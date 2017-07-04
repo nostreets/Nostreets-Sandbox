@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Nostreets | Sandbox</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <!-- Favicon ================== -->
+    <!-- Standard -->
+    <link rel="shortcut icon" href="~/assets/img/favicon-144.png">
+    <!-- Retina iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="144x144" href="~/assets/img/favicon-144.png">
+    <!-- Retina iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="114x114" href="~/assets/img/favicon-114.png">
+    <!-- Standard iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="72x72" href="~/assets/img/favicon-72.png">
+    <!-- Standard iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="57x57" href="~/assets/img/favicon-57.png">
+    <!--  Resources style ================== -->
+    <link href="~/assets/css/theme-Dark.css" rel="stylesheet" type="text/css" media="all" />
+    <link rel="stylesheet" href="~/Content/Site.css" />
+    <link rel="stylesheet" href="~/Content/bootstrap.css" />
+    <link rel="stylesheet" href="~/Content/bootstrap-theme.css" />
+    <link rel="stylesheet" href="~/Content/font-awesome.css" />
+    <link rel="stylesheet" href="~/Content/material-dashboard.css" />
+    <link rel="stylesheet" href="~/Content/angular-toastr.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.4.2/css/swiper.min.css">
+</head>
+<body ng-app="sandbox">
+    <section class="animsition">
+
+        <div id="leftSide">
+            <div id="home" class="gradient">
+                <!-- Your logo -->
+                <img src="~/assets/img/logo.png" alt="" class="main-logo" />
+                <div class="h-content">
+                    <h1 style="font-family: 'Trebuchet MS';">Welcome to <br> Nile's Sandbox!</h1>
+                    <p>Always trying expand and improve my knowledge and understanding of different technologies in this vast world of computer science.</p>
+                </div>
+                <ul class="social_icons">
+                    <li><a href="#"><i class="material-icons">home</i></a></li>
+                    <li><a href="mailto:nileoverstreet@gmail.com"><i class="material-icons">mail_outline</i></a></li>
+                    <li><a href="https://www.linkedin.com/in/nile-overstreet-6a4153140/"><i class="icon ion-social-linkedin"></i></a></li>
+                    <li><a href="https://github.com/nostreets/"><i class="icon ion-social-github"></i></a></li>
+                </ul>
+
+                <div id="particles-js" class="gradient"></div>
+                <div class="count-particles">
+                    <span class="js-count-particles"></span>
+                </div>
+            </div>
+        </div>
+        <div id="rightSide">
+
+
+            <div class="project container-fluid gradient">
+                <div class="particles gradient" id="particlesRSide" particles></div>
+
+                @RenderBody()
+
+
+
+            </div>
+        </div>
+    </section>
+    <script src="~/Scripts/jquery-1.10.2.js"></script>
+    <script src="~/Scripts/bootstrap.js"></script>
+    <script src="~/Scripts/material.min.js"></script>
+    <script src="~/Scripts/ng/angular.js"></script>
+    <script src="~/Scripts/ng/angular-animate.js"></script>
+    <script src="~/Scripts/ng/angular-route.js"></script>
+    <script src="~/Scripts/chartist.min.js"></script>
+    <script src="~/Scripts/ui-bootstrap-tpls-2.5.0.min.js"></script>
+    <script src="~/Scripts/angular-toastr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.4.2/js/swiper.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+
+
+    <script src="~/Scripts/global.js"></script>
+    <script src="~/Scripts/app/services/alert.service.js"></script>
+    <script src="~/Scripts/app/services/systemEvent.service.js"></script>
+    <script src="~/Scripts/app/configs/routeConfig.js"></script>
+    <script src="~/Scripts/app/services/chartsService.js"></script>
+
+
+    @RenderSection("startupScripts", false)
+
+
+    <script src="~/assets/js/animsition.min.js"></script>
+    <script src="~/assets/js/jquery.magnific-popup.min.js"></script>
+    <script src="~/assets/js/jquery.countdown.min.js"></script>
+    <script src="~/assets/js/twitterFetcher_min.js"></script>
+    <script src="~/assets/js/masonry.pkgd.min.js"></script>
+    <script src="~/assets/js/imagesloaded.pkgd.min.js"></script>
+    <script src="~/assets/js/jquery.flexslider-min.js"></script>
+    <script src="~/assets/js/photoswipe.min.js"></script>
+    <script src="~/assets/js/photoswipe-ui-default.min.js"></script>
+    <script src="~/assets/js/jqinstapics.min.js"></script>
+    <script src="~/assets/js/particles.min.js"></script>
+    <script src="~/assets/js/renderParticles.js"></script>
+    <script src="~/assets/js/script.js"></script>
+
+
+    @RenderSection("scripts", false)
+
+
+</body>
+</html>

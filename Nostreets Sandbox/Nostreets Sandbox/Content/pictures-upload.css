@@ -1,0 +1,67 @@
+﻿.white_space {
+    white-space: pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;
+    word-break: break-all;
+    white-space: pre;
+    white-space: -hp-pre-wrap;
+    white-space: pre-line;
+}
+
+a {
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+.lightBox {
+    display: inline-table;
+    width: 400px;
+    height: 244px;
+    overflow: hidden;
+}
+
+.cardCase a img {
+    -webkit-transform: scale(30);
+    -moz-transform: scale(30);
+    -ms-transform: scale(30);
+    -o-transform: scale(30);
+    transform: scale(1);
+    -webkit-transition: .3s;
+    -moz-transition: .3s;
+    -ms-transition: .3s;
+    -o-transition: .3s;
+    transition: .3s;
+    height: auto;
+    overflow: hidden;
+}
+
+.cardCase:hover img {
+    -webkit-transform: scale(2);
+    -moz-transform: scale(2);
+    -ms-transform: scale(2);
+    -o-transform: scale(2);
+    transform: scale(2);
+    overflow: hidden;
+}
+.picOutFrame {
+    max-height:700px; 
+    max-width:400px; 
+    position:center;
+}
+.cardCase {
+    max-height:300px; max-width:800px; position:center; overflow: hidden;
+}
+.displayPic {
+    height:300px; 
+    max-width:800px; 
+    position: center; 
+    overflow: hidden; 
+    object-fit: cover; 
+    object-position: top;
+}
+
+.title {
+    color: darkgrey;
+}

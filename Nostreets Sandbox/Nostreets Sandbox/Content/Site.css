@@ -1,0 +1,277 @@
+﻿p {
+    color: #fff;
+    font-family: 'Trebuchet MS';
+}
+
+h2 {
+    color: #99b9e4 !important;
+}
+
+.swiper-container {
+    width: 100%;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.swiper-slide {
+    overflow: visible;
+    background-position: center;
+    background-size: cover !important;
+    height: 600px !important;
+}
+
+form > div {
+    margin-bottom: 10%;
+}
+
+.spin {
+    position: relative;
+    -webkit-animation-name: spin;
+    -webkit-animation-duration: 40s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+}
+
+.reversespin {
+    position: relative;
+    -webkit-animation-name: reversespin;
+    -webkit-animation-duration: 40s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+}
+
+.particles {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    left: 0;
+    z-index: -1;
+}
+
+line.ct-grid {
+    stroke: rgba(138, 138, 138, 0.74) !important;
+}
+
+
+foreignObject > span {
+    color: rgba(138, 138, 138, 0.74) !important;
+}
+
+.circle {
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    -webkit-box-shadow: 11px 10px 61px -10px rgba(0,0,0,0.75);
+    -moz-box-shadow: 11px 10px 61px -10px rgba(0,0,0,0.75);
+    box-shadow: 11px 10px 61px -10px rgba(0,0,0,0.75);
+    margin-bottom: 25%;
+    position: relative;
+    text-align: center;
+    display: block;
+    padding-bottom: 90%;
+    width: 90%;
+    height: 0;
+    background-image: radial-gradient(circle closest-side at 40% 38%, #ffffff -30%, #909090 135%);
+    cursor: url("/assets/img/favicon.png"), pointer !important;
+}
+
+    .circle:hover {
+        -webkit-box-shadow: inset 11px 10px 61px -10px rgba(0,0,0,0.75);
+        -moz-box-shadow: inset 11px 10px 61px -10px rgba(0,0,0,0.75);
+        box-shadow: inset 11px 10px 61px -10px rgba(0,0,0,0.75);
+    }
+
+.circle__inner {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.circle__wrapper {
+    display: table;
+    width: 100%;
+    height: 100%;
+}
+
+.circle__content {
+    display: table-cell;
+    padding: 1em;
+    vertical-align: middle;
+    text-align: center;
+    color: #4689a0 !important;
+    font-size: 17px;
+    font-variant: small-caps;
+    font-weight: 400;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+    .circle__content:hover {
+        font-weight: 900;
+    }
+
+    .circle__content > a {
+        text-align: center;
+        color: #4689a0 !important;
+        font-size: 50%;
+        font-variant: small-caps;
+        font-weight: 400;
+    }
+
+        .circle__content > a:hover {
+            font-weight: 900;
+        }
+
+.card-footer > span {
+    padding-bottom: 1em !important;
+}
+
+.text-blueish {
+    color: #00adc3;
+    font-weight: 600;
+    font-variant: small-caps;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.36);
+}
+
+.project {
+    padding-left: 20% !important;
+    padding-top: 20% !important;
+}
+
+.typewriter {
+    color: #ffffff;
+    padding-bottom: 30px;
+    overflow: hidden no-display; /* Ensures the content is not revealed until the animation */
+    border-right: .15em solid #ffffff; /* The typwriter cursor */
+    white-space: pre-line; /* Keeps the content on a single line */
+    margin: 0 auto; /* Gives that scrolling effect as the typing happens */
+    letter-spacing: .15em; /* Adjust as needed */
+    animation: typing 10.5s steps(60, end), blink-caret .5s step-end infinite;
+}
+
+#rightSide {
+    background-color: #1e2329;
+}
+
+#dynamicGraphs {
+    padding-left: 0 !important;
+}
+
+
+
+@media only screen and (max-width: 1024px) {
+    .circle {
+        margin-left: 12%;
+    }
+
+    .circle__content > a {
+        font-size: 150%;
+        font-variant: small-caps;
+        font-weight: 500;
+    }
+}
+
+@keyframes typing {
+    from {
+        width: 0;
+    }
+
+    to {
+        width: 100%;
+    }
+}
+
+/* The typewriter cursor effect */
+@keyframes blink-caret {
+    from, to {
+        border-color: transparent;
+    }
+
+    50% {
+        border-color: mediumseagreen;
+    }
+}
+
+@-webkit-keyframes spin {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+
+    to {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@-moz-keyframes spin {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+
+    to {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@-o-keyframes spin {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+
+    to {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+
+    to {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+
+@-webkit-keyframes reversespin {
+    from {
+        -webkit-transform: rotate(360deg);
+    }
+
+    to {
+        -webkit-transform: rotate(0deg);
+    }
+}
+
+@-moz-keyframes reversespin {
+    from {
+        -webkit-transform: rotate(360deg);
+    }
+
+    to {
+        -webkit-transform: rotate(0deg);
+    }
+}
+
+@-o-keyframes reversespin {
+    from {
+        -webkit-transform: rotate(360deg);
+    }
+
+    to {
+        -webkit-transform: rotate(0deg);
+    }
+}
+
+@keyframes reversespin {
+    from {
+        -webkit-transform: rotate(360deg);
+    }
+
+    to {
+        -webkit-transform: rotate(0deg);
+    }
+}

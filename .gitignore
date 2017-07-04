@@ -286,3 +286,5 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
+/Nostreets Sandbox/Nostreets Sandbox/Web.config
+/Nostreets Sandbox/Nostreets Sandbox/Keys.config

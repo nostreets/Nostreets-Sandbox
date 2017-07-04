@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5574610E-7F20-4793-8D34-3C2C9C1322B8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Nostreets_Services</RootNamespace>
+    <AssemblyName>Nostreets Services</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.105.2.3\lib\net452\RestSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SendGrid, Version=9.4.1.0, Culture=neutral, PublicKeyToken=4f047e93159395ca, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sendgrid.9.5.0\lib\net452\SendGrid.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Domain\Newsletter\Link.cs" />
+    <Compile Include="Domain\Newsletter\Lists\CampaignDefaults.cs" />
+    <Compile Include="Domain\Newsletter\Lists\Contact.cs" />
+    <Compile Include="Domain\Newsletter\Lists\ListStats.cs" />
+    <Compile Include="Domain\Newsletter\Lists\MailChimpList.cs" />
+    <Compile Include="Domain\Newsletter\MCCollection.cs" />
+    <Compile Include="Domain\Newsletter\Members\GroupInterest.cs" />
+    <Compile Include="Domain\Newsletter\Members\Location.cs" />
+    <Compile Include="Domain\Newsletter\Members\Member.cs" />
+    <Compile Include="Domain\Newsletter\Members\MemberStats.cs" />
+    <Compile Include="Domain\Newsletter\UserListStats.cs" />
+    <Compile Include="Interfaces\Services\IMailChimpService.cs" />
+    <Compile Include="Interfaces\Services\NewsletterAddListRequest.cs" />
+    <Compile Include="Services\BaseService.cs" />
+    <Compile Include="Services\Database\ChartsService.cs" />
+    <Compile Include="Services\CustomSerializer.cs" />
+    <Compile Include="Domain\Charts\Chart.cs" />
+    <Compile Include="Enums\ChartTypeId.cs" />
+    <Compile Include="Interfaces\Services\IDBService.cs" />
+    <Compile Include="Interfaces\Services\ISendGridService.cs" />
+    <Compile Include="Interfaces\Sql\IDao.cs" />
+    <Compile Include="Interfaces\Sql\IDataReaderExt.cs" />
+    <Compile Include="Models\PagedList.cs" />
+    <Compile Include="Models\Requests\ChartAddRequest.cs" />
+    <Compile Include="Models\Requests\ChartUpdateRequest.cs" />
+    <Compile Include="Models\Requests\MailChimpAddListRequest.cs" />
+    <Compile Include="Models\Requests\MailChimpAddMemberRequest.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\DataHelper.cs" />
+    <Compile Include="Providers\DataMapper.cs" />
+    <Compile Include="Providers\DataProvider.cs" />
+    <Compile Include="Providers\SqlDao.cs" />
+    <Compile Include="Services\Web\MailChimpService.cs" />
+    <Compile Include="Services\Web\SendGridService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
