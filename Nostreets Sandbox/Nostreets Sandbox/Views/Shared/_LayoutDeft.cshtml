@@ -34,7 +34,7 @@
                 <!-- Your logo -->
                 <img src="~/assets/img/logo2.png" alt="" class="main-logo" />
 
-                 <div class="social_icons">
+                <div class="social_icons">
                     <ul class="btn-group btn-group-sm">
                         <li class="btn btn-simple"><a href="#"><i class="material-icons">home</i></a></li>
                         <li class="btn btn-simple"><a href="mailto:nileoverstreet@gmail.com"><i class="material-icons">mail_outline</i></a></li>
@@ -47,7 +47,7 @@
                     <h1 style="font-family: 'Trebuchet MS';">Welcome to <br> Nile's Sandbox!</h1>
                     <p>Always trying expand and improve my knowledge and understanding of different technologies in this vast world of computer science.</p>
                 </div>
-                
+
 
                 <div id="particles-js" class="gradient"></div>
                 <div class="count-particles">
@@ -55,18 +55,26 @@
                 </div>
 
 
-               
+
             </div>
         </div>
         <div id="rightSide">
 
             <nav class="navbar hidden-sm hidden-md hidden-lg">
-                <div class="col-xs-10">
-                    <ul class="nav text-center">
+                <div class="col-xs-10 col-xs-offset-1">
+                    <ul class="nav navbar-default text-center">
                         <li class="col-xs-3">
-                            <a href="#!applicationsInProgress">
+                            <a class="dropdown-toggle" data-toggle="dropdown">
                                 Apps in Progress
+                                <b class="caret"></b>
                             </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="#!dynamicGraphs">
+                                        Dynamic Graph Builder
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                         <li class="col-xs-3">
                             <a href="#!pastProjects">

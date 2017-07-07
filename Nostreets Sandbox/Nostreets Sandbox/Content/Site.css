@@ -42,6 +42,10 @@ form > div {
     margin-bottom: 10%;
 }
 
+.nav > li {
+    padding: 0 0 !important;
+}
+
 .spin {
     position: relative;
     -webkit-animation-name: spin;
@@ -121,7 +125,7 @@ foreignObject > span {
     vertical-align: middle;
     text-align: center;
     color: #4689a0 !important;
-    font-size: 70%;
+    font-size: 90%;
     font-variant: small-caps;
     font-weight: 400;
     font-family: Arial, Helvetica, sans-serif;
