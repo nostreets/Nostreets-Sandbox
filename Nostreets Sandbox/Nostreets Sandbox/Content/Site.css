@@ -147,6 +147,10 @@ foreignObject > span {
     padding-bottom: 1em !important;
 }
 
+.animsition {
+    position: inherit !important;
+}
+
 .text-blueish {
     color: #00adc3;
     font-weight: 600;
