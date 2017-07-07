@@ -1,10 +1,28 @@
-﻿p {
+﻿body {
+    background-color: #1e2329 !important;
+}
+
+p {
+    font-size: x-small;
     color: #fff;
     font-family: 'Trebuchet MS';
 }
 
+h1 {
+    font-size: xx-large !important;
+}
+
 h2 {
     color: #99b9e4 !important;
+}
+
+nav {
+    background-color: #1e2329 !important;
+    border-bottom: #1e2329 !important;
+}
+
+a:hover {
+    font-weight: 900;
 }
 
 .swiper-container {
@@ -17,7 +35,7 @@ h2 {
     overflow: visible;
     background-position: center;
     background-size: cover !important;
-    height: 600px !important;
+    height: 400px !important;
 }
 
 form > div {
@@ -103,7 +121,7 @@ foreignObject > span {
     vertical-align: middle;
     text-align: center;
     color: #4689a0 !important;
-    font-size: 17px;
+    font-size: 70%;
     font-variant: small-caps;
     font-weight: 400;
     font-family: Arial, Helvetica, sans-serif;
@@ -136,11 +154,6 @@ foreignObject > span {
     text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.36);
 }
 
-.project {
-    padding-left: 20% !important;
-    padding-top: 20% !important;
-}
-
 .typewriter {
     color: #ffffff;
     padding-bottom: 30px;
@@ -152,6 +165,18 @@ foreignObject > span {
     animation: typing 10.5s steps(60, end), blink-caret .5s step-end infinite;
 }
 
+.social_icons {
+    bottom: 0% !important;
+}
+
+.project {
+    padding-bottom: 22%;
+}
+
+#leftSide {
+    padding: 0 !important;
+}
+
 #rightSide {
     background-color: #1e2329;
 }
@@ -160,17 +185,37 @@ foreignObject > span {
     padding-left: 0 !important;
 }
 
+#homePage {
+    padding-left: 20% !important;
+    padding-top: 20% !important;
+}
 
-
-@media only screen and (max-width: 1024px) {
-    .circle {
-        margin-left: 12%;
+@media only screen and (max-width: 768px) {
+    .social_icons {
+        text-align: center;
+        bottom: 86% !important;
+        padding: 0 !important;
     }
 
-    .circle__content > a {
-        font-size: 150%;
-        font-variant: small-caps;
-        font-weight: 500;
+    .h-content {
+        text-align: center;
+    }
+
+    .main-logo {
+        margin: 0px 30%;
+    }
+}
+
+@media only screen and (min-width: 900px) {
+
+    #leftSide {
+        width: 50% !important;
+        float: left !important;
+    }
+
+    #rightSide {
+        width: 50% !important;
+        float: right !important;
     }
 }
 

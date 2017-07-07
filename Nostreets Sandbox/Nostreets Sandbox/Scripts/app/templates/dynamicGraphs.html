@@ -2,7 +2,7 @@
 <div id="dynamicGraphs" ng-controller="dynamicGraphsController as pg" class="container-fluid">
     <div style="padding-right: 10%;" class="row" align="center">
         <h2 class="text-center text-blueish">Dynamic Graph Builder</h2>
-        <button class="btn btn-sm btn-round" ng-click="pg.openModal()">Build Graph</button>
+        <button class="btn btn-xs btn-round" ng-click="pg.openModal()">Build Graph</button>
     </div>
     <div class="row">
         <div class="text-center" ng-if="pg.graphName"><h3>{{ pg.graphName }}</h3></div>
@@ -18,11 +18,11 @@
         </div>
         <div class="row">
 
-            <div ng-repeat="chart in pg.charts" class="col-xs-11">
+            <div ng-repeat="chart in pg.charts" class="col-xs-10 col-xs-offset-1">
                 <div class="card">
                     <div class="card-header text-center">
-                        <h5>Name: {{ chart.name }}</h5>
-                        <h5>Type: {{ chart.typeId == 1 ? 'Line' : chart.typeId == 2 ? 'Bar' : chart.typeId == 3 ? 'Pie' : 'N/A' }}</h5>
+                        <h6>Name: {{ chart.name }}</h6>
+                        <h6>Type: {{ chart.typeId == 1 ? 'Line' : chart.typeId == 2 ? 'Bar' : chart.typeId == 3 ? 'Pie' : 'N/A' }}</h6>
                     </div>
                     <div class="card-content text-center">
                         <chart graph="chart"></chart>

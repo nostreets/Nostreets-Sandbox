@@ -30,8 +30,8 @@
 
                         element.attr("class", "graph" + data.chartId);
 
-                        $(element).append("<input type='button' class='btn btn-sm btn-round pull-center' value='View' id='viewGraph" + data.chartId + "' />");
-                        $(element).append("<input type='button' class='btn btn-sm btn-round pull-center' value='X' style='background-color: #e00;' id='deleteGraph" + data.chartId + "' />");
+                        $(element).append("<input type='button' class='btn btn-xs btn-round pull-center' value='View' id='viewGraph" + data.chartId + "' />");
+                        $(element).append("<input type='button' class='btn btn-xs btn-round pull-center' value='X' style='background-color: #e00;' id='deleteGraph" + data.chartId + "' />");
 
                         $("#viewGraph" + data.chartId).on("click", _sendLogEvent);
                         $("#deleteGraph" + data.chartId).on("click", _deleteById);

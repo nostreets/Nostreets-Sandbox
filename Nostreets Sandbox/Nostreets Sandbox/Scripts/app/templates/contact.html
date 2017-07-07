@@ -1,5 +1,5 @@
 ﻿<div>
-    <div class="container" ng-controller="contactUsController as contactUs" style="padding-right: 25%;">
+    <div class="container" ng-controller="contactUsController as contactUs">
         <h2 class="title">Send me message</h2>
         <div class="row">
             <div class="col-md-6">
@@ -55,7 +55,7 @@
                         </div>
                     </div>
                     <div class="col-xs-12 text-center">
-                        <input style="background-color: #58768b;" type="submit" class="btn btn-round" value="Send" ng-disabled="contactUsForm.$invalid" ng-click="contactUs.sendEmail(contactUs.item)" />
+                        <input style="background-color: #58768b;" type="submit" class="btn btn-round btn-xs" value="Send" ng-disabled="contactUsForm.$invalid" ng-click="contactUs.sendEmail(contactUs.item)" />
                     </div>
                 </form>
                 <div ng-if="contactUs.hasSent">

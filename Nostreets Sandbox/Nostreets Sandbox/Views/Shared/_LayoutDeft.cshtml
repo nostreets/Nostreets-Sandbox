@@ -32,33 +32,65 @@
         <div id="leftSide">
             <div id="home" class="gradient">
                 <!-- Your logo -->
-                <img src="~/assets/img/logo.png" alt="" class="main-logo" />
+                <img src="~/assets/img/logo2.png" alt="" class="main-logo" />
+
+                 <div class="social_icons">
+                    <ul class="btn-group btn-group-sm">
+                        <li class="btn btn-simple"><a href="#"><i class="material-icons">home</i></a></li>
+                        <li class="btn btn-simple"><a href="mailto:nileoverstreet@gmail.com"><i class="material-icons">mail_outline</i></a></li>
+                        <li class="btn btn-simple"><a href="https://www.linkedin.com/in/nile-overstreet-6a4153140/"><i class="icon ion-social-linkedin"></i></a></li>
+                        <li class="btn btn-simple"><a href="https://github.com/nostreets/"><i class="icon ion-social-github"></i></a></li>
+                    </ul>
+                </div>
+
                 <div class="h-content">
                     <h1 style="font-family: 'Trebuchet MS';">Welcome to <br> Nile's Sandbox!</h1>
                     <p>Always trying expand and improve my knowledge and understanding of different technologies in this vast world of computer science.</p>
                 </div>
-                <ul class="social_icons">
-                    <li><a href="#"><i class="material-icons">home</i></a></li>
-                    <li><a href="mailto:nileoverstreet@gmail.com"><i class="material-icons">mail_outline</i></a></li>
-                    <li><a href="https://www.linkedin.com/in/nile-overstreet-6a4153140/"><i class="icon ion-social-linkedin"></i></a></li>
-                    <li><a href="https://github.com/nostreets/"><i class="icon ion-social-github"></i></a></li>
-                </ul>
+                
 
                 <div id="particles-js" class="gradient"></div>
                 <div class="count-particles">
                     <span class="js-count-particles"></span>
                 </div>
+
+
+               
             </div>
         </div>
         <div id="rightSide">
 
+            <nav class="navbar hidden-sm hidden-md hidden-lg">
+                <div class="col-xs-10">
+                    <ul class="nav text-center">
+                        <li class="col-xs-3">
+                            <a href="#!applicationsInProgress">
+                                Apps in Progress
+                            </a>
+                        </li>
+                        <li class="col-xs-3">
+                            <a href="#!pastProjects">
+                                Past Projects
+                            </a>
+                        </li>
+                        <li class="col-xs-3">
+                            <a href="#!contact">
+                                Contact Nile
+                            </a>
+                        </li>
+                        <li class="col-xs-3">
+                            <a href="#!about">
+                                About Nile
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
 
             <div class="project container-fluid gradient">
                 <div class="particles gradient" id="particlesRSide" particles></div>
 
                 @RenderBody()
-
-
 
             </div>
         </div>
