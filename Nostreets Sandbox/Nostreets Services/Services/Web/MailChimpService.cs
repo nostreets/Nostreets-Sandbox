@@ -275,8 +275,6 @@ namespace Nostreets_Services.Services.Web
         public void GetMember(string listId, string memberId, Func<Member, object> onSuccess, Func<IRestResponse, object> onError)
         {
             #region Rest Call and Response
-            Member member = null;
-
             IRestResponse<Member> response = GenericRestSharp<Member>(Domain + "lists/" + listId + "/members/" + memberId);
             if (response.StatusCode == HttpStatusCode.OK ||
                 response.StatusCode == HttpStatusCode.Accepted ||
