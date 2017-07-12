@@ -28,7 +28,10 @@
 </head>
 <body ng-app="sandbox">
     <section class="animsition">
-
+        <div id="particles-js" class="gradient"></div>
+        <div class="count-particles">
+            <span class="js-count-particles"></span>
+        </div>
         <div id="leftSide">
             <div id="home" class="gradient">
                 <!-- Your logo -->
@@ -49,16 +52,21 @@
                 </div>
 
 
-                <div id="particles-js" class="gradient"></div>
-                <div class="count-particles">
-                    <span class="js-count-particles"></span>
-                </div>
+                @*<div id="particles-js" class="gradient"></div>
+                    <div class="count-particles">
+                        <span class="js-count-particles"></span>
+                    </div>*@
 
 
 
             </div>
         </div>
         <div id="rightSide">
+
+            @*<div id="particles-js" class="gradient"></div>
+                <div class="count-particles">
+                    <span class="js-count-particles"></span>
+                </div>*@
 
             <nav class="navbar hidden-sm hidden-md hidden-lg">
                 <div class="col-xs-10 col-xs-offset-1">
@@ -78,7 +86,7 @@
                         </li>
                         <li class="col-xs-3">
                             <a href="#!pastProjects">
-                                Past Projects
+                                Delevoped Projects
                             </a>
                         </li>
                         <li class="col-xs-3">
@@ -96,7 +104,6 @@
             </nav>
 
             <div class="project container-fluid gradient">
-                <div class="particles gradient" id="particlesRSide" particles></div>
 
                 @RenderBody()
 
@@ -136,7 +143,8 @@
     <script src="~/assets/js/photoswipe.min.js"></script>
     <script src="~/assets/js/photoswipe-ui-default.min.js"></script>
     <script src="~/assets/js/jqinstapics.min.js"></script>
-    <script src="~/assets/js/particles.min.js"></script>
+    @*<script src="~/assets/js/particles.min.js"></script>*@
+    <script src="~/Scripts/particles.js"></script>
     <script src="~/assets/js/renderParticles.js"></script>
     <script src="~/assets/js/script.js"></script>
 

@@ -391,6 +391,7 @@
     <Content Include="assets\wedding.html" />
     <Content Include="Content\angular-moment-picker.css" />
     <Content Include="Content\angular-moment-picker.min.css" />
+    <Content Include="Content\animate.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -462,6 +463,7 @@
     <Content Include="assets\scss\_mixins.scss" />
     <Content Include="assets\scss\_style.scss" />
     <Content Include="assets\scss\_var.scss" />
+    <Content Include="Scripts\particles.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

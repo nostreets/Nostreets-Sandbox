@@ -178,6 +178,7 @@ foreignObject > span {
 }
 
 .project {
+    background: linear-gradient(rgba(29, 35, 40, 0.0), rgba(30, 35, 40, .0));
     padding-bottom: 22%;
 }
 
@@ -186,7 +187,8 @@ foreignObject > span {
 }
 
 #rightSide {
-    background-color: #1e2329;
+    background: linear-gradient(rgba(29, 35, 40, 0.79), rgba(30, 35, 40, .5));
+    background-color: rgba(30, 35, 41, 0.9);
 }
 
 #dynamicGraphs {
