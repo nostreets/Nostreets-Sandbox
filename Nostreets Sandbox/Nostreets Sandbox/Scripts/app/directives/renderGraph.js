@@ -42,6 +42,7 @@
                     function _deleteById()
                     {
                         $chartsService.deleteById(data.chartId, _consoleResponse, _consoleResponse);
+                        $systemEventService.broadcast("refreshCharts", true);
                     }
 
                     function _targetElementGraph() {
@@ -74,7 +75,7 @@
                                 var options = {
                                     donut: true,
                                     showLabel: true,
-                                    donutWidth: 150,
+                                    donutWidth: 20,
                                     labelDirection: "explode"
                                 };
                                 var renderedChart = new Chartist.Pie(".graph" + data.chartId, graph, options);
@@ -117,7 +118,7 @@
                                 var options = {
                                     donut: true,
                                     showLabel: true,
-                                    donutWidth: 150,
+                                    donutWidth: 60,
                                     labelDirection: "explode"
                                 };
                                 renderedChart = new Chartist.Pie(mainElement, graph, options);
@@ -213,6 +214,7 @@
                                 // We can't use guided mode as the animations need to rely on setting begin manually
                                 data.element.animate(animationDefinition, false);
                             }
+
                             else if (data.type === 'label' && data.axis === 'x') {
                                 data.element.animate({
                                     y: {

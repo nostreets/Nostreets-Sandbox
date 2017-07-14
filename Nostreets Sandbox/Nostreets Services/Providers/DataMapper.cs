@@ -7,7 +7,7 @@ using System.Web;
 
 namespace Nostreets_Services.Providers
 {
-    public class DataMapper<T> where T : class
+    public class DataMapper<T>
     {
         private System.Reflection.PropertyInfo[] props;
 
@@ -26,24 +26,36 @@ namespace Nostreets_Services.Providers
         {
             IEnumerable<string> colname = reader.GetSchemaTable().Rows.Cast<DataRow>().Select(c => c["ColumnName"].ToString().ToLower()).ToList();
             var obj = Activator.CreateInstance<T>();
-            foreach (var prop in props)
+
+            if (props.Length > 1)
             {
-                if (colname.Contains(prop.Name.ToLower()))
+                foreach (var prop in props)
                 {
-                    Type typ = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
-                    
-                    if (typ.Name != "String" && typ.IsClass)
+                    if (colname.Contains(prop.Name.ToLower()))
                     {
-                        dynamic pin = reader.GetString(reader.GetOrdinal(prop.Name));
-                        prop.SetValue(obj, JsonConvert.DeserializeObject(reader.GetString(reader.GetOrdinal(prop.Name)) ?? "", typ), null);
-                    }
-                    else if (reader[prop.Name] != DBNull.Value)
-                    {
-                        if (reader[prop.Name].GetType() == typeof(decimal)) { prop.SetValue(obj, (reader.GetDouble(prop.Name)), null); }
-                        else { prop.SetValue(obj, (reader.GetValue(reader.GetOrdinal(prop.Name)) ?? null), null); }
+                        Type type = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
+
+                        if (type.Name != "String" && type.Name != "Char" && type.IsClass)
+                        {
+                            object property = JsonConvert.DeserializeObject(reader.GetString(reader.GetOrdinal(prop.Name)) ?? "", type);
+                            if (property == null) { property = Activator.CreateInstance(type); }
+                            if (property.GetType() != type) { throw new Exception("Property " + type.Name + " Does Not Equal Type in DB"); }
+                            prop.SetValue(obj, property, null);
+                        }
+                        else if (reader[prop.Name] != DBNull.Value)
+                        {
+                            if (reader[prop.Name].GetType() == typeof(decimal)) { prop.SetValue(obj, (reader.GetDouble(prop.Name)), null); }
+                            else { prop.SetValue(obj, (reader.GetValue(reader.GetOrdinal(prop.Name)) ?? null), null); }
+                        }
                     }
                 }
             }
+            else
+            {
+                var item = reader.GetValue(reader.GetSchemaTable().Columns[0].Ordinal);
+                if (item.GetType() == obj.GetType()) { obj = (T)item; }
+            }
+
             return obj;
         }
     }

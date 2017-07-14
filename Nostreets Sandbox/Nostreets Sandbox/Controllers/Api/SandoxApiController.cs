@@ -8,19 +8,21 @@ using System.Web.Http;
 using System.Threading.Tasks;
 using System.IO;
 using System.Web;
+using System.Web.Configuration;
 using Nostreets_Services.Interfaces.Services;
 using Nostreets_Services.Domain.Charts;
 using Nostreets_Services.Models.Request;
 using Nostreets_Services.Services.Database;
 using Nostreets_Services.Services.Web;
 using Nostreets_Sandbox.Models.Responses;
+using Nostreets_Sandbox.Controllers.Attributes;
 
 namespace Nostreets_Sandbox.Controllers.Api
 {
     [RoutePrefix("api")]
     public class SandoxApiController : ApiController
     {
-        IDBService<Chart, int, ChartAddRequest, ChartUpdateRequest> _chartsSrv = null;
+        IChartsExtended _chartsSrv = null;
         ISendGridService _sendGridSrv = null;
 
         public SandoxApiController(/*IDBService<Chart, int, ChartAddRequest, ChartUpdateRequest> chartsInject, ISendGridService sendGridInject*/)
@@ -35,8 +37,8 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-                List<Chart> list = _chartsSrv.GetAll();
-                ItemsResponse<Chart> response = new ItemsResponse<Chart>(list);
+                List<Chart<object>> list = _chartsSrv.GetAll();
+                ItemsResponse<Chart<object>> response = new ItemsResponse<Chart<object>>(list);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -45,6 +47,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
             }
         }
+
 
         [Route("charts/{id:int}")]
         [HttpGet]
@@ -52,8 +55,8 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-                Chart chart = _chartsSrv.Get(id);
-                ItemResponse<Chart> response = new ItemResponse<Chart>(chart);
+                Chart<object> chart = _chartsSrv.Get(id);
+                ItemResponse<Chart<object>> response = new ItemResponse<Chart<object>>(chart);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -63,13 +66,13 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Auth("AzureDBConnection")]
         [Route("charts/int")]
         [HttpPost]
         public HttpResponseMessage InsertChart(ChartAddRequest<int> model)
         {
             try
             {
-                var a = Request.Content.Headers;
                 if (ModelState.IsValid)
                 {
                     int id = _chartsSrv.Insert(model);
@@ -89,6 +92,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Auth("AzureDBConnection")]
         [Route("charts/list/int")]
         [HttpPost]
         public HttpResponseMessage InsertChart(ChartAddRequest<List<int>> model)
@@ -114,6 +118,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Auth("AzureDBConnection")]
         [Route("charts/int")]
         [HttpPut]
         public HttpResponseMessage UpdateChart(ChartUpdateRequest<int> model)
@@ -138,6 +143,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Auth("AzureDBConnection")]
         [Route("charts/list/int")]
         [HttpPut]
         public HttpResponseMessage UpdateChart(ChartUpdateRequest<List<int>> model)
@@ -162,6 +168,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Auth("AzureDBConnection")]
         [Route("charts/delete/{id:int}")]
         [HttpDelete]
         public HttpResponseMessage DeleteChart(int id)

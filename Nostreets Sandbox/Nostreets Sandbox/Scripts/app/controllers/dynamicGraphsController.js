@@ -20,7 +20,7 @@
         vm.delete = _delete;
 
         $rootScope.$on('logGraph', _logMainGraph);
-
+        $baseController.systemEventService.listen('refreshCharts', _refreshResponse);
 
         _startUp();
         //Controller Function
@@ -140,10 +140,10 @@
                     var options = {
                         donut: true,
                         showLabel: true,
-                        donutWidth: 150,
+                        donutWidth: 100,
                         labelDirection: "explode"
                     };
-                    var oneArr = (function () {
+                    var oneArr = typeof (chart.series[0]) !== 'number' ? (function () {
                         var slice = [];
                         for (let arr of chart.series) {
                             for (let num of arr) {
@@ -151,7 +151,7 @@
                             }
                         }
                         return slice;
-                    })();
+                    })() : chart.series;
                     chart.series = oneArr;
                     vm.renderedChart = new Chartist.Pie("#graphMainDiv", chart, options);
                     break;
@@ -482,13 +482,15 @@
 
         function _buildEmptyLine(number) {
             var line = {
-                key: vm.typeId ? "Pie Chart" : "",
+                key: vm.typeId === '3' ? "Chart" : "",
                 points: []
             };
             for (var i = 0; i < number; i++) {
-                line.points.push({ point: 0 });
+                var point = Math.round(Math.random() * 20);
+                if (Math.random() < 0.5 && vm.typeId !== '3') { point = -point; }
+                line.points.push({ point: point });
                 if (!vm.labels[i]) {
-                    vm.labels.push({ label: 0 });
+                    vm.labels.push({ label: "Label " + (i + 1) });
                 }
             }
             vm.items.push(line);

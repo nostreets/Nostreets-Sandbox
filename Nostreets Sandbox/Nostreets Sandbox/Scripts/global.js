@@ -19,7 +19,7 @@
 
     function baseController($document, $log, $route, $routeParams, $systemEventService, $alertService, $window) {
 
-        let base = {
+        var base = {
             document: $document,
             log: $log,
             systemEventService: $systemEventService,

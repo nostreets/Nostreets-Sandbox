@@ -288,3 +288,4 @@ __pycache__/
 *.xsd.cs
 /Nostreets Sandbox/Nostreets Sandbox/Web.config
 /Nostreets Sandbox/Nostreets Sandbox/Keys.config
+/Nostreets Sandbox/Nostreets Sandbox/Connections.config

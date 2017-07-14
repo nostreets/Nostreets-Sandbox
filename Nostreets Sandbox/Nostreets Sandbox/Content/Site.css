@@ -25,6 +25,7 @@ a:hover {
     font-weight: 900;
 }
 
+
 .swiper-container {
     width: 100%;
     padding-top: 50px;
@@ -199,6 +200,23 @@ foreignObject > span {
     padding-left: 20% !important;
     padding-top: 20% !important;
 }
+
+.scrollable-content {
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+    .scrollable-content::-webkit-scrollbar {
+        width: 0px;
+    }
+
+        .scrollable-content::-webkit-scrollbar * {
+            background: transparent;
+        }
+
+    .scrollable-content::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.4) !important;
+    }
 
 @media only screen and (max-width: 768px) {
     .social_icons {

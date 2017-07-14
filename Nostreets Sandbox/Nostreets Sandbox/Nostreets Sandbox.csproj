@@ -216,6 +216,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Api\SandoxApiController.cs" />
+    <Compile Include="Controllers\Attributes\AuthAttribute.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Global.asax.cs">
@@ -547,6 +548,7 @@
     <Content Include="Scripts\ng\angular-sanitize.min.js.map" />
     <Content Include="Scripts\ng\angular-touch.min.js.map" />
     <Content Include="Scripts\ng\angular.min.js.map" />
+    <Content Include="Connections.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
