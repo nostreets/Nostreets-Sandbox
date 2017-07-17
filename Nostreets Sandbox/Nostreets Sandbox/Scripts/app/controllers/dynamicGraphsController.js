@@ -3,7 +3,7 @@
 (function () {
 
     angular.module(page.APPNAME).controller("dynamicGraphsController", pageController)
-    .controller("modalController", modalController);
+    .controller("modalGraphController", modalController);
 
     pageController.$inject = ["$scope", "$baseController", "$uibModal", '$rootScope', "$chartsService"];
     modalController.$inject = ["$scope", "$timeout", "$uibModalInstance", "graph", "$rootScope"];
@@ -60,7 +60,7 @@
             var modalInstance = $uibModal.open({
                 animation: true
                 , templateUrl: "modalGraphBuilder.html"
-                , controller: "modalController as mc"
+                , controller: "modalGraphController as mc"
                 , size: "lg"
                 , resolve: {
                     graph: function () {

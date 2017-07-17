@@ -31,7 +31,11 @@
                 templateUrl: '/Scripts/app/templates/dynamicGraphs.html',
                 controller: 'dynamicGraphsController',
                 controllerAs: 'pg'
-            });
+            }).when('/cardBuilder', {
+                templateUrl: '/Scripts/app/templates/bootstrapCardBuilder.html',
+                controller: 'cardBuilderController',
+                controllerAs: 'pg'
+            });;
 
             $locationProvider.html5Mode({
                 enabled: false,

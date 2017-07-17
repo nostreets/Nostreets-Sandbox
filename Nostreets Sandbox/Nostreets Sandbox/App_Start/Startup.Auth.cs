@@ -6,6 +6,8 @@ using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Google;
 using Owin;
 using Nostreets_Sandbox.Models;
+using Nostreets_Services.Services;
+using Nostreets_Services.Models;
 
 namespace Nostreets_Sandbox
 {

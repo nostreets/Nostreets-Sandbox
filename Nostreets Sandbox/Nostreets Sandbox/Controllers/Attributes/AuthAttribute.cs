@@ -27,7 +27,7 @@ namespace Nostreets_Sandbox.Controllers.Attributes
 
             if (actionContext.Request.RequestUri.Host == "localhost" || whitelistedIps.ContainsValue(ip))
             {
-                authKey = WebConfigurationManager.AppSettings["Sandbox.Local.ApiKey"];
+                authKey = WebConfigurationManager.AppSettings["Sandbox.Azure.ApiKey"];
             }
             if (actionContext.Request.Headers.Authorization == null && authKey == null) { return false; }
             if (authKey == null) { authKey = actionContext.Request.Headers.Authorization.Parameter; }
@@ -52,11 +52,11 @@ namespace Nostreets_Sandbox.Controllers.Attributes
 
         protected override void HandleUnauthorizedRequest(HttpActionContext actionContext)
         {
-            actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Forbidden, "Unauthorized Request");
+            actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Unauthorized Request");
             return;
         }
 
-        protected string GetRequestIPAddress()
+        private string GetRequestIPAddress()
         {
             System.Web.HttpContext context = System.Web.HttpContext.Current;
             string ipAddress = context.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];

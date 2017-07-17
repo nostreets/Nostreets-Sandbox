@@ -13,11 +13,11 @@
 
     angular.module(page.APPNAME, page.ngModules);
 
-    angular.module(page.APPNAME).factory("$baseController", baseController);
+    page.baseController = angular.module(page.APPNAME).factory("$baseController", baseController);
 
-    baseController.$inject = ['$document', '$log', '$route', '$routeParams', '$systemEventService', '$alertService', "$window"];
+    baseController.$inject = ['$document', '$log', '$route', '$routeParams', '$systemEventService', '$alertService', "$window", '$uibModal', '$timeout'];
 
-    function baseController($document, $log, $route, $routeParams, $systemEventService, $alertService, $window) {
+    function baseController($document, $log, $route, $routeParams, $systemEventService, $alertService, $window, $uibModal, $timeout) {
 
         var base = {
             document: $document,
@@ -26,10 +26,13 @@
             route: $route,
             routeParams: $routeParams,
             alertService: $alertService,
-            window: $window
+            window: $window,
+            modal: $uibModal,
+            timeout: $timeout
         }
 
 
         return base;
     }
+
 })();

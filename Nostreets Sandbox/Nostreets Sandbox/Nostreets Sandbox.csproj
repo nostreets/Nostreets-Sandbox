@@ -208,22 +208,18 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
-    <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="App_Start\UnityResolver.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Api\SandoxApiController.cs" />
     <Compile Include="Controllers\Attributes\AuthAttribute.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\PagedList.cs" />
     <Compile Include="Models\Responses\BaseResponse.cs" />
@@ -422,8 +418,11 @@
     <Content Include="Scripts\app\configs\routeConfig.js" />
     <Content Include="Scripts\app\controllers\dynamicGraphsController.js" />
     <Content Include="Scripts\app\controllers\generalControllers.js" />
+    <Content Include="Scripts\app\directives\cardBuilderModalDirective.js" />
     <Content Include="Scripts\app\directives\particles.js" />
     <Content Include="Scripts\app\directives\renderGraph.js" />
+    <Content Include="Scripts\app\directives\templates\cardBuilderModal.html" />
+    <Content Include="Scripts\app\directives\templates\cardPartials.html" />
     <Content Include="Scripts\app\services\alert.service.js" />
     <Content Include="Scripts\app\services\chartsService.js" />
     <Content Include="Scripts\app\services\systemEvent.service.js" />
@@ -552,7 +551,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Scripts\app\directives\templates\" />
     <Folder Include="Scripts\app\modules\" />
   </ItemGroup>
   <ItemGroup>
