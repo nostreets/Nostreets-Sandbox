@@ -1,4 +1,5 @@
-﻿using Nostreets_Services.Interfaces.Sql;
+﻿using Nostreets_Services.Domain.Cards;
+using Nostreets_Services.Interfaces.Sql;
 using Nostreets_Services.Providers;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,15 @@ namespace Nostreets_Services.Services
             _connectionKey = "DefaultConnection";
         }
 
-        public BaseService(string connectionKey) { _connectionKey = connectionKey; }
+        public BaseService(string connectionKey) {
+          
+            _connectionKey = connectionKey;
+
+            //if (!CheckIfTableExist(typeof(StyledCard)))
+            //{
+            //    var table = CreateTables(typeof(StyledCard));
+            //}
+        }
 
         private string _connectionKey;
         private string _path = Path.GetFullPath(Path.Combine(HttpContext.Current.Server.MapPath("~"), "../Nostreets Services/Querys/"));
@@ -30,34 +39,44 @@ namespace Nostreets_Services.Services
             get { return Providers.DataProvider.SqlInstance; }
         }
 
-        private string DeterminSQLType(Type type)
+        private string DeterminSQLType(Type type, string parentTable, out string FKs)
         {
             string statement = null;
-            switch (type.Name)
+            if (type.IsByRef && (type.Name != "String" || type.Name != "Char"))
             {
-                case "String":
-                    statement = "NVARCHAR (2000)";
-                    break;
+                Dictionary<string,string> table = CreateTables(type);
+                statement = "INT";
+                FKs = "CONSTRAINT [FK_" + parentTable + "s_" + table["Name"] + "] FOREIGN KEY ([" + type.Name + "]) REFERENCES [dbo].[" + table["Name"] + "] ([" + table["PK"] + "])";
+            }
+            else
+            {
+                switch (type.Name)
+                {
+                    case "String":
+                        statement = "NVARCHAR (2000)";
+                        break;
 
-                case "Int16":
-                    statement = "SMALLINT";
-                    break;
+                    case "Int16":
+                        statement = "SMALLINT";
+                        break;
 
-                case "Int32":
-                    statement = "INT";
-                    break;
+                    case "Int32":
+                        statement = "INT";
+                        break;
 
-                case "Bool":
-                    statement = "BIT";
-                    break;
+                    case "Bool":
+                        statement = "BIT";
+                        break;
 
-                case "DateTime":
-                    statement = "DATETIME2 (7)  CONSTRAINT [DF_Charts_DateCreated] DEFAULT (getutcdate())";
-                    break;
+                    case "DateTime":
+                        statement = "DATETIME2 (7)  CONSTRAINT [DF_" + parentTable + "s_" + type.Name + "] DEFAULT (getutcdate())";
+                        break;
 
-                default:
-                    statement = "NVARCHAR (MAX)";
-                    break;
+                    default:
+                        statement = "NVARCHAR (MAX)";
+                        break;
+                }
+                FKs = null;
             }
 
             return statement;
@@ -83,21 +102,29 @@ namespace Nostreets_Services.Services
             return false;
         }
 
-        public void CreateTables(Type type)
+        public Dictionary<string, string> CreateTables(Type type)
         {
+            Dictionary<string, string> result = null;
             PropertyInfo[] props = type.GetProperties();
             List<string> columns = new List<string>();
+            List<string> FKs = new List<string>();
+
             string endingTable = "NOT NULL, CONSTRAINT [PK_" + type.Name + "s] PRIMARY KEY CLUSTERED ([" + props[0].Name + "] ASC)";
 
             foreach (var item in props)
             {
-                columns.Add(String.Format(File.ReadAllText(HttpContext.Current.Server.MapPath("~/Querys/CreateColumn.sql")), item.Name, DeterminSQLType(item.PropertyType),
-                    props[0] == item ? "IDENTITY (1, 1) NOT NULL, " : props[props.Length - 1] == item ? endingTable : "NOT NULL, "));
+                string FK = null;
+                columns.Add(String.Format(File.ReadAllText(HttpContext.Current.Server.MapPath("~/Querys/CreateColumn.sql")), item.Name, DeterminSQLType(item.PropertyType, type.Name, out FK),
+                    props[0] == item ? "IDENTITY (1, 1) NOT NULL, " : props[props.Length - 1] == item ? String.Concat(endingTable, FKs.ToArray()) : "NOT NULL, "));
+                if (FK != null)
+                {
+                    FKs.Add(FK);
+                }
             }
             string table = String.Concat(columns.ToArray());
             string query = String.Format(File.ReadAllText(HttpContext.Current.Server.MapPath("~/Querys/CreateTable.sql")), type.Name + "s", table);
 
-            short isTrue;
+            short isTrue = 0;
             DataProvider.ExecuteCmd(() => Connection,
                query,
                 param => param.AddRange(new[]
@@ -107,6 +134,14 @@ namespace Nostreets_Services.Services
                 null,
                 param => short.TryParse(param["@IsTrue"].Value.ToString(), out isTrue),
                 mod => mod.CommandType = System.Data.CommandType.Text);
+
+            if (isTrue == 1) {
+                result = new Dictionary<string, string>();
+                result.Add("Name", type.Name + "s");
+                result.Add("PK", type.GetProperties()[0].Name + "s");
+            }
+
+            return result;
         }
 
     }

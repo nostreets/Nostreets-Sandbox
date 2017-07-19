@@ -26,7 +26,7 @@ namespace Nostreets_Sandbox.App_Start
 
             container.RegisterType<IMailChimpService, MailChimpService>(new ContainerControlledLifetimeManager());
             container.RegisterType<ISendGridService, SendGridService>(new ContainerControlledLifetimeManager(), new InjectionConstructor(WebConfigurationManager.AppSettings["SendGrid.ApiKey"]));
-            container.RegisterType<IChartsExtended, ChartsService>(new ContainerControlledLifetimeManager(), new InjectionConstructor("AzureDBConnection"));
+            container.RegisterType<IChartsExtended, ChartsService>(new ContainerControlledLifetimeManager(), new InjectionConstructor(/*"AzureDBConnection"*/"DefaultConnection"));
 
             DependencyResolver.SetResolver(new UnityDependencyResolver(container));
             config.DependencyResolver = new UnityResolver(container);

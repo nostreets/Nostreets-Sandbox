@@ -1,6 +1,19 @@
 ﻿
-<div id="dynamicGraphs" ng-controller="dynamicGraphsController as pg" class="container-fluid">
-    <div style="padding-right: 10%;" class="row" align="center">
+<div id="dynamicGraphs" class="container-fluid">
+    <div class="row text-center">
+        <div class="col-xs-3 dropdown text-blueish" style="margin-left: 37%">
+            <a class="dropdown-toggle" data-toggle="dropdown">View Code</a>
+            <ul class="dropdown-menu" ng-click="pg.viewCode()">
+                <li>
+                    <a class="btn btn-xs btn-simple btn-round" ng-click="pg.viewDirectiveCode()">Directive</a>
+                </li>
+                <li>
+                    <a data-target="#" class="btn btn-xs btn-simple btn-round" ng-click="pg.viewControllerCode()">Controller</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row" align="center">
         <h2 class="text-center text-blueish">Dynamic Graph Builder</h2>
         <button class="btn btn-xs btn-round" ng-click="pg.openModal()">Build Graph</button>
     </div>

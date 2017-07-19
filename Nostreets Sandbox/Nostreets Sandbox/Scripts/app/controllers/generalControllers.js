@@ -5,7 +5,8 @@
         .controller("pastProjectsController", pastProjectsController)
         .controller("contactUsController", contactUsController)
         .controller("aboutController", aboutController)
-        .controller("cardBuilderController", cardController);
+        .controller("cardBuilderController", cardController)
+        .controller("modalCodeController", modalCodeController);
 
 
     homeController.$inject = ["$scope", "$baseController", '$location'];
@@ -13,7 +14,7 @@
     pastProjectsController.$inject = ["$scope", "$baseController"];
     aboutController.$inject = ["$scope", "$baseController"];
     contactUsController.$inject = ["$scope", "$baseController", "$http"];
-    cardController.$inject = ['$baseController'];
+    cardController.$inject = ['$baseController', '$uibModal'];
 
 
     function homeController($scope, $baseController, $location) {
@@ -106,7 +107,7 @@
         }
     }
 
-    function cardController($baseController) {
+    function cardController($baseController, $uibModal) {
 
         var vm = this;
         vm.submitCard = _btnSumbit;
@@ -114,11 +115,19 @@
         vm.populateCard = _populateCard;
         vm.loadPreBuiltCard = _loadPreBuiltCard;
         vm.validateForm = _validateForm;
+        vm.viewCode = _viewCode;
 
         _setUp();
 
         function _setUp(cards) {
             //vm.elementsLoaded = _loopTillTrue(null, () => { angular.element(".card-builder-formModal").on("load", () => { return true; })});
+            vm.headerType = null;
+            vm.mainType = null;
+            vm.footerType = null;
+            vm.headerAlignment = null;
+            vm.mainAlignment = null;
+            vm.footerAlignment = null;
+
             if (!cards) {
                 vm.cards = [];
             }
@@ -130,12 +139,38 @@
         function _loopTillTrue(input, predicate) {
             var isTrue = predicate(input);
             if (!isTrue) {
-                _loopTillTrue(input, $baseController.timeout(5000, predicate(input)))
+                $baseController.timeout(5000, predicate(input));
+                //_loopTillTrue(input, $baseController.timeout(5000, predicate(input)))
             }
             else {
                 return true;
             }
         }
+
+        function _viewCode() {
+            $baseController.http({
+                url: "api/view/code/cardController",
+                method: "GET",
+                responseType: "JSON"
+            }).then(function (data) {
+                _openModal(data.data.item);
+            });
+        }
+
+        function _openModal(code) {
+            var modalInstance = $uibModal.open({
+                animation: true
+                , templateUrl: "codeModal.html"
+                , controller: "modalCodeController as mc"
+                , size: "lg"
+                , resolve: {
+                    code: function () {
+                        return code;
+                    }
+                }
+            });
+        }
+
 
         function _btnSumbit() {
             if (_validateForm("#cardBuilderForm")) {
@@ -350,8 +385,29 @@
                     $(element).parent('div').addClass('has-error');
                 }
             });
-            if ($(selector).valid()) { return true; }
-            else { return false; }
+            if (!$(selector).valid()) { return false; }
+            else {
+                if (!vm.headerType || !vm.headerAlignment || !vm.mainType || !vm.mainAlignment || !vm.footerType || !vm.footerAlignment || !vm.name || !vm.size) {
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
         }
     }
-    })();
+
+    function modalCodeController($baseController, $uibModalInstance, code) {
+
+        var vm = this;
+
+        _setUp();
+
+        function _setUp() {
+            if (code) {
+                vm.code = code;
+            }
+        }
+    }
+
+})();

@@ -3,7 +3,7 @@
 (function () {
 
     angular.module(page.APPNAME).controller("dynamicGraphsController", pageController)
-    .controller("modalGraphController", modalController);
+        .controller("modalGraphController", modalController);
 
     pageController.$inject = ["$scope", "$baseController", "$uibModal", '$rootScope', "$chartsService"];
     modalController.$inject = ["$scope", "$timeout", "$uibModalInstance", "graph", "$rootScope"];
@@ -18,6 +18,9 @@
         vm.renderGraph = _renderMainGraph;
         vm.saveGraph = _insertGraph;
         vm.delete = _delete;
+        vm.viewControllerCode = _viewControllerCode;
+        vm.viewDirectiveCode = _viewDirectiveCode;
+
 
         $rootScope.$on('logGraph', _logMainGraph);
         $baseController.systemEventService.listen('refreshCharts', _refreshResponse);
@@ -37,6 +40,40 @@
             vm.rendered = false;
             vm.legend = [];
         };
+
+        function _viewDirectiveCode() {
+            $baseController.http({
+                url: "api/view/code/dymanicGraphsDirective",
+                method: "GET",
+                responseType: "JSON"
+            }).then(function (data) {
+                _openCodeModal(data.data.item);
+            });
+        }
+
+        function _viewControllerCode() {
+            $baseController.http({
+                url: "api/view/code/dymanicGraphsController",
+                method: "GET",
+                responseType: "JSON"
+            }).then(function (data) {
+                _openCodeModal(data.data.item);
+            });
+        }
+
+        function _openCodeModal(code) {
+            var modalInstance = $uibModal.open({
+                animation: true
+                , templateUrl: "codeModal.html"
+                , controller: "modalCodeController as mc"
+                , size: "lg"
+                , resolve: {
+                    code: function () {
+                        return code;
+                    }
+                }
+            });
+        }
 
         function _openModal() {
             var obj = {
@@ -85,13 +122,13 @@
             if (item.legend) { vm.legend = item.legend; }
 
             if (item.labels[0].label) {
-                for(var i of item.labels) {
+                for (var i of item.labels) {
                     vm.chart.labels.push(i.label);
                 }
             }
 
             if (item.lines) {
-                for(var i of item.lines) {
+                for (var i of item.lines) {
                     if (!vm.legend[0] || vm.legend.find(a => { return a !== i.key; })) {
                         vm.legend.push(i.key);
                     }
@@ -167,8 +204,7 @@
                 series: vm.chart.series
             }
 
-            for (var line of vm.lines)
-            {
+            for (var line of vm.lines) {
                 chart.series.push(line.points);
             }
 
@@ -193,8 +229,8 @@
         function _animateGraph(chart) {
             // sequence number aside so we can use it in the event callbacks
             var seq = 0,
-              delays = 80,
-              durations = 400;
+                delays = 80,
+                durations = 400;
 
             // Once the chart is fully created we reset the sequence
             chart.on('created', function () {
@@ -436,13 +472,13 @@
             vm.chartId = item.chartId || 0;
             vm.typeId = item.typeId || 0;
             vm.points = item.labels ? item.labels.length : 0,
-            vm.name = item.name || null;
+                vm.name = item.name || null;
             vm.items = (function () {
                 var arr = [];
                 if (item.lines && item.lines[0] && item.lines[0].key) {
-                    for(var i of item.lines) {
+                    for (var i of item.lines) {
                         var pointsArr = [];
-                        for(var p of i.points) {
+                        for (var p of i.points) {
                             pointsArr.push({ point: p });
                         }
                         arr.push({ key: i.key, points: pointsArr });
@@ -451,7 +487,7 @@
                 else {
                     if (item.lines && item.lines[0]) {
                         var pointsArr = [];
-                        for(var i of item.lines) {
+                        for (var i of item.lines) {
                             pointsArr.push({ point: i });
                         }
                         arr.push({ key: 'Chart', points: pointsArr });
@@ -462,7 +498,7 @@
             vm.labels = (function () {
                 var arr = [];
                 if (item.labels) {
-                    for(var i of item.labels) {
+                    for (var i of item.labels) {
                         arr.push({ label: i });
                     }
                 }
@@ -472,7 +508,7 @@
 
         function _validateData() {
 
-            for(let i of vm.items) {
+            for (let i of vm.items) {
                 if (!i.key) {
                     return false;
                 }

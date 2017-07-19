@@ -1,10 +1,13 @@
 ﻿
 <div class="container-fluid" card-builder>
+    <div class="row text-center">
+        <a class="text-blueish" ng-click="pg.viewCode()">View Code</a>
+    </div>
     <div class="row">
-        <h2 class="text-center text-primary">Bootstrap Card Builder</h2>
+        <h2 class="text-center text-primary text-blueish">Bootstrap Card Builder</h2>
     </div>
     <div class="row" align="center">
-        <button class="card-builder-openModal" data-toggle="modal" data-target=".card-builder-formModal">Open Modal</button>
+        <button class="card-builder-openModal btn btn-xs" data-toggle="modal" data-target=".card-builder-formModal">Open Builder</button>
     </div>
     <div class="row">
         <div ng-repeat="card in pg.cards"></div>
@@ -13,6 +16,6 @@
 
 <ng-include src="'Scripts/app/directives/templates/cardPartials.html'"></ng-include>
 <ng-include src="'Scripts/app/directives/templates/cardBuilderModal.html'"></ng-include>
-<!--<script src="/Scripts/app/directives/cardBuilderModalDirective.js"></script>-->
+
 
 

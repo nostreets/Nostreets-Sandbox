@@ -31,6 +31,15 @@ namespace Nostreets_Sandbox.Controllers.Api
             _sendGridSrv = UnityConfig.GetContainer().Resolve<SendGridService>();
         }
 
+        private string GetStringWithinLines(int begining, int ending, string[] file) {
+
+            string result = null;
+            for (int i = begining + 1; i <= ending; i++) {
+                result += "\r\n" + file[i];
+            }
+            return result;
+        }
+
         [Route("charts/all")]
         [HttpGet]
         public HttpResponseMessage GetAllCharts()
@@ -66,7 +75,6 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Auth("AzureDBConnection")]
         [Route("charts/int")]
         [HttpPost]
         public HttpResponseMessage InsertChart(ChartAddRequest<int> model)
@@ -92,7 +100,6 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Auth("AzureDBConnection")]
         [Route("charts/list/int")]
         [HttpPost]
         public HttpResponseMessage InsertChart(ChartAddRequest<List<int>> model)
@@ -220,26 +227,38 @@ namespace Nostreets_Sandbox.Controllers.Api
         [HttpGet]
         public HttpResponseMessage GetCode(string fileName)
         {
-            BaseResponse response = null;
-            string code = null;
-            switch (fileName)
+            try
             {
-                case "dymanicGraphsController":
-                    code = File.ReadAllText(HttpContext.Current.Server.MapPath("~/Scripts/app/controllers/dynamicGraphsController.js"));
-                    response = new ItemResponse<string>(code);
-                    break;
+                BaseResponse response = null;
+                string code = null;
+                switch (fileName)
+                {
+                    case "dymanicGraphsController":
+                        code = File.ReadAllText(HttpContext.Current.Server.MapPath("~/Scripts/app/controllers/dynamicGraphsController.js"));
+                        response = new ItemResponse<string>(code);
+                        break;
 
-                case "generalControllers":
-                    code = File.ReadAllText(HttpContext.Current.Server.MapPath("~/Scripts/app/controllers/generalControllers.js"));
-                    response = new ItemResponse<string>(code);
-                    break;
+                    case "cardController":
+                        string[] lines = File.ReadAllLines(HttpContext.Current.Server.MapPath("~/Scripts/app/controllers/generalControllers.js"));
+                        code = GetStringWithinLines(110, 411, lines);
+                        response = new ItemResponse<string>(code);
+                        break;
 
-                case "dymanicGraphsDirective":
-                    code = File.ReadAllText(HttpContext.Current.Server.MapPath("~/Scripts/app/controllers/renderGraph.js"));
-                    response = new ItemResponse<string>(code);
-                    break;
+                    case "dymanicGraphsDirective":
+                        code = File.ReadAllText(HttpContext.Current.Server.MapPath("~/Scripts/app/directives/renderGraph.js"));
+                        response = new ItemResponse<string>(code);
+                        break;
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, response);
             }
-            return Request.CreateResponse(HttpStatusCode.OK, response);
+            catch (Exception ex)
+            {
+
+                ErrorResponse response = new ErrorResponse(ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
         }
+
+
     }
 }

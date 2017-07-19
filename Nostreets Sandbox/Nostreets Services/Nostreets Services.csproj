@@ -84,6 +84,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\Cards\StyledCard.cs" />
     <Compile Include="Domain\Identities\IdentityModels.cs" />
     <Compile Include="Domain\Newsletter\Link.cs" />
     <Compile Include="Domain\Newsletter\Lists\CampaignDefaults.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="Domain\Newsletter\Members\Member.cs" />
     <Compile Include="Domain\Newsletter\Members\MemberStats.cs" />
     <Compile Include="Domain\Newsletter\UserListStats.cs" />
+    <Compile Include="Enums\StyledCardTypes.cs" />
     <Compile Include="Interfaces\Services\IMailChimpService.cs" />
     <Compile Include="Providers\CloningService.cs" />
     <Compile Include="Services\BaseService.cs" />
@@ -122,6 +124,7 @@
     <Compile Include="Services\Web\SendGridService.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

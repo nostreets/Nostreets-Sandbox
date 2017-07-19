@@ -15,9 +15,9 @@
 
     page.baseController = angular.module(page.APPNAME).factory("$baseController", baseController);
 
-    baseController.$inject = ['$document', '$log', '$route', '$routeParams', '$systemEventService', '$alertService', "$window", '$uibModal', '$timeout'];
+    baseController.$inject = ['$document', '$log', '$route', '$routeParams', '$systemEventService', '$alertService', "$window", '$uibModal', '$timeout', '$http'];
 
-    function baseController($document, $log, $route, $routeParams, $systemEventService, $alertService, $window, $uibModal, $timeout) {
+    function baseController($document, $log, $route, $routeParams, $systemEventService, $alertService, $window, $uibModal, $timeout, $http) {
 
         var base = {
             document: $document,
@@ -28,7 +28,8 @@
             alertService: $alertService,
             window: $window,
             modal: $uibModal,
-            timeout: $timeout
+            timeout: $timeout,
+            http: $http
         }
 
 
