@@ -20,6 +20,18 @@ namespace Nostreets_Services.Interfaces.Services
 
     }
 
+    public interface IDBService<T>
+    {
+
+        List<T> GetAll();
+        T Get(object id);
+        object Insert(T model);
+        void Delete(object id);
+        void Update(object model);
+
+
+    }
+
     public interface IChartsExtended : IDBService<Chart<object>, int, ChartAddRequest, ChartUpdateRequest>
     {
         int Insert<T>(ChartAddRequest<T> model);

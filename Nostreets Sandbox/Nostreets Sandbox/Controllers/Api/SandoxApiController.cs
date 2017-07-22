@@ -16,6 +16,8 @@ using Nostreets_Services.Services.Database;
 using Nostreets_Services.Services.Web;
 using Nostreets_Sandbox.Models.Responses;
 using Nostreets_Sandbox.Controllers.Attributes;
+using Nostreets_Services.Services;
+using Nostreets_Services.Domain.Cards;
 
 namespace Nostreets_Sandbox.Controllers.Api
 {
@@ -24,20 +26,126 @@ namespace Nostreets_Sandbox.Controllers.Api
     {
         IChartsExtended _chartsSrv = null;
         ISendGridService _sendGridSrv = null;
+        IDBService<StyledCard> _cardSrv = null;
 
         public SandoxApiController(/*IDBService<Chart, int, ChartAddRequest, ChartUpdateRequest> chartsInject, ISendGridService sendGridInject*/)
         {
             _chartsSrv = UnityConfig.GetContainer().Resolve<ChartsService>();
             _sendGridSrv = UnityConfig.GetContainer().Resolve<SendGridService>();
+            _cardSrv = UnityConfig.GetContainer().Resolve<DBService<StyledCard>>();
+
         }
 
         private string GetStringWithinLines(int begining, int ending, string[] file) {
 
             string result = null;
-            for (int i = begining + 1; i <= ending; i++) {
+            for (int i = begining - 1; i <= ending; i++) {
                 result += "\r\n" + file[i];
             }
             return result;
+        }
+
+         [Route("cards/all")]
+        [HttpGet]
+        public HttpResponseMessage GetAllCards()
+        {
+            try
+            {
+                List<StyledCard> list = _cardSrv.GetAll();
+                ItemsResponse<StyledCard> response = new ItemsResponse<StyledCard>(list);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
+
+
+        [Route("cards/{id:int}")]
+        [HttpGet]
+        public HttpResponseMessage GetCard(int id)
+        {
+            try
+            {
+                StyledCard card = _cardSrv.Get(id);
+                ItemResponse<StyledCard> response = new ItemResponse<StyledCard>(card);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
+
+        [Route("cards")]
+        [HttpPost]
+        public HttpResponseMessage InsertCard(StyledCard model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var id = _cardSrv.Insert(model);
+                    if (typeof(int).GetProperties()[0].GetValue(id) == null) { throw new Exception("Insert Failed"); }
+                    ItemResponse<object> response = new ItemResponse<object>(id);
+                    return Request.CreateResponse(HttpStatusCode.OK, response);
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest);
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
+
+        [Auth("AzureDBConnection")]
+        [Route("cards")]
+        [HttpPut]
+        public HttpResponseMessage UpdateCard(StyledCard model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _cardSrv.Update(model);
+                    SuccessResponse response = new SuccessResponse();
+                    return Request.CreateResponse(HttpStatusCode.OK, response);
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest);
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
+
+        [Auth("AzureDBConnection")]
+        [Route("cards/delete/{id:int}")]
+        [HttpDelete]
+        public HttpResponseMessage DeleteCard(int id)
+        {
+            try
+            {
+                _chartsSrv.Delete(id);
+                SuccessResponse response = new SuccessResponse();
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
         }
 
         [Route("charts/all")]

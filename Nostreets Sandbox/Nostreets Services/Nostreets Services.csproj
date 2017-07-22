@@ -100,6 +100,7 @@
     <Compile Include="Enums\StyledCardTypes.cs" />
     <Compile Include="Interfaces\Services\IMailChimpService.cs" />
     <Compile Include="Providers\CloningService.cs" />
+    <Compile Include="Services\DBService.cs" />
     <Compile Include="Services\BaseService.cs" />
     <Compile Include="Services\Database\ChartsService.cs" />
     <Compile Include="Services\CustomSerializer.cs" />
@@ -134,6 +135,11 @@
     <Content Include="Querys\CheckIfTableExist.sql" />
     <Content Include="Querys\CreateColumn.sql" />
     <Content Include="Querys\CreateTable.sql" />
+    <Content Include="Querys\DeleteProcdure.sql" />
+    <Content Include="Querys\InsertProcdure.sql" />
+    <Content Include="Querys\NullCheckForUpdate.sql" />
+    <Content Include="Querys\SelectProcdure.sql" />
+    <Content Include="Querys\UpdateProcdure.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
