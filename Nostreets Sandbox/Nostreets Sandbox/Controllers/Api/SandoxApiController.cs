@@ -8,7 +8,6 @@ using System.Web.Http;
 using System.Threading.Tasks;
 using System.IO;
 using System.Web;
-using System.Web.Configuration;
 using Nostreets_Services.Interfaces.Services;
 using Nostreets_Services.Domain.Charts;
 using Nostreets_Services.Models.Request;
@@ -16,8 +15,9 @@ using Nostreets_Services.Services.Database;
 using Nostreets_Services.Services.Web;
 using Nostreets_Sandbox.Models.Responses;
 using Nostreets_Sandbox.Controllers.Attributes;
-using Nostreets_Services.Services;
 using Nostreets_Services.Domain.Cards;
+using NostreetsORM.Interfaces;
+using NostreetsORM;
 
 namespace Nostreets_Sandbox.Controllers.Api
 {
@@ -88,9 +88,9 @@ namespace Nostreets_Sandbox.Controllers.Api
             {
                 if (ModelState.IsValid)
                 {
-                    var id = _cardSrv.Insert(model);
-                    if (typeof(int).GetProperties()[0].GetValue(id) == null) { throw new Exception("Insert Failed"); }
-                    ItemResponse<object> response = new ItemResponse<object>(id);
+                    int id = (int)_cardSrv.Insert(model);
+                    if (id == 0) { throw new Exception("Insert Failed"); }
+                    ItemResponse<int> response = new ItemResponse<int>(id);
                     return Request.CreateResponse(HttpStatusCode.OK, response);
                 }
                 else

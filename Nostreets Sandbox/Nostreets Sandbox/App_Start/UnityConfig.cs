@@ -1,11 +1,12 @@
 ﻿using Microsoft.Practices.Unity;
 using Nostreets_Services.Domain.Cards;
-using Nostreets_Services.Domain.Charts;
 using Nostreets_Services.Interfaces.Services;
-using Nostreets_Services.Models.Request;
-using Nostreets_Services.Services;
 using Nostreets_Services.Services.Database;
 using Nostreets_Services.Services.Web;
+using NostreetsORM;
+using NostreetsORM.Interfaces;
+using System.IO;
+using System.Web;
 using System.Web.Configuration;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -29,7 +30,7 @@ namespace Nostreets_Sandbox.App_Start
             container.RegisterType<IMailChimpService, MailChimpService>(new ContainerControlledLifetimeManager());
             container.RegisterType<ISendGridService, SendGridService>(new ContainerControlledLifetimeManager(), new InjectionConstructor(WebConfigurationManager.AppSettings["SendGrid.ApiKey"]));
             container.RegisterType<IChartsExtended, ChartsService>(new ContainerControlledLifetimeManager(), new InjectionConstructor(/*"AzureDBConnection"*/"DefaultConnection"));
-            container.RegisterType<IDBService<StyledCard>, DBService<StyledCard>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(/*"AzureDBConnection"*/"DefaultConnection"));
+            container.RegisterType<IDBService<StyledCard>, DBService<StyledCard>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(/*"AzureDBConnection"*/"DefaultConnection", Path.GetFullPath(HttpRuntime.AppDomainAppPath)));
 
 
             DependencyResolver.SetResolver(new UnityDependencyResolver(container));

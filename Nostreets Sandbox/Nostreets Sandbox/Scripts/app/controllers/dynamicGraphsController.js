@@ -408,6 +408,7 @@
                     $chartsService.insert(model, _idResponse, _consoleResponse);
                 }
                 else {
+                    model.id = vm.chart.chartId;
                     $chartsService.update(model, _consoleResponse, _consoleResponse);
                 }
                 vm.saved = true;

@@ -4,7 +4,8 @@
         "ui.bootstrap",
         "ngAnimate",
         "ngRoute",
-        "toastr"
+        "toastr",
+        "ngSanitize"
     ]
 };
 
@@ -15,9 +16,9 @@
 
     page.baseController = angular.module(page.APPNAME).factory("$baseController", baseController);
 
-    baseController.$inject = ['$document', '$log', '$route', '$routeParams', '$systemEventService', '$alertService', "$window", '$uibModal', '$timeout', '$http'];
+    baseController.$inject = ['$document', '$log', '$route', '$routeParams', '$systemEventService', '$alertService', "$window", '$uibModal', '$timeout', '$http', '$sce'];
 
-    function baseController($document, $log, $route, $routeParams, $systemEventService, $alertService, $window, $uibModal, $timeout, $http) {
+    function baseController($document, $log, $route, $routeParams, $systemEventService, $alertService, $window, $uibModal, $timeout, $http, $sce) {
 
         var base = {
             document: $document,
@@ -29,7 +30,8 @@
             window: $window,
             modal: $uibModal,
             timeout: $timeout,
-            http: $http
+            http: $http,
+            sce: $sce
         }
 
 

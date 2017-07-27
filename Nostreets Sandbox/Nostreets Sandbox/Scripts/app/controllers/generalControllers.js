@@ -14,7 +14,8 @@
     pastProjectsController.$inject = ["$scope", "$baseController"];
     aboutController.$inject = ["$scope", "$baseController"];
     contactUsController.$inject = ["$scope", "$baseController", "$http"];
-    cardController.$inject = ['$baseController', '$uibModal'];
+    cardController.$inject = ['$scope', '$baseController', '$uibModal'];
+    modalCodeController.$inject = ['$baseController', '$uibModalInstance', 'code'];
 
 
     function homeController($scope, $baseController, $location) {
@@ -107,7 +108,7 @@
         }
     }
 
-    function cardController($baseController, $uibModal) {
+    function cardController($scope, $baseController, $uibModal) {
 
         var vm = this;
         vm.submitCard = _btnSumbit;
@@ -116,10 +117,12 @@
         vm.loadPreBuiltCard = _loadPreBuiltCard;
         vm.validateForm = _validateForm;
         vm.viewCode = _viewCode;
+        vm.updateVmToCurrentCard = _updateVmToCurrentCard;
+        vm.btnDelete = _btnDelete;
 
         _setUp();
 
-        function _setUp(cards) {
+        function _setUp() {
             //vm.elementsLoaded = _loopTillTrue(null, () => { angular.element(".card-builder-formModal").on("load", () => { return true; })});
             vm.headerType = null;
             vm.mainType = null;
@@ -127,12 +130,20 @@
             vm.headerAlignment = null;
             vm.mainAlignment = null;
             vm.footerAlignment = null;
-
-            if (!cards) {
+            if (!vm.cards) {
                 vm.cards = [];
+                _getAllCards(_cardResponse);
             }
-            else {
-                vm.cards.concat(vm.cards, cards.filter((a) => !vm.cards.indexOf(a)));
+
+        }
+
+        function _cardResponse(data) {
+            vm.cards = [];
+            if (data.data.items) {
+                for (let item of data.data.items) {
+                    item.html = $baseController.sce.trustAsHtml(item._HTML);
+                    vm.cards.push(item);
+                }
             }
         }
 
@@ -153,11 +164,11 @@
                 method: "GET",
                 responseType: "JSON"
             }).then(function (data) {
-                _openModal(data.data.item);
+                _openCodeModal(data.data.item);
             });
         }
 
-        function _openModal(code) {
+        function _openCodeModal(code) {
             var modalInstance = $uibModal.open({
                 animation: true
                 , templateUrl: "codeModal.html"
@@ -171,6 +182,17 @@
             });
         }
 
+        function _updateVmToCurrentCard(index) {
+            vm.id = vm.cards[index].id;
+            vm.name = vm.cards[index].name;
+            vm.size = vm.cards[index].size;
+            vm.headerType = vm.cards[index].headerType;
+            vm.headerAlignment = vm.cards[index].headerAlignment;
+            vm.mainType = vm.cards[index].mainType;
+            vm.mainAlignment = vm.cards[index].mainAlignment;
+            vm.footerType = vm.cards[index].footerType;
+            vm.footerAlignment = vm.cards[index].footerAlignment;
+        }
 
         function _btnSumbit() {
             if (_validateForm("#cardBuilderForm")) {
@@ -181,14 +203,65 @@
                     var card = vm.loadPreBuiltCard();
                     card = vm.buildCard(card);
                     card = vm.populateCard(card);
-                    console.log(card);
-                    vm.cards.push(card);
+
+                    var lastestCard = {
+                        id: vm.id || 0,
+                        name: vm.name,
+                        size: vm.size,
+                        headerType: vm.headerType === "text" ? 1 : vm.headerType === "img" ? 2 : 3,
+                        headerAlignment: vm.headerAlignmentId === "right" ? 1 : vm.headerAlignmentId === "center" ? 2 : 3,
+                        mainType: vm.mainType === "text" ? 1 : vm.mainType === "img" ? 2 : 3,
+                        mainAlignment: vm.mainAlignment === "right" ? 1 : vm.mainAlignment === "center" ? 2 : 3,
+                        footerType: vm.footerType === "text" ? 1 : vm.footerType === "img" ? 2 : 3,
+                        footerAlignment: vm.footerAlignment === "right" ? 1 : vm.footerAlignment === "center" ? 2 : 3,
+                        _HTML: card[0].outerHTML,
+                        html: $baseController.sce.trustAsHtml(card[0].outerHTML)
+                    };
+
+                    _insertCard(lastestCard, _getAllCards(_cardResponse));
                     $(".card-builder-formModal").modal("hide");
                 });
             }
         }
 
-        //Client Side Functions
+        function _btnDelete(index) {
+            _deleteCard(vm.cards[index].id, _getAllCards(_cardResponse));
+        }
+
+        function _insertCard(model, onSuccess, OnError) {
+            $baseController.http({
+                url: "/api/cards/",
+                method: "POST",
+                data: model,
+                headers: { 'Content-Type': 'application/json' }
+            }).then(onSuccess, OnError);
+        }
+
+        function _getAllCards(onSuccess, OnError) {
+            $baseController.http({
+                url: "/api/cards/all",
+                method: "GET",
+                headers: { 'Content-Type': 'application/json' }
+            }).then(onSuccess, OnError);
+        }
+
+        function _deleteCard(id, onSuccess, OnError) {
+            $baseController.http({
+                url: "/api/cards/delete/" + id,
+                method: "DELETE",
+                headers: { 'Content-Type': 'application/json' }
+            }).then(onSuccess, OnError);
+        }
+
+        function _updateCard(model, onSuccess, OnError) {
+            $baseController.http({
+                url: "/api/cards/",
+                method: "PUT",
+                data: model,
+                headers: { 'Content-Type': 'application/json' }
+            }).then(onSuccess, OnError);
+        }
+
         function _loadPreBuiltCard() {
             if ($("#formSize-smCheckbox").is(":checked")) {
                 var card = $($("#card").html());

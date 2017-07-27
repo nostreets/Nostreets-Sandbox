@@ -1,36 +1,69 @@
-﻿using Nostreets_Services.Interfaces.Services;
-using Nostreets_Services.Interfaces.Sql;
-using Nostreets_Services.Providers;
+﻿using NostreetsORM.Interfaces;
+using NostreetsORM.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
 using System.Reflection;
 using System.Web;
-using System.Web.Configuration;
 
-namespace Nostreets_Services.Services
+namespace NostreetsORM
 {
     public class DBService<T> : BaseService, IDBService<T>
     {
         public DBService() : base()
         {
-            if (!CheckIfTableExist(typeof(T)))
+            try
             {
-                CreateTables(typeof(T));
+                _path = Path.GetFullPath(Path.Combine(HttpContext.Current.Server.MapPath("~"), "../NostreetsORM/"));
+                if (!CheckIfTableExist(typeof(T)))
+                {
+                    CreateTables(typeof(T));
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
             }
         }
 
         public DBService(string connectionKey) : base(connectionKey)
         {
-            if (!CheckIfTableExist(typeof(T)))
+            _path = Path.GetFullPath(Path.Combine(HttpContext.Current.Server.MapPath("~"), "../NostreetsORM/"));
+            try
             {
-                CreateTables(typeof(T));
+                if (!CheckIfTableExist(typeof(T)))
+                {
+                    CreateTables(typeof(T));
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public DBService(string connectionKey, string directoryPath) : base(connectionKey)
+        {
+            try
+            {
+                _path = Path.GetFullPath(Path.Combine(directoryPath, "../NostreetsORM/"));
+                if (!CheckIfTableExist(typeof(T)))
+                {
+                    CreateTables(typeof(T));
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
             }
         }
 
         private Type _type = typeof(T);
-        private string _path = Path.GetFullPath(Path.Combine(HttpContext.Current.Server.MapPath("~"), "../Nostreets Services/"));
+        private string _path = null;
 
         private string DeterminSQLType(Type type, string parentTable)
         {
@@ -74,7 +107,7 @@ namespace Nostreets_Services.Services
 
         private bool CheckIfTableExist(Type type)
         {
-            string sqlTemp = String.Join(" ", File.ReadAllLines(_path + "/Querys/CheckIfTableExist.sql"));
+            string sqlTemp = String.Join(" ", File.ReadAllLines(_path + "/Queries/CheckIfTableExist.sql"));
             string query = String.Format(sqlTemp, type.Name);
 
             int isTrue = 0;
@@ -95,11 +128,11 @@ namespace Nostreets_Services.Services
         private void CreateProcdures(Type type)
         {
 
-            string sqlInsertTemp = String.Join(" ", File.ReadAllLines(_path + "/Querys/InsertProcdure.sql"));
-            string sqlUpdateTemp = String.Join(" ", File.ReadAllLines(_path + "/Querys/UpdateProcdure.sql"));
-            string sqlSelectTemp = String.Join(" ", File.ReadAllLines(_path + "/Querys/SelectProcdure.sql"));
-            string sqlDeleteTemp = String.Join(" ", File.ReadAllLines(_path + "/Querys/DeleteProcdure.sql"));
-            string sqlUpdateNullCheckTemp = String.Join(" ", File.ReadAllLines(_path + "/Querys/NullCheckForUpdate.sql")) + " ";
+            string sqlInsertTemp = String.Join(" ", File.ReadAllLines(_path + "/Queries/InsertProcdure.sql"));
+            string sqlUpdateTemp = String.Join(" ", File.ReadAllLines(_path + "/Queries/UpdateProcdure.sql"));
+            string sqlSelectTemp = String.Join(" ", File.ReadAllLines(_path + "/Queries/SelectProcdure.sql"));
+            string sqlDeleteTemp = String.Join(" ", File.ReadAllLines(_path + "/Queries/DeleteProcdure.sql"));
+            string sqlUpdateNullCheckTemp = String.Join(" ", File.ReadAllLines(_path + "/Queries/NullCheckForUpdate.sql")) + " ";
 
             
             string[] temps = { sqlInsertTemp, sqlSelectTemp, sqlSelectTemp, sqlUpdateTemp, sqlDeleteTemp };
@@ -307,7 +340,7 @@ namespace Nostreets_Services.Services
                         FK = "CONSTRAINT [FK_" + type.Name + "s_" + item.Name + "] FOREIGN KEY ([" + item.Name + "Id]) REFERENCES [dbo].[" + normalizedTbl["Name"] + "] ([" + normalizedTbl["PK"] + "])";
                     }
 
-                    columns.Add(String.Format(File.ReadAllText(_path + "/Querys/CreateColumn.sql"),
+                    columns.Add(String.Format(File.ReadAllText(_path + "/Queries/CreateColumn.sql"),
                         (item.PropertyType.BaseType.Name == "Enum" || item.PropertyType.IsClass) && (item.PropertyType.Name != "String" && item.PropertyType.Name != "Char") ? item.Name + "Id" : item.Name,
                         DeterminSQLType(item.PropertyType, type.Name),
                         props[0] == item ? "IDENTITY (1, 1) NOT NULL, " : props[props.Length - 1] == item ? endingTable + "," + String.Join(", ", FKs.ToArray()) : "NOT NULL, "));
@@ -322,14 +355,14 @@ namespace Nostreets_Services.Services
                 string endingTable = "NOT NULL, CONSTRAINT [PK_" + type.Name + "s] PRIMARY KEY CLUSTERED ([Id] ASC)";
                 for (int i = 0; i < 2; i++)
                 {
-                    columns.Add(String.Format(File.ReadAllText(_path + "/Querys/CreateColumn.sql"), i == 0 ? "Id" : "Value", DeterminSQLType(i == 0 ? typeof(int) : typeof(string), type.Name),
+                    columns.Add(String.Format(File.ReadAllText(_path + "/Queries/CreateColumn.sql"), i == 0 ? "Id" : "Value", DeterminSQLType(i == 0 ? typeof(int) : typeof(string), type.Name),
                     i == 0 ? "IDENTITY (1, 1) NOT NULL, " : endingTable));
                 }
             }
 
 
             string table = String.Concat(columns.ToArray());
-            string query = String.Format(String.Join(" ", File.ReadAllLines(_path + "/Querys/CreateTable.sql")), type.Name, table);
+            string query = String.Format(String.Join(" ", File.ReadAllLines(_path + "/Queries/CreateTable.sql")), type.Name, table);
 
 
 
@@ -408,7 +441,10 @@ namespace Nostreets_Services.Services
             DataProvider.ExecuteCmd(() => Connection, "dbo." + _type.Name + "s_Insert",
                        param => {
                            foreach (var prop in typeof(T).GetProperties()) {
-                               param.Add(new SqlParameter(prop.Name, prop.GetValue(model)));
+                               if (prop.Name != "Id")
+                               {
+                                   param.Add(new SqlParameter(prop.Name, prop.GetValue(model))); 
+                               }
                            }
                        },
                       (reader, set) => {

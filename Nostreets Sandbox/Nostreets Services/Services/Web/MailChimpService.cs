@@ -8,11 +8,9 @@ using RestSharp;
 using RestSharp.Authenticators;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using Nostreets_Services.Interfaces.Services;
+using NostreetsORM;
 
 namespace Nostreets_Services.Services.Web
 {

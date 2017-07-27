@@ -11,7 +11,7 @@ namespace Nostreets_Services.Domain.Cards
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public CardSize Size { get; set; }
+        public string Size { get; set; }
         public ContentType HeaderType { get; set; }
         public AlignmentType HeaderAlignment { get; set; }
         public ContentType MainType { get; set; }
@@ -19,7 +19,7 @@ namespace Nostreets_Services.Domain.Cards
         public ContentType FooterType { get; set; }
         public AlignmentType FooterAlignment { get; set; }
 
-        public string Html { get; set; }
+        public string _HTML { get; set; }
 
     }
 }

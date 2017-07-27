@@ -2,7 +2,8 @@
 using Nostreets_Services.Domain.Charts;
 using Nostreets_Services.Interfaces.Services;
 using Nostreets_Services.Models.Request;
-using Nostreets_Services.Providers;
+using NostreetsORM;
+using NostreetsORM.Utilities;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 

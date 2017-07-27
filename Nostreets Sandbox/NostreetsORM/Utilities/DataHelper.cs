@@ -4,7 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Web;
 
-namespace Nostreets_Services.Providers
+namespace NostreetsORM.Utilities
 {
     public static class DataHelper
     {

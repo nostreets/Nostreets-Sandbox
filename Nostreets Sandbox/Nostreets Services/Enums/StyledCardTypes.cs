@@ -6,23 +6,23 @@ using System.Threading.Tasks;
 
 namespace Nostreets_Services.Enums
 {
-    public enum CardSize
+    public enum CardSize : int
     {
-        Small,
+        Small = 1,
         Medium,
         Large
     }
 
-    public enum ContentType
+    public enum ContentType : int
     {
-        Text,
+        Text = 1,
         Image,
         Video
     }
 
-    public enum AlignmentType
+    public enum AlignmentType : int
     {
-        Left,
+        Left = 1,
         Middle,
         Right
     }

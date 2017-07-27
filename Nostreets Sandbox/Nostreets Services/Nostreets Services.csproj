@@ -98,28 +98,20 @@
     <Compile Include="Domain\Newsletter\Members\MemberStats.cs" />
     <Compile Include="Domain\Newsletter\UserListStats.cs" />
     <Compile Include="Enums\StyledCardTypes.cs" />
+    <Compile Include="Interfaces\Services\IChartExtended.cs" />
     <Compile Include="Interfaces\Services\IMailChimpService.cs" />
     <Compile Include="Providers\CloningService.cs" />
-    <Compile Include="Services\DBService.cs" />
-    <Compile Include="Services\BaseService.cs" />
     <Compile Include="Services\Database\ChartsService.cs" />
     <Compile Include="Services\CustomSerializer.cs" />
     <Compile Include="Domain\Charts\Chart.cs" />
     <Compile Include="Enums\ChartTypeId.cs" />
-    <Compile Include="Interfaces\Services\IDBService.cs" />
     <Compile Include="Interfaces\Services\ISendGridService.cs" />
-    <Compile Include="Interfaces\Sql\IDao.cs" />
-    <Compile Include="Interfaces\Sql\IDataReaderExt.cs" />
     <Compile Include="Models\PagedList.cs" />
     <Compile Include="Models\Requests\ChartAddRequest.cs" />
     <Compile Include="Models\Requests\ChartUpdateRequest.cs" />
     <Compile Include="Models\Requests\MailChimpAddListRequest.cs" />
     <Compile Include="Models\Requests\MailChimpAddMemberRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Providers\DataHelper.cs" />
-    <Compile Include="Providers\DataMapper.cs" />
-    <Compile Include="Providers\DataProvider.cs" />
-    <Compile Include="Providers\SqlDao.cs" />
     <Compile Include="Services\IdentityConfig.cs" />
     <Compile Include="Services\Web\MailChimpService.cs" />
     <Compile Include="Services\Web\SendGridService.cs" />
@@ -132,14 +124,10 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Querys\CheckIfTableExist.sql" />
-    <Content Include="Querys\CreateColumn.sql" />
-    <Content Include="Querys\CreateTable.sql" />
-    <Content Include="Querys\DeleteProcdure.sql" />
-    <Content Include="Querys\InsertProcdure.sql" />
-    <Content Include="Querys\NullCheckForUpdate.sql" />
-    <Content Include="Querys\SelectProcdure.sql" />
-    <Content Include="Querys\UpdateProcdure.sql" />
+    <ProjectReference Include="..\NostreetsORM\NostreetsORM.csproj">
+      <Project>{6e132f1c-f285-4535-abee-f02fc0bd18cb}</Project>
+      <Name>NostreetsORM</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

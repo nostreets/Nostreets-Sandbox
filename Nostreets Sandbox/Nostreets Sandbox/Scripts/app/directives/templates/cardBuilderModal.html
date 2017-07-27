@@ -19,111 +19,267 @@
                             </div>
                             <div class="col-sm-3">
                                 <ul class="nav nav-stacked nav-pills">
-                                    <li class="active"><a data-target="#form-sizeTab" data-toggle="tab">Size</a></li>
-                                    <li><a data-target="#form-headerTab" data-toggle="tab">Header</a></li>
-                                    <li><a data-target="#form-contentTab" data-toggle="tab">Content</a></li>
-                                    <li><a data-target="#form-footerTab" data-toggle="tab">Footer</a></li>
+                                    <li><a data-target="#form-headerTab" data-toggle="tab">Head</a></li>
+                                    <li><a data-target="#form-contentTab" data-toggle="tab">Main</a></li>
+                                    <li><a data-target="#form-footerTab" data-toggle="tab">Foot</a></li>
                                 </ul>
                             </div>
                             <div class="col-sm-9">
-                                <div class="tab-content">
-                                    <div class="tab-pane text-center active" id="form-sizeTab">
-                                        <h4>Size</h4>
-                                        <p>
-                                            Message is required.
-                                        </p>
-                                        <div id="sizeGroup" class="form-group text-center">
-                                            <div class="row">
-                                                <label for="formSize-smCheckbox" class="control-label">Small: <input type="radio" name="size" value="sm" ng-model="pg.size" id="formSize-smCheckbox" /></label>
-                                            </div>
-                                            <div class="row">
-                                                <label for="formSize-mdCheckbox" class="control-label">Medidum: <input type="radio" name="size" value="md" ng-model="pg.size" id="formSize-mdCheckbox" /></label>
-                                            </div>
-                                            <div class="row">
-                                                <label for="formSize-lgCheckbox" class="control-label">Large: <input type="radio" name="size" value="lg" ng-model="pg.size" id="formSize-lgCheckbox" /></label>
-                                            </div>
-                                        </div>
+
+                                <div id="sizeGroup" class="form-group text-center">
+                                    <div class="row">
+                                        <span><strong>Size: </strong></span>
+                                        <label for="formSize-smCheckbox" class="label">
+                                            Small: <input type="radio"
+                                                          ng-checked="pg.size === 1 ? true : false"
+                                                          name="size"
+                                                          value="sm"
+                                                          ng-model="pg.size"
+                                                          id="formSize-smCheckbox" />
+                                        </label>
+                                        <label for="formSize-mdCheckbox" class="label">
+                                            Medium: <input type="radio"
+                                                           ng-checked="pg.size === 2 ? true : false"
+                                                           name="size"
+                                                           value="md"
+                                                           ng-model="pg.size"
+                                                           id="formSize-mdCheckbox" />
+                                        </label>
+                                        <label for="formSize-lgCheckbox" class="label">
+                                            Large: <input type="radio"
+                                                          ng-checked="pg.size === 3 ? true : false"
+                                                          name="size"
+                                                          value="lg"
+                                                          ng-model="pg.size"
+                                                          id="formSize-lgCheckbox" />
+                                        </label>
                                     </div>
-                                    <div class="tab-pane text-center" id="form-headerTab">
-                                        <h4>Header Content</h4>
-                                        <div id="headerContentGroup" class="form-group">
-                                            <div class="row">
-                                                <label for="formHeader-textCheckbox" class="control-label">Text <input type="radio" name="headerType" value="text" ng-model="pg.headerType" id="formHeader-textCheckbox" class="active" /></label>
-                                            </div>
-                                            <div class="row">
-                                                <label for="formHeader-imageCheckbox" class="control-label">Image <input type="radio" name="headerType" value="img" ng-model="pg.headerType" id="formHeader-imageCheckbox" /></label>
-                                            </div>
-                                            <div class="row">
-                                                <label for="formHeader-videoCheckbox" class="control-label">Video <input type="radio" name="headerType" value="vid"  ng-model="pg.headerType" id="formHeader-videoCheckbox" /></label>
-                                            </div>
-                                        </div>
-                                        <h4>Header Alignment</h4>
+                                </div>
+
+                                <div class="tab-content">
+
+                                    <div class="tab-pane text-center active" id="form-headerTab">
+
                                         <div id="headerAlignmentGroup" class="form-group text-center">
                                             <div class="row">
-                                                <label for="formHeader-leftCheckbox" class="control-label">Left <input type="radio" value="left" ng-model="pg.headerAlignment" name="header-alignment" id="formHeader-leftCheckbox" /></label>
-                                            </div>
-                                            <div class="row">
-                                                <label for="formHeader-middleCheckbox" class="control-label">Middle <input type="radio" value="middle" ng-model="pg.headerAlignment"  name="header-alignment" id="formHeader-middleCheckbox" class="active" /></label>
-                                            </div>
-                                            <div class="row">
-                                                <label for="formHeader-rightCheckbox" class="control-label">Right <input type="radio" value="right" ng-model="pg.headerAlignment"  name="header-alignment" id="formHeader-rightCheckbox" /></label>
+                                                <span><strong>Header Alignment: </strong></span>
+                                                <label for="formHeader-leftCheckbox" class="label">
+                                                    Left: <input type="radio"
+                                                                 value="left"
+                                                                 ng-checked="pg.headerAlignment === 1 ? true : false"
+                                                                 ng-model="pg.headerAlignment"
+                                                                 name="header-alignment"
+                                                                 id="formHeader-leftCheckbox" />
+                                                </label>
+                                                <label for="formHeader-middleCheckbox" class="label">
+                                                    Middle: <input type="radio"
+                                                                   value="middle"
+                                                                   ng-checked="pg.headerAlignment === 2 ? true : false"
+                                                                   ng-model="pg.headerAlignment"
+                                                                   name="header-alignment"
+                                                                   id="formHeader-middleCheckbox" />
+                                                </label>
+                                                <label for="formHeader-rightCheckbox" class="label">
+                                                    Right: <input type="radio"
+                                                                  value="right"
+                                                                  ng-checked="pg.headerAlignment === 3 ? true : false"
+                                                                  ng-model="pg.headerAlignment"
+                                                                  name="header-alignment"
+                                                                  id="formHeader-rightCheckbox" />
+                                                </label>
                                             </div>
                                         </div>
-                                        <div><textarea rows="4" name="headerContent" cols="50" ng-if="pg.headerType === 'text'" ng-model="pg.headerContent" id="headerText"></textarea><input type="url" ng-if="pg.headerType === 'img' ||pg.headerType === 'vid'" class="" id="headerUrl" /></div>
+
+                                        <div id="headerContentGroup" class="form-group">
+                                            <div class="row">
+                                                <span><strong>Header Content: </strong></span>
+                                                <label for="formHeader-textCheckbox" class="label">
+                                                    Text: <input type="radio"
+                                                                 name="headerType"
+                                                                 value="text"
+                                                                 ng-checked="pg.headerType === 1 ? true : false"
+                                                                 ng-model="pg.headerType"
+                                                                 id="formHeader-textCheckbox" />
+                                                </label>
+                                                <label for="formHeader-imageCheckbox" class="label">
+                                                    Image: <input type="radio"
+                                                                  name="headerType"
+                                                                  ng-checked="pg.headerType === 1 ? true : false"
+                                                                  value="img"
+                                                                  ng-model="pg.headerType"
+                                                                  id="formHeader-imageCheckbox" />
+                                                </label>
+                                                <label for="formHeader-videoCheckbox" class="label">
+                                                    Video: <input type="radio"
+                                                                  name="headerType"
+                                                                  ng-checked="pg.headerType === 1 ? true : false"
+                                                                  value="vid"
+                                                                  ng-model="pg.headerType"
+                                                                  id="formHeader-videoCheckbox" />
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <textarea rows="4"
+                                                      name="headerContent"
+                                                      cols="50"
+                                                      ng-if="pg.headerType === 'text'"
+                                                      ng-model="pg.headerContent"
+                                                      id="headerText"></textarea>
+                                            <input type="url"
+                                                   ng-if="pg.headerType === 'img' ||pg.headerType === 'vid'"
+                                                   class=""
+                                                   id="headerUrl" />
+                                        </div>
                                     </div>
+
                                     <div class="tab-pane text-center" id="form-contentTab">
-                                        <h4>Main Content</h4>
-                                        <div id="mainContentGroup" class="form-group text-center">
-                                            <div class="row">
-                                                <label for="formContent-textCheckbox" class="control-label">Text <input type="radio" name="mainType" value="text" ng-model="pg.mainType" id="formContent-textCheckbox" /></label>
-                                            </div>
-                                            <div class="row">
-                                                <label for="formContent-imageCheckbox" class="control-label">Image <input type="radio" name="mainType" value="img" ng-model="pg.mainType" id="formContent-imageCheckbox" class="active" /></label>
-                                            </div>
-                                            <div class="row">
-                                                <label for="formContent-videoCheckbox" class="control-label">Video <input type="radio" name="mainType" value="vid" ng-model="pg.mainType" id="formContent-videoCheckbox" /></label>
-                                            </div>
-                                        </div>
-                                        <h4>Main Alignment</h4>
+
                                         <div id="mainAlignmentGroup" class="form-group text-center">
                                             <div class="row">
-                                                <label for="formContent-leftCheckbox" class="control-label">Left <input type="radio" value="left" ng-model="pg.mainAlignment" name="main-alignment" id="formContent-leftCheckbox" /></label>
-                                            </div>
-                                            <div class="row">
-                                                <label for="formContent-middleCheckbox" class="control-label">Middle <input type="radio" value="middle" ng-model="pg.mainAlignment" name="main-alignment" id="formContent-middleCheckbox" class="active" /></label>
-                                            </div>
-                                            <div class="row">
-                                                <label for="formContent-rightCheckbox" class="control-label">Right <input type="radio" value="right" ng-model="pg.mainAlignment" name="main-alignment" id="formContent-rightCheckbox"></label>
+                                                <span><strong>Main Alignment: </strong></span>
+                                                <label for="formContent-leftCheckbox" class="label">
+                                                    Left: <input type="radio"
+                                                                 value="left"
+                                                                 ng-checked="pg.mainAlignment === 1 ? true : false"
+                                                                 ng-model="pg.mainAlignment"
+                                                                 name="main-alignment"
+                                                                 id="formContent-leftCheckbox" />
+                                                </label>
+                                                <label for="formContent-middleCheckbox" class="label">
+                                                    Middle: <input type="radio"
+                                                                   value="middle"
+                                                                   ng-checked="pg.mainAlignment === 2 ? true : false"
+                                                                   ng-model="pg.mainAlignment"
+                                                                   name="main-alignment"
+                                                                   id="formContent-middleCheckbox" />
+                                                </label>
+                                                <label for="formContent-rightCheckbox" class="label">
+                                                    Right: <input type="radio"
+                                                                  value="right"
+                                                                  ng-checked="pg.mainAlignment === 3 ? true : false"
+                                                                  ng-model="pg.mainAlignment"
+                                                                  name="main-alignment"
+                                                                  id="formContent-rightCheckbox">
+                                                </label>
                                             </div>
                                         </div>
-                                        <div><textarea ng-if="pg.mainType === 'text'" rows="3" cols="50" id="contentText" name="mainContent" ng-model="pg.mainContent"></textarea><input ng-if="pg.mainType === 'img' ||pg.mainType === 'vid'" type="url" class="" id="contentUrl" /></div>
+
+                                        <div id="mainContentGroup" class="form-group text-center">
+                                            <div class="row">
+                                                <span><strong>Main Content: </strong></span>
+                                                <label for="formContent-textCheckbox" class="label">
+                                                    Text: <input type="radio"
+                                                                 name="mainType"
+                                                                 value="text"
+                                                                 ng-checked="pg.mainType === 1 ? true : false"
+                                                                 ng-model="pg.mainType"
+                                                                 id="formContent-textCheckbox" />
+                                                </label>
+                                                <label for="formContent-imageCheckbox" class="label">
+                                                    Image: <input type="radio"
+                                                                  name="mainType"
+                                                                  value="img"
+                                                                  ng-checked="pg.mainType === 2 ? true : false"
+                                                                  ng-model="pg.mainType"
+                                                                  id="formContent-imageCheckbox" />
+                                                </label>
+                                                <label for="formContent-videoCheckbox" class="label">
+                                                    Video: <input type="radio"
+                                                                  name="mainType"
+                                                                  value="vid"
+                                                                  ng-checked="pg.mainType === 3 ? true : false"
+                                                                  ng-model="pg.mainType"
+                                                                  id="formContent-videoCheckbox" />
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <textarea ng-if="pg.mainType === 'text'"
+                                                      rows="3"
+                                                      cols="50"
+                                                      id="contentText"
+                                                      name="mainContent"
+                                                      ng-model="pg.mainContent"></textarea>
+                                            <input ng-if="pg.mainType === 'img' ||pg.mainType === 'vid'"
+                                                   type="url"
+                                                   class=""
+                                                   id="contentUrl" />
+                                        </div>
                                     </div>
+
                                     <div class="tab-pane text-center" id="form-footerTab">
-                                        <h4>Footer Content</h4>
-                                        <div id="footerContentGroup" class="form-group text-center">
-                                            <div class="row">
-                                                <label for="formFooter-textCheckbox" class="control-label">Text <input type="radio" name="footer-content" value="text" ng-model="pg.footerType" id="formFooter-textCheckbox" /></label>
-                                            </div>
-                                            <div class="row">
-                                                <label for="formFooter-imageCheckbox" class="control-label">Image <input type="radio" name="footer-content" value="img" ng-model="pg.footerType" id="formFooter-imageCheckbox" /></label>
-                                            </div>
-                                            <div class="row">
-                                                <label for="formFooter-videoCheckbox" class="control-label">Video <input type="radio" name="footer-content" value="vid" ng-model="pg.footerType" id="formFooter-videoCheckbox" /></label>
-                                            </div>
-                                        </div>
-                                        <h4>Footer Alignment</h4>
+
                                         <div id="footerAlignmentGroup" class="form-group text-center">
                                             <div class="row">
-                                                <label for="formFooter-leftCheckbox" class="control-label">Left <input type="radio" value="left" ng-model="pg.footerAlignment" name="footer-alignment" id="formFooter-leftCheckbox" /></label>
-                                            </div>
-                                            <div class="row">
-                                                <label for="formFooter-middleCheckbox" class="control-label">Middle <input type="radio" value="middle" ng-model="pg.footerAlignment" name="footer-alignment" id="formFooter-middleCheckbox" /></label>
-                                            </div>
-                                            <div class="row">
-                                                <label for="formFooter-rightCheckbox" class="control-label">Right <input type="radio" value="right" ng-model="pg.footerAlignment" name="footer-alignment" id="formFooter-rightCheckbox" /></label>
+                                                <span><strong>Footer Alignment: </strong></span>
+                                                <label for="formFooter-leftCheckbox" class="label">
+                                                    Left: <input type="radio"
+                                                                 value="left"
+                                                                 ng-checked="pg.footerAlignment === 1 ? true : false"
+                                                                 ng-model="pg.footerAlignment"
+                                                                 name="footer-alignment"
+                                                                 id="formFooter-leftCheckbox" />
+                                                </label>
+                                                <label for="formFooter-middleCheckbox" class="label">
+                                                    Middle: <input type="radio"
+                                                                   value="middle"
+                                                                   ng-checked="pg.footerAlignment === 2 ? true : false"
+                                                                   ng-model="pg.footerAlignment"
+                                                                   name="footer-alignment"
+                                                                   id="formFooter-middleCheckbox" />
+                                                </label>
+                                                <label for="formFooter-rightCheckbox" class="label">
+                                                    Right: <input type="radio"
+                                                                  value="right"
+                                                                  ng-checked="pg.footerAlignment === 3 ? true : false"
+                                                                  ng-model="pg.footerAlignment"
+                                                                  name="footer-alignment"
+                                                                  id="formFooter-rightCheckbox" />
+                                                </label>
                                             </div>
                                         </div>
-                                        <div><textarea rows="3" cols="50" ng-if="pg.footerType === 'text'" id="footerText"></textarea><input type="url" ng-if="pg.footerType === 'img' ||pg.footerType === 'vid'" id="footerUrl" /></div>
+
+                                        <div id="footerContentGroup" class="form-group text-center">
+                                            <div class="row">
+                                                <span><strong>Footer Content: </strong></span>
+                                                <label for="formFooter-textCheckbox" class="label">
+                                                    Text: <input type="radio"
+                                                                 name="footer-content"
+                                                                 ng-checked="pg.footerType === 1 ? true : false"
+                                                                 value="text" ng-model="pg.footerType"
+                                                                 id="formFooter-textCheckbox" />
+                                                </label>
+                                                <label for="formFooter-imageCheckbox" class="label">
+                                                    Image: <input type="radio"
+                                                                  name="footer-content"
+                                                                  value="img"
+                                                                  ng-checked="pg.footerType === 2 ? true : false"
+                                                                  ng-model="pg.footerType"
+                                                                  id="formFooter-imageCheckbox" />
+                                                </label>
+                                                <label for="formFooter-videoCheckbox" class="label">
+                                                    Video: <input type="radio"
+                                                                  name="footer-content"
+                                                                  value="vid"
+                                                                  ng-checked="pg.footerType === 3 ? true : false"
+                                                                  ng-model="pg.footerType"
+                                                                  id="formFooter-videoCheckbox" />
+                                                </label>
+                                            </div>
+                                        </div>
+                                        
+                                        <div>
+                                            <textarea rows="3"
+                                                      cols="50"
+                                                      ng-if="pg.footerType === 'text'"
+                                                      id="footerText"></textarea>
+                                            <input type="url"
+                                                   ng-if="pg.footerType === 'img' ||pg.footerType === 'vid'"
+                                                   id="footerUrl" />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -132,9 +288,8 @@
                                     <small>*</small> Required fields
                                 </div>
                                 <div class="btn-group btn-group-sm">
-                                    <button type="button" class="btn btn-round" id="cms-btnDisplay">Display</button>
                                     <button type="button" class="btn btn-round card-builder-formSubmit" ng-disabled="!pg.validateForm('#cardBuilderForm')" ng-click="pg.submitCard()">Submit</button>
-                                    <button type="button" class="btn btn-round" data-dismiss="modal">Close</button>
+                                    <button type="button" style="background-color: #914e4e" class="btn btn-round" data-dismiss="modal">Close</button>
                                 </div>
                             </div>
                         </div>

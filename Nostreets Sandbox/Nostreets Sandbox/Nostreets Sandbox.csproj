@@ -566,6 +566,10 @@
       <Project>{5574610E-7F20-4793-8D34-3C2C9C1322B8}</Project>
       <Name>Nostreets Services</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NostreetsORM\NostreetsORM.csproj">
+      <Project>{6e132f1c-f285-4535-abee-f02fc0bd18cb}</Project>
+      <Name>NostreetsORM</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
