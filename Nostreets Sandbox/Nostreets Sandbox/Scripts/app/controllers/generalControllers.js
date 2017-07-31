@@ -117,8 +117,9 @@
         vm.loadPreBuiltCard = _loadPreBuiltCard;
         vm.validateForm = _validateForm;
         vm.viewCode = _viewCode;
-        vm.updateVmToCurrentCard = _updateVmToCurrentCard;
-        vm.btnDelete = _btnDelete;
+        vm.selectElement = _selectElement;
+        vm.activateMode = _activateMode;
+
 
         _setUp();
 
@@ -182,16 +183,51 @@
             });
         }
 
-        function _updateVmToCurrentCard(index) {
-            vm.id = vm.cards[index].id;
-            vm.name = vm.cards[index].name;
-            vm.size = vm.cards[index].size;
-            vm.headerType = vm.cards[index].headerType;
-            vm.headerAlignment = vm.cards[index].headerAlignment;
-            vm.mainType = vm.cards[index].mainType;
-            vm.mainAlignment = vm.cards[index].mainAlignment;
-            vm.footerType = vm.cards[index].footerType;
-            vm.footerAlignment = vm.cards[index].footerAlignment;
+        function _activateMode(mode) {
+            vm.deleteMode = false;
+            vm.updateMode = false;
+
+            if (mode === "delete") {
+                vm.deleteMode = true;
+            }
+            else if (mode === "update") {
+                vm.updateMode = true;
+            }
+        }
+
+        function _selectElement(index) {
+            if (vm.deleteMode) {
+                swal({
+                    title: "Do you want to delete this card?",
+                    showCancelButton: true
+                }).then(function () {
+                    _deleteCard(vm.cards[index].id);
+                    _getAllCards(_cardResponse);
+                });
+                
+            }
+            else if (vm.updateMode) {
+                vm.id = vm.cards[index].id;
+                vm.name = vm.cards[index].name;
+                vm.size = vm.cards[index].size;
+                vm.headerType = vm.cards[index].headerType;
+                vm.headerAlignment = vm.cards[index].headerAlignment;
+                vm.mainType = vm.cards[index].mainType;
+                vm.mainAlignment = vm.cards[index].mainAlignment;
+                vm.footerType = vm.cards[index].footerType;
+                vm.footerAlignment = vm.cards[index].footerAlignment;
+
+                var html = $($.parseHTML(vm.cards[index]._HTML));
+                var h_type = vm.headerType === 1 ? "Text" : vm.headerType === 2 ? "Img" : "Vid";
+                var m_type = vm.mainType === 1 ? "Text" : vm.headerType === 2 ? "Img" : "Vid";
+                var f_type = vm.footerType === 1 ? "Text" : vm.headerType === 2 ? "Img" : "Vid";
+
+                vm.headerContent = html.find(".header" + h_type).text();
+                vm.mainContent = html.find(".content" + m_type).text();
+                vm.footerContent = html.find(".footer" + f_type).text();
+
+                $(".card-builder-formModal").modal("show");
+            }
         }
 
         function _btnSumbit() {
@@ -218,14 +254,11 @@
                         html: $baseController.sce.trustAsHtml(card[0].outerHTML)
                     };
 
-                    _insertCard(lastestCard, _getAllCards(_cardResponse));
+                    _insertCard(lastestCard);
+                    _getAllCards(_cardResponse);
                     $(".card-builder-formModal").modal("hide");
                 });
             }
-        }
-
-        function _btnDelete(index) {
-            _deleteCard(vm.cards[index].id, _getAllCards(_cardResponse));
         }
 
         function _insertCard(model, onSuccess, OnError) {

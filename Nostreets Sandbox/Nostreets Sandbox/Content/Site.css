@@ -25,6 +25,13 @@ a:hover {
     font-weight: 900;
 }
 
+.delete .card:hover {
+    background-color: #d07e7e
+}
+
+.update .card:hover {
+    background-color: #93d07e
+}
 
 .swiper-container {
     width: 100%;

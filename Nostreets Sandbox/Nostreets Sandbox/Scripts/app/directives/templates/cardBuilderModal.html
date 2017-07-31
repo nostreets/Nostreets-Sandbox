@@ -104,7 +104,7 @@
                                                 <label for="formHeader-imageCheckbox" class="label">
                                                     Image: <input type="radio"
                                                                   name="headerType"
-                                                                  ng-checked="pg.headerType === 1 ? true : false"
+                                                                  ng-checked="pg.headerType === 2 ? true : false"
                                                                   value="img"
                                                                   ng-model="pg.headerType"
                                                                   id="formHeader-imageCheckbox" />
@@ -112,7 +112,7 @@
                                                 <label for="formHeader-videoCheckbox" class="label">
                                                     Video: <input type="radio"
                                                                   name="headerType"
-                                                                  ng-checked="pg.headerType === 1 ? true : false"
+                                                                  ng-checked="pg.headerType === 3 ? true : false"
                                                                   value="vid"
                                                                   ng-model="pg.headerType"
                                                                   id="formHeader-videoCheckbox" />
@@ -124,12 +124,11 @@
                                             <textarea rows="4"
                                                       name="headerContent"
                                                       cols="50"
-                                                      ng-if="pg.headerType === 'text'"
+                                                      ng-if="pg.headerType === 'text' || pg.headerType ===  1"
                                                       ng-model="pg.headerContent"
                                                       id="headerText"></textarea>
                                             <input type="url"
-                                                   ng-if="pg.headerType === 'img' ||pg.headerType === 'vid'"
-                                                   class=""
+                                                   ng-if="pg.headerType === 'img' || pg.headerType === 'vid' || pg.headerType ===  2 || pg.headerType ===  3"
                                                    id="headerUrl" />
                                         </div>
                                     </div>
@@ -197,13 +196,13 @@
                                         </div>
 
                                         <div>
-                                            <textarea ng-if="pg.mainType === 'text'"
+                                            <textarea ng-if="pg.mainType === 'text' || pg.mainType ===  1"
                                                       rows="3"
                                                       cols="50"
                                                       id="contentText"
                                                       name="mainContent"
                                                       ng-model="pg.mainContent"></textarea>
-                                            <input ng-if="pg.mainType === 'img' ||pg.mainType === 'vid'"
+                                            <input ng-if="pg.mainType === 'img' ||pg.mainType === 'vid' || pg.mainType ===  2 || pg.mainType ===  3"
                                                    type="url"
                                                    class=""
                                                    id="contentUrl" />
@@ -274,10 +273,11 @@
                                         <div>
                                             <textarea rows="3"
                                                       cols="50"
-                                                      ng-if="pg.footerType === 'text'"
-                                                      id="footerText"></textarea>
+                                                      ng-if="pg.footerType === 'text' || pg.footerType ===  1"
+                                                      id="footerText"
+                                                      ng-model="pg.footerContent"></textarea>
                                             <input type="url"
-                                                   ng-if="pg.footerType === 'img' ||pg.footerType === 'vid'"
+                                                   ng-if="pg.footerType === 'img' ||pg.footerType === 'vid' || pg.footerType ===  2 || pg.footerType ===  3"
                                                    id="footerUrl" />
                                         </div>
                                     </div>

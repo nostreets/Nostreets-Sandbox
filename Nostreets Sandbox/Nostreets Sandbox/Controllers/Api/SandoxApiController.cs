@@ -16,8 +16,8 @@ using Nostreets_Services.Services.Web;
 using Nostreets_Sandbox.Models.Responses;
 using Nostreets_Sandbox.Controllers.Attributes;
 using Nostreets_Services.Domain.Cards;
-using NostreetsORM.Interfaces;
-using NostreetsORM;
+using NostreetsSandbox.Providers.Interfaces;
+using NostreetsSandbox.Providers;
 
 namespace Nostreets_Sandbox.Controllers.Api
 {
