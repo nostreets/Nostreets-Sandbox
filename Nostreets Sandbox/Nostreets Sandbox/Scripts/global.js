@@ -6,7 +6,11 @@
         "ngRoute",
         "toastr",
         "ngSanitize"
-    ]
+    ],
+    user: {
+        signedIn: localStorage["nostreetsUsername"] ? true : false,
+        username: localStorage["nostreetsUsername"] ? localStorage["nostreetsUsername"] : null
+    }
 };
 
 (function () {

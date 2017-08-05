@@ -24,6 +24,7 @@ namespace Nostreets_Services.Models.Request
         [Required]
         public List<string> Labels { get; set; }
 
+        public string UserId { get; set; }
     }
 
     public class ChartAddRequest<T> : ChartAddRequest

@@ -14,7 +14,7 @@
     pastProjectsController.$inject = ["$scope", "$baseController"];
     aboutController.$inject = ["$scope", "$baseController"];
     contactUsController.$inject = ["$scope", "$baseController", "$http"];
-    cardController.$inject = ['$scope', '$baseController', '$uibModal'];
+    cardController.$inject = ['$scope', '$baseController', '$uibModal', '$sandboxService'];
     modalCodeController.$inject = ['$baseController', '$uibModalInstance', 'code'];
 
 
@@ -108,7 +108,7 @@
         }
     }
 
-    function cardController($scope, $baseController, $uibModal) {
+    function cardController($scope, $baseController, $uibModal, $sandboxService) {
 
         var vm = this;
         vm.submitCard = _btnSumbit;
@@ -120,8 +120,12 @@
         vm.selectElement = _selectElement;
         vm.activateMode = _activateMode;
 
+        _startUp();
 
-        _setUp();
+        function _startUp() {
+            _setUp();
+            $sandboxService.getAllCardsByUser(_cardResponse);
+        }
 
         function _setUp() {
             //vm.elementsLoaded = _loopTillTrue(null, () => { angular.element(".card-builder-formModal").on("load", () => { return true; })});
@@ -133,7 +137,38 @@
             vm.footerAlignment = null;
             if (!vm.cards) {
                 vm.cards = [];
-                _getAllCards(_cardResponse);
+                if (!page.user.signedIn) {
+                    swal({
+                        title: "Enter your session's username",
+                        type: "info",
+                        input: "text",
+                        showCancelButton: false,
+                        closeOnConfirm: false,
+                        animation: "slide-from-top",
+                        allowOutsideClick: false,
+                        inputPlaceholder: "Type in your username!",
+                        preConfirm: function (inputValue) {
+                            return new Promise(function (resolve, reject) {
+                                if (inputValue === false || inputValue === "") {
+                                    reject("You need to write something!");
+                                }
+                                else {
+                                    resolve();
+                                }
+                            });
+                        }
+                    }).then(function (input) {
+                        $sandboxService.loginUser(input).then(function (data) {
+                            page.user.signedIn = true;
+                            //page.user.username = input;
+                            //localStorage["nostreetsUsername"] = input;
+                            $sandboxService.getAllCardsByUser(_cardResponse);
+                        });
+                    });
+                }
+                else {
+                    $sandboxService.getAllCardsByUser(_cardResponse);
+                }
             }
 
         }
@@ -201,10 +236,10 @@
                     title: "Do you want to delete this card?",
                     showCancelButton: true
                 }).then(function () {
-                    _deleteCard(vm.cards[index].id);
-                    _getAllCards(_cardResponse);
+                    $sandboxService.deleteCard(vm.cards[index].id);
+                    $sandboxService.getAllCardsByUser(_cardResponse);
                 });
-                
+
             }
             else if (vm.updateMode) {
                 vm.id = vm.cards[index].id;
@@ -254,45 +289,11 @@
                         html: $baseController.sce.trustAsHtml(card[0].outerHTML)
                     };
 
-                    _insertCard(lastestCard);
-                    _getAllCards(_cardResponse);
+                    $sandboxService.insertCard(lastestCard).then($sandboxService.getAllCardsByUser(_cardResponse));
+                    
                     $(".card-builder-formModal").modal("hide");
                 });
             }
-        }
-
-        function _insertCard(model, onSuccess, OnError) {
-            $baseController.http({
-                url: "/api/cards/",
-                method: "POST",
-                data: model,
-                headers: { 'Content-Type': 'application/json' }
-            }).then(onSuccess, OnError);
-        }
-
-        function _getAllCards(onSuccess, OnError) {
-            $baseController.http({
-                url: "/api/cards/all",
-                method: "GET",
-                headers: { 'Content-Type': 'application/json' }
-            }).then(onSuccess, OnError);
-        }
-
-        function _deleteCard(id, onSuccess, OnError) {
-            $baseController.http({
-                url: "/api/cards/delete/" + id,
-                method: "DELETE",
-                headers: { 'Content-Type': 'application/json' }
-            }).then(onSuccess, OnError);
-        }
-
-        function _updateCard(model, onSuccess, OnError) {
-            $baseController.http({
-                url: "/api/cards/",
-                method: "PUT",
-                data: model,
-                headers: { 'Content-Type': 'application/json' }
-            }).then(onSuccess, OnError);
         }
 
         function _loadPreBuiltCard() {

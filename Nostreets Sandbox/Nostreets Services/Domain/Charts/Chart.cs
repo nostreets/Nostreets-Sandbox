@@ -16,6 +16,7 @@ namespace Nostreets_Services.Domain.Charts
         public List<string> Labels { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateModified { get; set; }
+        public string UserId { get; set; }
 
         public Dictionary<string, List<T>> GetSeriesWithKey()
         {

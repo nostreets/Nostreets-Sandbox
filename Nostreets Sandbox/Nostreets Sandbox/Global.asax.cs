@@ -1,6 +1,8 @@
 ﻿using Nostreets_Sandbox.App_Start;
+using Nostreets_Services.Domain;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
@@ -19,7 +21,9 @@ namespace Nostreets_Sandbox
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-            UnityConfig.RegisterInterfaces(System.Web.Http.GlobalConfiguration.Configuration);
+
+            UnityConfig.RegisterInterfaces(GlobalConfiguration.Configuration);
+            Database.SetInitializer(new DropCreateDatabaseIfModelChanges<UserDbContext>());
         }
     }
 }

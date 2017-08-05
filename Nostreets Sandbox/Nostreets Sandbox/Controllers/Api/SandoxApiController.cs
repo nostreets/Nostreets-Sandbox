@@ -16,8 +16,11 @@ using Nostreets_Services.Services.Web;
 using Nostreets_Sandbox.Models.Responses;
 using Nostreets_Sandbox.Controllers.Attributes;
 using Nostreets_Services.Domain.Cards;
-using NostreetsSandbox.Providers.Interfaces;
-using NostreetsSandbox.Providers;
+using Nostreets_Services.Domain;
+using System.Linq;
+using NostreetsORM;
+using NostreetsORM.Interfaces;
+using Nostreets_Services.Providers;
 
 namespace Nostreets_Sandbox.Controllers.Api
 {
@@ -27,12 +30,14 @@ namespace Nostreets_Sandbox.Controllers.Api
         IChartsExtended _chartsSrv = null;
         ISendGridService _sendGridSrv = null;
         IDBService<StyledCard> _cardSrv = null;
+        IUserService _userSrv = null;
 
         public SandoxApiController(/*IDBService<Chart, int, ChartAddRequest, ChartUpdateRequest> chartsInject, ISendGridService sendGridInject*/)
         {
             _chartsSrv = UnityConfig.GetContainer().Resolve<ChartsService>();
             _sendGridSrv = UnityConfig.GetContainer().Resolve<SendGridService>();
             _cardSrv = UnityConfig.GetContainer().Resolve<DBService<StyledCard>>();
+            _userSrv = UnityConfig.GetContainer().Resolve<UserService>();
 
         }
 
@@ -45,7 +50,26 @@ namespace Nostreets_Sandbox.Controllers.Api
             return result;
         }
 
-         [Route("cards/all")]
+        [Route("user/{username}")]
+        [HttpGet]
+        public HttpResponseMessage LogInUser(string username)
+        {
+            try
+            {
+                if (!_userSrv.CheckIfUserExist(username)){
+                    string id = _userSrv.Insert(new User { UserName = username });
+                }
+                ItemResponse<string> response = new ItemResponse<string>(username);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
+
+        [Route("cards/all")]
         [HttpGet]
         public HttpResponseMessage GetAllCards()
         {
@@ -62,6 +86,24 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Route("cards/user/{username}")]
+        [HttpGet]
+        public HttpResponseMessage GetAllCardsByUser(string username)
+        {
+            try
+            {
+                User user = _userSrv.GetByUsername(username);
+                List<StyledCard> list = _cardSrv.GetAll();
+                List<StyledCard> filteredList = list != null ? list.Where(a => a.UserId == user.Id).ToList() : null;
+                ItemsResponse<StyledCard> response = new ItemsResponse<StyledCard>(filteredList);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
 
         [Route("cards/{id:int}")]
         [HttpGet]
@@ -82,12 +124,13 @@ namespace Nostreets_Sandbox.Controllers.Api
 
         [Route("cards")]
         [HttpPost]
-        public HttpResponseMessage InsertCard(StyledCard model)
+        public HttpResponseMessage InsertCard(StyledCard model, string username)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
+                    model.UserId = _userSrv.GetByUsername(username).Id;
                     int id = (int)_cardSrv.Insert(model);
                     if (id == 0) { throw new Exception("Insert Failed"); }
                     ItemResponse<int> response = new ItemResponse<int>(id);
@@ -105,15 +148,15 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Auth("AzureDBConnection")]
         [Route("cards")]
         [HttpPut]
-        public HttpResponseMessage UpdateCard(StyledCard model)
+        public HttpResponseMessage UpdateCard(StyledCard model, string username)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
+                    model.UserId = _userSrv.GetByUsername(username).Id;
                     _cardSrv.Update(model);
                     SuccessResponse response = new SuccessResponse();
                     return Request.CreateResponse(HttpStatusCode.OK, response);
@@ -130,7 +173,6 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Auth("AzureDBConnection")]
         [Route("cards/delete/{id:int}")]
         [HttpDelete]
         public HttpResponseMessage DeleteCard(int id)
@@ -165,6 +207,24 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Route("charts/user/{username}")]
+        [HttpGet]
+        public HttpResponseMessage GetAllChartsByUser(string username)
+        {
+            try
+            {
+                User user = _userSrv.GetByUsername(username);
+                List<Chart<object>> list = _chartsSrv.GetAll();
+                List<Chart<object>> filteredList = list != null ? list.Where(a => a.UserId == user.Id).ToList() : null;
+                ItemsResponse<Chart<object>> response = new ItemsResponse<Chart<object>>(filteredList);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
 
         [Route("charts/{id:int}")]
         [HttpGet]
@@ -185,12 +245,13 @@ namespace Nostreets_Sandbox.Controllers.Api
 
         [Route("charts/int")]
         [HttpPost]
-        public HttpResponseMessage InsertChart(ChartAddRequest<int> model)
+        public HttpResponseMessage InsertChart(ChartAddRequest<int> model, string username)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
+                    model.UserId = _userSrv.GetByUsername(username).Id;
                     int id = _chartsSrv.Insert(model);
                     if (id == 0) { throw new Exception("Insert Failed"); }
                     ItemResponse<int> response = new ItemResponse<int>(id);
@@ -210,12 +271,13 @@ namespace Nostreets_Sandbox.Controllers.Api
 
         [Route("charts/list/int")]
         [HttpPost]
-        public HttpResponseMessage InsertChart(ChartAddRequest<List<int>> model)
+        public HttpResponseMessage InsertChart(ChartAddRequest<List<int>> model, string username)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
+                    model.UserId = _userSrv.GetByUsername(username).Id;
                     int id = _chartsSrv.Insert(model);
                     if (id == 0) { throw new Exception("Insert Failed"); }
                     ItemResponse<int> response = new ItemResponse<int>(id);
@@ -233,15 +295,15 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Auth("AzureDBConnection")]
         [Route("charts/int")]
         [HttpPut]
-        public HttpResponseMessage UpdateChart(ChartUpdateRequest<int> model)
+        public HttpResponseMessage UpdateChart(ChartUpdateRequest<int> model, string username)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
+                    model.UserId = _userSrv.GetByUsername(username).Id;
                     _chartsSrv.Update(model);
                     SuccessResponse response = new SuccessResponse();
                     return Request.CreateResponse(HttpStatusCode.OK, response);
@@ -258,15 +320,15 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Auth("AzureDBConnection")]
         [Route("charts/list/int")]
         [HttpPut]
-        public HttpResponseMessage UpdateChart(ChartUpdateRequest<List<int>> model)
+        public HttpResponseMessage UpdateChart(ChartUpdateRequest<List<int>> model, string username)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
+                    model.UserId = _userSrv.GetByUsername(username).Id;
                     _chartsSrv.Update(model);
                     SuccessResponse response = new SuccessResponse();
                     return Request.CreateResponse(HttpStatusCode.OK, response);
@@ -283,7 +345,6 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Auth("AzureDBConnection")]
         [Route("charts/delete/{id:int}")]
         [HttpDelete]
         public HttpResponseMessage DeleteChart(int id)

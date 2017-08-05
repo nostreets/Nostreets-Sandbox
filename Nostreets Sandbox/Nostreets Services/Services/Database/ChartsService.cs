@@ -53,6 +53,7 @@ namespace Nostreets_Services.Services.Database
             DataProvider.ExecuteNonQuery(() => Connection, "dbo.Charts_Insert",
                        param => param.AddRange(new[] {
                            new SqlParameter("Name", model.Name),
+                           new SqlParameter("UserId", model.UserId),
                            new SqlParameter("TypeId", (int)model.TypeId),
                            new SqlParameter("Legend", JsonConvert.SerializeObject(model.Legend)),
                            new SqlParameter("Series", JsonConvert.SerializeObject(model.Series)),
@@ -69,6 +70,7 @@ namespace Nostreets_Services.Services.Database
             DataProvider.ExecuteNonQuery(() => Connection, "dbo.Charts_Insert",
                        param => param.AddRange(new[] {
                            new SqlParameter("Name", model.Name),
+                           new SqlParameter("UserId", model.UserId),
                            new SqlParameter("TypeId", (int)model.TypeId),
                            new SqlParameter("Legend", JsonConvert.SerializeObject(model.Legend)),
                            new SqlParameter("Series", JsonConvert.SerializeObject(model.Series)),
@@ -85,6 +87,7 @@ namespace Nostreets_Services.Services.Database
                        param => param.AddRange(new[] {
                            new SqlParameter("ChartId", model.ChartId),
                            model.Name != null ? new SqlParameter("Name", model.Name) : new SqlParameter("Name", null),
+                           new SqlParameter("UserId", model.UserId),
                            new SqlParameter("TypeId", (int)model.TypeId),
                            model.Legend != null ? new SqlParameter("Legend", JsonConvert.SerializeObject(model.Legend)) : new SqlParameter("Legend", null),
                            model.Series != null ? new SqlParameter("Series", JsonConvert.SerializeObject(model.Series)) : new SqlParameter("Series", null),
@@ -98,6 +101,7 @@ namespace Nostreets_Services.Services.Database
                        param => param.AddRange(new[] {
                            new SqlParameter("ChartId", model.ChartId),
                            model.Name != null ? new SqlParameter("Name", model.Name) : new SqlParameter("Name", null),
+                           new SqlParameter("UserId", model.UserId),
                            new SqlParameter("TypeId", (int)model.TypeId),
                            model.Legend != null ? new SqlParameter("Legend", JsonConvert.SerializeObject(model.Legend)) : new SqlParameter("Legend", null),
                            model.Series != null ? new SqlParameter("Series", JsonConvert.SerializeObject(model.Series)) : new SqlParameter("Series", null),

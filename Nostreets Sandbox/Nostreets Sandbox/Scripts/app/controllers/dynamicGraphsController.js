@@ -5,11 +5,11 @@
     angular.module(page.APPNAME).controller("dynamicGraphsController", pageController)
         .controller("modalGraphController", modalController);
 
-    pageController.$inject = ["$scope", "$baseController", "$uibModal", '$rootScope', "$chartsService"];
+    pageController.$inject = ["$scope", "$baseController", "$uibModal", '$rootScope', "$sandboxService"];
     modalController.$inject = ["$scope", "$timeout", "$uibModalInstance", "graph", "$rootScope"];
 
 
-    function pageController($scope, $baseController, $uibModal, $rootScope, $chartsService) {
+    function pageController($scope, $baseController, $uibModal, $rootScope, $sandboxService) {
 
         //View Model and Mapping
         var vm = this;
@@ -26,10 +26,10 @@
         $baseController.systemEventService.listen('refreshCharts', _refreshResponse);
 
         _startUp();
-        //Controller Function
+
+        //Controller Functions
         function _startUp() {
-            if (!vm.data) { _setUp(); }
-            $chartsService.getAll(_chartsResponse, _consoleResponse);
+            _setUp();
         }
 
         function _setUp() {
@@ -39,6 +39,39 @@
             vm.saved = false;
             vm.rendered = false;
             vm.legend = [];
+
+            if (!page.user.signedIn) {
+                swal({
+                    title: "Enter your session's username",
+                    type: "info",
+                    input: "text",
+                    showCancelButton: false,
+                    closeOnConfirm: false,
+                    animation: "slide-from-top",
+                    allowOutsideClick: false,
+                    inputPlaceholder: "Type in your username!",
+                    preConfirm: function (inputValue) {
+                        return new Promise(function (resolve, reject) {
+                            if (inputValue === false || inputValue === "") {
+                                reject("You need to write something!");
+                            }
+                            else {
+                                resolve();
+                            }
+                        });
+                    }
+                }).then(function (input) {
+                    $sandboxService.loginUser(input).then(function (data) {
+                        page.user.signedIn = true;
+                        localStorage["nostreetsUsername"] = input;
+                        page.user.username = input;
+                        $sandboxService.getAllChartsByUser(_chartsResponse, _consoleResponse);
+                    });
+                });
+            }
+            else {
+                $sandboxService.getAllChartsByUser(_chartsResponse, _consoleResponse);
+            }
         };
 
         function _viewDirectiveCode() {
@@ -405,11 +438,11 @@
                     series: vm.chart.series
                 }
                 if (!vm.chart.chartId) {
-                    $chartsService.insert(model, _idResponse, _consoleResponse);
+                    $sandboxService.insertChart(model, _idResponse, _consoleResponse);
                 }
                 else {
                     model.id = vm.chart.chartId;
-                    $chartsService.update(model, _consoleResponse, _consoleResponse);
+                    $sandboxService.updateChart(model, _consoleResponse, _consoleResponse);
                 }
                 vm.saved = true;
             }
@@ -417,7 +450,7 @@
 
         function _delete(chart) {
             if (chart && chart.chartId) {
-                $chartsService.deleteById(chart.chartId, _refreshResponse, _consoleResponse);
+                $sandboxService.deleteChartById(chart.chartId, _refreshResponse, _consoleResponse);
             }
         }
 
@@ -447,7 +480,7 @@
         }
 
         function _refreshResponse() {
-            $chartsService.getAll(_chartsResponse, _consoleResponse);
+            $sandboxService.getAllChartsByUser(_chartsResponse, _consoleResponse);
         }
     }
 

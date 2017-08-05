@@ -2,9 +2,9 @@
 
     angular.module(page.APPNAME).directive("chart", directive);
 
-    directive.$inject = ["$systemEventService", '$chartsService'];
+    directive.$inject = ["$systemEventService", '$sandboxService'];
 
-    function directive($systemEventService, $chartsService) {
+    function directive($systemEventService, $sandboxService) {
 
         return {
             restrict: "E",
@@ -41,7 +41,7 @@
 
                     function _deleteById()
                     {
-                        $chartsService.deleteById(data.chartId, _consoleResponse, _consoleResponse);
+                        $sandboxService.deleteChartById(data.chartId, _consoleResponse, _consoleResponse);
                         $systemEventService.broadcast("refreshCharts", true);
                     }
 

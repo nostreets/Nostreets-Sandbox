@@ -16,6 +16,7 @@ namespace Nostreets_Services.Models.Request
         public List<List<int>> Series { get; set; }
         public List<string> Legend { get; set; }
         public List<string> Labels { get; set; }
+        public string UserId { get; set; }
 
     }
 
