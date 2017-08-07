@@ -24,6 +24,7 @@
 
         $rootScope.$on('logGraph', _logMainGraph);
         $baseController.systemEventService.listen('refreshCharts', _refreshResponse);
+        $baseController.systemEventService.listen("refreshedUsername", _setUp);
 
         _startUp();
 
@@ -65,13 +66,11 @@
                         page.user.signedIn = true;
                         localStorage["nostreetsUsername"] = input;
                         page.user.username = input;
-                        $sandboxService.getAllChartsByUser(_chartsResponse, _consoleResponse);
                     });
                 });
             }
-            else {
-                $sandboxService.getAllChartsByUser(_chartsResponse, _consoleResponse);
-            }
+
+            $sandboxService.getAllChartsByUser(_chartsResponse, _consoleResponse);
         };
 
         function _viewDirectiveCode() {
@@ -445,6 +444,7 @@
                     $sandboxService.updateChart(model, _consoleResponse, _consoleResponse);
                 }
                 vm.saved = true;
+                $sandboxService.getAllChartsByUser(_chartsResponse, _consoleResponse);
             }
         }
 

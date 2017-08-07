@@ -18,7 +18,9 @@
 
     angular.module(page.APPNAME, page.ngModules);
 
-    page.baseController = angular.module(page.APPNAME).factory("$baseController", baseController);
+    page.baseController = angular.module(page.APPNAME)
+        .factory("$baseController", baseController)
+        .directive("changeUsername", changeUsernanmeDirective);
 
     baseController.$inject = ['$document', '$log', '$route', '$routeParams', '$systemEventService', '$alertService', "$window", '$uibModal', '$timeout', '$http', '$sce'];
 
@@ -41,5 +43,59 @@
 
         return base;
     }
+
+    function changeUsernanmeDirective($baseController) {
+
+        return {
+            restrict: "A",
+            scope: true,
+            link: function ($scope, element, attr) {
+
+                $(document).ready(_startUp);
+
+                function _startUp() {
+
+                    element.on("click", function () {
+                        swal({
+                            title: "Enter your session's username",
+                            type: "info",
+                            input: "text",
+                            showCancelButton: true,
+                            closeOnConfirm: false,
+                            allowOutsideClick: true,
+                            inputPlaceholder: "Type in your username!",
+                            preConfirm: function (inputValue) {
+                                return new Promise(function (resolve, reject) {
+                                    if (inputValue === false || inputValue === "") {
+                                        reject("You need to write something!");
+                                    }
+                                    else {
+                                        resolve();
+                                    }
+                                });
+                            }
+                        }).then(function (input) {
+                            $baseController.http({
+                                url: "/api/user/" + input,
+                                method: "GET",
+                                headers: { 'Content-Type': 'application/json' }
+                            }).then(function (data) {
+                                page.user.signedIn = true;
+                                page.user.username = input;
+                                localStorage["nostreetsUsername"] = input;
+                                $baseController.systemEventService.broadcast("refreshedUsername");
+                            });
+                        });
+
+                    });
+
+                }
+
+
+
+            }
+        }
+    }
+
 
 })();

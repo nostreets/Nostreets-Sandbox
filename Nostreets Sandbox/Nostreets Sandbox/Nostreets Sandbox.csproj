@@ -418,7 +418,6 @@
     <Content Include="Scripts\app\configs\routeConfig.js" />
     <Content Include="Scripts\app\controllers\dynamicGraphsController.js" />
     <Content Include="Scripts\app\controllers\generalControllers.js" />
-    <Content Include="Scripts\app\directives\cardBuilderModalDirective.js" />
     <Content Include="Scripts\app\directives\particles.js" />
     <Content Include="Scripts\app\directives\renderGraph.js" />
     <Content Include="Scripts\app\directives\templates\cardBuilderModal.html" />

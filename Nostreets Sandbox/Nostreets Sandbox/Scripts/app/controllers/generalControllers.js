@@ -1,4 +1,4 @@
-﻿(function () {
+﻿(function() {
 
     angular.module(page.APPNAME).controller("homeController", homeController)
         .controller("applicationsInProgressController", applicationsInProgressController)
@@ -120,15 +120,15 @@
         vm.selectElement = _selectElement;
         vm.activateMode = _activateMode;
 
+        $baseController.systemEventService.listen("refreshedUsername", _setUp);
+
         _startUp();
 
         function _startUp() {
             _setUp();
-            $sandboxService.getAllCardsByUser(_cardResponse);
         }
 
         function _setUp() {
-            //vm.elementsLoaded = _loopTillTrue(null, () => { angular.element(".card-builder-formModal").on("load", () => { return true; })});
             vm.headerType = null;
             vm.mainType = null;
             vm.footerType = null;
@@ -137,40 +137,36 @@
             vm.footerAlignment = null;
             if (!vm.cards) {
                 vm.cards = [];
-                if (!page.user.signedIn) {
-                    swal({
-                        title: "Enter your session's username",
-                        type: "info",
-                        input: "text",
-                        showCancelButton: false,
-                        closeOnConfirm: false,
-                        animation: "slide-from-top",
-                        allowOutsideClick: false,
-                        inputPlaceholder: "Type in your username!",
-                        preConfirm: function (inputValue) {
-                            return new Promise(function (resolve, reject) {
-                                if (inputValue === false || inputValue === "") {
-                                    reject("You need to write something!");
-                                }
-                                else {
-                                    resolve();
-                                }
-                            });
-                        }
-                    }).then(function (input) {
-                        $sandboxService.loginUser(input).then(function (data) {
-                            page.user.signedIn = true;
-                            //page.user.username = input;
-                            //localStorage["nostreetsUsername"] = input;
-                            $sandboxService.getAllCardsByUser(_cardResponse);
-                        });
-                    });
-                }
-                else {
-                    $sandboxService.getAllCardsByUser(_cardResponse);
-                }
             }
-
+            if (!page.user.signedIn) {
+                swal({
+                    title: "Enter your session's username",
+                    type: "info",
+                    input: "text",
+                    showCancelButton: false,
+                    closeOnConfirm: false,
+                    animation: "slide-from-top",
+                    allowOutsideClick: false,
+                    inputPlaceholder: "Type in your username!",
+                    preConfirm: function(inputValue) {
+                        return new Promise(function(resolve, reject) {
+                            if (inputValue === false || inputValue === "") {
+                                reject("You need to write something!");
+                            }
+                            else {
+                                resolve();
+                            }
+                        });
+                    }
+                }).then(function(input) {
+                    $sandboxService.loginUser(input).then(function(data) {
+                        page.user.signedIn = true;
+                        page.user.username = input;
+                        localStorage["nostreetsUsername"] = input;
+                    });
+                });
+            }
+            $sandboxService.getAllCardsByUser(_cardResponse);
         }
 
         function _cardResponse(data) {
@@ -199,7 +195,7 @@
                 url: "api/view/code/cardController",
                 method: "GET",
                 responseType: "JSON"
-            }).then(function (data) {
+            }).then(function(data) {
                 _openCodeModal(data.data.item);
             });
         }
@@ -211,7 +207,7 @@
                 , controller: "modalCodeController as mc"
                 , size: "lg"
                 , resolve: {
-                    code: function () {
+                    code: function() {
                         return code;
                     }
                 }
@@ -235,7 +231,7 @@
                 swal({
                     title: "Do you want to delete this card?",
                     showCancelButton: true
-                }).then(function () {
+                }).then(function() {
                     $sandboxService.deleteCard(vm.cards[index].id);
                     $sandboxService.getAllCardsByUser(_cardResponse);
                 });
@@ -270,7 +266,7 @@
                 swal({
                     title: "Do you want to save this card?",
                     showCancelButton: true
-                }).then(function () {
+                }).then(function() {
                     var card = vm.loadPreBuiltCard();
                     card = vm.buildCard(card);
                     card = vm.populateCard(card);
@@ -290,7 +286,7 @@
                     };
 
                     $sandboxService.insertCard(lastestCard).then($sandboxService.getAllCardsByUser(_cardResponse));
-                    
+
                     $(".card-builder-formModal").modal("hide");
                 });
             }
@@ -488,7 +484,7 @@
                         maxlength: 2000
                     }
                 },
-                errorPlacement: function (error, element) {
+                errorPlacement: function(error, element) {
                     $(element).parent('div').addClass('has-error');
                 }
             });

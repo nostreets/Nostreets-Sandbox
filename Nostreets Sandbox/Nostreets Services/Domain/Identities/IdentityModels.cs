@@ -28,7 +28,7 @@ namespace Nostreets_Services.Domain
     public class UserDbContext : DbContext
     {
         public UserDbContext()
-            : base("DefaultConnection" /*"AzureDBConnection"*/)
+            : base(/*"DefaultConnection" */"AzureDBConnection")
         {  }
 
         public IDbSet<User> Users { get; set; }
