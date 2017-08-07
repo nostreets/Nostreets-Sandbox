@@ -5,8 +5,10 @@ using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using Nostreets_Services.Domain;
 using Nostreets_Services.Interfaces.Services;
+using NostreetsORM.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -73,4 +75,6 @@ namespace Nostreets_Services.Services.Database
      
 
     }
+
+    
 }

@@ -116,6 +116,7 @@
     <Compile Include="Models\Requests\MailChimpAddListRequest.cs" />
     <Compile Include="Models\Requests\MailChimpAddMemberRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\Database\EFDBService.cs" />
     <Compile Include="Services\Database\UserService.cs" />
     <Compile Include="Services\Web\MailChimpService.cs" />
     <Compile Include="Services\Web\SendGridService.cs" />
