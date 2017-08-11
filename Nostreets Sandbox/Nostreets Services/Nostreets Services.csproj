@@ -105,6 +105,7 @@
     <Compile Include="Interfaces\Services\IUserService.cs" />
     <Compile Include="Providers\CacheService.cs" />
     <Compile Include="Providers\CloningService.cs" />
+    <Compile Include="Providers\RdlGenerator.cs" />
     <Compile Include="Services\Database\ChartsService.cs" />
     <Compile Include="Services\CustomSerializer.cs" />
     <Compile Include="Domain\Charts\Chart.cs" />
