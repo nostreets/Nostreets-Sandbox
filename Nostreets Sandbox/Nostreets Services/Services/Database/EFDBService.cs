@@ -69,6 +69,8 @@ namespace Nostreets_Services.Services.Database
             if (_context.SaveChanges() == 0) { throw new Exception("DB changes not saved!"); }
         }
 
+        public IEnumerable<T> Where() { }
+
         private class EFDbContext<TContext> : DbContext where TContext : class
         {
             public EFDbContext()

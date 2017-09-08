@@ -19,7 +19,6 @@ namespace Nostreets_Services.Providers
         string _commandText;
         ArrayList _fields;
 
-
         public void GenerateReport()
         {
             try
@@ -41,7 +40,6 @@ namespace Nostreets_Services.Providers
                 _connection.Close();
             }
         }
-
 
         public void GenerateFieldsList()
         {
@@ -83,6 +81,7 @@ namespace Nostreets_Services.Providers
             AddElement(report, "ConsumeContainerWhitespace", "true");
             #endregion
 
+
             //DataSources element
             XmlElement dataSources = AddElement(report, "DataSources", null);
 
@@ -92,10 +91,12 @@ namespace Nostreets_Services.Providers
             XmlAttribute attr = dataSource.Attributes.Append(doc.CreateAttribute("Name"));
             attr.Value = "DataSource1";
 
+
             XmlElement connectionProperties = AddElement(dataSource, "ConnectionProperties", null);
             AddElement(connectionProperties, "DataProvider", "SQL");
             AddElement(connectionProperties, "ConnectString", _connectString);
             AddElement(connectionProperties, "IntegratedSecurity", "true");
+
 
             //DataSets element
             XmlElement dataSets = AddElement(report, "DataSets", null);
@@ -103,11 +104,13 @@ namespace Nostreets_Services.Providers
             attr = dataSet.Attributes.Append(doc.CreateAttribute("Name"));
             attr.Value = "DataSet1";
 
+
             //Query element
             XmlElement query = AddElement(dataSet, "Query", null);
             AddElement(query, "DataSourceName", "DataSource1");
             AddElement(query, "CommandText", _commandText);
             AddElement(query, "Timeout", "30");
+
 
             //Fields element
             XmlElement fields = AddElement(dataSet, "Fields", null);
@@ -125,6 +128,7 @@ namespace Nostreets_Services.Providers
 
             //end of DataSources
 
+
             //ReportSections element
             XmlElement reportSections = AddElement(report, "ReportSections", null);
             XmlElement reportSection = AddElement(reportSections, "ReportSection", null);
@@ -133,6 +137,7 @@ namespace Nostreets_Services.Providers
             XmlElement body = AddElement(reportSection, "Body", null);
             AddElement(body, "Height", "1.5in");
             XmlElement reportItems = AddElement(body, "ReportItems", null);
+
 
             // Tablix element
             XmlElement tablix = AddElement(reportItems, "Tablix", null);
@@ -154,6 +159,7 @@ namespace Nostreets_Services.Providers
             tablixColumn = AddElement(tablixColumns, "TablixColumn", null);
             AddElement(tablixColumn, "Width", "1.5in");
 
+
             //TablixRows element
             XmlElement tablixRows = AddElement(tablixBody, "TablixRows", null);
 
@@ -161,6 +167,7 @@ namespace Nostreets_Services.Providers
             XmlElement tablixRow = AddElement(tablixRows, "TablixRow", null);
             AddElement(tablixRow, "Height", "0.5in");
             XmlElement tablixCells = AddElement(tablixRow, "TablixCells", null);
+
 
             // TablixCell element (first cell)
             XmlElement tablixCell = AddElement(tablixCells, "TablixCell", null);

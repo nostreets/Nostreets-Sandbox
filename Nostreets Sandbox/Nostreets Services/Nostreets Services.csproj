@@ -85,6 +85,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\Bills\Expense.cs" />
+    <Compile Include="Domain\Bills\Income.cs" />
     <Compile Include="Domain\Cards\StyledCard.cs" />
     <Compile Include="Domain\Identities\IdentityModels.cs" />
     <Compile Include="Domain\Newsletter\Link.cs" />
@@ -98,14 +100,19 @@
     <Compile Include="Domain\Newsletter\Members\Member.cs" />
     <Compile Include="Domain\Newsletter\Members\MemberStats.cs" />
     <Compile Include="Domain\Newsletter\UserListStats.cs" />
+    <Compile Include="Enums\BillTypes.cs" />
+    <Compile Include="Enums\IncomeTypes.cs" />
+    <Compile Include="Enums\ScheduleTypes.cs" />
     <Compile Include="Enums\StyledCardTypes.cs" />
     <Compile Include="Interfaces\Services\ICacheService.cs" />
     <Compile Include="Interfaces\Services\IChartExtended.cs" />
     <Compile Include="Interfaces\Services\IMailChimpService.cs" />
     <Compile Include="Interfaces\Services\IUserService.cs" />
+    <Compile Include="Models\Requests\BillRequestModels.cs" />
     <Compile Include="Providers\CacheService.cs" />
     <Compile Include="Providers\CloningService.cs" />
     <Compile Include="Providers\RdlGenerator.cs" />
+    <Compile Include="Services\Database\BillService.cs" />
     <Compile Include="Services\Database\ChartsService.cs" />
     <Compile Include="Services\CustomSerializer.cs" />
     <Compile Include="Domain\Charts\Chart.cs" />
@@ -135,6 +142,7 @@
       <Name>NostreetsORM</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

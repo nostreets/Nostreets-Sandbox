@@ -72,9 +72,6 @@ namespace Nostreets_Services.Services.Database
 
         }
 
-     
-
     }
 
-    
 }
