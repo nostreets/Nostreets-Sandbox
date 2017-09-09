@@ -14,6 +14,7 @@ namespace Nostreets_Services.Enums
         BiWeekly,
         Weekly,
         Daily,
+        Hourly,
         Occasionally,
         Once
     }

@@ -11,17 +11,27 @@ namespace Nostreets_Services.Domain.Bills
     public class Expenses
     {
         [Key]
+        [Required]
         public int Id { get; set; }
+
+        [Required]
 
         public string UserId { get; set; }
 
+        [Required]
         public string Name { get; set; }
 
+        [Required]
         public decimal Price { get; set; }
 
+        [Required]
         public BillTypes BillType { get; set; }
 
+        [Required]
         public ScheduleTypes PaySchedule { get; set; }
+
+        public DateTime TimePaid { get; set; }
+
 
     }
 }

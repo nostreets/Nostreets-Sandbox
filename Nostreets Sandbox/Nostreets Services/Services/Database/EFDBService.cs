@@ -69,7 +69,16 @@ namespace Nostreets_Services.Services.Database
             if (_context.SaveChanges() == 0) { throw new Exception("DB changes not saved!"); }
         }
 
-        public IEnumerable<T> Where() { }
+        public IEnumerable<T> Where(Func<T, bool> predicate)
+        {
+            return _context.Table.Where(predicate);
+        }
+
+        public IEnumerable<T> Where(Func<T, int, bool> predicate)
+        {
+            return _context.Table.Where(predicate);
+        }
+
 
         private class EFDbContext<TContext> : DbContext where TContext : class
         {
