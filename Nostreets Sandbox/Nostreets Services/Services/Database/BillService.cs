@@ -1,6 +1,6 @@
 ﻿using Nostreets_Services.Domain.Bills;
 using Nostreets_Services.Domain.Charts;
-using Nostreets_Services.Models.Requests;
+using Nostreets_Services.Utilities;
 using System.Globalization;
 using System;
 using System.Collections.Generic;
@@ -46,135 +46,372 @@ namespace Nostreets_Services.Services.Database
             return _incomeSrv.Where((a) => a.UserId == userId && a.Name == income.Name).SingleOrDefault();
         }
 
-        public Chart<List<int>> GetIncomeChart(string userId, DateTime? startDate = null, DateTime? endDate = null, string preferedLabel = null)
+        public Chart<List<decimal>> GetIncomeChart(string userId, DateTime? startDate = null, DateTime? endDate = null, string preferedLabel = null)
         {
-
-
-            Chart<List<int>> result = null;
+            Chart<List<decimal>> result = null;
             List<Income> income = GetAllIncome(userId);
-            ScheduleTypes schedule;
+            ScheduleTypes chartSchedule;
 
             DateTime start = (startDate == null) ? DateTime.Now : startDate.Value,
                      end = (endDate == null) ? DateTime.Now.Add(new TimeSpan(24, 0, 0)) : endDate.Value;
 
             TimeSpan diff = (end - start);
 
-            result.Name = "Income Chart";
-            result.Labels = CalculateLabelRange(out schedule, startDate, endDate, preferedLabel);
+            result.Labels = CalculateLabelRange(out chartSchedule, startDate, endDate, preferedLabel);
+            result.Name = String.Format("Income {0} Chart", chartSchedule.ToString());
+            result.TypeId = ChartTypes.Line;
+            result.UserId = userId;
 
-
-            if (result.Series == null) { result.Series = new List<List<int>>(); }
+            if (result.Series == null) { result.Series = new List<List<decimal>>(); }
 
             for (int n = 0; n < income.Count; n++)
             {
-                result.Series.Add(new List<int>());
+                result.Series.Add(new List<decimal>());
                 result.Legend.Add(income[n].Name);
 
-                switch (schedule)
+                switch (chartSchedule)
                 {
 
                     case ScheduleTypes.Hourly:
-                        for (int i = 1; i < result.Labels.Count; i++)
+                        for (int i = 0; i < result.Labels.Count; i++)
                         {
+                            int day = 1;
+                            day += ((i + 1) % 24 == 0) ? 1 : 0;
+                            DateTime intervalDate = start.AddDays(day);
+
                             switch (income[n].PaySchedule)
                             {
                                 case ScheduleTypes.Weekly:
-                                    result.Series[n].Add((i == 168) ? 0 : income[n].PayRate);
+                                    result.Series[n].Add((!IsPayDay(intervalDate, chartSchedule, income[n])) ? 0 : income[n].PayRate);
                                     break;
 
                                 case ScheduleTypes.Daily:
-                                    result.Series[n].Add((i % income[n].TimePaid.Hour) != 0 ? 0 : income[n].PayRate);
+                                    result.Series[n].Add(!IsPayDay(intervalDate, chartSchedule, income[n]) ? 0 : income[n].PayRate);
                                     break;
                             }
-                            
+
                         }
                         break;
 
                     case ScheduleTypes.Daily:
-                        for (int i = 1; i < result.Labels.Count; i++)
+                        for (int i = 0; i < result.Labels.Count; i++)
                         {
+                            DateTime intervalDate = start.AddDays(i + 1);
                             switch (income[n].PaySchedule)
                             {
+                                case ScheduleTypes.Monthly:
+                                    result.Series[n].Add(!IsPayDay(intervalDate, chartSchedule, income[n]) ? 0 : income[n].PayRate);
+                                    break;
+
                                 case ScheduleTypes.Weekly:
-                                    result.Series[n].Add((i == 168) ? 0 : income[n].PayRate);
+                                    result.Series[n].Add(!IsPayDay(intervalDate, chartSchedule, income[n]) ? 0 : income[n].PayRate);
                                     break;
 
                                 case ScheduleTypes.Daily:
-                                    result.Series[n].Add((i % income[n].TimePaid.Hour) != 0 ? 0 : income[n].PayRate);
+                                    result.Series[n].Add(income[n].PayRate);
                                     break;
                             }
                         }
                         break;
 
                     case ScheduleTypes.Weekly:
-                        for (int i = 1; i < result.Labels.Count; i++)
+                        for (int i = 0; i < result.Labels.Count; i++)
                         {
                             switch (income[n].PaySchedule)
                             {
+
+                                case ScheduleTypes.BiYearly:
+                                    result.Series[n].Add((income[n].TimePaid.Month != start.Month + (i % 4 != 0 ? 0 : i / 4)) ? 0 : income[n].PayRate);
+                                    break;
+
+                                case ScheduleTypes.Monthly:
+                                    result.Series[n].Add((!i.IsWeekOfMonth(income[n].TimePaid)) ? 0 : income[n].PayRate);
+                                    break;
+
                                 case ScheduleTypes.Weekly:
-                                    result.Series[n].Add((i == 168) ? 0 : income[n].PayRate);
+                                    result.Series[n].Add(income[n].PayRate);
                                     break;
 
                                 case ScheduleTypes.Daily:
-                                    result.Series[n].Add((i % income[n].TimePaid.Hour) != 0 ? 0 : income[n].PayRate);
+                                    result.Series[n].Add(income[n].PayRate * 7);
+                                    break;
+
+                                case ScheduleTypes.Hourly:
+                                    result.Series[n].Add(income[n].PayRate * 168);
                                     break;
                             }
                         }
                         break;
 
                     case ScheduleTypes.Monthly:
-                        for (int i = 1; i < result.Labels.Count; i++)
+                        for (int i = 0; i < result.Labels.Count; i++)
                         {
                             switch (income[n].PaySchedule)
                             {
+                                case ScheduleTypes.Yearly:
+                                    result.Series[n].Add((income[n].TimePaid.Month == start.Month + i) ? 0 : income[n].PayRate);
+                                    break;
+
+                                case ScheduleTypes.BiYearly:
+                                    result.Series[n].Add((income[n].TimePaid.Month != start.Month + i || income[n].TimePaid.AddMonths(6).Month != start.Month + i) ? 0 : income[n].PayRate);
+                                    break;
+
+                                case ScheduleTypes.Monthly:
+                                    result.Series[n].Add(income[n].PayRate);
+                                    break;
+
                                 case ScheduleTypes.Weekly:
-                                    result.Series[n].Add((i == 168) ? 0 : income[n].PayRate);
+                                    result.Series[n].Add(income[n].PayRate * 4);
                                     break;
 
                                 case ScheduleTypes.Daily:
-                                    result.Series[n].Add((i % income[n].TimePaid.Hour) != 0 ? 0 : income[n].PayRate);
+                                    result.Series[n].Add(income[n].PayRate * DateTime.DaysInMonth(start.Year, start.Month + i));
+                                    break;
+
+                                case ScheduleTypes.Hourly:
+                                    result.Series[n].Add(income[n].PayRate * 672);
+                                    break;
+
+                                default:
+                                    result.Series[n].Add(income[n].TimePaid.Month == start.Month + i && i + 1 < 12 ? 0 : income[n].PayRate);
                                     break;
                             }
                         }
                         break;
 
                     case ScheduleTypes.Yearly:
-                        for (int i = 1; i < result.Labels.Count; i++)
+                        for (int i = 0; i < result.Labels.Count; i++)
                         {
                             switch (income[n].PaySchedule)
                             {
+                                case ScheduleTypes.Yearly:
+                                    result.Series[n].Add(income[n].PayRate);
+                                    break;
+
+                                case ScheduleTypes.BiYearly:
+                                    result.Series[n].Add(income[n].PayRate * 2);
+                                    break;
+
+                                case ScheduleTypes.Monthly:
+                                    result.Series[n].Add(income[n].PayRate * 12);
+                                    break;
+
                                 case ScheduleTypes.Weekly:
-                                    result.Series[n].Add((i == 168) ? 0 : income[n].PayRate);
+                                    result.Series[n].Add(income[n].PayRate * 52);
                                     break;
 
                                 case ScheduleTypes.Daily:
-                                    result.Series[n].Add((i % income[n].TimePaid.Hour) != 0 ? 0 : income[n].PayRate);
+                                    result.Series[n].Add(income[n].PayRate * 365);
+                                    break;
+
+                                case ScheduleTypes.Hourly:
+                                    result.Series[n].Add(income[n].PayRate * 8064);
+                                    break;
+
+                                default:
+                                    result.Series[n].Add(income[n].TimePaid.Year != start.Year ? 0 : income[n].PayRate);
                                     break;
                             }
                         }
                         break;
-
                 }
+
             }
 
 
             return result;
         }
 
-        public Chart<List<int>> GetExpensesChart(string userId, DateTime startDate, DateTime endDate)
+        public Chart<List<decimal>> GetExpensesChart(string userId, DateTime? startDate = null, DateTime? endDate = null, string preferedLabel = null)
         {
-            Chart<List<int>> result = null;
+            Chart<List<decimal>> result = null;
+            List<Expenses> expenses = GetAllExpenses(userId);
+            ScheduleTypes chartSchedule;
 
+            DateTime start = (startDate == null) ? DateTime.Now : startDate.Value,
+                     end = (endDate == null) ? DateTime.Now.Add(new TimeSpan(24, 0, 0)) : endDate.Value;
+
+            TimeSpan diff = (end - start);
+
+            result.Labels = CalculateLabelRange(out chartSchedule, startDate, endDate, preferedLabel);
+            result.Name = String.Format("Expenses {0} Chart", chartSchedule.ToString());
+            result.TypeId = ChartTypes.Line;
+            result.UserId = userId;
+
+            if (result.Series == null) { result.Series = new List<List<decimal>>(); }
+
+            for (int n = 0; n < expenses.Count; n++)
+            {
+                result.Series.Add(new List<decimal>());
+                result.Legend.Add(expenses[n].Name);
+
+                switch (chartSchedule)
+                {
+
+                    case ScheduleTypes.Hourly:
+                        for (int i = 0; i < result.Labels.Count; i++)
+                        {
+                            int day = 1;
+                            day += ((i + 1) % 24 == 0) ? 1 : 0;
+                            DateTime intervalDate = start.AddDays(day);
+
+                            switch (expenses[n].PaySchedule)
+                            {
+                                case ScheduleTypes.Weekly:
+                                    result.Series[n].Add((!IsPayDay(intervalDate, chartSchedule, null, expenses[n])) ? 0 : expenses[n].Price);
+                                    break;
+
+                                case ScheduleTypes.Daily:
+                                    result.Series[n].Add(!IsPayDay(intervalDate, chartSchedule, null, expenses[n]) ? 0 : expenses[n].Price);
+                                    break;
+                            }
+
+                        }
+                        break;
+
+                    case ScheduleTypes.Daily:
+                        for (int i = 0; i < result.Labels.Count; i++)
+                        {
+                            DateTime intervalDate = start.AddDays(i + 1);
+                            switch (expenses[n].PaySchedule)
+                            {
+                                case ScheduleTypes.Monthly:
+                                    result.Series[n].Add(!IsPayDay(intervalDate, chartSchedule, null, expenses[n]) ? 0 : expenses[n].Price);
+                                    break;
+
+                                case ScheduleTypes.Weekly:
+                                    result.Series[n].Add(!IsPayDay(intervalDate, chartSchedule, null, expenses[n]) ? 0 : expenses[n].Price);
+                                    break;
+
+                                case ScheduleTypes.Daily:
+                                    result.Series[n].Add(expenses[n].Price);
+                                    break;
+                            }
+                        }
+                        break;
+
+                    case ScheduleTypes.Weekly:
+                        for (int i = 0; i < result.Labels.Count; i++)
+                        {
+                            switch (expenses[n].PaySchedule)
+                            {
+
+                                case ScheduleTypes.BiYearly:
+                                    result.Series[n].Add((expenses[n].TimePaid.Month != start.Month + (i % 4 != 0 ? 0 : i / 4)) ? 0 : expenses[n].Price);
+                                    break;
+
+                                case ScheduleTypes.Monthly:
+                                    result.Series[n].Add((!i.IsWeekOfMonth(expenses[n].TimePaid)) ? 0 : expenses[n].Price);
+                                    break;
+
+                                case ScheduleTypes.Weekly:
+                                    result.Series[n].Add(expenses[n].Price);
+                                    break;
+
+                                case ScheduleTypes.Daily:
+                                    result.Series[n].Add(expenses[n].Price * 7);
+                                    break;
+
+                                case ScheduleTypes.Hourly:
+                                    result.Series[n].Add(expenses[n].Price * 168);
+                                    break;
+                            }
+                        }
+                        break;
+
+                    case ScheduleTypes.Monthly:
+                        for (int i = 0; i < result.Labels.Count; i++)
+                        {
+                            switch (expenses[n].PaySchedule)
+                            {
+                                case ScheduleTypes.Yearly:
+                                    result.Series[n].Add((expenses[n].TimePaid.Month == start.Month + i) ? 0 : expenses[n].Price);
+                                    break;
+
+                                case ScheduleTypes.BiYearly:
+                                    result.Series[n].Add((expenses[n].TimePaid.Month != start.Month + i || expenses[n].TimePaid.AddMonths(6).Month != start.Month + i) ? 0 : expenses[n].Price);
+                                    break;
+
+                                case ScheduleTypes.Monthly:
+                                    result.Series[n].Add(expenses[n].Price);
+                                    break;
+
+                                case ScheduleTypes.Weekly:
+                                    result.Series[n].Add(expenses[n].Price * 4);
+                                    break;
+
+                                case ScheduleTypes.Daily:
+                                    result.Series[n].Add(expenses[n].Price * DateTime.DaysInMonth(start.Year, start.Month + i));
+                                    break;
+
+                                case ScheduleTypes.Hourly:
+                                    result.Series[n].Add(expenses[n].Price * 672);
+                                    break;
+
+                                default:
+                                    result.Series[n].Add(expenses[n].TimePaid.Month == start.Month + i && i + 1 < 12 ? 0 : expenses[n].Price);
+                                    break;
+                            }
+                        }
+                        break;
+
+                    case ScheduleTypes.Yearly:
+                        for (int i = 0; i < result.Labels.Count; i++)
+                        {
+                            switch (expenses[n].PaySchedule)
+                            {
+                                case ScheduleTypes.Yearly:
+                                    result.Series[n].Add(expenses[n].Price);
+                                    break;
+
+                                case ScheduleTypes.BiYearly:
+                                    result.Series[n].Add(expenses[n].Price * 2);
+                                    break;
+
+                                case ScheduleTypes.Monthly:
+                                    result.Series[n].Add(expenses[n].Price * 12);
+                                    break;
+
+                                case ScheduleTypes.Weekly:
+                                    result.Series[n].Add(expenses[n].Price * 52);
+                                    break;
+
+                                case ScheduleTypes.Daily:
+                                    result.Series[n].Add(expenses[n].Price * 365);
+                                    break;
+
+                                case ScheduleTypes.Hourly:
+                                    result.Series[n].Add(expenses[n].Price * 8064);
+                                    break;
+
+                                default:
+                                    result.Series[n].Add(expenses[n].TimePaid.Year != start.Year ? 0 : expenses[n].Price);
+                                    break;
+                            }
+                        }
+                        break;
+                }
+
+            }
 
 
             return result;
         }
 
-        public Chart<List<int>> GetCombinedChart(string userId, DateTime startDate, DateTime endDate)
+        public Chart<List<decimal>> GetCombinedChart(string userId, DateTime? startDate = null, DateTime? endDate = null, string preferedLabel = null)
         {
-            Chart<List<int>> result = null;
+            Chart<List<decimal>> result = null;
+            ScheduleTypes chartSchedule;
 
+            Chart<List<decimal>> incomeChart = GetIncomeChart(userId, startDate, endDate, preferedLabel);
+            Chart<List<decimal>> expensesChart = GetExpensesChart(userId, startDate, endDate, preferedLabel);
 
+            result.Labels = CalculateLabelRange(out chartSchedule, startDate, endDate, preferedLabel);
+            result.Name = String.Format("Complete {0} Chart", chartSchedule.ToString());
+            result.UserId = userId;
+            result.TypeId = ChartTypes.Line;
+            result.Series = incomeChart.Series.Concat(expensesChart.Series).ToList();
+            result.Legend = incomeChart.Legend.Concat(expensesChart.Legend).ToList();
 
             return result;
         }
@@ -211,16 +448,18 @@ namespace Nostreets_Services.Services.Database
 
         private List<string> CalculateLabelRange(out ScheduleTypes schedule, DateTime? startDate = null, DateTime? endDate = null, string preferedLabels = null)
         {
+            DateTime start = (startDate == null) ? DateTime.Now : startDate.Value,
+                    end = (endDate == null) ? DateTime.Now.Add(new TimeSpan(24, 0, 0)) : endDate.Value;
+
             string[] hourly = new[] { "12AM", "1AM", "2AM", "3AM", "4AM", "5AM", "6AM", "7AM", "8AM", "9AM", "10AM", "11AM", "12PM", "1PM", "2PM", "3PM", "4PM", "5PM", "6PM", "7PM", "8PM", "9PM", "10PM", "11PM" },
-                     daily = DateTimeFormatInfo.CurrentInfo.DayNames,
+                     daily = DateTimeFormatInfo.CurrentInfo.DayNames.Where((a, b) => b >= (int)start.DayOfWeek).Concat(DateTimeFormatInfo.CurrentInfo.DayNames.Where((a, b) => b < (int)start.DayOfWeek)).ToArray(),
                      weekly = new[] { "Week 1" },
-                     monthly = DateTimeFormatInfo.CurrentInfo.MonthNames,
+                     monthly = DateTimeFormatInfo.CurrentInfo.MonthNames.Where((a, b) => b >= start.Month - 1).Concat(DateTimeFormatInfo.CurrentInfo.MonthNames.Where((a, b) => b < start.Month - 1)).ToArray(),
                      yearly = new[] { "Year 1" };
 
             List<string> result = null;
 
-            DateTime start = (startDate == null) ? DateTime.Now : startDate.Value,
-                     end = (endDate == null) ? DateTime.Now.Add(new TimeSpan(24, 0, 0)) : endDate.Value;
+
 
             TimeSpan diff = (end - start);
 
@@ -326,6 +565,74 @@ namespace Nostreets_Services.Services.Database
 
             }
 
+
+            return result;
+        }
+
+        private bool IsPayDay(DateTime intervalDay, ScheduleTypes schedule, Income income = null, Expenses expense = null)
+        {
+            bool result = false;
+
+            switch (schedule)
+            {
+                case ScheduleTypes.Hourly:
+
+                    switch (income.PaySchedule)
+                    {
+                        case ScheduleTypes.Weekly:
+                            if (income != null)
+                            {
+                                result = (income.TimePaid.DayOfWeek == intervalDay.DayOfWeek && income.TimePaid.Hour == intervalDay.Hour) ? true : false;
+                            }
+                            else if (expense != null)
+                            {
+                                result = (expense.TimePaid.DayOfWeek == intervalDay.DayOfWeek && income.TimePaid.Hour == intervalDay.Hour) ? true : false;
+                            }
+                            break;
+
+                        case ScheduleTypes.Daily:
+                            if (income != null)
+                            {
+                                result = (income.TimePaid.Hour == intervalDay.Hour) ? true : false;
+                            }
+                            else if (expense != null)
+                            {
+                                result = (expense.TimePaid.Hour == intervalDay.Hour) ? true : false;
+                            }
+                            break;
+                    }
+                    break;
+
+                case ScheduleTypes.Daily:
+
+                    switch (income.PaySchedule)
+                    {
+
+                        case ScheduleTypes.Monthly:
+                            if (income != null)
+                            {
+                                result = (income.TimePaid.Month == intervalDay.Month && income.TimePaid.Day == intervalDay.Day && income.TimePaid.Hour == intervalDay.Hour) ? true : false;
+                            }
+                            else if (expense != null)
+                            {
+                                result = (expense.TimePaid.Month == intervalDay.Month && income.TimePaid.Day == intervalDay.Day && income.TimePaid.Hour == intervalDay.Hour) ? true : false;
+                            }
+                            break;
+
+                        case ScheduleTypes.Weekly:
+                            if (income != null)
+                            {
+                                result = (income.TimePaid.DayOfWeek == intervalDay.DayOfWeek && income.TimePaid.Hour == intervalDay.Hour) ? true : false;
+                            }
+                            else if (expense != null)
+                            {
+                                result = (expense.TimePaid.DayOfWeek == intervalDay.DayOfWeek && income.TimePaid.Hour == intervalDay.Hour) ? true : false;
+                            }
+                            break;
+                    }
+                    break;
+
+            }
 
             return result;
         }
