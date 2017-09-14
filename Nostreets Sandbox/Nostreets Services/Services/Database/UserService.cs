@@ -18,7 +18,16 @@ namespace Nostreets_Services.Services.Database
 {
     public class UserService : IUserService
     {
-        UserDbContext _context = new UserDbContext();
+        public UserService() {
+            _context = new UserDbContext("DefaultConnection");
+        }
+
+        public UserService(string connectionKey)
+        {
+            _context = new UserDbContext(connectionKey);
+        }
+
+        UserDbContext _context = null;
 
         public bool CheckIfUserExist(string username)
         {

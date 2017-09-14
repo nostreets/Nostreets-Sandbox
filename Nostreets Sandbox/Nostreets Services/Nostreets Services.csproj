@@ -104,6 +104,7 @@
     <Compile Include="Enums\IncomeTypes.cs" />
     <Compile Include="Enums\ScheduleTypes.cs" />
     <Compile Include="Enums\StyledCardTypes.cs" />
+    <Compile Include="Interfaces\Services\IBillService.cs" />
     <Compile Include="Interfaces\Services\ICacheService.cs" />
     <Compile Include="Interfaces\Services\IChartExtended.cs" />
     <Compile Include="Interfaces\Services\IMailChimpService.cs" />

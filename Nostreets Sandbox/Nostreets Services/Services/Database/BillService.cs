@@ -6,25 +6,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nostreets_Services.Enums;
+using Nostreets_Services.Interfaces.Services;
 
 namespace Nostreets_Services.Services.Database
 {
-    public class BillService
+    public class BillService : IBillService
     {
         public BillService()
         {
             _connectionKey = "DefaultConnection";
+            _incomeSrv = new EFDBService<Income>(_connectionKey);
+            _expenseSrv = new EFDBService<Expenses>(_connectionKey);
         }
 
         public BillService(string connectionKey)
         {
             _connectionKey = connectionKey;
+            _incomeSrv = new EFDBService<Income>(_connectionKey);
+            _expenseSrv = new EFDBService<Expenses>(_connectionKey);
         }
 
 
-        private string _connectionKey;
-        private EFDBService<Expenses> _expenseSrv = new EFDBService<Expenses>();
-        private EFDBService<Income> _incomeSrv = new EFDBService<Income>();
+        private string _connectionKey = null;
+        private EFDBService<Expenses> _expenseSrv = null;;
+        private EFDBService<Income> _incomeSrv = null;;
 
         public List<Expenses> GetAllExpenses(string userId)
         {

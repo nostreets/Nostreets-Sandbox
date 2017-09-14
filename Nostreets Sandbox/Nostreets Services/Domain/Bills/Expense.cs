@@ -32,6 +32,9 @@ namespace Nostreets_Services.Domain.Bills
 
         public DateTime TimePaid { get; set; }
 
+        public DateTime BeginDate { get; set; }
+
+        public DateTime EndDate { get; set; }
 
     }
 }
