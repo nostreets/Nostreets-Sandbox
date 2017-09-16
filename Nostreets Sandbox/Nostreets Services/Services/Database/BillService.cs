@@ -28,8 +28,8 @@ namespace Nostreets_Services.Services.Database
 
 
         private string _connectionKey = null;
-        private EFDBService<Expenses> _expenseSrv = null;;
-        private EFDBService<Income> _incomeSrv = null;;
+        private EFDBService<Expenses> _expenseSrv = null;
+        private EFDBService<Income> _incomeSrv = null;
 
         public List<Expenses> GetAllExpenses(string userId)
         {
@@ -41,14 +41,54 @@ namespace Nostreets_Services.Services.Database
             return _incomeSrv.Where((a) => a.UserId == userId).ToList();
         }
 
-        public Expenses GetExpense(string userId, Expenses expense)
+        public Expenses GetExpense(string userId, int id)
         {
-            return _expenseSrv.Where((a) => a.UserId == userId && a.Name == expense.Name).SingleOrDefault();
+            return _expenseSrv.Where((a) => a.UserId == userId && a.Id == id).SingleOrDefault();
         }
 
-        public Income GetIncome(string userId, Income income)
+        public Expenses GetExpense(string userId, string expenseName)
         {
-            return _incomeSrv.Where((a) => a.UserId == userId && a.Name == income.Name).SingleOrDefault();
+            return _expenseSrv.Where((a) => a.UserId == userId && a.Name == expenseName).SingleOrDefault();
+        }
+
+        public List<Expenses> GetExpense(string userId, BillTypes type)
+        {
+            return _expenseSrv.Where((a) => a.UserId == userId && a.BillType == type).ToList();
+        }
+
+        public List<Expenses> GetExpense(string userId, ScheduleTypes type)
+        {
+            return _expenseSrv.Where((a) => a.UserId == userId && a.PaySchedule == type).ToList();
+        }
+
+        public List<Expenses> GetExpense(string userId, BillTypes billType, ScheduleTypes scheduleType)
+        {
+            return _expenseSrv.Where((a) => a.UserId == userId && a.BillType == billType && a.PaySchedule == scheduleType).ToList();
+        }
+
+        public Income GetIncome(string userId, int id)
+        {
+            return _incomeSrv.Where((a) => a.UserId == userId && a.Id == id).SingleOrDefault();
+        }
+
+        public Income GetIncome(string userId, string incomeName)
+        {
+            return _incomeSrv.Where((a) => a.UserId == userId && a.Name == incomeName).SingleOrDefault();
+        }
+
+        public List<Income> GetIncome(string userId, IncomeTypes type)
+        {
+            return _incomeSrv.Where((a) => a.UserId == userId && a.IncomeType == type).ToList();
+        }
+
+        public List<Income> GetIncome(string userId, ScheduleTypes type)
+        {
+            return _incomeSrv.Where((a) => a.UserId == userId && a.PaySchedule == type).ToList();
+        }
+
+        public List<Income> GetIncome(string userId, IncomeTypes incomeType, ScheduleTypes scheduleType)
+        {
+            return _incomeSrv.Where((a) => a.UserId == userId && a.IncomeType == incomeType && a.PaySchedule == scheduleType).ToList();
         }
 
         public Chart<List<decimal>> GetIncomeChart(string userId, DateTime? startDate = null, DateTime? endDate = null, string preferedLabel = null)
@@ -58,7 +98,7 @@ namespace Nostreets_Services.Services.Database
             ScheduleTypes chartSchedule;
 
             DateTime start = (startDate == null) ? DateTime.Now : startDate.Value,
-                     end = (endDate == null) ? DateTime.Now.Add(new TimeSpan(24, 0, 0)) : endDate.Value;
+                     end = (endDate == null) ? DateTime.Now.AddDays(14) : endDate.Value;
 
             TimeSpan diff = (end - start);
 
@@ -71,6 +111,8 @@ namespace Nostreets_Services.Services.Database
 
             for (int n = 0; n < income.Count; n++)
             {
+                if (income[n].IsHiddenOnChart) { continue; }
+
                 result.Series.Add(new List<decimal>());
                 result.Legend.Add(income[n].Name);
 
@@ -234,7 +276,7 @@ namespace Nostreets_Services.Services.Database
             ScheduleTypes chartSchedule;
 
             DateTime start = (startDate == null) ? DateTime.Now : startDate.Value,
-                     end = (endDate == null) ? DateTime.Now.Add(new TimeSpan(24, 0, 0)) : endDate.Value;
+                     end = (endDate == null) ? DateTime.Now.AddDays(14) : endDate.Value;
 
             TimeSpan diff = (end - start);
 
@@ -441,12 +483,12 @@ namespace Nostreets_Services.Services.Database
             _incomeSrv.Update(request);
         }
 
-        public void DeleteExpense(string userId, int id)
+        public void DeleteExpense(int id)
         {
             _expenseSrv.Delete(id);
         }
 
-        public void DeleteIncome(string userId, int id)
+        public void DeleteIncome(int id)
         {
             _incomeSrv.Delete(id);
         }

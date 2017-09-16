@@ -35,7 +35,11 @@
                 templateUrl: '/Scripts/app/templates/bootstrapCardBuilder.html',
                 controller: 'cardBuilderController',
                 controllerAs: 'pg'
-            });;
+            }).when('/billManager', {
+                templateUrl: '/Scripts/app/templates/billManager.html',
+                controller: 'billManagerController',
+                controllerAs: 'pg'
+            });
 
             $locationProvider.html5Mode({
                 enabled: false,

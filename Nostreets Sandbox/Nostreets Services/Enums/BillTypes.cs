@@ -8,6 +8,7 @@ namespace Nostreets_Services.Enums
 {
     public enum BillTypes
     {
+        Any,
         Shelter,
         Food,
         Travel,

@@ -14,13 +14,14 @@ using Nostreets_Services.Models.Request;
 using Nostreets_Services.Services.Database;
 using Nostreets_Services.Services.Web;
 using Nostreets_Sandbox.Models.Responses;
-using Nostreets_Sandbox.Controllers.Attributes;
 using Nostreets_Services.Domain.Cards;
 using Nostreets_Services.Domain;
 using System.Linq;
 using NostreetsORM;
 using NostreetsORM.Interfaces;
-using Nostreets_Services.Providers;
+using Nostreets_Services.Utilities;
+using Nostreets_Services.Domain.Bills;
+using Nostreets_Services.Enums;
 
 namespace Nostreets_Sandbox.Controllers.Api
 {
@@ -31,6 +32,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         ISendGridService _sendGridSrv = null;
         IDBService<StyledCard> _cardSrv = null;
         IUserService _userSrv = null;
+        IBillService _billSrv = null;
 
         public SandoxApiController(/*IDBService<Chart, int, ChartAddRequest, ChartUpdateRequest> chartsInject, ISendGridService sendGridInject*/)
         {
@@ -38,27 +40,42 @@ namespace Nostreets_Sandbox.Controllers.Api
             _sendGridSrv = UnityConfig.GetContainer().Resolve<SendGridService>();
             _cardSrv = UnityConfig.GetContainer().Resolve<DBService<StyledCard>>();
             _userSrv = UnityConfig.GetContainer().Resolve<UserService>();
+            _billSrv = UnityConfig.GetContainer().Resolve<BillService>();
 
         }
 
-        private string GetStringWithinLines(int begining, int ending, string[] file) {
+        private string GetStringWithinLines(int begining, int ending, string[] file)
+        {
 
             string result = null;
-            for (int i = begining - 1; i <= ending; i++) {
+            for (int i = begining - 1; i <= ending; i++)
+            {
                 result += "\r\n" + file[i];
             }
             return result;
         }
 
+        #region User Service Endpoints
         [Route("user/{username}")]
         [HttpGet]
         public HttpResponseMessage LogInUser(string username)
         {
             try
             {
-                if (!_userSrv.CheckIfUserExist(username)){
+                if (!_userSrv.CheckIfUserExist(username))
+                {
                     string id = _userSrv.Insert(new User { UserName = username });
+                    var offset = new DateTimeOffset(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.AddDays(1).Day, DateTime.Now.Hour, 0, 0, default(TimeSpan));
+                    CacheManager.InsertItem("uid", id, offset);
                 }
+                else
+                {
+                    User user = _userSrv.GetByUsername(username);
+                    var offset = new DateTimeOffset(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.AddDays(1).Day, DateTime.Now.Hour, 0, 0, default(TimeSpan));
+                    CacheManager.InsertItem("uid", user.Id, offset);
+                }
+
+
                 ItemResponse<string> response = new ItemResponse<string>(username);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -69,6 +86,341 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        #endregion
+
+        #region Bill Service Endpoints
+        [Route("bill/income/all")]
+        [HttpGet]
+        public HttpResponseMessage GetAllIncome()
+        {
+            try
+            {
+                List<Income> result = null;
+
+                if (!CacheManager.Contains("uid")) { throw new Exception("User is not logged in"); }
+                else
+                {
+                    User user = _userSrv.Get(CacheManager.GetItem<string>("uid"));
+                    result = _billSrv.GetAllIncome(user.Id);
+                }
+
+                ItemsResponse<Income> response = new ItemsResponse<Income>(result);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
+
+        [Route("bill/expenses/all")]
+        [HttpGet]
+        public HttpResponseMessage GetAllExpenses()
+        {
+            try
+            {
+                List<Expenses> result = null;
+
+                if (!CacheManager.Contains("uid")) { throw new Exception("User is not logged in"); }
+                else
+                {
+                    User user = _userSrv.Get(CacheManager.GetItem<string>("uid"));
+                    result = _billSrv.GetAllExpenses(user.Id);
+                }
+
+                ItemsResponse<Expenses> response = new ItemsResponse<Expenses>(result);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
+
+        [Route("bill/income")]
+        [HttpGet]
+        public HttpResponseMessage GetIncome(int id = 0, string name = null, ScheduleTypes scheduleType = ScheduleTypes.Any, IncomeTypes incomeType = IncomeTypes.Any)
+        {
+            try
+            {
+                Income result = null;
+
+                if (!CacheManager.Contains("uid")) { throw new Exception("User is not logged in"); }
+                else
+                {
+                    User user = _userSrv.Get(CacheManager.GetItem<string>("uid"));
+                    result = _billSrv.GetIncome(user.Id, name);
+                }
+
+                ItemResponse<Income> response = new ItemResponse<Income>(result);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
+
+        [Route("bill/expenses")]
+        [HttpGet]
+        public HttpResponseMessage GetExpense(int id = 0, string name = null, ScheduleTypes scheduleType = ScheduleTypes.Any, BillTypes billType = BillTypes.Any)
+        {
+            try
+            {
+                Expenses result = null;
+
+                if (!CacheManager.Contains("uid")) { throw new Exception("User is not logged in"); }
+                else
+                {
+                    User user = _userSrv.Get(CacheManager.GetItem<string>("uid"));
+                    result = _billSrv.GetExpense(user.Id, name);
+                }
+
+                ItemResponse<Expenses> response = new ItemResponse<Expenses>(result);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
+
+        [Route("bill/income/chart")]
+        [HttpGet]
+        public HttpResponseMessage GetIncomeChart(DateTime? startDate = null, DateTime? endDate = null)
+        {
+            try
+            {
+                Chart<List<decimal>> result = null;
+
+                if (!CacheManager.Contains("uid")) { throw new Exception("User is not logged in"); }
+                else
+                {
+                    User user = _userSrv.Get(CacheManager.GetItem<string>("uid"));
+                    result = _billSrv.GetIncomeChart(user.Id);
+                }
+
+                ItemResponse<Chart<List<decimal>>> response = new ItemResponse<Chart<List<decimal>>>(result);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
+
+        [Route("bill/expenses/chart")]
+        [HttpGet]
+        public HttpResponseMessage GetExpensesChart(DateTime? startDate = null, DateTime? endDate = null)
+        {
+            try
+            {
+                Chart<List<decimal>> result = null;
+
+                if (!CacheManager.Contains("uid")) { throw new Exception("User is not logged in"); }
+                else
+                {
+                    User user = _userSrv.Get(CacheManager.GetItem<string>("uid"));
+                    result = _billSrv.GetExpensesChart(user.Id);
+                }
+
+                ItemResponse<Chart<List<decimal>>> response = new ItemResponse<Chart<List<decimal>>>(result);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
+
+        [Route("bill/combined/chart")]
+        [HttpGet]
+        public HttpResponseMessage GetCombinedChart(DateTime? startDate = null, DateTime? endDate = null)
+        {
+            try
+            {
+                Chart<List<decimal>> result = null;
+
+                if (!CacheManager.Contains("uid")) { throw new Exception("User is not logged in"); }
+                else
+                {
+                    User user = _userSrv.Get(CacheManager.GetItem<string>("uid"));
+                    result = _billSrv.GetCombinedChart(user.Id);
+                }
+
+                ItemResponse<Chart<List<decimal>>> response = new ItemResponse<Chart<List<decimal>>>(result);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
+
+        [Route("bill/income")]
+        [HttpPost]
+        public HttpResponseMessage InsertIncome(Income income)
+        {
+            try
+            {
+                BaseResponse response = null;
+
+                if (!CacheManager.Contains("uid"))
+                {
+                    throw new Exception("User is not logged in");
+                }
+                else if (ModelState.IsValid)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest);
+                }
+                else
+                {
+                    User user = _userSrv.Get(CacheManager.GetItem<string>("uid"));
+                    income.UserId = user.Id;
+                    _billSrv.InsertIncome(income);
+                    response = new SuccessResponse();
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
+
+        [Route("bill/expenses")]
+        [HttpPost]
+        public HttpResponseMessage InsertExpense(Expenses expense)
+        {
+            try
+            {
+                BaseResponse response = null;
+
+                if (!CacheManager.Contains("uid"))
+                {
+                    throw new Exception("User is not logged in");
+                }
+                else if (ModelState.IsValid)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest);
+                }
+                else
+                {
+                    User user = _userSrv.Get(CacheManager.GetItem<string>("uid"));
+                    expense.UserId = user.Id;
+                    _billSrv.InsertExpense(expense);
+                    response = new SuccessResponse();
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
+
+        [Route("bill/income")]
+        [HttpPut]
+        public HttpResponseMessage UpdateIncome(Income income)
+        {
+            try
+            {
+                BaseResponse response = null;
+
+                if (ModelState.IsValid)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest);
+                }
+                else
+                {
+                    _billSrv.UpdateIncome(income);
+                    response = new SuccessResponse();
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
+
+        [Route("bill/expenses")]
+        [HttpPut]
+        public HttpResponseMessage UpdateExpense(Expenses expense)
+        {
+            try
+            {
+                BaseResponse response = null;
+                if (ModelState.IsValid)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest);
+                }
+                else
+                {
+                    _billSrv.UpdateExpense(expense);
+                    response = new SuccessResponse();
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
+
+        [Route("bill/income/{id:int}")]
+        [HttpDelete]
+        public HttpResponseMessage DeleteIncome(int id)
+        {
+            try
+            {
+                _billSrv.DeleteIncome(id);
+                SuccessResponse response = new SuccessResponse();
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
+
+        [Route("bill/expenses/{id:int}")]
+        [HttpDelete]
+        public HttpResponseMessage DeleteExpense(int id)
+        {
+            try
+            {
+
+                _billSrv.DeleteExpense(id);
+                SuccessResponse response = new SuccessResponse();
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
+
+        #endregion
+
+        #region Card Service Endpoints
         [Route("cards/all")]
         [HttpGet]
         public HttpResponseMessage GetAllCards()
@@ -190,6 +542,9 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        #endregion
+
+        #region Chart Service Endpoints
         [Route("charts/all")]
         [HttpGet]
         public HttpResponseMessage GetAllCharts()
@@ -362,6 +717,9 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        #endregion
+
+        #region Other Endpoints
         [Route("send/email")]
         [HttpPost]
         public async Task<HttpResponseMessage> SendEmail(Dictionary<string, string> emailRequest)
@@ -428,6 +786,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        #endregion
 
     }
 }

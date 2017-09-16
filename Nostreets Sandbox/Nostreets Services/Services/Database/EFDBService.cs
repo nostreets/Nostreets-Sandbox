@@ -61,10 +61,10 @@ namespace Nostreets_Services.Services.Database
             if (_context.SaveChanges() == 0) { throw new Exception("DB changes not saved!"); }
         }
 
-        public void Update(object model)
+        public void Update(T model)
         {
             T targetedUser = _context.Table.FirstOrDefault(a => a.GetType().GetProperties().GetValue(0) == model.GetType().GetProperties().GetValue(0));
-            targetedUser = (T)model;
+            targetedUser = model;
 
             if (_context.SaveChanges() == 0) { throw new Exception("DB changes not saved!"); }
         }

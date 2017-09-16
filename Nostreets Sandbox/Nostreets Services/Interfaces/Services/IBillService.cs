@@ -14,9 +14,9 @@ namespace Nostreets_Services.Interfaces.Services
 
         List<Income> GetAllIncome(string userId);
 
-        Expenses GetExpense(string userId, Expenses expense);
+        Expenses GetExpense(string userId, string expenseName);
 
-        Income GetIncome(string userId, Income income);
+        Income GetIncome(string userId, string incomeName);
 
         Chart<List<decimal>> GetIncomeChart(string userId, DateTime? startDate = null, DateTime? endDate = null, string preferedLabel = null);
 
@@ -32,8 +32,8 @@ namespace Nostreets_Services.Interfaces.Services
 
         void UpdateIncome(Income request);
 
-        void DeleteExpense(string userId, int id);
+        void DeleteExpense(int id);
 
-        void DeleteIncome(string userId, int id);
+        void DeleteIncome(int id);
     }
 }

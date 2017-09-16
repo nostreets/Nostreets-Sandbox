@@ -36,5 +36,7 @@ namespace Nostreets_Services.Domain.Bills
 
         public DateTime EndDate { get; set; }
 
+        public bool IsHiddenOnChart { get; set; }
+
     }
 }

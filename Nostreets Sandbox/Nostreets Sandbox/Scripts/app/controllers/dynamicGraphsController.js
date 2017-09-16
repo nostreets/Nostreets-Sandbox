@@ -70,7 +70,7 @@
                 });
             }
 
-            $sandboxService.getAllChartsByUser(_chartsResponse, _consoleResponse);
+            $sandboxService.getAllChartsByUser.then(_chartsResponse, _consoleResponse);
         };
 
         function _viewDirectiveCode() {
@@ -437,20 +437,20 @@
                     series: vm.chart.series
                 }
                 if (!vm.chart.chartId) {
-                    $sandboxService.insertChart(model, _idResponse, _consoleResponse);
+                    $sandboxService.insertChart(model).then(_idResponse, _consoleResponse);
                 }
                 else {
                     model.id = vm.chart.chartId;
-                    $sandboxService.updateChart(model, _consoleResponse, _consoleResponse);
+                    $sandboxService.updateChart(model).then(_consoleResponse, _consoleResponse);
                 }
                 vm.saved = true;
-                $sandboxService.getAllChartsByUser(_chartsResponse, _consoleResponse);
+                $sandboxService.getAllChartsByUser.then(_chartsResponse, _consoleResponse);
             }
         }
 
         function _delete(chart) {
             if (chart && chart.chartId) {
-                $sandboxService.deleteChartById(chart.chartId, _refreshResponse, _consoleResponse);
+                $sandboxService.deleteChartById(chart.chartId).then(_refreshResponse, _consoleResponse);
             }
         }
 
@@ -480,7 +480,7 @@
         }
 
         function _refreshResponse() {
-            $sandboxService.getAllChartsByUser(_chartsResponse, _consoleResponse);
+            $sandboxService.getAllChartsByUser.then(_chartsResponse, _consoleResponse);
         }
     }
 

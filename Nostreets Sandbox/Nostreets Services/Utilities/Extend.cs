@@ -191,5 +191,10 @@ namespace Nostreets_Services.Utilities
 
         }
 
+        public static DateTime ToDateTime(this string obj, string format = null)
+        {
+            if (format != null) { return DateTime.ParseExact(obj, format, CultureInfo.InvariantCulture); }
+            else { return Convert.ToDateTime(obj); }
+        }
     }
 }

@@ -8,7 +8,9 @@ namespace Nostreets_Services.Enums
 {
     public enum IncomeTypes
     {
+        Any,
         Paycheck,
+        Residual,
         Product,
         Personal
     }

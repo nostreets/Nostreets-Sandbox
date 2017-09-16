@@ -8,6 +8,9 @@ namespace Nostreets_Services.Enums
 {
     public enum ScheduleTypes
     {
+        Any,
+        Occasionally,
+        Once,
         Yearly,
         BiYearly,
         Monthly,
@@ -15,7 +18,6 @@ namespace Nostreets_Services.Enums
         Weekly,
         Daily,
         Hourly,
-        Occasionally,
-        Once
+        
     }
 }

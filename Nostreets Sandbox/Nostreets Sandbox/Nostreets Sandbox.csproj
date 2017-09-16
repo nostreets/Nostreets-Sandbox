@@ -273,6 +273,7 @@
     <Content Include="assets\img\1400x2000.jpg" />
     <Content Include="assets\img\1920x1280.jpg" />
     <Content Include="assets\img\1920x1280.png" />
+    <Content Include="assets\img\amarkCover.png" />
     <Content Include="assets\img\favicon-16x16.png" />
     <Content Include="assets\img\logo3.png" />
     <Content Include="assets\img\nile4.jpg" />
@@ -416,6 +417,8 @@
     <Content Include="Scripts\angular-toastr.tpls.min.js" />
     <Content Include="Scripts\angularjs-geolocation.min.js" />
     <Content Include="Scripts\app\configs\routeConfig.js" />
+    <Content Include="Scripts\app\controllers\billManagerController.js" />
+    <Content Include="Scripts\app\controllers\cardController.js" />
     <Content Include="Scripts\app\controllers\dynamicGraphsController.js" />
     <Content Include="Scripts\app\controllers\generalControllers.js" />
     <Content Include="Scripts\app\directives\particles.js" />
@@ -431,6 +434,7 @@
     <Content Include="Scripts\app\templates\contact.html" />
     <Content Include="Scripts\app\templates\dynamicGraphs.html" />
     <Content Include="Scripts\app\templates\home.html" />
+    <Content Include="Scripts\app\templates\billManager.html" />
     <Content Include="Scripts\app\templates\pastProjects.html" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />

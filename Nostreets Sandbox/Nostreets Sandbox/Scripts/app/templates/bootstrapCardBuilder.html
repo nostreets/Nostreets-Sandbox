@@ -12,7 +12,7 @@
         <button class="btn btn-simple" ng-click="pg.activateMode('delete')"><i class="material-icons">delete</i></button>
     </div>
     <div class="row">
-        <div ng-repeat="item in pg.cards" ng-class="{'delete': pg.deleteMode, 'update': pg.updateMode,}">
+        <div ng-repeat="item in pg.cards" ng-class="{'delete': pg.deleteMode, 'update': pg.updateMode}">
             <div ng-bind-html="item.html" ng-click="pg.selectElement($index)"></div>
         </div>
     </div>
