@@ -1,7 +1,7 @@
 ﻿<div>
 
     <div class="row text-center">
-        <a class="text-blueish" ng-click="pg.viewCode()">View Code</a>
+        <a class="text-blueish">View Code</a>
     </div>
 
     <div class="row">
@@ -10,6 +10,36 @@
 
     <div class="row">
 
+        <div class="col-xs-10 col-xs-offset-1">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h6>{{ pg.charts[0].name }}</h6>
+                </div>
+                <div id="incomeChart" class="card-content text-center">
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xs-10 col-xs-offset-1">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h6>{{ pg.charts[1].name }}</h6>
+                </div>
+                <div id="expenseChart" class="card-content text-center">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xs-10 col-xs-offset-1">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h6>{{ pg.charts[2].name }}</h6>
+                </div>
+                <div id="combinedChart" class="card-content text-center">
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>

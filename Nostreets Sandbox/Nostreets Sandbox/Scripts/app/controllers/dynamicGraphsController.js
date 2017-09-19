@@ -70,7 +70,7 @@
                 });
             }
 
-            $sandboxService.getAllChartsByUser.then(_chartsResponse, _consoleResponse);
+            $sandboxService.getAllChartsByUser().then(_chartsResponse, _consoleResponse);
         };
 
         function _viewDirectiveCode() {

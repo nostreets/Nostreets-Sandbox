@@ -62,7 +62,7 @@
                     });
                 });
             }
-            $sandboxService.getAllCardsByUser.then(_cardResponse);
+            $sandboxService.getAllCardsByUser().then(_cardResponse);
         }
 
         function _cardResponse(data) {
@@ -128,8 +128,8 @@
                     title: "Do you want to delete this card?",
                     showCancelButton: true
                 }).then(function () {
-                    $sandboxService.deleteCard.then(vm.cards[index].id);
-                    $sandboxService.getAllCardsByUser.then(_cardResponse);
+                    $sandboxService.deleteCard().then(vm.cards[index].id);
+                    $sandboxService.getAllCardsByUser().then(_cardResponse);
                 });
 
             }

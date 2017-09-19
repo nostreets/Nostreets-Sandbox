@@ -8,6 +8,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -196,5 +198,43 @@ namespace Nostreets_Services.Utilities
             if (format != null) { return DateTime.ParseExact(obj, format, CultureInfo.InvariantCulture); }
             else { return Convert.ToDateTime(obj); }
         }
+
+        public static void AddAttribute<T>(this object obj, bool affectClass= true, Dictionary<object, Type> attributeParams = null, FieldInfo[] affectedFields = null) 
+        {
+            Type type = obj.GetType();
+
+            AssemblyName aName = new AssemblyName("SomeNamespace");
+            AssemblyBuilder assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(aName, AssemblyBuilderAccess.Run);
+            ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule(aName.Name);
+            TypeBuilder affectedType = moduleBuilder.DefineType(type.Name + "Proxy", TypeAttributes.Public, type);
+
+
+            Type[] attrParams = attributeParams.Values.ToArray();
+            ConstructorInfo attrConstructor = typeof(T).GetConstructor(attrParams);
+            CustomAttributeBuilder attrBuilder = new CustomAttributeBuilder(attrConstructor, attributeParams.Keys.ToArray());
+
+
+            if (affectClass)
+            {
+                affectedType.SetCustomAttribute(attrBuilder);
+            }
+            else if (affectedFields != null && affectedFields.Length > 1)
+            {
+                foreach (FieldInfo field in affectedFields)
+                {
+                    FieldBuilder firstNameField = affectedType.DefineField(field.Name, field.FieldType, (field.IsPrivate) ? FieldAttributes.Private : FieldAttributes.Public);
+                    firstNameField.SetCustomAttribute(attrBuilder);
+                }
+            }
+
+
+            Type newType = affectedType.CreateType();
+            object instance = Activator.CreateInstance(newType);
+
+
+            obj = instance;
+
+        }
+
     }
 }

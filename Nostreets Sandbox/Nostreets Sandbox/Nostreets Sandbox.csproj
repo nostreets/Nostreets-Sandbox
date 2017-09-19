@@ -219,20 +219,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\ManageViewModels.cs" />
-    <Compile Include="Models\PagedList.cs" />
-    <Compile Include="Models\Responses\BaseResponse.cs" />
-    <Compile Include="Models\Responses\ErrorResponse.cs" />
-    <Compile Include="Models\Responses\ItemResponse.cs" />
-    <Compile Include="Models\Responses\ItemsResponse.cs" />
-    <Compile Include="Models\Responses\SuccessResponse.cs" />
-    <Compile Include="Models\ViewModels\AccountViewModels.cs" />
-    <Compile Include="Models\ViewModels\BaseViewModel.cs" />
-    <Compile Include="Models\ViewModels\ItemViewModel.cs" />
-    <Compile Include="Models\ViewModels\JsViewModel.cs" />
-    <Compile Include="Models\ViewModels\MetaTagViewModel.cs" />
-    <Compile Include="Models\ViewModels\QueryStringViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -568,6 +554,10 @@
     <ProjectReference Include="..\..\..\NostreetsORM\NostreetsORM\NostreetsORM.csproj">
       <Project>{6e132f1c-f285-4535-abee-f02fc0bd18cb}</Project>
       <Name>NostreetsORM</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\NostreetsRouter\NostreetsRouter\NostreetsRouter.csproj">
+      <Project>{8be12d9d-e28f-4276-96ff-228c1fd867b4}</Project>
+      <Name>NostreetsRouter</Name>
     </ProjectReference>
     <ProjectReference Include="..\Nostreets Services\Nostreets Services.csproj">
       <Project>{5574610E-7F20-4793-8D34-3C2C9C1322B8}</Project>

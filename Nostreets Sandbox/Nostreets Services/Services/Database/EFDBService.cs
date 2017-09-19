@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Nostreets_Services.Services.Database
 {
-    class EFDBService<T> : IDBService<T> where T : class
+    public class EFDBService<T> : IDBService<T> where T : class
     {
 
         public EFDBService()
@@ -55,6 +55,100 @@ namespace Nostreets_Services.Services.Database
         public void Delete(object id)
         {
             T obj = _context.Table.FirstOrDefault(a => a.GetType().GetProperties().GetValue(0) == id);
+
+            _context.Table.Remove(obj);
+
+            if (_context.SaveChanges() == 0) { throw new Exception("DB changes not saved!"); }
+        }
+
+        public void Update(T model)
+        {
+            T targetedUser = _context.Table.FirstOrDefault(a => a.GetType().GetProperties().GetValue(0) == model.GetType().GetProperties().GetValue(0));
+            targetedUser = model;
+
+            if (_context.SaveChanges() == 0) { throw new Exception("DB changes not saved!"); }
+        }
+
+        public IEnumerable<T> Where(Func<T, bool> predicate)
+        {
+            return _context.Table.Where(predicate);
+        }
+
+        public IEnumerable<T> Where(Func<T, int, bool> predicate)
+        {
+            return _context.Table.Where(predicate);
+        }
+
+
+        private class EFDbContext<TContext> : DbContext where TContext : class
+        {
+            public EFDbContext()
+                : base("DefaultConnection")
+            { }
+
+            public EFDbContext(string connectionKey)
+                : base(connectionKey)
+            { }
+
+            public EFDbContext(string connectionKey, string tableName)
+                : base(connectionKey)
+            {
+                OnModelCreating(new DbModelBuilder().HasDefaultSchema(tableName));
+            }
+
+            public IDbSet<TContext> Table { get; set; }
+
+        }
+
+    }
+
+    public class EFDBService<T, IdType> : IDBService<T, IdType> where T : class
+    {
+
+        public EFDBService()
+        {
+            _context = new EFDbContext<T>();
+        }
+        public EFDBService(string connectionKey)
+        {
+            _context = new EFDbContext<T>(connectionKey, typeof(T).Name);
+        }
+
+        EFDbContext<T> _context = null;
+
+        public List<T> GetAll()
+        {
+            return _context.Table.ToList();
+        }
+
+        public T Get(IdType id)
+        {
+            T user = _context.Table.FirstOrDefault(a => a.GetType().GetProperties().GetValue(0) == (object)id);
+            return user;
+        }
+
+        public IdType Insert(T model)
+        {
+            var firstPTypeName = model.GetType().GetProperties()[0].GetType().Name;
+
+            if (firstPTypeName.Contains("INT"))
+            {
+                model.GetType().GetProperties().SetValue(GetAll().Count + 1, 0);
+            }
+            else if (firstPTypeName == "GUID")
+            {
+                model.GetType().GetProperties().SetValue(Guid.NewGuid().ToString(), 0);
+            }
+            _context.Table.Add(model);
+
+            if (_context.SaveChanges() == 0) { throw new Exception("DB changes not saved!"); }
+
+            return (IdType)model.GetType().GetProperties().GetValue(0);
+        }
+
+        public void Delete(IdType id)
+        {
+            T obj = _context.Table.FirstOrDefault(a => a.GetType().GetProperties().GetValue(0) == (object)id);
 
             _context.Table.Remove(obj);
 

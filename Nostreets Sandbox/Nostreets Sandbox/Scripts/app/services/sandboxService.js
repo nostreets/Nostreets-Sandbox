@@ -27,12 +27,12 @@
             getCombinedChart: _getCombinedChart,
             insertIncome: _insertIncome,
             getAllIncomes: _getAllIncomes,
-            getIncomeByName: _getIncomeByName,
+            getIncomeByName: _getIncome,
             deleteIncome: _deleteIncome,
             updateIncome: _updateIncome,
             insertExpenses: _insertExpenses,
             getAllExpenses: _getAllExpenses,
-            getExpensesByName: _getExpensesByName,
+            getExpensesByName: _getExpense,
             deleteExpenses: _deleteExpenses,
             updateExpenses: _updateExpenses
         };
@@ -178,7 +178,7 @@
 
         function _getAllIncomes() {
             return $http({
-                url: "/api/bill/income",
+                url: "/api/bill/income/all",
                 method: "GET",
                 headers: { 'Content-Type': 'application/json' }
             });
@@ -230,7 +230,7 @@
 
         function _getAllExpenses() {
             return $http({
-                url: "/api/bill/expenses",
+                url: "/api/bill/expenses/all",
                 method: "GET",
                 headers: { 'Content-Type': 'application/json' }
             });
