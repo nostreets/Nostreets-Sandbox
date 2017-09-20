@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nostreets Services", "Nostr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NostreetsORM", "..\..\NostreetsORM\NostreetsORM\NostreetsORM.csproj", "{6E132F1C-F285-4535-ABEE-F02FC0BD18CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NostreetsRouter", "..\..\NostreetsRouter\NostreetsRouter\NostreetsRouter.csproj", "{8BE12D9D-E28F-4276-96FF-228C1FD867B4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NostreetsRouter", "..\..\NostreetsRouter\NostreetsRouter\NostreetsRouter\NostreetsRouter.csproj", "{7E7127D3-3146-46A4-A72A-B05200A1756E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{6E132F1C-F285-4535-ABEE-F02FC0BD18CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E132F1C-F285-4535-ABEE-F02FC0BD18CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E132F1C-F285-4535-ABEE-F02FC0BD18CB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8BE12D9D-E28F-4276-96FF-228C1FD867B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8BE12D9D-E28F-4276-96FF-228C1FD867B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8BE12D9D-E28F-4276-96FF-228C1FD867B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8BE12D9D-E28F-4276-96FF-228C1FD867B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E7127D3-3146-46A4-A72A-B05200A1756E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E7127D3-3146-46A4-A72A-B05200A1756E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E7127D3-3146-46A4-A72A-B05200A1756E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E7127D3-3146-46A4-A72A-B05200A1756E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

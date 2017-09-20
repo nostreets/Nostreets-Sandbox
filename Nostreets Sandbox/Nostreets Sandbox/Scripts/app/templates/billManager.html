@@ -1,45 +1,152 @@
 ﻿<div>
-
     <div class="row text-center">
         <a class="text-blueish">View Code</a>
     </div>
-
     <div class="row">
         <h2 class="text-center text-primary text-blueish">Bill Manager</h2>
+        <ul class="nav nav-tabs nav-justified">
+            <li class="active" data-target="#incomeTab" ng-click="pg.changeCurrentTab('income')">Income</li>
+            <li class="active" data-target="#expenseTab" ng-click="pg.changeCurrentTab('expense')">Expense</li>
+            <li class="active" data-target="#combinedTab" ng-click="pg.changeCurrentTab('combined')">Combined</li>
+        </ul>
     </div>
-
     <div class="row">
-
-        <div class="col-xs-10 col-xs-offset-1">
-            <div class="card">
-                <div class="card-header text-center">
-                    <h6>{{ pg.charts[0].name }}</h6>
-                </div>
-                <div id="incomeChart" class="card-content text-center">
-
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xs-10 col-xs-offset-1">
-            <div class="card">
-                <div class="card-header text-center">
-                    <h6>{{ pg.charts[1].name }}</h6>
-                </div>
-                <div id="expenseChart" class="card-content text-center">
+        <div class="tab-content">
+            <div id="incomeTab" class="tab-pane active" role="tabpanel">
+                <div class="col-xs-10 col-xs-offset-1">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <h6>{{ pg.charts[0].name }}</h6>
+                        </div>
+                        <div class="card-content text-center">
+                            <div id="incomeChart" class="card-content text-center">
+                            </div>
+                        </div>
+                        <div>
+                            <button ng-click="pg.openInsertModal()">Insert</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <div class="col-xs-10 col-xs-offset-1">
-            <div class="card">
-                <div class="card-header text-center">
-                    <h6>{{ pg.charts[2].name }}</h6>
+            <div id="expenseTab" class="tab-pane" role="tabpanel">
+                <div class="col-xs-10 col-xs-offset-1">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <h6>{{ pg.charts[1].name }}</h6>
+                        </div>
+                        <div class="card-content text-center">
+                            <div id="expenseChart" class="card-content text-center">
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div id="combinedChart" class="card-content text-center">
+            </div>
+            <div id="combinedTab" class="tab-pane" role="tabpanel">
+                <div class="col-xs-10 col-xs-offset-1">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <h6>{{ pg.charts[2].name }}</h6>
+                        </div>
+                        <div class="card-content text-center">
+                            <div id="combinedChart" class="card-content text-center">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
 </div>
+
+
+<script type="text/ng-template" id="modelBillMainMenu.html">
+    <div>
+
+    </div>
+</script>
+
+<script type="text/ng-template" id="modalExpenseBuilder.html">
+    <div class="card modal-body">
+        <form name="form" novalidate>
+            <div class="card-content">
+                <div class="row" align="center">
+                    <div class="col-sm-10">
+                        <span><strong>{{ mc.typeId == "income" ? "Income" : "Expense" }} Name:</strong></span>
+                        <input type="text" class="input-sm" required ng-model="mc.name" />
+                    </div>
+
+
+                    <div class="col-sm-4">
+                        <span><strong>Payment Type:</strong></span>
+                        <select ng-model="mc.typeId">
+                            <option value="income">Income</option>
+                            <option value="expense">Expense</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <span><strong>{{ mc.typeId == "income" ? "Income" : "Expense" }} Type:</strong></span>
+                        <select ng-if="mc.typeId == 'income'" ng-model="mc.incomeType">
+                            <option value="1">Paycheck</option>
+                            <option value="2">Residual</option>
+                            <option value="3">Product</option>
+                            <option value="4">Personal</option>
+                        </select>
+                        <select ng-if="mc.typeId != 'income'" ng-model="mc.incomeType">
+                            <option value="1">Shelter</option>
+                            <option value="2">Food</option>
+                            <option value="3">Travel</option>
+                            <option value="4">Educational</option>
+                            <option value="5">Utilities</option>
+                            <option value="6">Entertaiment</option>
+                            <option value="7">Recreational</option>
+                            <option value="8">Investment</option>
+                            <option value="9">Other</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <span><strong>Schedule Type:</strong></span>
+                        <select ng-model="mc.scheduleType">
+                            <option value="1">Occasionally</option>
+                            <option value="2">Once</option>
+                            <option value="3">Yearly</option>
+                            <option value="4">BiYearly</option>
+                            <option value="5">Monthly</option>
+                            <option value="6">BiWeekly</option>
+                            <option value="7">Weekly</option>
+                            <option value="8">Daily</option>
+                            <option value="9">Hourly</option>
+                        </select>
+                    </div>
+
+                    <div class="col-sm-8">
+                        <span><strong>Date Paid:</strong></span>
+                        <!-- DATEPICKER -->
+                    </div>
+
+
+                    <div class="col-sm-5">
+                        <span><strong>Date Paid:</strong></span>
+                        <!-- DATEPICKER -->
+                    </div><div class="col-sm-5">
+                        <span><strong>Date Paid:</strong></span>
+                        <!-- DATEPICKER -->
+                    </div>
+
+
+                    <button class="btn btn-sm btn-round"
+                            ng-disabled="!mc.name || !mc.typeId || !mc.incomeType || !mc.scheduleType"
+                            ng-click="mc.createLine(mc.points)">
+                        Add {{ mc.typeId == "income" ? "Income" : "Expense" }}!
+                    </button>
+
+                    <button class="btn btn-sm btn-round" ng-click="mc.reset()">
+                        Reset!
+                    </button>
+                    <select>
+                        <option class="checkbox">Hide</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+</script>

@@ -84,49 +84,49 @@
                         _animateGraph(renderedChart, 100);
                     }
 
-                    function _targetMainGraph() {
+                    //function _targetMainGraph() {
 
-                        var id = typeof (data.typeId) === "string" ? parseInt(data.typeId) : data.typeId;
-                        var renderedChart = null;
+                    //    var id = typeof (data.typeId) === "string" ? parseInt(data.typeId) : data.typeId;
+                    //    var renderedChart = null;
 
-                        switch (id) {
-                            case 1:
-                                var options = {
-                                    axisX: {
-                                        labelOffset: {
-                                            x: 0,
-                                            y: 0
-                                        }
-                                    },
-                                    fullWidth: true
-                                };
-                                renderedChart = new Chartist.Line(mainElement, graph, options);
-                                break;
-                            case 2:
-                                var options = {
-                                    axisX: {
-                                        labelOffset: {
-                                            x: 0,
-                                            y: 0
-                                        }
-                                    },
-                                    fullWidth: true
-                                };
-                                renderedChart = new Chartist.Bar(mainElement, graph, options);
-                                break;
-                            case 3:
-                                var options = {
-                                    donut: true,
-                                    showLabel: true,
-                                    donutWidth: 60,
-                                    labelDirection: "explode"
-                                };
-                                renderedChart = new Chartist.Pie(mainElement, graph, options);
-                                break;
-                        }
-                        _animateGraph(renderedChart);
+                    //    switch (id) {
+                    //        case 1:
+                    //            var options = {
+                    //                axisX: {
+                    //                    labelOffset: {
+                    //                        x: 0,
+                    //                        y: 0
+                    //                    }
+                    //                },
+                    //                fullWidth: true
+                    //            };
+                    //            renderedChart = new Chartist.Line(mainElement, graph, options);
+                    //            break;
+                    //        case 2:
+                    //            var options = {
+                    //                axisX: {
+                    //                    labelOffset: {
+                    //                        x: 0,
+                    //                        y: 0
+                    //                    }
+                    //                },
+                    //                fullWidth: true
+                    //            };
+                    //            renderedChart = new Chartist.Bar(mainElement, graph, options);
+                    //            break;
+                    //        case 3:
+                    //            var options = {
+                    //                donut: true,
+                    //                showLabel: true,
+                    //                donutWidth: 60,
+                    //                labelDirection: "explode"
+                    //            };
+                    //            renderedChart = new Chartist.Pie(mainElement, graph, options);
+                    //            break;
+                    //    }
+                    //    _animateGraph(renderedChart);
 
-                    }
+                    //}
 
                     function _animateGraph(chart, time) {
                         // sequence number aside so we can use it in the event callbacks

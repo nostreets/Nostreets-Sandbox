@@ -1,12 +1,19 @@
 ﻿(function () {
 
-    angular.module(page.APPNAME).controller("billManagerController", billManagerController);
+    angular.module(page.APPNAME)
+        .controller("billManagerController", billManagerController)
+        .controller("modalMainMenuController", modalMainMenuController)
+        .controller("modalInsertController", modalInsertController);
 
     billManagerController.$inject = ["$scope", "$baseController", '$uibModal', '$sandboxService'];
+    modalMainMenuController.$inject = ["$scope", "$baseController", '$uibModalInstance', '$uibModal', '$sandboxService', 'data'];
+    modalInsertController.$inject = ["$scope", "$baseController", '$uibModalInstance', '$sandboxService', 'data'];
+
 
     function billManagerController($scope, $baseController, $uibModal, $sandboxService) {
 
         var vm = this;
+        vm.changeCurrentTab = _changeCurrentTab;
 
         _render();
 
@@ -20,6 +27,7 @@
             vm.income = [];
             vm.expenses = [];
             vm.charts = [];
+            vm.currentTab = null;
         }
 
         function _getUserData() {
@@ -33,7 +41,7 @@
 
             for (var chart in vm.charts) {
                 _targetGraph((chart.value.name.includes("income")) ? "income" : (chart.value.name.includes("expense")) ? "expense" : "combined",
-                    (chart.value.name.includes("income")) ? "incomeChart" : (chart.value.name.includes("expense")) ? "expenseChart" : "combinedChart" );
+                    (chart.value.name.includes("income")) ? "incomeChart" : (chart.value.name.includes("expense")) ? "expenseChart" : "combinedChart");
             }
 
         }
@@ -317,6 +325,205 @@
             });
 
         }
+
+        function _changeCurrentTab(tab) {
+            vm.currentTab = tab;
+        }
+
+        function _openMainMenuModal(typeId) {
+
+            switch (typeId) {
+                case "income":
+                    _getAllIncome();
+                    var modalInstance = $uibModal.open({
+                        animation: true
+                        , templateUrl: "modalExpenseBuilder.html"
+                        , controller: "modalMainMenuController as mm"
+                        , size: "lg"
+                        , resolve: {
+                            code: function () {
+                                return vm.income;
+                            }
+                        }
+                    });
+                    break;
+
+                case "expense":
+                    _getAllExpense();
+                    var modalInstance = $uibModal.open({
+                        animation: true
+                        , templateUrl: "modalExpenseBuilder.html"
+                        , controller: "modalMainMenuController as mm"
+                        , size: "lg"
+                        , resolve: {
+                            code: function () {
+                                return vm.expenses;
+                            }
+                        }
+                    })
+                    break;
+
+                case "combined":
+                    _getAllExpense();
+                    _getAllIncome();
+                    var newArr = vm.expenses.concat(vm.income);
+                    var modalInstance = $uibModal.open({
+                        animation: true
+                        , templateUrl: "modalExpenseBuilder.html"
+                        , controller: "modalMainMenuController as mm"
+                        , size: "lg"
+                        , resolve: {
+                            code: function () {
+                                return newArr;
+                            }
+                        }
+                    })
+                    break;
+            }
+        }
+
+        function _openInsertModal(data) {
+            var modalInstance = $uibModal.open({
+                animation: true
+                , templateUrl: "modalExpenseBuilder.html"
+                , controller: "modalInsertController as mc"
+                , size: "lg"
+                , resolve: {
+                    code: function () {
+                        return data;
+                    }
+                }
+            });
+        }
+
+        function _openCodeModal(code) {
+            var modalInstance = $uibModal.open({
+                animation: true
+                , templateUrl: "codeModal.html"
+                , controller: "modalCodeController as mc"
+                , size: "lg"
+                , resolve: {
+                    code: function () {
+                        return code;
+                    }
+                }
+            });
+        }
+
+        //Change When Controller is Complete
+        function _getCode() {
+            $baseController.http({
+                url: "api/view/code/dymanicGraphsDirective",
+                method: "GET",
+                responseType: "JSON"
+            }).then(function (data) {
+                _openCodeModal(data.data.item);
+            });
+        }
+    }
+
+    function modalMainMenuController($scope, $baseController, $uibModalInstance, $sandboxService, data) {
+
+        var vm = this;
+        vm.$scope = $scope;
+        vm.$uibModalInstance = $uibModalInstance;
+        vm.submit = _submit;
+        vm.reset = _setUp;
+
+        _startUp();
+
+        function _startUp() {
+            _setUp(graph);
+        }
+
+        function _setUp(item) {
+
+        }
+
+        function _validateData() {
+
+        }
+
+        function _submit() {
+            var chart = {
+                chartId: vm.chartId,
+                labels: vm.labels,
+                lines: vm.items,
+                name: vm.name,
+                typeId: vm.typeId
+            };
+            $rootScope.$broadcast('logGraph', chart);
+            vm.$uibModalInstance.close();
+        }
+
+        function _cancel() {
+            vm.$uibModalInstance.dismiss("cancel");
+        }
+
+        function _onSuccess(data) {
+
+        }
+
+        function _errorResponse(error) {
+            console.log(error);
+        }
+
+        function _consoleResponse(data) {
+            console.log(data);
+        }
+
+    }
+
+    function modalInsertController($scope, $baseController, $uibModalInstance, $sandboxService, data) {
+
+        var vm = this;
+        vm.$scope = $scope;
+        vm.$uibModalInstance = $uibModalInstance;
+        vm.submit = _submit;
+        vm.reset = _setUp;
+
+        _startUp();
+
+        function _startUp() {
+            _setUp(graph);
+        }
+
+        function _setUp(item) {
+
+        }
+
+        function _validateData() {
+
+        }
+
+        function _submit() {
+            var chart = {
+                chartId: vm.chartId,
+                labels: vm.labels,
+                lines: vm.items,
+                name: vm.name,
+                typeId: vm.typeId
+            };
+            $rootScope.$broadcast('logGraph', chart);
+            vm.$uibModalInstance.close();
+        }
+
+        function _cancel() {
+            vm.$uibModalInstance.dismiss("cancel");
+        }
+
+        function _onSuccess(data) {
+
+        }
+
+        function _errorResponse(error) {
+            console.log(error);
+        }
+
+        function _consoleResponse(data) {
+            console.log(data);
+        }
+
     }
 
 })();

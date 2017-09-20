@@ -30,6 +30,7 @@ namespace Nostreets_Services.Domain.Bills
         [Required]
         public ScheduleTypes PaySchedule { get; set; }
 
+        [Required]
         public DateTime TimePaid { get; set; }
 
         public DateTime BeginDate { get; set; }

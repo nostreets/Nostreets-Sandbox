@@ -199,7 +199,7 @@ namespace Nostreets_Services.Utilities
             else { return Convert.ToDateTime(obj); }
         }
 
-        public static void AddAttribute<T>(this object obj, bool affectClass= true, Dictionary<object, Type> attributeParams = null, FieldInfo[] affectedFields = null) 
+        public static void AddAttribute<T>(this object obj, bool affectThisObj = true, Dictionary<object, Type> attributeParams = null, FieldInfo[] affectedFields = null) where T : Attribute
         {
             Type type = obj.GetType();
 
@@ -214,7 +214,7 @@ namespace Nostreets_Services.Utilities
             CustomAttributeBuilder attrBuilder = new CustomAttributeBuilder(attrConstructor, attributeParams.Keys.ToArray());
 
 
-            if (affectClass)
+            if (affectThisObj)
             {
                 affectedType.SetCustomAttribute(attrBuilder);
             }

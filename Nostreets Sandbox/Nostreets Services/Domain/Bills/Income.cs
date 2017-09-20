@@ -29,6 +29,7 @@ namespace Nostreets_Services.Domain.Bills
         [Required]
         public IncomeTypes IncomeType { get; set; }
 
+        [Required]
         public DateTime TimePaid { get; set; }
 
         public DateTime BeginDate { get; set; }
