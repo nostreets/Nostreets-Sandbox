@@ -20,7 +20,7 @@ namespace Nostreets_Services.Models.Requests
         public decimal Price { get; set; }
 
         [Required]
-        public BillTypes BillType { get; set; }
+        public ExpenseTypes BillType { get; set; }
 
         [Required]
 
@@ -60,7 +60,7 @@ namespace Nostreets_Services.Models.Requests
         public decimal Price { get; set; }
 
         [Required]
-        public BillTypes BillType { get; set; }
+        public ExpenseTypes BillType { get; set; }
 
         [Required]
 

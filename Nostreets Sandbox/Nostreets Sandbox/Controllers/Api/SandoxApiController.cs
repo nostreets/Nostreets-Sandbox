@@ -166,7 +166,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
         [Route("bill/expenses")]
         [HttpGet]
-        public HttpResponseMessage GetExpense(int id = 0, string name = null, ScheduleTypes scheduleType = ScheduleTypes.Any, BillTypes billType = BillTypes.Any)
+        public HttpResponseMessage GetExpense(int id = 0, string name = null, ScheduleTypes scheduleType = ScheduleTypes.Any, ExpenseTypes billType = ExpenseTypes.Any)
         {
             try
             {

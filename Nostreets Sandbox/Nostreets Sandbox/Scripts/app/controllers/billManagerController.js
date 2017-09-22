@@ -32,18 +32,6 @@
 
         function _getUserData() {
 
-             //_getAllExpense().then(
-             //   _getAllIncome().then(
-             //       _getIncomeChart().then(
-             //           _getExpensesChart().then(
-             //               _getCombinedChart().then(
-             //                   null, _getCombinedChart()),
-             //               _getExpensesChart()),
-             //           _getIncomeChart()),
-             //       _getAllIncome()),
-             //   _getAllExpense());
-
-
             _getAllExpense().then(
                 _getAllIncome().then(
                     _getIncomeChart().then(
@@ -67,7 +55,7 @@
                     };
                     vm.charts.push(incomeChart);
                 },
-                (data) => console.log(data)
+                (data) => $baseController.timeout(2000, $sandboxService.getIncomesChart()) //console.log(data)
             );
         }
 
@@ -80,7 +68,7 @@
                     };
                     vm.charts.push(expensesChart);
                 },
-                (data) => console.log(data)
+                (data) => $baseController.timeout(2000, $sandboxService.getExpensesChart()) //console.log(data)
             );
         }
 
@@ -93,35 +81,35 @@
                     };
                     vm.charts.push(combinedChart);
                 },
-                (data) => console.log(data)
+                (data) => $baseController.timeout(2000, $sandboxService.getCombinedChart()) //console.log(data)
             );
         }
 
         function _getAllIncome() {
             return $sandboxService.getAllIncomes().then(
                 (data) => vm.income = data.data.items,
-                (data) => console.log(data)
+                (data) => $baseController.timeout(2000, $sandboxService.getAllIncomes()) //console.log(data)
             );
         }
 
         function _getAllExpense() {
             return $sandboxService.getAllExpenses().then(
                 (data) => vm.expenses = data.data.items,
-                (data) => console.log(data)
+                (data) => $baseController.timeout(2000, $sandboxService.getAllExpenses()) //console.log(data)
             );
         }
 
         function _getIncome(id, name, scheduleType, incomeType) {
             $sandboxService.getIncome(id, name, scheduleType, incomeType).then(
                 (data) => console.log(data),
-                (data) => console.log(data)
+                (data) => $baseController.timeout(2000, $sandboxService.getIncome()) //console.log(data)
             );
         }
 
         function _getExpense(id, name, scheduleType, incomeType) {
             $sandboxService.getExpense(id, name, scheduleType, incomeType).then(
                 (data) => console.log(data),
-                (data) => console.log(data)
+                (data) => $baseController.timeout(2000, $sandboxService.getExpense()) //console.log(data)
             );
         }
 

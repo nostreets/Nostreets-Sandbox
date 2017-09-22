@@ -98,7 +98,7 @@
     <Compile Include="Domain\Newsletter\Members\Member.cs" />
     <Compile Include="Domain\Newsletter\Members\MemberStats.cs" />
     <Compile Include="Domain\Newsletter\UserListStats.cs" />
-    <Compile Include="Enums\BillTypes.cs" />
+    <Compile Include="Enums\ExpenseTypes.cs" />
     <Compile Include="Enums\IncomeTypes.cs" />
     <Compile Include="Enums\ScheduleTypes.cs" />
     <Compile Include="Enums\StyledCardTypes.cs" />
