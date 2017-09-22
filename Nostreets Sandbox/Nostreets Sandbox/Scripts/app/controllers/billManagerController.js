@@ -27,17 +27,29 @@
             vm.income = [];
             vm.expenses = [];
             vm.charts = [];
-            vm.currentTab = null;
+            vm.currentTab = 'income';
         }
 
         function _getUserData() {
 
-            _getAllExpense();
-            _getAllIncome();
+             //_getAllExpense().then(
+             //   _getAllIncome().then(
+             //       _getIncomeChart().then(
+             //           _getExpensesChart().then(
+             //               _getCombinedChart().then(
+             //                   null, _getCombinedChart()),
+             //               _getExpensesChart()),
+             //           _getIncomeChart()),
+             //       _getAllIncome()),
+             //   _getAllExpense());
 
-            _getIncomeChart();
-            _getExpensesChart();
-            _getCombinedChart();
+
+            _getAllExpense().then(
+                _getAllIncome().then(
+                    _getIncomeChart().then(
+                        _getExpensesChart().then(
+                            _getCombinedChart()))));
+
 
             for (var chart in vm.charts) {
                 _targetGraph((chart.value.name.includes("income")) ? "income" : (chart.value.name.includes("expense")) ? "expense" : "combined",
@@ -47,11 +59,11 @@
         }
 
         function _getIncomeChart() {
-            $sandboxService.getIncomeChart().then(
+            return $sandboxService.getIncomesChart().then(
                 (data) => {
                     var incomeChart = {
                         key: "income",
-                        value: data.item
+                        value: data.data.item
                     };
                     vm.charts.push(incomeChart);
                 },
@@ -60,11 +72,11 @@
         }
 
         function _getExpensesChart() {
-            $sandboxService.getExpensesChart().then(
+            return $sandboxService.getExpensesChart().then(
                 (data) => {
                     var expensesChart = {
                         type: "expense",
-                        data: data.item
+                        data: data.data.item
                     };
                     vm.charts.push(expensesChart);
                 },
@@ -73,11 +85,11 @@
         }
 
         function _getCombinedChart() {
-            $sandboxService.getCombinedChart().then(
+            return $sandboxService.getCombinedChart().then(
                 (data) => {
                     var combinedChart = {
                         type: "combined",
-                        data: data.item
+                        data: data.data.item
                     };
                     vm.charts.push(combinedChart);
                 },
@@ -86,36 +98,36 @@
         }
 
         function _getAllIncome() {
-            $sandboxService.getAllIncomes().then(
-                (data) => vm.income = data.items,
+            return $sandboxService.getAllIncomes().then(
+                (data) => vm.income = data.data.items,
                 (data) => console.log(data)
             );
         }
 
         function _getAllExpense() {
-            $sandboxService.getAllExpenses().then(
-                (data) => vm.expenses = data.items,
+            return $sandboxService.getAllExpenses().then(
+                (data) => vm.expenses = data.data.items,
                 (data) => console.log(data)
             );
         }
 
         function _getIncome(id, name, scheduleType, incomeType) {
             $sandboxService.getIncome(id, name, scheduleType, incomeType).then(
-                (data) => vm.income.push(data.item),
+                (data) => console.log(data),
                 (data) => console.log(data)
             );
         }
 
         function _getExpense(id, name, scheduleType, incomeType) {
             $sandboxService.getExpense(id, name, scheduleType, incomeType).then(
-                (data) => vm.expenses.puch(data.items),
+                (data) => console.log(data),
                 (data) => console.log(data)
             );
         }
 
         function _insertIncome(model) {
             $sandboxService.insertIncome().then(
-                (data) => vm.expenses = data.items,
+                (data) => console.log(data),
                 (data) => console.log(data)
             );
         }
@@ -332,9 +344,15 @@
 
         function _openMainMenuModal(typeId) {
 
+            var obj = {
+                type: typeId
+            };
+
             switch (typeId) {
                 case "income":
                     _getAllIncome();
+                    obj.items = vm.income;
+
                     var modalInstance = $uibModal.open({
                         animation: true
                         , templateUrl: "modalExpenseBuilder.html"
@@ -342,7 +360,7 @@
                         , size: "lg"
                         , resolve: {
                             code: function () {
-                                return vm.income;
+                                return obj;
                             }
                         }
                     });
@@ -350,6 +368,8 @@
 
                 case "expense":
                     _getAllExpense();
+                    obj.items = vm.expenses;
+
                     var modalInstance = $uibModal.open({
                         animation: true
                         , templateUrl: "modalExpenseBuilder.html"
@@ -357,7 +377,7 @@
                         , size: "lg"
                         , resolve: {
                             code: function () {
-                                return vm.expenses;
+                                return obj;
                             }
                         }
                     })
@@ -367,6 +387,8 @@
                     _getAllExpense();
                     _getAllIncome();
                     var newArr = vm.expenses.concat(vm.income);
+                    obj.items = newArr;
+
                     var modalInstance = $uibModal.open({
                         animation: true
                         , templateUrl: "modalExpenseBuilder.html"
@@ -374,26 +396,12 @@
                         , size: "lg"
                         , resolve: {
                             code: function () {
-                                return newArr;
+                                return obj;
                             }
                         }
                     })
                     break;
             }
-        }
-
-        function _openInsertModal(data) {
-            var modalInstance = $uibModal.open({
-                animation: true
-                , templateUrl: "modalExpenseBuilder.html"
-                , controller: "modalInsertController as mc"
-                , size: "lg"
-                , resolve: {
-                    code: function () {
-                        return data;
-                    }
-                }
-            });
         }
 
         function _openCodeModal(code) {
@@ -422,41 +430,52 @@
         }
     }
 
-    function modalMainMenuController($scope, $baseController, $uibModalInstance, $sandboxService, data) {
+    function modalMainMenuController($scope, $baseController, $uibModalInstance, $uibModal, $sandboxService, data) {
 
         var vm = this;
         vm.$scope = $scope;
         vm.$uibModalInstance = $uibModalInstance;
-        vm.submit = _submit;
-        vm.reset = _setUp;
+        vm.openInsertModal = _openInsertModal;
 
-        _startUp();
+        _render();
 
-        function _startUp() {
-            _setUp(graph);
+        function _render() {
+            _setUp(data);
         }
 
-        function _setUp(item) {
-
+        function _setUp(data) {
+            if (data) {
+                vm.type = data.type;
+                vm.items = data.items || [];
+            }
         }
 
-        function _validateData() {
+        function _openInsertModal(data) {
 
-        }
-
-        function _submit() {
-            var chart = {
-                chartId: vm.chartId,
-                labels: vm.labels,
-                lines: vm.items,
-                name: vm.name,
-                typeId: vm.typeId
+            var obj = {
+                type: vm.type,
+                name: data.name,
+                price: data.price,
+                paySchedule: data.paySchedule,
+                timePaid: new Date(data.timePaid) || new Date(),
+                beginDate: new Date(data.beginDate) || new Date(),
+                endDate: new Date(data.endDate) || new Date()
             };
-            $rootScope.$broadcast('logGraph', chart);
-            vm.$uibModalInstance.close();
+
+            var modalInstance = $uibModal.open({
+                animation: true
+                , templateUrl: "modalExpenseBuilder.html"
+                , controller: "modalInsertController as mc"
+                , size: "lg"
+                , resolve: {
+                    code: function () {
+                        return obj;
+                    }
+                }
+            });
         }
 
-        function _cancel() {
+        function _close() {
             vm.$uibModalInstance.dismiss("cancel");
         }
 
@@ -464,14 +483,9 @@
 
         }
 
-        function _errorResponse(error) {
-            console.log(error);
-        }
-
         function _consoleResponse(data) {
             console.log(data);
         }
-
     }
 
     function modalInsertController($scope, $baseController, $uibModalInstance, $sandboxService, data) {
@@ -482,18 +496,20 @@
         vm.submit = _submit;
         vm.reset = _setUp;
 
-        _startUp();
+        _render();
 
-        function _startUp() {
-            _setUp(graph);
+        function _render() {
+            _setUp(data);
         }
 
-        function _setUp(item) {
-
-        }
-
-        function _validateData() {
-
+        function _setUp(data) {
+            vm.type = data.type;
+            vm.name = data.name;
+            vm.price = data.price;
+            vm.paySchedule = data.paySchedule
+            vm.timePaid = data.timePaid;
+            vm.beginDate = data.beginDate;
+            vm.endDate = data.endDate;
         }
 
         function _submit() {

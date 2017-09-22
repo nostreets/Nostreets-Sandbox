@@ -23,7 +23,7 @@
 
 
             getIncomesChart: _getIncomesChart,
-            getExpenseChart: _getExpenseChart,
+            getExpensesChart: _getExpenseChart,
             getCombinedChart: _getCombinedChart,
             insertIncome: _insertIncome,
             getAllIncomes: _getAllIncomes,

@@ -13,92 +13,106 @@ namespace Nostreets_Services.Services.Database
 
         public EFDBService()
         {
-            _context = new EFDbContext<T>();
-        }
-        public EFDBService(string connectionKey)
-        {
-            _context = new EFDbContext<T>(connectionKey, typeof(T).Name);
         }
 
-        EFDbContext<T> _context = null;
+        public EFDBService(string connectionKey)
+        {
+            _connectionKey = connectionKey;
+        }
+
+        private string _connectionKey = "DefaultConnection";
+        private EFDbContext<T> _context = null;
 
         public List<T> GetAll()
         {
-            return _context.Table.ToList();
+            List<T> result = null;
+            using (_context = new EFDbContext<T>(_connectionKey, typeof(T).Name))
+            {
+                result = _context.Table.ToList(); 
+            }
+            return result;
         }
 
         public T Get(object id)
         {
-            T user = _context.Table.FirstOrDefault(a => a.GetType().GetProperties().GetValue(0) == id);
-            return user;
+            T result = null;
+            using (_context = new EFDbContext<T>(_connectionKey, typeof(T).Name))
+            {
+                result = _context.Table.FirstOrDefault(a => a.GetType().GetProperties().GetValue(0) == id);
+            }
+            return result;
         }
 
         public object Insert(T model)
         {
-            var firstPTypeName = model.GetType().GetProperties()[0].GetType().Name;
-
-            if (firstPTypeName.Contains("INT"))
+            object result = null;
+            using (_context = new EFDbContext<T>(_connectionKey, typeof(T).Name))
             {
-                model.GetType().GetProperties().SetValue(GetAll().Count + 1, 0);
-            }
-            else if (firstPTypeName == "GUID")
-            {
-                model.GetType().GetProperties().SetValue(Guid.NewGuid().ToString(), 0);
-            }
-            _context.Table.Add(model);
+                var firstPTypeName = model.GetType().GetProperties()[0].GetType().Name;
 
-            if (_context.SaveChanges() == 0) { throw new Exception("DB changes not saved!"); }
+                if (firstPTypeName.Contains("INT"))
+                {
+                    model.GetType().GetProperties().SetValue(GetAll().Count + 1, 0);
+                }
+                else if (firstPTypeName == "GUID")
+                {
+                    model.GetType().GetProperties().SetValue(Guid.NewGuid().ToString(), 0);
+                }
+                _context.Table.Add(model);
 
-            return model.GetType().GetProperties().GetValue(0);
+                if (_context.SaveChanges() == 0) { throw new Exception("DB changes not saved!"); }
+
+                result = model.GetType().GetProperties().GetValue(0);
+            }
+
+            return result;
         }
 
         public void Delete(object id)
         {
-            T obj = _context.Table.FirstOrDefault(a => a.GetType().GetProperties().GetValue(0) == id);
+            using (_context = new EFDbContext<T>(_connectionKey, typeof(T).Name))
+            {
+                T obj = _context.Table.FirstOrDefault(a => a.GetType().GetProperties().GetValue(0) == id);
 
-            _context.Table.Remove(obj);
+                _context.Table.Remove(obj);
 
-            if (_context.SaveChanges() == 0) { throw new Exception("DB changes not saved!"); }
+                if (_context.SaveChanges() == 0) { throw new Exception("DB changes not saved!"); } 
+            }
         }
 
         public void Update(T model)
         {
-            T targetedUser = _context.Table.FirstOrDefault(a => a.GetType().GetProperties().GetValue(0) == model.GetType().GetProperties().GetValue(0));
-            targetedUser = model;
-
-            if (_context.SaveChanges() == 0) { throw new Exception("DB changes not saved!"); }
-        }
-
-        public IEnumerable<T> Where(Func<T, bool> predicate)
-        {
-            return _context.Table.Where(predicate);
-        }
-
-        public IEnumerable<T> Where(Func<T, int, bool> predicate)
-        {
-            return _context.Table.Where(predicate);
-        }
-
-
-        private class EFDbContext<TContext> : DbContext where TContext : class
-        {
-            public EFDbContext()
-                : base("DefaultConnection")
-            { }
-
-            public EFDbContext(string connectionKey)
-                : base(connectionKey)
-            { }
-
-            public EFDbContext(string connectionKey, string tableName)
-                : base(connectionKey)
+            using (_context = new EFDbContext<T>(_connectionKey, typeof(T).Name))
             {
-                OnModelCreating(new DbModelBuilder().HasDefaultSchema(tableName));
-            }
+                T targetedUser = _context.Table.FirstOrDefault(a => a.GetType().GetProperties().GetValue(0) == model.GetType().GetProperties().GetValue(0));
+                targetedUser = model;
 
-            public IDbSet<TContext> Table { get; set; }
-
+                if (_context.SaveChanges() == 0) { throw new Exception("DB changes not saved!"); }
+            } 
         }
+
+        public List<T> Where(Func<T, bool> predicate)
+        {
+            List<T> result = null;
+            using (_context = new EFDbContext<T>(_connectionKey, typeof(T).Name))
+            {
+                result = _context.Table.Where(predicate).ToList(); 
+            }
+            return result;
+        }
+
+        public List<T> Where(Func<T, int, bool> predicate)
+        {
+            List<T> result = null;
+            using (_context = new EFDbContext<T>(_connectionKey, typeof(T).Name))
+            {
+                result = _context.Table.Where(predicate).ToList();
+            }
+            return result;
+        }
+
+
+        
 
     }
 
@@ -107,92 +121,123 @@ namespace Nostreets_Services.Services.Database
 
         public EFDBService()
         {
-            _context = new EFDbContext<T>();
-        }
-        public EFDBService(string connectionKey)
-        {
-            _context = new EFDbContext<T>(connectionKey, typeof(T).Name);
         }
 
-        EFDbContext<T> _context = null;
+        public EFDBService(string connectionKey)
+        {
+            _connectionKey = connectionKey;
+        }
+
+        private string _connectionKey = "DefaultConnection";
+        private EFDbContext<T> _context = null;
 
         public List<T> GetAll()
         {
-            return _context.Table.ToList();
+            List<T> result = null;
+            using (_context = new EFDbContext<T>(_connectionKey, typeof(T).Name))
+            {
+                result = _context.Table.ToList();
+            }
+            return result;
         }
 
         public T Get(IdType id)
         {
-            T user = _context.Table.FirstOrDefault(a => a.GetType().GetProperties().GetValue(0) == (object)id);
-            return user;
+            T result = null;
+            using (_context = new EFDbContext<T>(_connectionKey, typeof(T).Name))
+            {
+                result = _context.Table.FirstOrDefault(a => a.GetType().GetProperties().GetValue(0) == (object)id);
+            }
+            return result;
         }
 
         public IdType Insert(T model)
         {
-            var firstPTypeName = model.GetType().GetProperties()[0].GetType().Name;
-
-            if (firstPTypeName.Contains("INT"))
+            IdType result = default(IdType);
+            using (_context = new EFDbContext<T>(_connectionKey, typeof(T).Name))
             {
-                model.GetType().GetProperties().SetValue(GetAll().Count + 1, 0);
-            }
-            else if (firstPTypeName == "GUID")
-            {
-                model.GetType().GetProperties().SetValue(Guid.NewGuid().ToString(), 0);
-            }
-            _context.Table.Add(model);
+                var firstPTypeName = model.GetType().GetProperties()[0].GetType().Name;
 
-            if (_context.SaveChanges() == 0) { throw new Exception("DB changes not saved!"); }
+                if (firstPTypeName.Contains("INT"))
+                {
+                    model.GetType().GetProperties().SetValue(GetAll().Count + 1, 0);
+                }
+                else if (firstPTypeName == "GUID")
+                {
+                    model.GetType().GetProperties().SetValue(Guid.NewGuid().ToString(), 0);
+                }
+                _context.Table.Add(model);
 
-            return (IdType)model.GetType().GetProperties().GetValue(0);
+                if (_context.SaveChanges() == 0) { throw new Exception("DB changes not saved!"); }
+
+                result = (IdType)model.GetType().GetProperties().GetValue(0);
+            }
+
+            return result;
         }
 
         public void Delete(IdType id)
         {
-            T obj = _context.Table.FirstOrDefault(a => a.GetType().GetProperties().GetValue(0) == (object)id);
+            using (_context = new EFDbContext<T>(_connectionKey, typeof(T).Name))
+            {
+                T obj = _context.Table.FirstOrDefault(a => a.GetType().GetProperties().GetValue(0) == (object)id);
 
-            _context.Table.Remove(obj);
+                _context.Table.Remove(obj);
 
-            if (_context.SaveChanges() == 0) { throw new Exception("DB changes not saved!"); }
+                if (_context.SaveChanges() == 0) { throw new Exception("DB changes not saved!"); }
+            }
         }
 
         public void Update(T model)
         {
-            T targetedUser = _context.Table.FirstOrDefault(a => a.GetType().GetProperties().GetValue(0) == model.GetType().GetProperties().GetValue(0));
-            targetedUser = model;
+            using (_context = new EFDbContext<T>(_connectionKey, typeof(T).Name))
+            {
+                T targetedUser = _context.Table.FirstOrDefault(a => a.GetType().GetProperties().GetValue(0) == model.GetType().GetProperties().GetValue(0));
+                targetedUser = model;
 
-            if (_context.SaveChanges() == 0) { throw new Exception("DB changes not saved!"); }
+                if (_context.SaveChanges() == 0) { throw new Exception("DB changes not saved!"); }
+            }
         }
 
         public IEnumerable<T> Where(Func<T, bool> predicate)
         {
-            return _context.Table.Where(predicate);
+            IEnumerable<T> result = null;
+            using (_context = new EFDbContext<T>(_connectionKey, typeof(T).Name))
+            {
+                result = _context.Table.Where(predicate);
+            }
+            return result;
         }
 
         public IEnumerable<T> Where(Func<T, int, bool> predicate)
         {
-            return _context.Table.Where(predicate);
-        }
-
-
-        private class EFDbContext<TContext> : DbContext where TContext : class
-        {
-            public EFDbContext()
-                : base("DefaultConnection")
-            { }
-
-            public EFDbContext(string connectionKey)
-                : base(connectionKey)
-            { }
-
-            public EFDbContext(string connectionKey, string tableName)
-                : base(connectionKey)
+            IEnumerable<T> result = null;
+            using (_context = new EFDbContext<T>(_connectionKey, typeof(T).Name))
             {
-                OnModelCreating(new DbModelBuilder().HasDefaultSchema(tableName));
+                result = _context.Table.Where(predicate);
             }
-
-            public IDbSet<TContext> Table { get; set; }
-
+            return result;
         }
+
+    }
+
+    class EFDbContext<TContext> : DbContext where TContext : class
+    {
+        public EFDbContext()
+            : base("DefaultConnection")
+        { }
+
+        public EFDbContext(string connectionKey)
+            : base(connectionKey)
+        { }
+
+        public EFDbContext(string connectionKey, string tableName)
+            : base(connectionKey)
+        {
+            OnModelCreating(new DbModelBuilder().HasDefaultSchema(tableName));
+        }
+
+        public IDbSet<TContext> Table { get; set; }
 
     }
 }

@@ -33,12 +33,16 @@ namespace Nostreets_Services.Services.Database
 
         public List<Expenses> GetAllExpenses(string userId)
         {
-            return _expenseSrv.Where((a) => a.UserId == userId).ToList();
+            List<Expenses> expenses = _expenseSrv.Where((a) => a.UserId == userId).ToList();
+            expenses.Sort((a, b) => DateTime.Compare(a.DateModified, b.DateModified));
+            return expenses;
         }
 
         public List<Income> GetAllIncome(string userId)
         {
-            return _incomeSrv.Where((a) => a.UserId == userId).ToList();
+            List<Income> incomes = _incomeSrv.Where((a) => a.UserId == userId).ToList();
+            incomes.Sort((a, b) => DateTime.Compare(a.DateModified, b.DateModified));
+            return incomes;
         }
 
         public Expenses GetExpense(string userId, int id)
@@ -51,9 +55,9 @@ namespace Nostreets_Services.Services.Database
             return _expenseSrv.Where((a) => a.UserId == userId && a.Name == expenseName).SingleOrDefault();
         }
 
-        public List<Expenses> GetExpense(string userId, BillTypes type)
+        public List<Expenses> GetExpense(string userId, ExpenseTypes type)
         {
-            return _expenseSrv.Where((a) => a.UserId == userId && a.BillType == type).ToList();
+            return _expenseSrv.Where((a) => a.UserId == userId && a.ExpenseType == type).ToList();
         }
 
         public List<Expenses> GetExpense(string userId, ScheduleTypes type)
@@ -61,9 +65,9 @@ namespace Nostreets_Services.Services.Database
             return _expenseSrv.Where((a) => a.UserId == userId && a.PaySchedule == type).ToList();
         }
 
-        public List<Expenses> GetExpense(string userId, BillTypes billType, ScheduleTypes scheduleType)
+        public List<Expenses> GetExpense(string userId, ExpenseTypes billType, ScheduleTypes scheduleType)
         {
-            return _expenseSrv.Where((a) => a.UserId == userId && a.BillType == billType && a.PaySchedule == scheduleType).ToList();
+            return _expenseSrv.Where((a) => a.UserId == userId && a.ExpenseType == billType && a.PaySchedule == scheduleType).ToList();
         }
 
         public Income GetIncome(string userId, int id)
@@ -93,7 +97,7 @@ namespace Nostreets_Services.Services.Database
 
         public Chart<List<decimal>> GetIncomeChart(string userId, DateTime? startDate = null, DateTime? endDate = null, string preferedLabel = null)
         {
-            Chart<List<decimal>> result = null;
+            Chart<List<decimal>> result = new Chart<List<decimal>>(); ;
             List<Income> income = GetAllIncome(userId);
             ScheduleTypes chartSchedule;
 
@@ -102,12 +106,14 @@ namespace Nostreets_Services.Services.Database
 
             TimeSpan diff = (end - start);
 
-            result.Labels = CalculateLabelRange(out chartSchedule, startDate, endDate, preferedLabel);
+            result.Labels = CalculateLabelRange(out chartSchedule, start, end, preferedLabel);
             result.Name = String.Format("Income {0} Chart", chartSchedule.ToString());
             result.TypeId = ChartTypes.Line;
             result.UserId = userId;
 
             if (result.Series == null) { result.Series = new List<List<decimal>>(); }
+            if (result.Legend == null) { result.Legend = new List<string>(); }
+
 
             for (int n = 0; n < income.Count; n++)
             {
@@ -271,7 +277,7 @@ namespace Nostreets_Services.Services.Database
 
         public Chart<List<decimal>> GetExpensesChart(string userId, DateTime? startDate = null, DateTime? endDate = null, string preferedLabel = null)
         {
-            Chart<List<decimal>> result = null;
+            Chart<List<decimal>> result = new Chart<List<decimal>>();
             List<Expenses> expenses = GetAllExpenses(userId);
             ScheduleTypes chartSchedule;
 
@@ -280,12 +286,13 @@ namespace Nostreets_Services.Services.Database
 
             TimeSpan diff = (end - start);
 
-            result.Labels = CalculateLabelRange(out chartSchedule, startDate, endDate, preferedLabel);
+            result.Labels = CalculateLabelRange(out chartSchedule, start, end, preferedLabel);
             result.Name = String.Format("Expenses {0} Chart", chartSchedule.ToString());
             result.TypeId = ChartTypes.Line;
             result.UserId = userId;
 
             if (result.Series == null) { result.Series = new List<List<decimal>>(); }
+            if (result.Legend == null) { result.Legend = new List<string>(); }
 
             for (int n = 0; n < expenses.Count; n++)
             {
@@ -447,13 +454,13 @@ namespace Nostreets_Services.Services.Database
 
         public Chart<List<decimal>> GetCombinedChart(string userId, DateTime? startDate = null, DateTime? endDate = null, string preferedLabel = null)
         {
-            Chart<List<decimal>> result = null;
+            Chart<List<decimal>> result = new Chart<List<decimal>>();
             ScheduleTypes chartSchedule;
 
             Chart<List<decimal>> incomeChart = GetIncomeChart(userId, startDate, endDate, preferedLabel);
             Chart<List<decimal>> expensesChart = GetExpensesChart(userId, startDate, endDate, preferedLabel);
 
-            result.Labels = CalculateLabelRange(out chartSchedule, startDate, endDate, preferedLabel);
+            result.Labels = CalculateLabelRange(out chartSchedule, (startDate != null) ? startDate.Value : DateTime.Now, (endDate != null) ? endDate.Value : DateTime.Now.AddDays(14), preferedLabel);
             result.Name = String.Format("Complete {0} Chart", chartSchedule.ToString());
             result.UserId = userId;
             result.TypeId = ChartTypes.Line;
@@ -493,24 +500,22 @@ namespace Nostreets_Services.Services.Database
             _incomeSrv.Delete(id);
         }
 
-        private List<string> CalculateLabelRange(out ScheduleTypes schedule, DateTime? startDate = null, DateTime? endDate = null, string preferedLabels = null)
+        private List<string> CalculateLabelRange(out ScheduleTypes schedule, DateTime startDate, DateTime endDate, string preferedLabels = null)
         {
-            DateTime start = (startDate == null) ? DateTime.Now : startDate.Value,
-                    end = (endDate == null) ? DateTime.Now.Add(new TimeSpan(24, 0, 0)) : endDate.Value;
-
             string[] hourly = new[] { "12AM", "1AM", "2AM", "3AM", "4AM", "5AM", "6AM", "7AM", "8AM", "9AM", "10AM", "11AM", "12PM", "1PM", "2PM", "3PM", "4PM", "5PM", "6PM", "7PM", "8PM", "9PM", "10PM", "11PM" },
-                     daily = DateTimeFormatInfo.CurrentInfo.DayNames.Where((a, b) => b >= (int)start.DayOfWeek).Concat(DateTimeFormatInfo.CurrentInfo.DayNames.Where((a, b) => b < (int)start.DayOfWeek)).ToArray(),
+                     daily = DateTimeFormatInfo.CurrentInfo.DayNames.Where((a, b) => b >= (int)startDate.DayOfWeek).Concat(DateTimeFormatInfo.CurrentInfo.DayNames.Where((a, b) => b < (int)startDate.DayOfWeek)).ToArray(),
                      weekly = new[] { "Week 1" },
-                     monthly = DateTimeFormatInfo.CurrentInfo.MonthNames.Where((a, b) => b >= start.Month - 1).Concat(DateTimeFormatInfo.CurrentInfo.MonthNames.Where((a, b) => b < start.Month - 1)).ToArray(),
+                     monthly = DateTimeFormatInfo.CurrentInfo.MonthNames.Where((a, b) => b >= startDate.Month - 1).Concat(DateTimeFormatInfo.CurrentInfo.MonthNames.Where((a, b) => b < startDate.Month - 1)).ToArray(),
                      yearly = new[] { "Year 1" };
 
             List<string> result = null;
 
 
 
-            TimeSpan diff = (end - start);
+            TimeSpan diff = (endDate - startDate);
 
             if (result == null) { result = new List<string>(); }
+            if (preferedLabels == null) { preferedLabels = ""; }
 
             if (diff.TotalHours < 168)
             {
@@ -574,29 +579,28 @@ namespace Nostreets_Services.Services.Database
             {
 
                 case ScheduleTypes.Hourly:
-                    for (int i = 24; i < diff.TotalHours; i += 24)
+                    for (int i = 24; i < Math.Round(diff.TotalHours); i += 24)
                     {
                         result.AddRange(hourly);
                     }
                     break;
 
                 case ScheduleTypes.Daily:
-                    for (int i = 1; i < diff.TotalDays; i++)
+                    for (int i = 7; i < Math.Round(diff.TotalDays); i += 7)
                     {
                         result.AddRange(daily);
                     }
                     break;
 
                 case ScheduleTypes.Weekly:
-                    int week = 1;
-                    for (int i = 7; i < diff.TotalDays; i += 7)
+                    for (int i = 1; (i * 7) < Math.Round(diff.TotalDays); i++)
                     {
-                        result.Add("Week" + (++week));
+                        result.Add("Week" + (++i));
                     }
                     break;
 
                 case ScheduleTypes.Monthly:
-                    for (int i = 365; i < diff.TotalDays; i += 365)
+                    for (int i = 365; i < Math.Round(diff.TotalDays); i += 365)
                     {
                         result.AddRange(monthly);
                     }
@@ -604,7 +608,7 @@ namespace Nostreets_Services.Services.Database
 
                 case ScheduleTypes.Yearly:
                     int year = 1;
-                    for (int i = 365; i < diff.TotalDays; i += 365)
+                    for (int i = 365; i < Math.Round(diff.TotalDays); i += 365)
                     {
                         result.Add("Year" + (++year));
                     }

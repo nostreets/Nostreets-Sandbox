@@ -5,9 +5,9 @@
     <div class="row">
         <h2 class="text-center text-primary text-blueish">Bill Manager</h2>
         <ul class="nav nav-tabs nav-justified">
-            <li class="active" data-target="#incomeTab" ng-click="pg.changeCurrentTab('income')">Income</li>
-            <li class="active" data-target="#expenseTab" ng-click="pg.changeCurrentTab('expense')">Expense</li>
-            <li class="active" data-target="#combinedTab" ng-click="pg.changeCurrentTab('combined')">Combined</li>
+            <li class="active"><a data-target="#incomeTab" data-toggle="tab" ng-click="pg.changeCurrentTab('income')">Incomes</a></li>
+            <li><a data-target="#combinedTab" data-toggle="tab" ng-click="pg.changeCurrentTab('combined')">Incomes & Expenses</a></li>
+            <li><a data-target="#expenseTab" data-toggle="tab" ng-click="pg.changeCurrentTab('expense')">Expenses</a></li>
         </ul>
     </div>
     <div class="row">
@@ -22,9 +22,7 @@
                             <div id="incomeChart" class="card-content text-center">
                             </div>
                         </div>
-                        <div>
-                            <button ng-click="pg.openInsertModal()">Insert</button>
-                        </div>
+
                     </div>
                 </div>
             </div>
@@ -38,6 +36,9 @@
                             <div id="expenseChart" class="card-content text-center">
                             </div>
                         </div>
+                        <!--<div>
+                            <button ng-click="pg.openMainmMenuModal('expense')">Expenses</button>
+                        </div>-->
                     </div>
                 </div>
             </div>
@@ -51,47 +52,77 @@
                             <div id="combinedChart" class="card-content text-center">
                             </div>
                         </div>
+                        <!--<div>
+                            <button ng-click="pg.openMainmMenuModal('combined')">Income & Expenses</button>
+                        </div>-->
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <div class="row">
+        <div align="center">
+            <button ng-click="pg.openMainmMenuModal((pg.crrentTab == 'income') ? 'income' : (pg.currentTab == 'expense') ? 'expense' : 'combined')">All {{ (pg.currentTab == 'income') ? 'Income' : (pg.currentTab == 'expense') ? 'Expense' : 'Incomes & Expenses' }}</button>
+        </div>
+    </div>
 </div>
 
-
 <script type="text/ng-template" id="modelBillMainMenu.html">
-    <div>
-
+    <div class="card modal-body">
+        <div class="row">
+            All {{ mm.type == "income" ? "Incomes" : mm.type == "expense" ? "Expenses" : "Income & Expenses" }}
+        </div>
+        <div>
+            <div class="row" ng-repeat="item in mm.items">
+                <div>
+                    <h5>{{ item.name }}</h5>
+                </div>
+                <div>
+                    <strong>{{ item.price }}</strong>
+                </div>
+                <div>
+                    Type: {{ item.itemType }}
+                </div>
+                <div>
+                    Schedule: {{ item.paySchedule }}
+                </div>
+                <div>
+                    Next {{ mm.type == "income" ? "Date Paid" : "Pay Date" }}: {{ item.nextPayDay }}
+                </div>
+                <div>
+                    <input type="checkbox" value="Hide" ng-checked="item.isHiddenOnChart" />
+                    <button class="btn btn-xs btn-success" ng-click="mm.openInsertModal(item)">Edit</button>
+                </div>
+            </div>
+        </div>
     </div>
 </script>
-
 <script type="text/ng-template" id="modalExpenseBuilder.html">
     <div class="card modal-body">
         <form name="form" novalidate>
             <div class="card-content">
                 <div class="row" align="center">
                     <div class="col-sm-10">
-                        <span><strong>{{ mc.typeId == "income" ? "Income" : "Expense" }} Name:</strong></span>
+                        <span><strong>{{ mc.type == "income" ? "Income" : "Expense" }} Name:</strong></span>
                         <input type="text" class="input-sm" required ng-model="mc.name" />
                     </div>
 
-
                     <div class="col-sm-4">
                         <span><strong>Payment Type:</strong></span>
-                        <select ng-model="mc.typeId">
+                        <select ng-model="mc.type">
                             <option value="income">Income</option>
                             <option value="expense">Expense</option>
                         </select>
                     </div>
                     <div class="col-sm-4">
-                        <span><strong>{{ mc.typeId == "income" ? "Income" : "Expense" }} Type:</strong></span>
-                        <select ng-if="mc.typeId == 'income'" ng-model="mc.incomeType">
+                        <span><strong>{{ mc.type == "income" ? "Income" : "Expense" }} Type:</strong></span>
+                        <select ng-if="mc.type == 'income'" ng-model="mc.incomeType">
                             <option value="1">Paycheck</option>
                             <option value="2">Residual</option>
                             <option value="3">Product</option>
                             <option value="4">Personal</option>
                         </select>
-                        <select ng-if="mc.typeId != 'income'" ng-model="mc.incomeType">
+                        <select ng-if="mc.type != 'income'" ng-model="mc.expenseType">
                             <option value="1">Shelter</option>
                             <option value="2">Food</option>
                             <option value="3">Travel</option>
@@ -105,7 +136,7 @@
                     </div>
                     <div class="col-sm-4">
                         <span><strong>Schedule Type:</strong></span>
-                        <select ng-model="mc.scheduleType">
+                        <select ng-model="mc.paySchedule">
                             <option value="1">Occasionally</option>
                             <option value="2">Once</option>
                             <option value="3">Yearly</option>
@@ -117,28 +148,30 @@
                             <option value="9">Hourly</option>
                         </select>
                     </div>
-
                     <div class="col-sm-8">
                         <span><strong>Date Paid:</strong></span>
-                        <!-- DATEPICKER -->
+                        <div style="display:inline-block; min-height:290px;">
+                            <div uib-datepicker ng-model="mc.timePaid" class="well well-sm"></div>
+                        </div>
                     </div>
-
 
                     <div class="col-sm-5">
-                        <span><strong>Date Paid:</strong></span>
-                        <!-- DATEPICKER -->
+                        <span><strong>Beginning Pay Date:</strong></span>
+                        <div style="display:inline-block; min-height:290px;">
+                            <div uib-datepicker ng-model="mc.beginDate" class="well well-sm"></div>
+                        </div>
                     </div><div class="col-sm-5">
-                        <span><strong>Date Paid:</strong></span>
-                        <!-- DATEPICKER -->
+                        <span><strong>Endding Pay Date:</strong></span>
+                        <div style="display:inline-block; min-height:290px;">
+                            <div uib-datepicker ng-model="mc.endDate" class="well well-sm"></div>
+                        </div>
                     </div>
 
-
                     <button class="btn btn-sm btn-round"
-                            ng-disabled="!mc.name || !mc.typeId || !mc.incomeType || !mc.scheduleType"
+                            ng-disabled="!mc.name || !mc.type || (!mc.incomeType && !mc.expenseType) || !mc.paySchedule || mc.timePaid"
                             ng-click="mc.createLine(mc.points)">
-                        Add {{ mc.typeId == "income" ? "Income" : "Expense" }}!
+                        Add {{ mc.type == "income" ? "Income" : "Expense" }}!
                     </button>
-
                     <button class="btn btn-sm btn-round" ng-click="mc.reset()">
                         Reset!
                     </button>
