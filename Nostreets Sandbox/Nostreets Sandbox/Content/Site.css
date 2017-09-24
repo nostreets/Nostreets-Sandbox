@@ -1,4 +1,5 @@
-﻿body {
+﻿
+body {
     background-color: #1e2329 !important;
 }
 
@@ -23,6 +24,19 @@ nav {
 
 a:hover {
     font-weight: 900;
+}
+
+.uib-datepicker .btn-default {
+    background-image: none;
+}
+
+
+    .uib-datepicker .btn-default:hover {
+        box-shadow: 0 14px 26px -12px rgba(163, 134, 175, 0.28), 0 4px 23px 0px rgba(199, 126, 218, 0.42), 0 8px 10px -5px rgba(64, 41, 72, 0.58);
+    }
+
+.uib-datepicker .text-info {
+    color: #fff
 }
 
 .delete .card:hover {
@@ -54,6 +68,7 @@ form > div {
     padding: 0 0 !important;
 }
 
+
 .spin {
     position: relative;
     -webkit-animation-name: spin;
@@ -82,7 +97,6 @@ form > div {
 line.ct-grid {
     stroke: rgba(138, 138, 138, 0.74) !important;
 }
-
 
 foreignObject > span {
     color: rgba(138, 138, 138, 0.74) !important;
@@ -224,6 +238,8 @@ foreignObject > span {
         background: rgba(0, 0, 0, 0.4) !important;
     }
 
+/*#region @medias and @keyframes */
+
 @media only screen and (max-width: 768px) {
     .social_icons {
         text-align: center;
@@ -239,6 +255,7 @@ foreignObject > span {
         margin: 0px 30%;
     }
 }
+
 
 @media only screen and (min-width: 900px) {
 
@@ -354,3 +371,5 @@ foreignObject > span {
         -webkit-transform: rotate(0deg);
     }
 }
+/*#endregion */
+

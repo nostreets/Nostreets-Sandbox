@@ -403,6 +403,7 @@
     <Content Include="Scripts\app\controllers\cardController.js" />
     <Content Include="Scripts\app\controllers\dynamicGraphsController.js" />
     <Content Include="Scripts\app\controllers\generalControllers.js" />
+    <Content Include="Scripts\app\directives\custom-datepicker.js" />
     <Content Include="Scripts\app\directives\particles.js" />
     <Content Include="Scripts\app\directives\renderGraph.js" />
     <Content Include="Scripts\app\directives\templates\cardBuilderModal.html" />

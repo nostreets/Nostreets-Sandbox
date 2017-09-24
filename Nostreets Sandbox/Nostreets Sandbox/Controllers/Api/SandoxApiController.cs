@@ -284,6 +284,8 @@ namespace Nostreets_Sandbox.Controllers.Api
                 {
                     User user = _userSrv.Get(CacheManager.GetItem<string>("uid"));
                     income.UserId = user.Id;
+                    income.DateCreated = DateTime.Now;
+                    income.DateModified = DateTime.Now;
                     _billSrv.InsertIncome(income);
                     response = new SuccessResponse();
                 }
@@ -317,6 +319,8 @@ namespace Nostreets_Sandbox.Controllers.Api
                 {
                     User user = _userSrv.Get(CacheManager.GetItem<string>("uid"));
                     expense.UserId = user.Id;
+                    expense.DateCreated = DateTime.Now;
+                    expense.DateModified = DateTime.Now;
                     _billSrv.InsertExpense(expense);
                     response = new SuccessResponse();
                 }
@@ -344,6 +348,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                 {
+                    income.DateModified = DateTime.Now;
                     _billSrv.UpdateIncome(income);
                     response = new SuccessResponse();
                 }
@@ -370,6 +375,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                 {
+                    expense.DateModified = DateTime.Now;
                     _billSrv.UpdateExpense(expense);
                     response = new SuccessResponse();
                 }

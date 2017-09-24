@@ -6,21 +6,21 @@
         .controller("modalInsertController", modalInsertController);
 
     billManagerController.$inject = ["$scope", "$baseController", '$uibModal', '$sandboxService'];
-    modalMainMenuController.$inject = ["$scope", "$baseController", '$uibModalInstance', '$uibModal', '$sandboxService', 'data'];
-    modalInsertController.$inject = ["$scope", "$baseController", '$uibModalInstance', '$sandboxService', 'data'];
+    modalMainMenuController.$inject = ["$scope", "$baseController", '$uibModalInstance', '$uibModal', 'data'];
+    modalInsertController.$inject = ["$scope", "$baseController", '$uibModalInstance', '$sandboxService', 'model'];
 
 
     function billManagerController($scope, $baseController, $uibModal, $sandboxService) {
 
         var vm = this;
-        vm.changeCurrentTab = _changeCurrentTab;
+        vm.changeCurrentTab = _changeTab;
+        vm.openMainMenuModal = _openMainMenuModal;
 
         _render();
 
         function _render() {
             _setUp();
-            _getUserData();
-
+            _getUserData(_changeTab);
         }
 
         function _setUp() {
@@ -28,22 +28,27 @@
             vm.expenses = [];
             vm.charts = [];
             vm.currentTab = 'income';
+            vm.renderedChart = null;
+
         }
 
-        function _getUserData() {
+        function _getUserData(func) {
 
             _getAllExpense().then(
-                _getAllIncome().then(
-                    _getIncomeChart().then(
-                        _getExpensesChart().then(
-                            _getCombinedChart()))));
+                () => _getAllIncome().then(
+                    () => _getIncomeChart().then(
+                        () => _getExpensesChart().then(
+                            () => _getCombinedChart().then(
+                                () => func()
+                            )))));
+        }
 
-
-            for (var chart in vm.charts) {
-                _targetGraph((chart.value.name.includes("income")) ? "income" : (chart.value.name.includes("expense")) ? "expense" : "combined",
-                    (chart.value.name.includes("income")) ? "incomeChart" : (chart.value.name.includes("expense")) ? "expenseChart" : "combinedChart");
+        function _arrayOfZeros(lengthOfArr) {
+            var arr = [];
+            for (var i = 0; i < lengthOfArr; i++) {
+                arr.push(0);
             }
-
+            return arr;
         }
 
         function _getIncomeChart() {
@@ -63,8 +68,8 @@
             return $sandboxService.getExpensesChart().then(
                 (data) => {
                     var expensesChart = {
-                        type: "expense",
-                        data: data.data.item
+                        key: "expense",
+                        value: data.data.item
                     };
                     vm.charts.push(expensesChart);
                 },
@@ -76,8 +81,8 @@
             return $sandboxService.getCombinedChart().then(
                 (data) => {
                     var combinedChart = {
-                        type: "combined",
-                        data: data.data.item
+                        key: "combined",
+                        value: data.data.item
                     };
                     vm.charts.push(combinedChart);
                 },
@@ -114,10 +119,7 @@
         }
 
         function _insertIncome(model) {
-            $sandboxService.insertIncome().then(
-                (data) => console.log(data),
-                (data) => console.log(data)
-            );
+
         }
 
         function _insertExpense(model) {
@@ -142,7 +144,6 @@
         }
 
         function _targetGraph(type, elementId) {
-
             var options = {
                 axisX: {
                     labelOffset: {
@@ -152,8 +153,27 @@
                 }
             };
 
-            var renderedChart = new Chartist.Line(elementId, vm.charts.map((a) => a.key === type).value, options);
-            _animateGraph(renderedChart, 100);
+            var chart = vm.charts.filter((a) => a.key === type)[0].value;
+            if (chart.series.length === 0) {
+                chart.series.push(_arrayOfZeros(chart.labels.length));
+            }
+
+
+            if (vm.renderedChart === null) {
+                var renderedChart = new Chartist.Line(elementId, chart, options);
+                _animateGraph(renderedChart);
+            }
+            else {
+                $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                    //e.target // newly activated tab
+                    //e.relatedTarget // previous active tab
+                    var renderedChart = new Chartist.Line(elementId, chart, options);
+                    _animateGraph(renderedChart);
+                });
+            }
+
+            vm.renderedChart = chart;
+
         }
 
         function _animateGraph(chart, time) {
@@ -326,70 +346,47 @@
 
         }
 
-        function _changeCurrentTab(tab) {
-            vm.currentTab = tab;
+        function _changeTab(tab) {
+            if (tab) {
+                vm.currentTab = tab;
+            }
+
+            if (vm.currentTab) {
+                _targetGraph(vm.currentTab, ((vm.currentTab === "income") ? "#incomeChart" : (vm.currentTab === "expense") ? "#expenseChart" : "#combinedChart"));
+            }
         }
 
         function _openMainMenuModal(typeId) {
 
-            var obj = {
+            var data = {
                 type: typeId
             };
 
             switch (typeId) {
                 case "income":
-                    _getAllIncome();
-                    obj.items = vm.income;
-
-                    var modalInstance = $uibModal.open({
-                        animation: true
-                        , templateUrl: "modalExpenseBuilder.html"
-                        , controller: "modalMainMenuController as mm"
-                        , size: "lg"
-                        , resolve: {
-                            code: function () {
-                                return obj;
-                            }
-                        }
-                    });
+                    data.items = vm.income;
                     break;
 
                 case "expense":
-                    _getAllExpense();
-                    obj.items = vm.expenses;
-
-                    var modalInstance = $uibModal.open({
-                        animation: true
-                        , templateUrl: "modalExpenseBuilder.html"
-                        , controller: "modalMainMenuController as mm"
-                        , size: "lg"
-                        , resolve: {
-                            code: function () {
-                                return obj;
-                            }
-                        }
-                    })
+                    data.items = vm.expenses;
                     break;
 
                 case "combined":
-                    _getAllExpense();
-                    _getAllIncome();
                     var newArr = vm.expenses.concat(vm.income);
-                    obj.items = newArr;
-
-                    var modalInstance = $uibModal.open({
-                        animation: true
-                        , templateUrl: "modalExpenseBuilder.html"
-                        , controller: "modalMainMenuController as mm"
-                        , size: "lg"
-                        , resolve: {
-                            code: function () {
-                                return obj;
-                            }
-                        }
-                    })
-                    break;
+                    data.items = newArr;
             }
+
+            var modalInstance = $uibModal.open({
+                animation: true
+                , templateUrl: "modelBillMainMenu.html"
+                , controller: "modalMainMenuController as mm"
+                , size: "lg"
+                , resolve: {
+                    data: function () {
+                        return data;
+                    }
+                }
+            });
         }
 
         function _openCodeModal(code) {
@@ -418,7 +415,7 @@
         }
     }
 
-    function modalMainMenuController($scope, $baseController, $uibModalInstance, $uibModal, $sandboxService, data) {
+    function modalMainMenuController($scope, $baseController, $uibModalInstance, $uibModal, data) {
 
         var vm = this;
         vm.$scope = $scope;
@@ -440,14 +437,17 @@
 
         function _openInsertModal(data) {
 
+            data = (data) ? data : {};
+
             var obj = {
                 type: vm.type,
-                name: data.name,
-                price: data.price,
-                paySchedule: data.paySchedule,
-                timePaid: new Date(data.timePaid) || new Date(),
-                beginDate: new Date(data.beginDate) || new Date(),
-                endDate: new Date(data.endDate) || new Date()
+                name: (data.name) ? data.name : null,
+                price: (data.price) ? data.price : null,
+                paySchedule: (data.paySchedule) ? data.paySchedule : null,
+                timePaid: (data.timePaid) ? new Date(data.timePaid) : null, //new Date(),
+                beginDate: (data.beginDate) ? new Date(data.beginDate) : null,// new Date(),
+                endDate: (data.endDate) ? new Date(data.endDate) : null,//new Date(),
+                isHiddenOnChart: (typeof (data.isHiddenOnChart) !== "boolean" && data.isHiddenOnChart == true) ? true : false
             };
 
             var modalInstance = $uibModal.open({
@@ -456,7 +456,7 @@
                 , controller: "modalInsertController as mc"
                 , size: "lg"
                 , resolve: {
-                    code: function () {
+                    model: function () {
                         return obj;
                     }
                 }
@@ -476,48 +476,133 @@
         }
     }
 
-    function modalInsertController($scope, $baseController, $uibModalInstance, $sandboxService, data) {
+    function modalInsertController($scope, $baseController, $uibModalInstance, $sandboxService, model) {
 
         var vm = this;
         vm.$scope = $scope;
         vm.$uibModalInstance = $uibModalInstance;
         vm.submit = _submit;
         vm.reset = _setUp;
+        vm.cancel = _cancel;
+        vm.openDatePicker = _openDatePicker;
 
         _render();
 
         function _render() {
-            _setUp(data);
+            _setUp(model);
         }
 
         function _setUp(data) {
-            vm.type = data.type;
-            vm.name = data.name;
-            vm.price = data.price;
-            vm.paySchedule = data.paySchedule
-            vm.timePaid = data.timePaid;
-            vm.beginDate = data.beginDate;
-            vm.endDate = data.endDate;
+
+            if (!data) { data = {}; }
+
+            vm.type = model.type;
+            vm.id = data.id || 0;
+            vm.name = data.name || null;
+            vm.price = data.price || 0;
+            vm.paySchedule = data.paySchedule || "1";
+            vm.timePaid = data.timePaid || null;
+            vm.beginDate = data.beginDate || null;
+            vm.endDate = data.endDate || null;
+            vm.isHiddenOnChart = data.isHiddenOnChart || "0";
+
+            vm.isTimePaidOpen = false;
+            vm.isBeginDateOpen = false;
+            vm.isEndDateOpen = false;
+
+            switch (model.type) {
+                case "income":
+                    vm.incomeType = data.incomeType || "1";
+                    break;
+
+                case "expense":
+                    vm.expenseType = data.expenseType || "1";
+                    break;
+            }
+
+        }
+
+        function _openDatePicker(prop) {
+            switch (prop) {
+                case "timePaid":
+                    vm.isTimePaidOpen = true;
+                    break;
+
+                case "beginDate":
+                    vm.isBeginDateOpen = true;
+                    break;
+
+                case "endDate":
+                    vm.isEndDateOpen = true;
+                    break;
+            }
         }
 
         function _submit() {
-            var chart = {
-                chartId: vm.chartId,
-                labels: vm.labels,
-                lines: vm.items,
+
+            var obj = {
                 name: vm.name,
-                typeId: vm.typeId
+                paySchedule: vm.paySchedule,
+                timePaid: vm.timePaid,
+                beginDate: (vm.beginDate) ? new Date(vm.beginDate) : null,
+                endDate: (vm.endDate) ? new Date(vm.endDate) : null,
+                isHiddenOnChart: (vm.isHiddenOnChart === "1") ? true : false
             };
-            $rootScope.$broadcast('logGraph', chart);
-            vm.$uibModalInstance.close();
+
+
+            switch (vm.type) {
+                case "income":
+                    obj.incomeType = parseInt(vm.incomeType);
+                    obj.payRate = vm.price;
+
+                    if (vm.id) {
+                        obj.id = vm.id
+                        $sandboxService.updateIncome(obj).then(
+                            () => vm.$uibModalInstance.close(),
+                            () => $sandboxService.updateIncome(obj).then(
+                                () => vm.$uibModalInstance.close(),
+                                (err) => console.log(err)
+                            ));
+                    }
+                    else
+                    {
+                        $sandboxService.insertIncome(obj).then(
+                            () => vm.$uibModalInstance.close(),
+                            (err) => $sandboxService.insertIncome(obj).then(
+                                () => vm.$uibModalInstance.close(),
+                                (err) => console.log(err)
+                            ));
+                    }
+                    break;
+
+                case "expense":
+                    obj.expenseType = parseInt(vm.expenseType);
+                    obj.price = vm.price;
+
+                    if (vm.id) {
+                        obj.id = vm.id
+                        $sandboxService.updateExpense(obj).then(
+                            () => vm.$uibModalInstance.close(),
+                            () => $sandboxService.updateExpense(obj).then(
+                                () => vm.$uibModalInstance.close(),
+                                (err) => console.log(err)
+                            ));
+                    }
+                    else
+                    {
+                        $sandboxService.insertExpense(obj).then(
+                            () => vm.$uibModalInstance.close(),
+                            (err) => $sandboxService.insertExpense(obj).then(
+                                () => vm.$uibModalInstance.close(),
+                                (err) => console.log(err)
+                            ));
+                    }
+                    break;
+            }
         }
 
         function _cancel() {
             vm.$uibModalInstance.dismiss("cancel");
-        }
-
-        function _onSuccess(data) {
-
         }
 
         function _errorResponse(error) {

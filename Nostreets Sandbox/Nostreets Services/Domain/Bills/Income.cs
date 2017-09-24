@@ -31,18 +31,18 @@ namespace Nostreets_Services.Domain.Bills
         public IncomeTypes IncomeType { get; set; }
 
         [Required]
-        public DateTime TimePaid { get; set; }
+        public DateTime? TimePaid { get; set; }
 
         [NotMapped]
-        public DateTime NextPayDay { get; set; }
+        public DateTime? NextPayDay { get; set; }
 
-        public DateTime BeginDate { get; set; }
+        public DateTime? BeginDate { get; set; }
 
-        public DateTime EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
 
-        public DateTime DateCreated { get; set; }
+        public DateTime? DateCreated { get; set; }
 
-        public DateTime DateModified { get; set; }
+        public DateTime? DateModified { get; set; }
 
         public bool IsHiddenOnChart { get; set; }
 
