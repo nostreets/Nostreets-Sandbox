@@ -143,25 +143,35 @@
 
 
 
-        function _getIncomesChart() {
+        function _getIncomesChart(start, end) {
+            var url = "/api/bill/income/chart";
+            url += (start && end) ? "?" : "";
+            url += (!start) ? "" : (end) ? "startDate=" + start + "&endDate=" + end : "startDate=" + start;
+
             return $http({
-                url: "/api/bill/income/chart",
+                url: url,
                 method: "GET",
                 headers: { 'Content-Type': 'application/json' }
             });
         }
 
-        function _getExpenseChart() {
+        function _getExpenseChart(start, end) {
+            var url = "/api/bill/expenses/chart";
+            url += (start && end) ? "?" : "";
+            url += (!start) ? "" : (end) ? "startDate=" + start + "&endDate=" + end : "startDate=" + start;
             return $http({
-                url: "/api/bill/expenses/chart",
+                url: url,
                 method: "GET",
                 headers: { 'Content-Type': 'application/json' }
             });
         }
 
-        function _getCombinedChart() {
+        function _getCombinedChart(start, end) {
+            var url = "/api/bill/combined/chart";
+            url += (start && end) ? "?" : "";
+            url += (!start) ? "" : (end) ? "startDate=" + start + "&endDate=" + end : "startDate=" + start;
             return $http({
-                url: "/api/bill/combined/chart",
+                url: url,
                 method: "GET",
                 headers: { 'Content-Type': 'application/json' }
             });
@@ -190,10 +200,10 @@
 
             var url = "/api/bill/income";
             var isFirst = true;
-            url += (isFirst && id && id != null && typeof (id) === "int") ? "?id=" + id : (id && id != null && typeof (id) === "int") ? "&id=" + id : "";
-            url += (isFirst && name && name != null && typeof (name) === "string") ? "?name=" + name : (name && name != null && typeof (name) === "string") ? "&name=" + name : "";
-            url += (isFirst && scheduleType && scheduleType != null && typeof (scheduleType) === "int") ? "?scheduleType=" + scheduleType : (scheduleType && scheduleType != null && typeof (scheduleType) === "int") ? "&scheduleType=" + scheduleType : "";
-            url += (isFirst && incomeType && incomeType != null && typeof (incomeType) === "int") ? "?incomeType=" + incomeType : (incomeType && incomeType != null && typeof (incomeType) === "int") ? "&incomeType=" + incomeType : "";
+            url += (isFirst && id && id !== null && typeof (id) === "int") ? "?id=" + id : (id && id !== null && typeof (id) === "int") ? "&id=" + id : "";
+            url += (isFirst && name && name !== null && typeof (name) === "string") ? "?name=" + name : (name && name != null && typeof (name) === "string") ? "&name=" + name : "";
+            url += (isFirst && scheduleType && scheduleType !== null && typeof (scheduleType) === "int") ? "?scheduleType=" + scheduleType : (scheduleType && scheduleType !== null && typeof (scheduleType) === "int") ? "&scheduleType=" + scheduleType : "";
+            url += (isFirst && incomeType && incomeType !== null && typeof (incomeType) === "int") ? "?incomeType=" + incomeType : (incomeType && incomeType !== null && typeof (incomeType) === "int") ? "&incomeType=" + incomeType : "";
 
             return $http({
                 url: url,
@@ -242,10 +252,10 @@
 
             var url = "/api/bill/expenses";
             var isFirst = true;
-            url += (isFirst && id && id != null && typeof (id) === "int") ? "?id=" + id : (id && id != null && typeof (id) === "int") ? "&id=" + id : "";
-            url += (isFirst && name && name != null && typeof (name) === "string") ? "?name=" + name : (name && name != null && typeof (name) === "string") ? "&name=" + name : "";
-            url += (isFirst && scheduleType && scheduleType != null && typeof (scheduleType) === "int") ? "?scheduleType=" + scheduleType : (scheduleType && scheduleType != null && typeof (scheduleType) === "int") ? "&scheduleType=" + scheduleType : "";
-            url += (isFirst && billType && billType != null && typeof (billType) === "int") ? "?billType=" + billType : (billType && billType != null && typeof (billType) === "int") ? "&billType=" + billType : "";
+            url += (isFirst && id && id !== null && typeof (id) === "int") ? "?id=" + id : (id && id != null && typeof (id) === "int") ? "&id=" + id : "";
+            url += (isFirst && name && name !== null && typeof (name) === "string") ? "?name=" + name : (name && name !== null && typeof (name) === "string") ? "&name=" + name : "";
+            url += (isFirst && scheduleType && scheduleType !== null && typeof (scheduleType) === "int") ? "?scheduleType=" + scheduleType : (scheduleType && scheduleType !== null && typeof (scheduleType) === "int") ? "&scheduleType=" + scheduleType : "";
+            url += (isFirst && billType && billType !== null && typeof (billType) === "int") ? "?billType=" + billType : (billType && billType !== null && typeof (billType) === "int") ? "&billType=" + billType : "";
 
             return $http({
                 url: url,

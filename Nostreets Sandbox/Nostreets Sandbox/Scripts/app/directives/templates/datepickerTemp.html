@@ -1,0 +1,8 @@
+﻿<div class="ebcs-calendar">
+    <p class="input-group ebcscontrol-long-calendar">
+        <input type="text" class="form-control ebcscontrol-date-input" datepicker-popup="{{rec.calendar.format}}" name="Endorser1DueDate" ng-model="rec.item.eBriefEndorser1DueDate" is-open="rec.calendar.calendars['Endorser1DueDate']" min-date="rec.calendar.minDate" max-date="'2030-12-31'" datepicker-options="rec.calendar.dateOptions" ng-required="true" close-text="Close" />
+        <span class="input-group-btn">
+            <button type="button" class="btn btn-default ecbs-calendar-button" ng-click="rec.calendar.open($event, 'Endorser1DueDate')"><i class="glyphicon glyphicon-calendar"></i></button>
+        </span>
+    </p>
+</div>

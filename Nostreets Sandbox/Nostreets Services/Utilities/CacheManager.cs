@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Caching;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nostreets_Services.Utilities
 {
@@ -49,7 +46,7 @@ namespace Nostreets_Services.Utilities
         {
             if (Contains(key))
             {
-                _instance.Remove(key); 
+                _instance.Remove(key);
             }
 
         }

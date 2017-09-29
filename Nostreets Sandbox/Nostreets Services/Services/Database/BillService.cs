@@ -1,12 +1,13 @@
-﻿using Nostreets_Services.Domain.Bills;
+﻿using NostreetsEntities;
+using Nostreets_Services.Domain.Bills;
 using Nostreets_Services.Domain.Charts;
-using Nostreets_Services.Utilities;
-using System.Globalization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Nostreets_Services.Enums;
 using Nostreets_Services.Interfaces.Services;
+using Nostreets_Services.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 
 namespace Nostreets_Services.Services.Database
 {
@@ -153,7 +154,7 @@ namespace Nostreets_Services.Services.Database
                     case ScheduleTypes.Daily:
                         for (int i = 0; i < result.Labels.Count; i++)
                         {
-                            DateTime intervalDate = start.AddDays(i + 1);
+                            DateTime intervalDate = start.AddDays(i);
                             switch (income[n].PaySchedule)
                             {
                                 case ScheduleTypes.Monthly:
@@ -202,7 +203,12 @@ namespace Nostreets_Services.Services.Database
                                     break;
 
                                 default:
-                                    result.Series[n].Add((income[n].TimePaid.Value > start.AddDays((i) * 7) && income[n].TimePaid.Value < start.AddDays((i + 1) * 7)) ?  income[n].PayRate : 0);
+                                    DateTime beginningOfWeek  = start.AddDays((i) * 7);
+                                    DateTime endingOfWeek = start.AddDays((i + 1) * 7);
+
+                                    result.Series[n].Add(
+                                        (income[n].TimePaid.Value > beginningOfWeek && income[n].TimePaid.Value < endingOfWeek ) 
+                                        ? income[n].PayRate : 0);
                                     break;
                             }
                         }
@@ -522,12 +528,10 @@ namespace Nostreets_Services.Services.Database
 
             List<string> result = null;
 
-
-
             TimeSpan diff = (endDate - startDate);
 
             if (result == null) { result = new List<string>(); }
-            if (preferedLabels == null) { preferedLabels = ""; }
+            if (preferedLabels == null) { preferedLabels = string.Empty; }
 
             if (diff.TotalHours < 168)
             {
@@ -607,7 +611,7 @@ namespace Nostreets_Services.Services.Database
                 case ScheduleTypes.Weekly:
                     for (int i = 1; (i * 7) < Math.Round(diff.TotalDays); i++)
                     {
-                        result.Add("Week" + (++i));
+                        result.Add(startDate.ToShortDateString().Substring(0, 4) + "-" + startDate.AddDays(7).ToShortDateString().Substring(0, 4)); //"Week " + (i));
                     }
                     break;
 
@@ -622,7 +626,7 @@ namespace Nostreets_Services.Services.Database
                     int year = 1;
                     for (int i = 365; i < Math.Round(diff.TotalDays); i += 365)
                     {
-                        result.Add("Year" + (++year));
+                        result.Add("Year " + (++year));
                     }
                     break;
 

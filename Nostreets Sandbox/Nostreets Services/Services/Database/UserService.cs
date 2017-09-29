@@ -1,33 +1,29 @@
-﻿using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin;
-using Microsoft.Owin.Security;
-using Nostreets_Services.Domain;
+﻿using Nostreets_Services.Domain;
 using Nostreets_Services.Interfaces.Services;
-using NostreetsORM.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nostreets_Services.Services.Database
 {
     public class UserService : IUserService
     {
-        public UserService() {
-            _context = new UserDbContext("DefaultConnection");
+        public UserService()
+        {
+            _context = new UserDBContext("DefaultConnection");
         }
 
         public UserService(string connectionKey)
         {
-            _context = new UserDbContext(connectionKey);
+            //var config = new UserMigrationConfig(); //DbMigrationsConfiguration<UserDBContext>();// { AutomaticMigrationsEnabled = true };
+            //var migrator = new DbMigrator(config);
+            //migrator.Update();
+
+            _context = new UserDBContext(connectionKey);
         }
 
-        UserDbContext _context = null;
+        UserDBContext _context = null;
 
         public bool CheckIfUserExist(string username)
         {
@@ -83,4 +79,23 @@ namespace Nostreets_Services.Services.Database
 
     }
 
+
+    public class UserDBContext : DbContext
+    {
+        public UserDBContext()
+            : base("DefaultConnection" /*"AzureDBConnection"*/)
+        {
+        }
+
+        public UserDBContext(string connectionKey)
+            : base(connectionKey)
+        {
+            OnModelCreating(new DbModelBuilder());
+        }
+
+       
+
+
+        public IDbSet<User> Users { get; set; }
+    }
 }

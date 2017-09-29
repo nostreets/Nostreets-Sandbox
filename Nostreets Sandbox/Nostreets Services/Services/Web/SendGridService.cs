@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-using Nostreets_Services.Interfaces.Services;
+﻿using Nostreets_Services.Interfaces.Services;
 using SendGrid;
 using SendGrid.Helpers.Mail;
+using System.Threading.Tasks;
 
 namespace Nostreets_Services.Services.Web
 {

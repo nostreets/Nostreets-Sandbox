@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.16
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nostreets Sandbox", "Nostreets Sandbox\Nostreets Sandbox.csproj", "{98CC2DEE-C321-4BF9-8D29-9E5E1ED60060}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NostreetsORM", "..\..\NostreetsORM\NostreetsORM\NostreetsORM.csproj", "{6E132F1C-F285-4535-ABEE-F02FC0BD18CB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NostreetsRouter", "..\..\NostreetsRouter\NostreetsRouter\NostreetsRouter\NostreetsRouter.csproj", "{7E7127D3-3146-46A4-A72A-B05200A1756E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NostreetsEntities", "..\..\NostreetsEntities\NostreetsEntities.csproj", "{62F716D7-6FC2-48A7-A63A-117C21908A73}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,8 +35,15 @@ Global
 		{7E7127D3-3146-46A4-A72A-B05200A1756E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E7127D3-3146-46A4-A72A-B05200A1756E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E7127D3-3146-46A4-A72A-B05200A1756E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62F716D7-6FC2-48A7-A63A-117C21908A73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62F716D7-6FC2-48A7-A63A-117C21908A73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62F716D7-6FC2-48A7-A63A-117C21908A73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62F716D7-6FC2-48A7-A63A-117C21908A73}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {49EC8EBE-DF7D-4176-A313-2F16D0FC658A}
 	EndGlobalSection
 EndGlobal

@@ -1,16 +1,16 @@
 ﻿using Newtonsoft.Json;
+using NostreetsORM;
 using Nostreets_Services.Domain.Newsletter;
 using Nostreets_Services.Domain.Newsletter.Lists;
 using Nostreets_Services.Domain.Newsletter.Members;
-using Nostreets_Services.Models.Requests;
+using Nostreets_Services.Interfaces.Services;
 using Nostreets_Services.Models;
+using Nostreets_Services.Models.Requests;
 using RestSharp;
 using RestSharp.Authenticators;
 using System;
 using System.Collections.Generic;
 using System.Net;
-using Nostreets_Services.Interfaces.Services;
-using NostreetsORM;
 
 namespace Nostreets_Services.Services.Web
 {

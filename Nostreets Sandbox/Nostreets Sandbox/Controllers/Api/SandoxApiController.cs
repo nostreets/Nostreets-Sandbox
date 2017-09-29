@@ -34,13 +34,13 @@ namespace Nostreets_Sandbox.Controllers.Api
         IUserService _userSrv = null;
         IBillService _billSrv = null;
 
-        public SandoxApiController(/*IDBService<Chart, int, ChartAddRequest, ChartUpdateRequest> chartsInject, ISendGridService sendGridInject*/)
+        public SandoxApiController(IChartsExtended chartsInject, ISendGridService sendGridInject, IDBService<StyledCard> cardInject, IUserService userInject, IBillService billsInject)
         {
-            _chartsSrv = UnityConfig.GetContainer().Resolve<ChartsService>();
-            _sendGridSrv = UnityConfig.GetContainer().Resolve<SendGridService>();
-            _cardSrv = UnityConfig.GetContainer().Resolve<DBService<StyledCard>>();
-            _userSrv = UnityConfig.GetContainer().Resolve<UserService>();
-            _billSrv = UnityConfig.GetContainer().Resolve<BillService>();
+            _chartsSrv = chartsInject;//UnityConfig.GetContainer().Resolve<ChartsService>();
+            _sendGridSrv = sendGridInject;// UnityConfig.GetContainer().Resolve<SendGridService>();
+            _cardSrv = cardInject;//UnityConfig.GetContainer().Resolve<DBService<StyledCard>>();
+            _userSrv = userInject;//UnityConfig.GetContainer().Resolve<UserService>();
+            _billSrv = billsInject;// UnityConfig.GetContainer().Resolve<BillService>();
 
         }
 

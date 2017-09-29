@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using NostreetsORM;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,11 +8,11 @@ using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Management.Automation;
 using System.Net;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace Nostreets_Services.Utilities
 {
@@ -21,19 +22,19 @@ namespace Nostreets_Services.Utilities
         {
             DataTable dataTable = new DataTable();
             //PropertyDescriptorCollection
-              List<PropertyDescriptor> propertyDescriptorCollection = TypeDescriptor.GetProperties(typeof(T)).Cast<PropertyDescriptor>()
-                .Where((a) => a.Name !=  "sCarrier_Method_Desc" && a.Name != "dtFulfilled_DT" ).ToList();
+            List<PropertyDescriptor> propertyDescriptorCollection = TypeDescriptor.GetProperties(typeof(T)).Cast<PropertyDescriptor>()
+              .Where((a) => a.Name != "sCarrier_Method_Desc" && a.Name != "dtFulfilled_DT").ToList();
             foreach (PropertyDescriptor item in propertyDescriptorCollection)
             {
-               
-                    PropertyDescriptor propertyDescriptor = item;
-                    Type type = propertyDescriptor.PropertyType;
 
-                    if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
-                        type = Nullable.GetUnderlyingType(type);
+                PropertyDescriptor propertyDescriptor = item;
+                Type type = propertyDescriptor.PropertyType;
 
-                    dataTable.Columns.Add(propertyDescriptor.Name, type); 
-                
+                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                    type = Nullable.GetUnderlyingType(type);
+
+                dataTable.Columns.Add(propertyDescriptor.Name, type);
+
             }
 
             //new object[propertyDescriptorCollection.Count];
@@ -49,70 +50,24 @@ namespace Nostreets_Services.Utilities
                         : (i == 0)
                         ? id += 1
                         : propertyDescriptorCollection[i].GetValue(iListItem));
-                    
+
                     //values[i] = (propertyDescriptorCollection[i].GetValue(iListItem).GetType() != typeof(string)) ? propertyDescriptorCollection[i].GetValue(iListItem) : DBNull.Value; 
                 }
                 dataTable.Rows.Add(values.ToArray());
-             
+
                 values = null;
             }
             return dataTable;
         }
 
-        public static object HitEndpoint(this object obj, string url, string method = "GET", object data = null, string contentType = "application/json", Dictionary<string, string> headers = null)
+        public static DateTime ToDateTime(this string obj, string format = null)
         {
-            HttpWebRequest requestStream = (HttpWebRequest)WebRequest.Create(url);
-            HttpWebResponse responseStream = null;
-            string responseString, requestString;
-
-            requestStream.ContentType = contentType;
-            requestStream.Method = method;
-
-            foreach (KeyValuePair<string, string> head in headers) {
-                requestStream.Headers.Add(head.Key, head.Value);
-            }
-
-            try
-            {
-                if (data != null)
-                {
-                    if (method == "POST" || method == "PUT" || method == "PATCH")
-                    {
-                        requestString = JsonConvert.SerializeObject(data);
-                        using (Stream stream = requestStream.GetRequestStream())
-                        {
-                            StreamWriter writer = new StreamWriter(stream);
-                            writer.Write(requestString);
-                            writer.Close();
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                return ex;
-            }
-
-            try
-            {
-                using (responseStream = (HttpWebResponse)requestStream.GetResponse())
-                {
-                    using (Stream stream = responseStream.GetResponseStream())
-                    {
-                        StreamReader reader = new StreamReader(stream);
-                        responseString = reader.ReadToEnd();
-                    }
-                    Dictionary<string, dynamic> responseData = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(responseString);
-                    return responseData;
-                }
-            }
-            catch (Exception ex)
-            {
-                return ex;
-            }
+            if (format != null) { return DateTime.ParseExact(obj, format, CultureInfo.InvariantCulture); }
+            else { return Convert.ToDateTime(obj); }
         }
 
-        public static T HitEndpoint<T>(this object obj, string url, string method = "GET", object data = null, string contentType = "application/json", Dictionary<string, string> headers = null) {
+        public static object HitEndpoint(this BaseService obj, string url, string method = "GET", object data = null, string contentType = "application/json", Dictionary<string, string> headers = null)
+        {
             HttpWebRequest requestStream = (HttpWebRequest)WebRequest.Create(url);
             HttpWebResponse responseStream = null;
             string responseString, requestString;
@@ -131,7 +86,21 @@ namespace Nostreets_Services.Utilities
                 {
                     if (method == "POST" || method == "PUT" || method == "PATCH")
                     {
-                        requestString = JsonConvert.SerializeObject(data);
+                        if (contentType == "application/json")
+                        {
+                            requestString = JsonConvert.SerializeObject(data);
+
+
+                        }
+                        else
+                        {
+                            XmlSerializer serial = new XmlSerializer(data.GetType());
+                            StringWriter writer = new StringWriter();
+                            serial.Serialize(writer, data);
+                            requestString = writer.ToString();
+                            writer.Close();
+                        }
+
                         using (Stream stream = requestStream.GetRequestStream())
                         {
                             StreamWriter writer = new StreamWriter(stream);
@@ -143,7 +112,7 @@ namespace Nostreets_Services.Utilities
             }
             catch (Exception ex)
             {
-                throw ex;
+                return ex;
             }
 
             try
@@ -155,7 +124,108 @@ namespace Nostreets_Services.Utilities
                         StreamReader reader = new StreamReader(stream);
                         responseString = reader.ReadToEnd();
                     }
-                    T responseData = JsonConvert.DeserializeObject<T>(responseString);
+
+                    object responseData;
+
+                    if (contentType == "application/json")
+                    {
+                        responseData = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(responseString);
+                    }
+                    else
+                    {
+                        XmlSerializer serial = new XmlSerializer(data.GetType());
+                        StringReader reader = new StringReader(responseString);
+                        responseData = serial.Deserialize(reader);
+                    }
+                    return responseData;
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex;
+            }
+        }
+
+        public static T HitEndpoint<T>(this BaseService obj, string url, string method = "GET", object data = null, string contentType = "application/json", Dictionary<string, string> headers = null)
+        {
+            HttpWebRequest requestStream = (HttpWebRequest)WebRequest.Create(url);
+            HttpWebResponse responseStream = null;
+            string responseString = null,
+                   requestString = null;
+            byte[] bytes = null;
+
+            if (headers == null) { headers = new Dictionary<string, string>(); }
+
+            requestStream.ContentType = contentType;
+            requestStream.Method = method;
+
+            foreach (KeyValuePair<string, string> head in headers)
+            {
+                requestStream.Headers.Add(head.Key, head.Value);
+            }
+
+            try
+            {
+                if (data != null)
+                {
+                    if (method == "POST" || method == "PUT" || method == "PATCH")
+                    {
+                        if (contentType == "application/json")
+                        {
+                            requestString = JsonConvert.SerializeObject(data);
+                        }
+                        else if (contentType == "text/xml; encoding='utf-8'")
+                        {
+                            XmlSerializer serial = new XmlSerializer(data.GetType());
+                            StringWriter writer = new StringWriter();
+                            serial.Serialize(writer, data);
+                            requestString = "XML=" + writer.ToString();
+                            writer.Close();
+                        }
+                    }
+
+                    using (Stream stream = requestStream.GetRequestStream())
+                    {
+                        StreamWriter writer = new StreamWriter(stream);
+                        if (requestString != null) { writer.Write(requestString); }
+                        else if (bytes != null) { stream.Write(bytes, 0, bytes.Length); }
+                        writer.Close();
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+
+            try
+            {
+                using (responseStream = (HttpWebResponse)requestStream.GetResponse())
+                {
+                    using (Stream stream = responseStream.GetResponseStream())
+                    {
+                        StreamReader reader = new StreamReader(stream);
+                        responseString = reader.ReadToEnd();
+                    }
+
+                    T responseData;
+
+                    if (contentType == "application/json")
+                    {
+                        responseData = JsonConvert.DeserializeObject<T>(responseString);
+                    }
+                    else
+                    {
+                        XmlSerializer serial = new XmlSerializer(typeof(T));
+                        StringReader reader = new StringReader(responseString); //XmlReader.Create(responseString);
+                        responseData = (T)serial.Deserialize(reader);
+                    }
+
+                    if (responseString.ToLower().Contains("<error>"))
+                    { throw new Exception(responseString); }
+
                     return responseData;
                 }
             }
@@ -193,13 +263,23 @@ namespace Nostreets_Services.Utilities
 
         }
 
-        public static DateTime ToDateTime(this string obj, string format = null)
+        public static void RunPowerShellCommand(this string command, params string[] parameters)
         {
-            if (format != null) { return DateTime.ParseExact(obj, format, CultureInfo.InvariantCulture); }
-            else { return Convert.ToDateTime(obj); }
+            string script = "Set-ExecutionPolicy -Scope Process -ExecutionPolicy Unrestricted; Get-ExecutionPolicy"; // the second command to know the ExecutionPolicy level
+
+            using (PowerShell powershell = PowerShell.Create())
+            {
+                powershell.AddScript(script);
+                var someResult = powershell.Invoke();
+
+
+                powershell.AddCommand(command);
+                powershell.AddParameters(parameters);
+                var results = powershell.Invoke();
+            }
         }
 
-        public static void AddAttribute<T>(this object obj, bool affectThisObj = true, Dictionary<object, Type> attributeParams = null, FieldInfo[] affectedFields = null) where T : Attribute
+        public static void AddAttribute<T>(this object obj, bool affectBaseObj = true, Dictionary<object, Type> attributeParams = null, FieldInfo[] affectedFields = null) where T : Attribute
         {
             Type type = obj.GetType();
 
@@ -214,7 +294,7 @@ namespace Nostreets_Services.Utilities
             CustomAttributeBuilder attrBuilder = new CustomAttributeBuilder(attrConstructor, attributeParams.Keys.ToArray());
 
 
-            if (affectThisObj)
+            if (affectBaseObj)
             {
                 affectedType.SetCustomAttribute(attrBuilder);
             }

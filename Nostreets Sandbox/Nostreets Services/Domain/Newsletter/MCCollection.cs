@@ -1,13 +1,11 @@
-﻿using Newtonsoft.Json.Serialization;
-using Nostreets_Services.Domain.Newsletter.Lists;
+﻿using Nostreets_Services.Domain.Newsletter.Lists;
 using Nostreets_Services.Domain.Newsletter.Members;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace Nostreets_Services.Domain.Newsletter
 {
-   public abstract class MCCollection<T>
+    public abstract class MCCollection<T>
     {
         public int Total_Items { get; set; }
         public List<Link> _Links { get; set; }

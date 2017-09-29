@@ -15,6 +15,8 @@
         var vm = this;
         vm.changeCurrentTab = _changeTab;
         vm.openMainMenuModal = _openMainMenuModal;
+        vm.openDatePicker = _openDatePicker;
+        vm.updateChart = _updateChart;
 
         _render();
 
@@ -29,7 +31,8 @@
             vm.charts = [];
             vm.currentTab = 'income';
             vm.renderedChart = null;
-
+            vm.beginDate = new Date();
+            vm.endDate = new Date(new Date().setTime(vm.beginDate.getTime() + 14 * 86400000));
         }
 
         function _getUserData(func) {
@@ -43,6 +46,18 @@
                             )))));
         }
 
+        function _openDatePicker(prop) {
+            switch (prop) {
+                case "start":
+                    vm.isStart = true;
+                    break;
+
+                case "end":
+                    vm.isEndding = true;
+                    break;
+            }
+        }
+
         function _arrayOfZeros(lengthOfArr) {
             var arr = [];
             for (var i = 0; i < lengthOfArr; i++) {
@@ -51,8 +66,27 @@
             return arr;
         }
 
+        function _updateChart() {
+            switch (vm.currentTab) {
+                case "income":
+                    _getIncomeChart();
+                    _changeTab();
+                    break;
+
+                case "expense":
+                    _getExpensesChart();
+                    _changeTab();
+                    break;
+
+                case "combined":
+                    _getCombinedChart();
+                    _changeTab();
+                    break;
+            }
+        }
+
         function _getIncomeChart() {
-            return $sandboxService.getIncomesChart().then(
+            return $sandboxService.getIncomesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
                 (data) => {
                     var incomeChart = {
                         key: "income",
@@ -65,7 +99,7 @@
         }
 
         function _getExpensesChart() {
-            return $sandboxService.getExpensesChart().then(
+            return $sandboxService.getExpensesChart(vm.beginDate, vm.endDate).then(
                 (data) => {
                     var expensesChart = {
                         key: "expense",
@@ -78,7 +112,7 @@
         }
 
         function _getCombinedChart() {
-            return $sandboxService.getCombinedChart().then(
+            return $sandboxService.getCombinedChart(vm.beginDate, vm.endDate).then(
                 (data) => {
                     var combinedChart = {
                         key: "combined",
@@ -447,7 +481,7 @@
                 timePaid: (data.timePaid) ? new Date(data.timePaid) : null, //new Date(),
                 beginDate: (data.beginDate) ? new Date(data.beginDate) : null,// new Date(),
                 endDate: (data.endDate) ? new Date(data.endDate) : null,//new Date(),
-                isHiddenOnChart: (typeof (data.isHiddenOnChart) !== "boolean" && data.isHiddenOnChart == true) ? true : false
+                isHiddenOnChart: (typeof (data.isHiddenOnChart) !== "boolean" && data.isHiddenOnChart === true) ? true : false
             };
 
             var modalInstance = $uibModal.open({
@@ -564,8 +598,7 @@
                                 (err) => console.log(err)
                             ));
                     }
-                    else
-                    {
+                    else {
                         $sandboxService.insertIncome(obj).then(
                             () => vm.$uibModalInstance.close(),
                             (err) => $sandboxService.insertIncome(obj).then(
@@ -588,8 +621,7 @@
                                 (err) => console.log(err)
                             ));
                     }
-                    else
-                    {
+                    else {
                         $sandboxService.insertExpense(obj).then(
                             () => vm.$uibModalInstance.close(),
                             (err) => $sandboxService.insertExpense(obj).then(
