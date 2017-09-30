@@ -70,16 +70,19 @@
             switch (vm.currentTab) {
                 case "income":
                     _getIncomeChart();
+                    vm.renderedChart = null;
                     _changeTab();
                     break;
 
                 case "expense":
                     _getExpensesChart();
+                    vm.renderedChart = null;
                     _changeTab();
                     break;
 
                 case "combined":
                     _getCombinedChart();
+                    vm.renderedChart = null;
                     _changeTab();
                     break;
             }
@@ -92,7 +95,7 @@
                         key: "income",
                         value: data.data.item
                     };
-                    vm.charts.push(incomeChart);
+                    vm.charts.add(incomeChart);
                 },
                 (data) => $baseController.timeout(2000, $sandboxService.getIncomesChart()) //console.log(data)
             );
@@ -105,7 +108,7 @@
                         key: "expense",
                         value: data.data.item
                     };
-                    vm.charts.push(expensesChart);
+                    vm.charts.add(expensesChart);
                 },
                 (data) => $baseController.timeout(2000, $sandboxService.getExpensesChart()) //console.log(data)
             );
@@ -118,7 +121,7 @@
                         key: "combined",
                         value: data.data.item
                     };
-                    vm.charts.push(combinedChart);
+                    vm.charts.add(combinedChart);
                 },
                 (data) => $baseController.timeout(2000, $sandboxService.getCombinedChart()) //console.log(data)
             );
