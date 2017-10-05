@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Nostreets_Services.Domain.Base
 {
-    public partial class DBObject
+    public abstract partial class DBObject
     {
         [Required]
         public virtual string UserId { get; set; }

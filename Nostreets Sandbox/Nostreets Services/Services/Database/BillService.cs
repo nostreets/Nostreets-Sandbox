@@ -48,50 +48,50 @@ namespace Nostreets_Services.Services.Database
 
         public Expenses GetExpense(string userId, int id)
         {
-            return _expenseSrv.Where((a) => a.UserId == userId && a.Id == id).SingleOrDefault();
+            return _expenseSrv.Get(a => a.UserId == userId && a.Id == id);    //.SingleOrDefault();
         }
 
         public Expenses GetExpense(string userId, string expenseName)
         {
-            return _expenseSrv.Where((a) => a.UserId == userId && a.Name == expenseName).SingleOrDefault();
+            return _expenseSrv.Get(a => a.UserId == userId && a.Name == expenseName);     //.SingleOrDefault();
         }
 
-        public List<Expenses> GetExpense(string userId, ExpenseTypes type)
+        public List<Expenses> GetExpenses(string userId, ExpenseTypes type)
         {
             return _expenseSrv.Where((a) => a.UserId == userId && a.ExpenseType == type).ToList();
         }
 
-        public List<Expenses> GetExpense(string userId, ScheduleTypes type)
+        public List<Expenses> GetExpenses(string userId, ScheduleTypes type)
         {
             return _expenseSrv.Where((a) => a.UserId == userId && a.PaySchedule == type).ToList();
         }
 
-        public List<Expenses> GetExpense(string userId, ExpenseTypes billType, ScheduleTypes scheduleType)
+        public List<Expenses> GetExpenses(string userId, ExpenseTypes billType, ScheduleTypes scheduleType)
         {
             return _expenseSrv.Where((a) => a.UserId == userId && a.ExpenseType == billType && a.PaySchedule == scheduleType).ToList();
         }
 
         public Income GetIncome(string userId, int id)
         {
-            return _incomeSrv.Where((a) => a.UserId == userId && a.Id == id).SingleOrDefault();
+            return _incomeSrv.Get(a => a.Id == id && a.UserId == userId);           //.Where((a) => a.UserId == userId && a.Id == id).SingleOrDefault();
         }
 
         public Income GetIncome(string userId, string incomeName)
         {
-            return _incomeSrv.Where((a) => a.UserId == userId && a.Name == incomeName).SingleOrDefault();
+            return _incomeSrv.Get(a => a.UserId == userId && a.Name == incomeName); //.SingleOrDefault();
         }
 
-        public List<Income> GetIncome(string userId, IncomeTypes type)
+        public List<Income> GetIncomes(string userId, IncomeTypes type)
         {
             return _incomeSrv.Where((a) => a.UserId == userId && a.IncomeType == type).ToList();
         }
 
-        public List<Income> GetIncome(string userId, ScheduleTypes type)
+        public List<Income> GetIncomes(string userId, ScheduleTypes type)
         {
             return _incomeSrv.Where((a) => a.UserId == userId && a.PaySchedule == type).ToList();
         }
 
-        public List<Income> GetIncome(string userId, IncomeTypes incomeType, ScheduleTypes scheduleType)
+        public List<Income> GetIncomes(string userId, IncomeTypes incomeType, ScheduleTypes scheduleType)
         {
             return _incomeSrv.Where((a) => a.UserId == userId && a.IncomeType == incomeType && a.PaySchedule == scheduleType).ToList();
         }
@@ -107,6 +107,8 @@ namespace Nostreets_Services.Services.Database
 
             TimeSpan diff = (end - start);
 
+            int numOfAssetsSkipped = 0;
+
             result.Labels = CalculateLabelRange(out chartSchedule, start, end, preferedLabel);
             result.Name = String.Format("Income {0} Chart", chartSchedule.ToString());
             result.TypeId = ChartTypes.Line;
@@ -118,7 +120,7 @@ namespace Nostreets_Services.Services.Database
 
             for (int n = 0; n < income.Count; n++)
             {
-                if (income[n].IsHiddenOnChart) { continue; }
+                if (income[n].IsHiddenOnChart) { numOfAssetsSkipped++; continue; }
 
                 result.Series.Add(new List<float>());
                 result.Legend.Add(income[n].Name);
@@ -131,24 +133,11 @@ namespace Nostreets_Services.Services.Database
                         {
                             int day = 0;
                             day += ((i + 1) % 24 == 0) ? 1 : 0;
-                            DateTime intervalDate = start.AddDays(day);
 
-                            result.Series[n].Add(!IsPayDay(intervalDate, chartSchedule, income[n]) ? 0 : income[n].PayRate);
+                            IsPayDay(start, i, chartSchedule, income[n], out float pay);
+                            result.Series[n - numOfAssetsSkipped].Add(pay);
 
-                            //switch (income[n].PaySchedule)
-                            //{
-                            //    case ScheduleTypes.Weekly:
-                            //        result.Series[n].Add((!IsPayDay(intervalDate, chartSchedule, income[n])) ? 0 : income[n].PayRate);
-                            //        break;
-
-                            //    case ScheduleTypes.Daily:
-                            //        result.Series[n].Add(!IsPayDay(intervalDate, chartSchedule, income[n]) ? 0 : income[n].PayRate);
-                            //        break;
-
-                            //    default:
-                            //        result.Series[n].Add((income[n].TimePaid != intervalDate) ? 0 : income[n].PayRate);
-                            //        break;
-                            //}
+                            //result.Series[n].Add(income[n].Cost + (!IsPayDay(start, day, chartSchedule, income[n], out pay) ? pay : income[n].Cost));
 
                         }
                         break;
@@ -156,9 +145,11 @@ namespace Nostreets_Services.Services.Database
                     case ScheduleTypes.Daily:
                         for (int i = 0; i < result.Labels.Count; i++)
                         {
-                            DateTime intervalDate = start.AddDays(i);
 
-                            result.Series[n].Add(!IsPayDay(intervalDate, chartSchedule, income[n]) ? 0 : (income[n].PaySchedule == ScheduleTypes.Hourly) ? income[n].PayRate * 24 : income[n].PayRate);
+                            IsPayDay(start, i, chartSchedule, income[n], out float pay);
+                            result.Series[n - numOfAssetsSkipped].Add(pay);
+
+                            //result.Series[n].Add(!IsPayDay(start, i, chartSchedule, income[n], out pay) ? pay : (income[n].PaySchedule == ScheduleTypes.Hourly) ? income[n].Cost * 24 : income[n].Cost);
                         }
                         break;
 
@@ -169,23 +160,23 @@ namespace Nostreets_Services.Services.Database
                             {
 
                                 case ScheduleTypes.BiYearly:
-                                    result.Series[n].Add((income[n].TimePaid.Value.Month != start.Month + (i % 4 != 0 ? 0 : i / 4)) ? 0 : income[n].PayRate);
+                                    result.Series[n].Add(income[n].Cost + (((income[n].TimePaid.Value.Month != start.Month + (i % 4 != 0 ? 0 : i / 4)) ? 0 : income[n].Cost)));
                                     break;
 
                                 case ScheduleTypes.Monthly:
-                                    result.Series[n].Add((!i.IsWeekOfMonth(income[n].TimePaid.Value)) ? 0 : income[n].PayRate);
+                                    result.Series[n].Add(income[n].Cost + ((!i.IsWeekOfMonth(income[n].TimePaid.Value)) ? 0 : income[n].Cost));
                                     break;
 
                                 case ScheduleTypes.Weekly:
-                                    result.Series[n].Add(income[n].PayRate);
+                                    result.Series[n].Add(income[n].Cost + (income[n].Cost));
                                     break;
 
                                 case ScheduleTypes.Daily:
-                                    result.Series[n].Add(income[n].PayRate * 7);
+                                    result.Series[n].Add(income[n].Cost + (income[n].Cost * 7));
                                     break;
 
                                 case ScheduleTypes.Hourly:
-                                    result.Series[n].Add(income[n].PayRate * 168);
+                                    result.Series[n].Add(income[n].Cost + (income[n].Cost * 168));
                                     break;
 
                                 default:
@@ -194,7 +185,7 @@ namespace Nostreets_Services.Services.Database
 
                                     result.Series[n].Add(
                                         (income[n].TimePaid.Value > beginningOfWeek && income[n].TimePaid.Value < endingOfWeek)
-                                        ? income[n].PayRate : 0);
+                                        ? income[n].Cost : 0);
                                     break;
                             }
                         }
@@ -206,31 +197,31 @@ namespace Nostreets_Services.Services.Database
                             switch (income[n].PaySchedule)
                             {
                                 case ScheduleTypes.Yearly:
-                                    result.Series[n].Add((income[n].TimePaid.Value.Month == start.Month + i) ? 0 : income[n].PayRate);
+                                    result.Series[n].Add((income[n].TimePaid.Value.Month == start.Month + i) ? 0 : income[n].Cost);
                                     break;
 
                                 case ScheduleTypes.BiYearly:
-                                    result.Series[n].Add((income[n].TimePaid.Value.Month != start.Month + i || income[n].TimePaid.Value.AddMonths(6).Month != start.Month + i) ? 0 : income[n].PayRate);
+                                    result.Series[n].Add((income[n].TimePaid.Value.Month != start.Month + i || income[n].TimePaid.Value.AddMonths(6).Month != start.Month + i) ? 0 : income[n].Cost);
                                     break;
 
                                 case ScheduleTypes.Monthly:
-                                    result.Series[n].Add(income[n].PayRate);
+                                    result.Series[n].Add(income[n].Cost);
                                     break;
 
                                 case ScheduleTypes.Weekly:
-                                    result.Series[n].Add(income[n].PayRate * 4);
+                                    result.Series[n].Add(income[n].Cost * 4);
                                     break;
 
                                 case ScheduleTypes.Daily:
-                                    result.Series[n].Add(income[n].PayRate * DateTime.DaysInMonth(start.Year, start.Month + i));
+                                    result.Series[n].Add(income[n].Cost * DateTime.DaysInMonth(start.Year, start.Month + i));
                                     break;
 
                                 case ScheduleTypes.Hourly:
-                                    result.Series[n].Add(income[n].PayRate * 672);
+                                    result.Series[n].Add(income[n].Cost * 672);
                                     break;
 
                                 default:
-                                    result.Series[n].Add(income[n].TimePaid.Value.Month == start.Month + i && i + 1 < 12 ? 0 : income[n].PayRate);
+                                    result.Series[n].Add(income[n].TimePaid.Value.Month == start.Month + i && i + 1 < 12 ? 0 : income[n].Cost);
                                     break;
                             }
                         }
@@ -242,31 +233,31 @@ namespace Nostreets_Services.Services.Database
                             switch (income[n].PaySchedule)
                             {
                                 case ScheduleTypes.Yearly:
-                                    result.Series[n].Add(income[n].PayRate);
+                                    result.Series[n].Add(income[n].Cost);
                                     break;
 
                                 case ScheduleTypes.BiYearly:
-                                    result.Series[n].Add(income[n].PayRate * 2);
+                                    result.Series[n].Add(income[n].Cost * 2);
                                     break;
 
                                 case ScheduleTypes.Monthly:
-                                    result.Series[n].Add(income[n].PayRate * 12);
+                                    result.Series[n].Add(income[n].Cost * 12);
                                     break;
 
                                 case ScheduleTypes.Weekly:
-                                    result.Series[n].Add(income[n].PayRate * 52);
+                                    result.Series[n].Add(income[n].Cost * 52);
                                     break;
 
                                 case ScheduleTypes.Daily:
-                                    result.Series[n].Add(income[n].PayRate * 365);
+                                    result.Series[n].Add(income[n].Cost * 365);
                                     break;
 
                                 case ScheduleTypes.Hourly:
-                                    result.Series[n].Add(income[n].PayRate * 8064);
+                                    result.Series[n].Add(income[n].Cost * 8064);
                                     break;
 
                                 default:
-                                    result.Series[n].Add(income[n].TimePaid.Value.Year != start.Year ? 0 : income[n].PayRate);
+                                    result.Series[n].Add(income[n].TimePaid.Value.Year != start.Year ? 0 : income[n].Cost);
                                     break;
                             }
                         }
@@ -309,20 +300,21 @@ namespace Nostreets_Services.Services.Database
                     case ScheduleTypes.Hourly:
                         for (int i = 0; i < result.Labels.Count; i++)
                         {
-                            int day = 0;
-                            day += ((i + 1) % 24 == 0) ? 1 : 0;
-                            DateTime intervalDate = start.AddDays(day);
 
-                            switch (expenses[n].PaySchedule)
-                            {
-                                case ScheduleTypes.Weekly:
-                                    result.Series[n].Add((!IsPayDay(intervalDate, chartSchedule, expenses[n])) ? 0 : expenses[n].Price);
-                                    break;
+                            IsPayDay(start, i, chartSchedule, expenses[n], out float price);
 
-                                case ScheduleTypes.Daily:
-                                    result.Series[n].Add(!IsPayDay(intervalDate, chartSchedule, expenses[n]) ? 0 : expenses[n].Price);
-                                    break;
-                            }
+                            result.Series[n].Add(price);
+
+                            //switch (expenses[n].PaySchedule)
+                            //{
+                            //    case ScheduleTypes.Weekly:
+                            //        result.Series[n].Add((!IsPayDay(start, i, chartSchedule, expenses[n])) ? 0 : expenses[n].Cost);
+                            //        break;
+
+                            //    case ScheduleTypes.Daily:
+                            //        result.Series[n].Add(!IsPayDay(intervalDate, chartSchedule, expenses[n]) ? 0 : expenses[n].Cost);
+                            //        break;
+                            //}
 
                         }
                         break;
@@ -330,15 +322,20 @@ namespace Nostreets_Services.Services.Database
                     case ScheduleTypes.Daily:
                         for (int i = 0; i < result.Labels.Count; i++)
                         {
-                            DateTime intervalDate = start.AddDays(i);
-                            if (expenses[n].PaySchedule == ScheduleTypes.Hourly)
-                            {
-                                result.Series[n].Add(expenses[n].Price);
-                            }
-                            else
-                            {
-                                result.Series[n].Add(!IsPayDay(intervalDate, chartSchedule, expenses[n]) ? 0 : expenses[n].Price);
-                            }
+
+                            IsPayDay(start, i, chartSchedule, expenses[n], out float price);
+
+                            result.Series[n].Add(price);
+
+                            //DateTime intervalDate = start.AddDays(i);
+                            //if (expenses[n].PaySchedule == ScheduleTypes.Hourly)
+                            //{
+                            //    result.Series[n].Add(expenses[n].Cost);
+                            //}
+                            //else
+                            //{
+                            //    result.Series[n].Add(!IsPayDay(intervalDate, chartSchedule, expenses[n]) ? 0 : expenses[n].Cost);
+                            //}
                         }
                         break;
 
@@ -349,23 +346,23 @@ namespace Nostreets_Services.Services.Database
                             {
 
                                 case ScheduleTypes.BiYearly:
-                                    result.Series[n].Add((expenses[n].TimePaid.Value.Month != start.Month + (i % 4 != 0 ? 0 : i / 4)) ? 0 : expenses[n].Price);
+                                    result.Series[n].Add((expenses[n].TimePaid.Value.Month != start.Month + (i % 4 != 0 ? 0 : i / 4)) ? 0 : expenses[n].Cost);
                                     break;
 
                                 case ScheduleTypes.Monthly:
-                                    result.Series[n].Add((!i.IsWeekOfMonth(expenses[n].TimePaid.Value)) ? 0 : expenses[n].Price);
+                                    result.Series[n].Add((!i.IsWeekOfMonth(expenses[n].TimePaid.Value)) ? 0 : expenses[n].Cost);
                                     break;
 
                                 case ScheduleTypes.Weekly:
-                                    result.Series[n].Add(expenses[n].Price);
+                                    result.Series[n].Add(expenses[n].Cost);
                                     break;
 
                                 case ScheduleTypes.Daily:
-                                    result.Series[n].Add(expenses[n].Price * 7);
+                                    result.Series[n].Add(expenses[n].Cost * 7);
                                     break;
 
                                 case ScheduleTypes.Hourly:
-                                    result.Series[n].Add(expenses[n].Price * 168);
+                                    result.Series[n].Add(expenses[n].Cost * 168);
                                     break;
                             }
                         }
@@ -377,31 +374,31 @@ namespace Nostreets_Services.Services.Database
                             switch (expenses[n].PaySchedule)
                             {
                                 case ScheduleTypes.Yearly:
-                                    result.Series[n].Add((expenses[n].TimePaid.Value.Month == start.Month + i) ? 0 : expenses[n].Price);
+                                    result.Series[n].Add((expenses[n].TimePaid.Value.Month == start.Month + i) ? 0 : expenses[n].Cost);
                                     break;
 
                                 case ScheduleTypes.BiYearly:
-                                    result.Series[n].Add((expenses[n].TimePaid.Value.Month != start.Month + i || expenses[n].TimePaid.Value.AddMonths(6).Month != start.Month + i) ? 0 : expenses[n].Price);
+                                    result.Series[n].Add((expenses[n].TimePaid.Value.Month != start.Month + i || expenses[n].TimePaid.Value.AddMonths(6).Month != start.Month + i) ? 0 : expenses[n].Cost);
                                     break;
 
                                 case ScheduleTypes.Monthly:
-                                    result.Series[n].Add(expenses[n].Price);
+                                    result.Series[n].Add(expenses[n].Cost);
                                     break;
 
                                 case ScheduleTypes.Weekly:
-                                    result.Series[n].Add(expenses[n].Price * 4);
+                                    result.Series[n].Add(expenses[n].Cost * 4);
                                     break;
 
                                 case ScheduleTypes.Daily:
-                                    result.Series[n].Add(expenses[n].Price * DateTime.DaysInMonth(start.Year, start.Month + i));
+                                    result.Series[n].Add(expenses[n].Cost * DateTime.DaysInMonth(start.Year, start.Month + i));
                                     break;
 
                                 case ScheduleTypes.Hourly:
-                                    result.Series[n].Add(expenses[n].Price * 672);
+                                    result.Series[n].Add(expenses[n].Cost * 672);
                                     break;
 
                                 default:
-                                    result.Series[n].Add(expenses[n].TimePaid.Value.Month == start.Month + i && i + 1 < 12 ? 0 : expenses[n].Price);
+                                    result.Series[n].Add(expenses[n].TimePaid.Value.Month == start.Month + i && i + 1 < 12 ? 0 : expenses[n].Cost);
                                     break;
                             }
                         }
@@ -413,31 +410,31 @@ namespace Nostreets_Services.Services.Database
                             switch (expenses[n].PaySchedule)
                             {
                                 case ScheduleTypes.Yearly:
-                                    result.Series[n].Add(expenses[n].Price);
+                                    result.Series[n].Add(expenses[n].Cost);
                                     break;
 
                                 case ScheduleTypes.BiYearly:
-                                    result.Series[n].Add(expenses[n].Price * 2);
+                                    result.Series[n].Add(expenses[n].Cost * 2);
                                     break;
 
                                 case ScheduleTypes.Monthly:
-                                    result.Series[n].Add(expenses[n].Price * 12);
+                                    result.Series[n].Add(expenses[n].Cost * 12);
                                     break;
 
                                 case ScheduleTypes.Weekly:
-                                    result.Series[n].Add(expenses[n].Price * 52);
+                                    result.Series[n].Add(expenses[n].Cost * 52);
                                     break;
 
                                 case ScheduleTypes.Daily:
-                                    result.Series[n].Add(expenses[n].Price * 365);
+                                    result.Series[n].Add(expenses[n].Cost * 365);
                                     break;
 
                                 case ScheduleTypes.Hourly:
-                                    result.Series[n].Add(expenses[n].Price * 8064);
+                                    result.Series[n].Add(expenses[n].Cost * 8064);
                                     break;
 
                                 default:
-                                    result.Series[n].Add(expenses[n].TimePaid.Value.Year != start.Year ? 0 : expenses[n].Price);
+                                    result.Series[n].Add(expenses[n].TimePaid.Value.Year != start.Year ? 0 : expenses[n].Cost);
                                     break;
                             }
                         }
@@ -480,22 +477,22 @@ namespace Nostreets_Services.Services.Database
 
         public void UpdateExpense(Expenses request)
         {
-            _expenseSrv.Update(request);
+            _expenseSrv.Update((a) => a.Id == request.Id, request);
         }
 
         public void UpdateIncome(Income request)
         {
-            _incomeSrv.Update(request);
+            _incomeSrv.Update((a) => a.Id == request.Id, request);
         }
 
         public void DeleteExpense(int id)
         {
-            _expenseSrv.Delete(id);
+            _expenseSrv.Delete((a) => a.Id == id);
         }
 
         public void DeleteIncome(int id)
         {
-            _incomeSrv.Delete(id);
+            _incomeSrv.Delete((a) => a.Id == id);
         }
 
         private List<string> CalculateLabelRange(out ScheduleTypes schedule, DateTime startDate, DateTime endDate, string preferedLabels = null)
@@ -584,10 +581,10 @@ namespace Nostreets_Services.Services.Database
                     break;
 
                 case ScheduleTypes.Daily:
-                    for (int i = 0, n = 0; i < Math.Round(diff.TotalDays); i++, n++)
+                    for (int i = 0, n = 0; i <= Math.Round(diff.TotalDays); i++, n++)
                     {
+                        if (n > 6) { n = 0; }
                         result.Add(daily[n]);
-                        if (n >= 7) { n = 0; }
                     }
                     break;
 
@@ -619,64 +616,81 @@ namespace Nostreets_Services.Services.Database
             return result;
         }
 
-        private bool IsPayDay(DateTime intervalDay, ScheduleTypes schedule, Asset asset)
+        private bool IsPayDay(DateTime start, int interval, ScheduleTypes schedule, Asset asset, out float pay)
         {
             bool result = false;
+            DateTime intervalDay;
+            pay = 0;
 
             switch (schedule)
             {
                 case ScheduleTypes.Hourly:
+                    int day = 0;
+                    day += ((interval + 1) % 24 == 0) ? 1 : 0;
+                    intervalDay = start.AddDays(day);
 
                     switch (asset.PaySchedule)
                     {
                         case ScheduleTypes.Hourly:
                             result = true;
+                            pay = (interval + 1) * asset.Cost;
                             break;
 
                         case ScheduleTypes.Daily:
                             result = (asset.TimePaid.Value.Hour == intervalDay.Hour) ? true : false;
+                            pay = (day + 1) * asset.Cost;
                             break;
 
                         case ScheduleTypes.Weekly:
                             result = (asset.TimePaid.Value.DayOfWeek == intervalDay.DayOfWeek && asset.TimePaid.Value.Hour == intervalDay.Hour) ? true : false;
+                            pay = (result) ? (day + 1) * asset.Cost : asset.Cost * day;
                             break;
 
                         case ScheduleTypes.BiWeekly:
                             result = (asset.TimePaid.Value.DayOfWeek == intervalDay.DayOfWeek && asset.TimePaid.Value.Hour == intervalDay.Hour && ((asset.TimePaid.Value.GetWeekOfYear().IsEven() && intervalDay.GetWeekOfYear().IsEven()) || (asset.TimePaid.Value.GetWeekOfYear().IsOdd() && intervalDay.GetWeekOfYear().IsOdd()))) ? true : false;
+                            pay = (result) ? (day + 1) * asset.Cost : asset.Cost * day;
                             break;
 
                         default:
                             result = (asset.TimePaid.Value.Year == intervalDay.Year && asset.TimePaid.Value.Month == intervalDay.Month && asset.TimePaid.Value.Day == intervalDay.Day && asset.TimePaid.Value.Hour == intervalDay.Hour) ? true : false;
+                            pay = (result) ? asset.Cost : 0;
                             break;
                     }
                     break;
 
                 case ScheduleTypes.Daily:
+                    intervalDay = start.AddDays(interval);
 
                     switch (asset.PaySchedule)
                     {
                         case ScheduleTypes.Hourly:
                             result = true;
+                            pay = ((interval + 1) * 24) * asset.Cost;
                             break;
 
                         case ScheduleTypes.Daily:
                             result = true;
+                            pay = (interval + 1) * asset.Cost;
                             break;
-
-                        case ScheduleTypes.Monthly:
-                            result = (asset.TimePaid.Value.Month == intervalDay.Month && asset.TimePaid.Value.Day == intervalDay.Day) ? true : false;
-                            break;
-
+                        
                         case ScheduleTypes.Weekly:
                             result = (asset.TimePaid.Value.DayOfWeek == intervalDay.DayOfWeek) ? true : false;
+                            pay = (result) ? (interval + 1) * asset.Cost : interval * asset.Cost;
                             break;
 
                         case ScheduleTypes.BiWeekly:
                             result = (asset.TimePaid.Value.DayOfWeek == intervalDay.DayOfWeek && ((asset.TimePaid.Value.GetWeekOfYear().IsEven() && intervalDay.GetWeekOfYear().IsEven()) || (asset.TimePaid.Value.GetWeekOfYear().IsOdd() && intervalDay.GetWeekOfYear().IsOdd()))) ? true : false;
+                            pay = (result) ? (interval + 1) * asset.Cost : interval * asset.Cost;
+                            break;
+
+                        case ScheduleTypes.Monthly:
+                            result = (asset.TimePaid.Value.Month == intervalDay.Month && asset.TimePaid.Value.Day == intervalDay.Day) ? true : false;
+                            pay = (result) ? (interval + 1) * asset.Cost : interval * asset.Cost;
                             break;
 
                         default:
                             result = (asset.TimePaid.Value.Year == intervalDay.Year && asset.TimePaid.Value.Month == intervalDay.Month && asset.TimePaid.Value.Day == intervalDay.Day) ? true : false;
+                            pay = (result) ? asset.Cost : 0;
                             break;
                     }
                     break;

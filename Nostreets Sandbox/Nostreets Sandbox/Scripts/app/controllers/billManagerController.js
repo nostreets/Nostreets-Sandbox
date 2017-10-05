@@ -6,7 +6,7 @@
         .controller("modalInsertController", modalInsertController);
 
     billManagerController.$inject = ["$scope", "$baseController", '$uibModal', '$sandboxService'];
-    modalMainMenuController.$inject = ["$scope", "$baseController", '$uibModalInstance', '$uibModal', 'data'];
+    modalMainMenuController.$inject = ["$scope", "$baseController", '$uibModalInstance', '$sandboxService', '$uibModal', '$filter', 'data'];
     modalInsertController.$inject = ["$scope", "$baseController", '$uibModalInstance', '$sandboxService', 'model'];
 
 
@@ -37,13 +37,14 @@
 
         function _getUserData(func) {
 
-            _getAllExpense().then(
+            /*_getAllExpense().then(
                 () => _getAllIncome().then(
-                    () => _getIncomeChart().then(
-                        () => _getExpensesChart().then(
-                            () => _getCombinedChart().then(
-                                () => func()
-                            )))));
+                    () => */
+            _getIncomeChart().then(
+                () => _getExpensesChart().then(
+                    () => _getCombinedChart().then(
+                        () => func()
+                    )));
         }
 
         function _openDatePicker(prop) {
@@ -97,9 +98,11 @@
                     };
                     vm.charts.add(incomeChart);
                 },
-                (data) => $baseController.timeout(2000, $sandboxService.getIncomesChart()) //console.log(data)
+                err => $baseController.tryAgain(5, 2000, _getIncomeChart, () => { /*var arr = vm.charts;*/ return (vm.charts.findByKey("income") === null) ? false : true; } )
+                //(data) => $baseController.timeout(2000, $sandboxService.getIncomesChart()) //console.log(data)
             );
         }
+
 
         function _getExpensesChart() {
             return $sandboxService.getExpensesChart(vm.beginDate, vm.endDate).then(
@@ -153,10 +156,6 @@
                 (data) => console.log(data),
                 (data) => $baseController.timeout(2000, $sandboxService.getExpense()) //console.log(data)
             );
-        }
-
-        function _insertIncome(model) {
-
         }
 
         function _insertExpense(model) {
@@ -452,7 +451,7 @@
         }
     }
 
-    function modalMainMenuController($scope, $baseController, $uibModalInstance, $uibModal, data) {
+    function modalMainMenuController($scope, $baseController, $uibModalInstance, $sandboxService, $uibModal, $filter, data) {
 
         var vm = this;
         vm.$scope = $scope;
@@ -463,13 +462,21 @@
 
         function _render() {
             _setUp(data);
+            _refreshData();
+            _getBillingEnums([vm.type, "schedule"]);
         }
 
         function _setUp(data) {
-            if (data) {
-                vm.type = data.type;
-                vm.items = data.items || [];
-            }
+            vm.type = data.type;
+            vm.items =/* data.items ||*/[];
+            vm.enums = [];
+        }
+
+        function _getBillingEnums(billTypes) {
+            $sandboxService.getEnums(billTypes).then(
+                (obj) => vm.enums = obj.data.items,
+                (err) => console.log(err)
+            );
         }
 
         function _openInsertModal(data) {
@@ -478,12 +485,13 @@
 
             var obj = {
                 type: vm.type,
+                id: (data.id) ? data.id : 0,
                 name: (data.name) ? data.name : null,
-                price: (data.price) ? data.price : null,
+                cost: (data.cost) ? data.cost : null,
                 paySchedule: (data.paySchedule) ? data.paySchedule : null,
-                timePaid: (data.timePaid) ? new Date(data.timePaid) : null, //new Date(),
-                beginDate: (data.beginDate) ? new Date(data.beginDate) : null,// new Date(),
-                endDate: (data.endDate) ? new Date(data.endDate) : null,//new Date(),
+                timePaid: (data.timePaid) ? new Date(data.timePaid) : null,
+                beginDate: (data.beginDate) ? new Date(data.beginDate) : null,
+                endDate: (data.endDate) ? new Date(data.endDate) : null,
                 isHiddenOnChart: (typeof (data.isHiddenOnChart) !== "boolean" && data.isHiddenOnChart === true) ? true : false
             };
 
@@ -498,6 +506,8 @@
                     }
                 }
             });
+
+            modalInstance.closed.then(_refreshData());
         }
 
         function _close() {
@@ -510,6 +520,20 @@
 
         function _consoleResponse(data) {
             console.log(data);
+        }
+
+        function _refreshData() {
+            return (vm.type === "income")
+                ? $sandboxService.getAllIncomes().then(
+                    a => vm.items = a.data.items,
+                    err => this.tryAgain(5, 2000, this.getAllIncomes)
+                    //err => console.log(err)
+                )
+                : $sandboxService.getAllExpenses().then(
+                    a => vm.items = a.data.items,
+                    err => this.tryAgain(5, 2000, this.getAllIncomes)
+                    //err => console.log(err)
+                );
         }
     }
 
@@ -536,8 +560,8 @@
             vm.type = model.type;
             vm.id = data.id || 0;
             vm.name = data.name || null;
-            vm.price = data.price || 0;
-            vm.paySchedule = data.paySchedule || "1";
+            vm.cost = data.cost || 0;
+            vm.paySchedule = (data.paySchedule) ? data.paySchedule.toString() : "1";
             vm.timePaid = data.timePaid || null;
             vm.beginDate = data.beginDate || null;
             vm.endDate = data.endDate || null;
@@ -579,6 +603,7 @@
 
             var obj = {
                 name: vm.name,
+                cost: vm.cost,
                 paySchedule: vm.paySchedule,
                 timePaid: vm.timePaid,
                 beginDate: (vm.beginDate) ? new Date(vm.beginDate) : null,
@@ -590,7 +615,6 @@
             switch (vm.type) {
                 case "income":
                     obj.incomeType = parseInt(vm.incomeType);
-                    obj.payRate = vm.price;
 
                     if (vm.id) {
                         obj.id = vm.id
@@ -613,7 +637,6 @@
 
                 case "expense":
                     obj.expenseType = parseInt(vm.expenseType);
-                    obj.price = vm.price;
 
                     if (vm.id) {
                         obj.id = vm.id

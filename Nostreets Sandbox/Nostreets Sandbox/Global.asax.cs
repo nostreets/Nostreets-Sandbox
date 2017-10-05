@@ -23,7 +23,7 @@ namespace Nostreets_Sandbox
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             UnityConfig.RegisterInterfaces(GlobalConfiguration.Configuration);
-            Database.SetInitializer(new DropCreateDatabaseIfModelChanges<UserDbContext>());
+           // Database.SetInitializer(new DropCreateDatabaseIfModelChanges<UserDbContext>());
         }
     }
 }

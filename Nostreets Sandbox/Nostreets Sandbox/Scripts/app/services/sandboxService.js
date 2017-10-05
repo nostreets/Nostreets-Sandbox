@@ -7,6 +7,7 @@
     function sandboxService($http) {
         return {
             loginUser: _loginUser,
+            getEnums: _getEnums,
 
             getChartById: _getChartById,
             getAllCharts: _getAllCharts,
@@ -45,6 +46,16 @@
             });
         }
 
+        function _getEnums(enumType) {
+            var url = "/api/config/enums/";
+            url += (Array.isArray(enumType)) ? enumType.join(",") : enumType;
+
+            return $http({
+                url: url,
+                method: "GET",
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
 
 
         function _getChartById(id) {

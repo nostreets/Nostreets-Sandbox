@@ -23,7 +23,7 @@
         <div class="col-sm-5 col-sm-offset-1 text-center">
             <div class="input-group">
                 <strong>Ending Date:</strong>
-                <input type="text" uib-datepicker-popup ng-model="pg.endDate" class="form-control well well-sm" is-open="pg.isEndding" close-text="Close" />
+                <input type="text" uib-datepicker-popup ng-model="pg.endDate" ng-change="pg.updateChart()" class="form-control well well-sm" is-open="pg.isEndding" close-text="Close" />
                 <span class="input-group-btn">
                     <button type="button" class="btn btn-xs btn-simple" ng-click="pg.openDatePicker('end')"><i class="glyphicon glyphicon-calendar"></i></button>
                 </span>
@@ -92,26 +92,27 @@
             <h4>All {{ mm.type == "income" ? "Incomes" : mm.type == "expense" ? "Expenses" : "Income & Expenses" }}</h4>
             <button class="btn btn-xs btn-round" ng-if="mm.type !== 'combined'" ng-click="mm.openInsertModal()">Add {{ mm.type == "income" ? "Income" : "Expense" }}</button>
         </div>
-        <div>
-            <div class="row" ng-repeat="item in mm.items">
+        <div class="row">
+            <div ng-repeat="item in mm.items" class="col-xs-6 text-center">
                 <div>
                     <h5>{{ item.name }}</h5>
                 </div>
                 <div>
-                    <strong>{{ item.price }}</strong>
+                    <strong>Cost: {{ item.cost | currency }}</strong>
                 </div>
                 <div>
-                    Type: {{ item.itemType }}
+                    Type: {{ (item.incomeType) ? mm.enums.income[item.incomeType] : mm.enums.expense[item.expenseType] }}
                 </div>
                 <div>
-                    Schedule: {{ item.paySchedule }}
+                    Schedule: {{  mm.enums.schedule[item.paySchedule] }}
                 </div>
                 <div>
-                    Next {{ mm.type == "income" ? "Date Paid" : "Pay Date" }}: {{ item.nextPayDay }}
+                    <strong>Date Paid: {{ (item.paySchedule == 3 || item.paySchedule == 4) ? (item.timePaid | date:'MMMM yyyy') :  (item.paySchedule == 6 || item.paySchedule == 7) ? (item.timePaid | date:'EEEE') : (item.paySchedule == 8 || item.paySchedule == 9) ? (item.timePaid | date:'h:mma') : (item.timePaid | date:'longDate') }}</strong>
                 </div>
                 <div>
-                    <input type="checkbox" value="Hide" ng-checked="item.isHiddenOnChart" />
+                    <div>Hidden - <input type="checkbox" ng-checked="item.isHiddenOnChart" /></div>
                     <button class="btn btn-xs btn-success btn-round" ng-click="mm.openInsertModal(item)">Edit</button>
+                    <button class="btn btn-xs btn-danger btn-round" ng-click="mm.openInsertModal(item)">X</button>
                 </div>
             </div>
         </div>
@@ -129,7 +130,7 @@
                         </div>
                         <div class="col-sm-6">
                             <span><strong>{{ mc.type == "income" ? "Income" : "Expense" }} Price:</strong></span>
-                            <input type="number" class="input-sm" required ng-model="mc.price" />
+                            <input type="number" class="input-sm" required ng-model="mc.cost" />
                         </div>
                     </div>
                     <div class="row" style="margin-bottom: 2%;">
@@ -164,7 +165,7 @@
                                 <option value="6">Bi=Weekly</option>
                                 <option value="7">Weekly</option>
                                 <option value="8">Daily</option>
-                                <option value="9">Hourly</option>
+                                <!--<option value="9">Hourly</option>-->
                             </select>
                         </div>
                     </div>

@@ -1,27 +1,22 @@
-﻿using Microsoft.Practices.Unity;
-using Nostreets_Sandbox.App_Start;
+﻿using NostreetsORM.Interfaces;
+using NostreetsRouter.Models.Responses;
+using Nostreets_Services.Domain;
+using Nostreets_Services.Domain.Bills;
+using Nostreets_Services.Domain.Cards;
+using Nostreets_Services.Domain.Charts;
+using Nostreets_Services.Enums;
+using Nostreets_Services.Interfaces.Services;
+using Nostreets_Services.Models.Request;
+using Nostreets_Services.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Web.Http;
 using System.Threading.Tasks;
-using System.IO;
 using System.Web;
-using Nostreets_Services.Interfaces.Services;
-using Nostreets_Services.Domain.Charts;
-using Nostreets_Services.Models.Request;
-using Nostreets_Services.Services.Database;
-using Nostreets_Services.Services.Web;
-using Nostreets_Services.Domain.Cards;
-using Nostreets_Services.Domain;
-using System.Linq;
-using NostreetsORM;
-using NostreetsORM.Interfaces;
-using Nostreets_Services.Utilities;
-using Nostreets_Services.Domain.Bills;
-using Nostreets_Services.Enums;
-using NostreetsRouter.Models.Responses;
+using System.Web.Http;
 
 namespace Nostreets_Sandbox.Controllers.Api
 {
@@ -195,16 +190,16 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-                Chart<List<decimal>> result = null;
+                Chart<List<float>> result = null;
 
                 if (!CacheManager.Contains("uid")) { throw new Exception("User is not logged in"); }
                 else
                 {
                     User user = _userSrv.Get(CacheManager.GetItem<string>("uid"));
-                    result = _billSrv.GetIncomeChart(user.Id);
+                    result = _billSrv.GetIncomeChart(user.Id, startDate, endDate);
                 }
 
-                ItemResponse<Chart<List<decimal>>> response = new ItemResponse<Chart<List<decimal>>>(result);
+                ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -220,16 +215,16 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-                Chart<List<decimal>> result = null;
+                Chart<List<float>> result = null;
 
                 if (!CacheManager.Contains("uid")) { throw new Exception("User is not logged in"); }
                 else
                 {
                     User user = _userSrv.Get(CacheManager.GetItem<string>("uid"));
-                    result = _billSrv.GetExpensesChart(user.Id);
+                    result = _billSrv.GetExpensesChart(user.Id, startDate, endDate);
                 }
 
-                ItemResponse<Chart<List<decimal>>> response = new ItemResponse<Chart<List<decimal>>>(result);
+                ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -245,16 +240,16 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-                Chart<List<decimal>> result = null;
+                Chart<List<float>> result = null;
 
                 if (!CacheManager.Contains("uid")) { throw new Exception("User is not logged in"); }
                 else
                 {
                     User user = _userSrv.Get(CacheManager.GetItem<string>("uid"));
-                    result = _billSrv.GetCombinedChart(user.Id);
+                    result = _billSrv.GetCombinedChart(user.Id, startDate, endDate);
                 }
 
-                ItemResponse<Chart<List<decimal>>> response = new ItemResponse<Chart<List<decimal>>>(result);
+                ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -348,6 +343,8 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                 {
+                    User user = _userSrv.Get(CacheManager.GetItem<string>("uid"));
+                    income.UserId = user.Id;
                     income.DateModified = DateTime.Now;
                     _billSrv.UpdateIncome(income);
                     response = new SuccessResponse();
@@ -737,7 +734,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 if (!emailRequest.ContainsKey("toEmail")) { emailRequest["toEmail"] = "nileoverstreet@gmail.com"; }
                 if (!emailRequest.ContainsKey("messageHtml"))
                 {
-                    string phoneNumber = (emailRequest.ContainsKey("phone") ? "Phone Number: " + emailRequest["phone"] : "");
+                    string phoneNumber = (emailRequest.ContainsKey("phone") ? "Phone Number: " + emailRequest["phone"] : string.Empty);
                     emailRequest["messageHtml"] = "<div> Email From Contact Me Page </div>"
                                                 + "<div>" + "Name: " + emailRequest["name"] + "</div>"
                                                 + "<div>" + "Email: " + emailRequest["email"] + "</div>"
@@ -792,6 +789,46 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Route("config/enums/{enumType}")]
+        [HttpGet]
+        public HttpResponseMessage GetEnums(string enumType)
+        {
+            try
+            {
+                string[] enumTypes = enumType.Split(',');
+                ItemsResponse<string, Dictionary<int, string>> response = null;
+                Dictionary<string, Dictionary<int, string>> result = new Dictionary<string, Dictionary<int, string>>();
+
+                if (enumTypes.FirstOrDefault(a => a == "income") != null)
+                {
+                    result.Add("income", typeof(IncomeTypes).ToDictionary<IncomeTypes>());
+                }
+
+                if (enumTypes.FirstOrDefault(a => a == "expense") != null)
+                {
+                    result.Add("expense", typeof(ExpenseTypes).ToDictionary<ExpenseTypes>());
+                }
+
+                if (enumTypes.FirstOrDefault(a => a == "schedule") != null)
+                {
+                    result.Add("schedule", typeof(ScheduleTypes).ToDictionary<ScheduleTypes>());
+                }
+
+                if (enumTypes.FirstOrDefault(a => a == "chart") != null)
+                {
+                    result.Add("chart", typeof(ChartTypes).ToDictionary<ChartTypes>());
+                }
+
+                response = new ItemsResponse<string, Dictionary<int, string>>(result);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+
+                ErrorResponse response = new ErrorResponse(ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
         #endregion
 
     }

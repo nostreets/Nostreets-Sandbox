@@ -8,8 +8,8 @@ namespace Nostreets_Services.Domain.Bills
 {
     public class Income : Asset
     {
-        [Required]
-        public int PayRate { get; set; }
+        //[Required]
+        //public float PayRate { get; set; }
 
         [Required]
         public IncomeTypes IncomeType { get; set; }

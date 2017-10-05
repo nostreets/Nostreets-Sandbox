@@ -10,22 +10,17 @@ using System.Threading.Tasks;
 
 namespace Nostreets_Services.Domain.Bills
 {
-    public class Asset : DBObject
+    public abstract class Asset : DBObject
     {
         [Key]
         [Required]
         public int Id { get; set; }
-
-
 
         [Required]
         public ScheduleTypes PaySchedule { get; set; }
 
         [Required]
         public DateTime? TimePaid { get; set; }
-
-        [NotMapped]
-        public DateTime? NextPayDay { get; set; }
 
         public DateTime? BeginDate { get; set; }
 
@@ -37,7 +32,7 @@ namespace Nostreets_Services.Domain.Bills
 
         public bool IsHiddenOnChart { get; set; }
 
-
+        public float Cost { get; set; }
 
     }
 }

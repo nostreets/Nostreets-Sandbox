@@ -11,8 +11,8 @@ namespace Nostreets_Services.Domain.Bills
         [Required]
         public ExpenseTypes ExpenseType { get; set; }
 
-        [Required]
-        public decimal Price { get; set; }
+        //[Required]
+        //public float Price { get; set; }
 
     }
 }

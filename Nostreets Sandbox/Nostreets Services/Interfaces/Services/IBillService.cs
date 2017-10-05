@@ -18,11 +18,11 @@ namespace Nostreets_Services.Interfaces.Services
 
         Income GetIncome(string userId, string incomeName);
 
-        Chart<List<decimal>> GetIncomeChart(string userId, DateTime? startDate = null, DateTime? endDate = null, string preferedLabel = null);
+        Chart<List<float>> GetIncomeChart(string userId, DateTime? startDate = null, DateTime? endDate = null, string preferedLabel = null);
 
-        Chart<List<decimal>> GetExpensesChart(string userId, DateTime? startDate = null, DateTime? endDate = null, string preferedLabel = null);
+        Chart<List<float>> GetExpensesChart(string userId, DateTime? startDate = null, DateTime? endDate = null, string preferedLabel = null);
 
-        Chart<List<decimal>> GetCombinedChart(string userId, DateTime? startDate = null, DateTime? endDate = null, string preferedLabel = null);
+        Chart<List<float>> GetCombinedChart(string userId, DateTime? startDate = null, DateTime? endDate = null, string preferedLabel = null);
 
         void InsertExpense(Expenses request);
 

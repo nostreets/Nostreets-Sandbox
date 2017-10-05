@@ -1,4 +1,4 @@
-﻿let page = {
+﻿var page = {
     APPNAME: "sandbox",
     ngModules: [
         "ui.bootstrap",
@@ -40,6 +40,24 @@
             sce: $sce
         }
 
+        base.tryAgain = function (numberOfTimesLooped, miliseconds, func, predicate) {
+            if (numberOfTimesLooped > 10) { numberOfTimesLooped = 9; }
+
+            this.stop = function () {
+                clearInterval(funcIntervalId);
+                clearInterval(counterIntervalId);
+            }
+
+            var index = 0;
+
+            var funcIntervalId = setInterval(() => {
+                func();
+                if (numberOfTimesLooped < index) { this.stop(); }
+                else if (predicate()) { this.stop(); }
+            }, miliseconds);
+
+            var counterIntervalId = setInterval(() => { index++; console.log(index); }, miliseconds);
+        }
 
         return base;
     }

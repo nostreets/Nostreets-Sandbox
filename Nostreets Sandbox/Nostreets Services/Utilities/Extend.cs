@@ -316,5 +316,22 @@ namespace Nostreets_Services.Utilities
 
         }
 
+        public static bool IsOdd(this int value)
+        {
+            return value % 2 != 0;
+        }
+
+        public static bool IsEven(this int value)
+        {
+            return value % 2 == 0;
+        }
+
+        public static Dictionary<int, string> ToDictionary<T>(this Type @enum) where T : struct, IConvertible
+        {
+            if (!typeof(T).IsEnum)
+                throw new ArgumentException("Type must be an enum");
+
+            return Enum.GetValues(typeof(T)).Cast<T>().ToDictionary(t => (int)(object)t, t => t.ToString());
+        }
     }
 }
