@@ -111,8 +111,10 @@
                 </div>
                 <div>
                     <div>Hidden - <input type="checkbox" ng-checked="item.isHiddenOnChart" /></div>
-                    <button class="btn btn-xs btn-success btn-round" ng-click="mm.openInsertModal(item)">Edit</button>
-                    <button class="btn btn-xs btn-danger btn-round" ng-click="mm.openInsertModal(item)">X</button>
+                    <div class="btn-group btn-group-xs" >
+                        <button class="btn btn-round" style="background-color: #58AA42" ng-click="mm.openInsertModal(item)">Edit</button>
+                        <button class="btn btn-round" style="background-color: #CB2A2A" ng-click="mm.deleteAsset(item)">X</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -208,7 +210,7 @@
                             <button class="btn btn-round" style="background-color: #d1b100" ng-click="mc.reset()">
                                 Reset!
                             </button>
-                            <button style="background-color: #914e4e" class="btn btn-round" ng-click="mc.cancel()">
+                            <button style="background-color: #CB2A2A" class="btn btn-round" ng-click="mc.cancel()">
                                 Cancel
                             </button>
                         </div>

@@ -5,11 +5,11 @@
         "ngAnimate",
         "ngRoute",
         "toastr",
-        "ngSanitize"
+        "ngSanitize",
+        "ngCookies"
     ],
     user: {
-        signedIn: localStorage["nostreetsUsername"] ? true : false,
-        username: localStorage["nostreetsUsername"] ? localStorage["nostreetsUsername"] : null
+        loggedIn: localStorage["nostreetsUsername"] ? true : false,
     }
 };
 
@@ -19,12 +19,11 @@
     angular.module(page.APPNAME, page.ngModules);
 
     page.baseController = angular.module(page.APPNAME)
-        .factory("$baseController", baseController)
-        .directive("changeUsername", changeUsernanmeDirective);
+        .factory("$baseController", baseController);
 
-    baseController.$inject = ['$document', '$log', '$route', '$routeParams', '$systemEventService', '$alertService', "$window", '$uibModal', '$timeout', '$http', '$sce'];
+    baseController.$inject = ['$document', '$log', '$route', '$routeParams', '$systemEventService', '$alertService', "$window", '$uibModal', '$timeout', '$http', '$sce', '$cookies'];
 
-    function baseController($document, $log, $route, $routeParams, $systemEventService, $alertService, $window, $uibModal, $timeout, $http, $sce) {
+    function baseController($document, $log, $route, $routeParams, $systemEventService, $alertService, $window, $uibModal, $timeout, $http, $sce, $cookies) {
 
         var base = {
             document: $document,
@@ -37,83 +36,142 @@
             modal: $uibModal,
             timeout: $timeout,
             http: $http,
-            sce: $sce
+            sce: $sce,
+            cookies: $cookies
         }
 
-        base.tryAgain = function (numberOfTimesLooped, miliseconds, func, predicate) {
-            if (numberOfTimesLooped > 10) { numberOfTimesLooped = 9; }
+        base.tryAgain = function (maxLoops, miliseconds, promise, method) {
 
-            this.stop = function () {
-                clearInterval(funcIntervalId);
-                clearInterval(counterIntervalId);
+            if (!maxLoops) { maxLoops = 1; }
+            if (!miliseconds) { miliseconds = 1000; }
+
+            var rootObj = {};
+
+            rootObj.isSuccessful = false;
+            rootObj.method = method;
+
+            _start();
+
+            function _stop() {
+                clearInterval(rootObj.funcIntervalId);
+                clearInterval(rootObj.counterIntervalId);
             }
 
-            var index = 0;
+            function _start() {
+                if (!rootObj.index) { rootObj.index = 0; }
+                if (maxLoops > 10) { maxLoops = 9; }
 
-            var funcIntervalId = setInterval(() => {
-                func();
-                if (numberOfTimesLooped < index) { this.stop(); }
-                else if (predicate()) { this.stop(); }
-            }, miliseconds);
+                rootObj.counterIntervalId = (rootObj.counterIntervalId) ? rootObj.counterIntervalId : setInterval(() => { rootObj.index++; }, miliseconds);
 
-            var counterIntervalId = setInterval(() => { index++; console.log(index); }, miliseconds);
+                rootObj.funcIntervalId = (rootObj.funcIntervalId) ? rootObj.funcIntervalId :
+                    setInterval(() => {
+                        //promise.then(() => isSuccessful = true, () => isSuccessful = false);
+
+                        rootObj.isSuccessful = promise.toObject().isFulfilled();
+                        method();
+
+                        if (maxLoops <= rootObj.index) { _stop(); return; }
+                        else if (rootObj.isSuccessful) { _stop(); return; }
+
+                    }, miliseconds);
+
+            }
+        }
+
+        base.login = function (username) {
+            if (!username) { username = "__refreshUser__" }
+
+            return $http({
+                url: "/api/user?username=" + username,
+                method: "GET",
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
+
+        base.loginPopup = function () {
+
+            alert(
+                input => brodcastUpdate(input, null,
+                    base.tryAgain(2, 3000, brodcastUpdate(input, null, null), brodcastUpdate)
+                ),
+
+                () => base.tryAgain(3, 10000,
+                    alert(
+                        input => brodcastUpdate(input, null,
+                            base.tryAgain(2, 3000, brodcastUpdate(input, null, null), brodcastUpdate))
+                    ), alert)
+            );
+
+            function alert(onSuccess, onError) {
+                return swal({
+                    title: "Enter your session's username",
+                    type: "info",
+                    input: "text",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    allowOutsideClick: true,
+                    inputPlaceholder: "Type in your username!",
+                    preConfirm: function (inputValue) {
+                        return new Promise(function (resolve, reject) {
+                            if (inputValue === false || inputValue === "") {
+                                reject("You need to write something!");
+                            }
+                            else {
+                                resolve();
+                            }
+                        });
+                    }
+                }).then(onSuccess, onError);
+            }
+
+            function brodcastUpdate(input, onSuccess, onError) {
+                return base.login(input).then((data) => {
+                    if (base.cookies.get("loggedIn")) {
+                        page.loggedIn = true;
+                        base.systemEventService.broadcast("refreshedUsername");
+                    }
+                }).then(onSuccess, onError);
+            };
+        }
+
+        base.errorCheck = function (err, tryAgainObj) {
+            if (!tryAgainObj) {
+                tryAgainObj = {
+                    maxLoops: 1,
+                    miliseconds: 1000,
+                    method: () => { base.alertService.error(err.data.exceptionMessage); },
+                    promise: new Promise((onSuccess, onError) => onSuccess())
+                };
+            }
+
+            if (err.data.errors) {
+                for (var error of err.data.errors) {
+                    switch (error) {
+                        case "User is not logged in...":
+                            base.loginPopup();
+                            break;
+
+                        default:
+                            if (!tryAgainObj || !tryAgainObj.maxLoops || !tryAgainObj.miliseconds || !tryAgainObj.method || !tryAgainObj.predicate) { return; }
+                            base.tryAgain(tryAgainObj.maxLoops, tryAgainObj.miliseconds, tryAgainObj.method, tryAgainObj.predicate);
+                            break;
+                    }
+                }
+            }
+            else if (err.data.exceptionMessage) {
+                switch (err.data.exceptionMessage) {
+                    case "User is not logged in...":
+                        base.loginPopup();
+                        break;
+
+                    default:
+                        base.tryAgain(tryAgainObj.maxLoops, tryAgainObj.miliseconds, tryAgainObj.promise, tryAgainObj.method);
+                        break;
+                }
+            }
         }
 
         return base;
     }
-
-    function changeUsernanmeDirective($baseController) {
-
-        return {
-            restrict: "A",
-            scope: true,
-            link: function ($scope, element, attr) {
-
-                $(document).ready(_startUp);
-
-                function _startUp() {
-
-                    element.on("click", function () {
-                        swal({
-                            title: "Enter your session's username",
-                            type: "info",
-                            input: "text",
-                            showCancelButton: true,
-                            closeOnConfirm: false,
-                            allowOutsideClick: true,
-                            inputPlaceholder: "Type in your username!",
-                            preConfirm: function (inputValue) {
-                                return new Promise(function (resolve, reject) {
-                                    if (inputValue === false || inputValue === "") {
-                                        reject("You need to write something!");
-                                    }
-                                    else {
-                                        resolve();
-                                    }
-                                });
-                            }
-                        }).then(function (input) {
-                            $baseController.http({
-                                url: "/api/user/" + input,
-                                method: "GET",
-                                headers: { 'Content-Type': 'application/json' }
-                            }).then(function (data) {
-                                page.user.signedIn = true;
-                                page.user.username = input;
-                                localStorage["nostreetsUsername"] = input;
-                                $baseController.systemEventService.broadcast("refreshedUsername");
-                            });
-                        });
-
-                    });
-
-                }
-
-
-
-            }
-        }
-    }
-
 
 })();

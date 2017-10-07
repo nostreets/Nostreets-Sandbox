@@ -41,36 +41,11 @@
             vm.rendered = false;
             vm.legend = [];
 
-            if (!page.user.signedIn) {
-                swal({
-                    title: "Enter your session's username",
-                    type: "info",
-                    input: "text",
-                    showCancelButton: false,
-                    closeOnConfirm: false,
-                    animation: "slide-from-top",
-                    allowOutsideClick: false,
-                    inputPlaceholder: "Type in your username!",
-                    preConfirm: function (inputValue) {
-                        return new Promise(function (resolve, reject) {
-                            if (inputValue === false || inputValue === "") {
-                                reject("You need to write something!");
-                            }
-                            else {
-                                resolve();
-                            }
-                        });
-                    }
-                }).then(function (input) {
-                    $sandboxService.loginUser(input).then(function (data) {
-                        page.user.signedIn = true;
-                        localStorage["nostreetsUsername"] = input;
-                        page.user.username = input;
-                    });
-                });
+            if (!page.user.loggedIn) {
+                $baseController.loginPopup();
             }
 
-            $sandboxService.getAllChartsByUser().then(_chartsResponse, _consoleResponse);
+            $sandboxService.getAllChartsByUser().then(_chartsResponse, (err) => $baseController.errorCheck(err));
         };
 
         function _viewDirectiveCode() {
@@ -437,20 +412,20 @@
                     series: vm.chart.series
                 }
                 if (!vm.chart.chartId) {
-                    $sandboxService.insertChart(model).then(_idResponse, _consoleResponse);
+                    $sandboxService.insertChart(model).then(_idResponse, (err) => $baseController.errorCheck(err));
                 }
                 else {
                     model.id = vm.chart.chartId;
-                    $sandboxService.updateChart(model).then(_consoleResponse, _consoleResponse);
+                    $sandboxService.updateChart(model).then(_consoleResponse, (err) => $baseController.errorCheck(err));
                 }
                 vm.saved = true;
-                $sandboxService.getAllChartsByUser.then(_chartsResponse, _consoleResponse);
+                $sandboxService.getAllChartsByUser.then(_chartsResponse, (err) => $baseController.errorCheck(err));
             }
         }
 
         function _delete(chart) {
             if (chart && chart.chartId) {
-                $sandboxService.deleteChartById(chart.chartId).then(_refreshResponse, _consoleResponse);
+                $sandboxService.deleteChartById(chart.chartId).then(_refreshResponse, (err) => $baseController.errorCheck(err));
             }
         }
 
@@ -480,7 +455,7 @@
         }
 
         function _refreshResponse() {
-            $sandboxService.getAllChartsByUser.then(_chartsResponse, _consoleResponse);
+            $sandboxService.getAllChartsByUser.then(_chartsResponse, (err) => $baseController.errorCheck(err));
         }
     }
 

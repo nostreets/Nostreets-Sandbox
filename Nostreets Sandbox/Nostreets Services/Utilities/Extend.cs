@@ -10,9 +10,13 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Net;
+using System.Net.Http;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Xml.Serialization;
+using System.Net.Http.Headers;
+using System.Linq.Expressions;
+using System.Collections.Specialized;
 
 namespace Nostreets_Services.Utilities
 {
@@ -332,6 +336,146 @@ namespace Nostreets_Services.Utilities
                 throw new ArgumentException("Type must be an enum");
 
             return Enum.GetValues(typeof(T)).Cast<T>().ToDictionary(t => (int)(object)t, t => t.ToString());
+        }
+
+        public static Dictionary<string, string> GetQueryStrings(this HttpRequestMessage request)
+        {
+            return request.GetQueryNameValuePairs()
+                          .ToDictionary(kv => kv.Key, kv => kv.Value, StringComparer.OrdinalIgnoreCase);
+        }
+
+        public static string GetQueryString(this HttpRequestMessage request, string key)
+        {
+            // IEnumerable<KeyValuePair<string,string>> - right!
+            var queryStrings = request.GetQueryNameValuePairs();
+            if (queryStrings == null)
+                return null;
+
+            var match = queryStrings.FirstOrDefault(kv => string.Compare(kv.Key, key, true) == 0);
+            if (string.IsNullOrEmpty(match.Value))
+                return null;
+
+            return match.Value;
+        }
+
+        public static string GetHeader(this HttpRequestMessage request, string key)
+        {
+            IEnumerable<string> keys = null;
+            if (!request.Headers.TryGetValues(key, out keys))
+                return null;
+
+            return keys.First();
+        }
+
+        public static string GetCookie(this HttpRequestMessage request, string cookieName)
+        {
+            CookieHeaderValue cookie = request.Headers.GetCookies(cookieName).FirstOrDefault();
+            if (cookie != null)
+            {
+                return cookie[cookieName].Value;
+            }
+
+            return null;
+        }
+
+        public static void SetCookie(this HttpRequestMessage request, ref HttpResponseMessage response, string cookieName, string value, DateTimeOffset? expires = null)
+        {
+            try
+            {
+                CookieHeaderValue storedCookie = request.Headers.GetCookies(cookieName).FirstOrDefault();
+
+                if (storedCookie != null)
+                {
+                    storedCookie.Expires = expires;
+                    storedCookie[cookieName].Value = value;
+                }
+                else
+                {
+                    CookieHeaderValue currentCookie = new CookieHeaderValue(cookieName, value);
+                    currentCookie.Expires = expires;
+
+                    response.Headers.AddCookies(new CookieHeaderValue[] { currentCookie });
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
+        public static void SetCookie(this HttpRequestMessage request, ref HttpResponseMessage response, string cookieName, Dictionary<string, string> values, DateTimeOffset? expires = null)
+        {
+            try
+            {
+                CookieHeaderValue storedCookie = request.Headers.GetCookies(cookieName).FirstOrDefault();
+                if (storedCookie != null)
+                {
+                    storedCookie.Expires = expires;
+
+                    foreach (var item in values)
+                    {
+                        storedCookie[item.Key].Value = item.Value;
+                    }
+                }
+                else
+                {
+                    CookieHeaderValue currentCookie = new CookieHeaderValue(cookieName, values.ToNameValueCollection());
+                    currentCookie.Expires = expires;
+
+                    response.Headers.AddCookies(new CookieHeaderValue[] { currentCookie });
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
+        public static Delegate ToDelegate(this MethodInfo obj, object target = null)
+        {
+
+            Type delegateType;
+
+            var typeArgs = obj.GetParameters()
+                .Select(p => p.ParameterType)
+                .ToList();
+
+            // builds a delegate type
+            if (obj.ReturnType == typeof(void))
+            {
+                delegateType = Expression.GetActionType(typeArgs.ToArray());
+
+            }
+            else
+            {
+                typeArgs.Add(obj.ReturnType);
+                delegateType = Expression.GetFuncType(typeArgs.ToArray());
+            }
+
+            // creates a binded delegate if target is supplied
+            var result = (target == null)
+                ? Delegate.CreateDelegate(delegateType, obj)
+                : Delegate.CreateDelegate(delegateType, target, obj);
+
+            return result;
+        }
+
+        public static NameValueCollection ToNameValueCollection<TKey, TValue>(this IDictionary<TKey, TValue> dict)
+        {
+            var nameValueCollection = new NameValueCollection();
+
+            foreach (var kvp in dict)
+            {
+                string value = null;
+                if (kvp.Value != null)
+                    value = kvp.Value.ToString();
+
+                nameValueCollection.Add(kvp.Key.ToString(), value);
+            }
+
+            return nameValueCollection;
         }
     }
 }

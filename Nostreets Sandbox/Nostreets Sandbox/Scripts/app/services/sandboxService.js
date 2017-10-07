@@ -6,11 +6,9 @@
 
     function sandboxService($http) {
         return {
-            loginUser: _loginUser,
             getEnums: _getEnums,
 
             getChartById: _getChartById,
-            getAllCharts: _getAllCharts,
             getAllChartsByUser: _getAllChartsByUser,
             insertChart: _insertChart,
             updateChart: _updateChart,
@@ -31,20 +29,12 @@
             getIncomeByName: _getIncome,
             deleteIncome: _deleteIncome,
             updateIncome: _updateIncome,
-            insertExpenses: _insertExpenses,
+            insertExpenses: _insertExpense,
             getAllExpenses: _getAllExpenses,
             getExpensesByName: _getExpense,
-            deleteExpenses: _deleteExpenses,
-            updateExpenses: _updateExpenses
+            deleteExpenses: _deleteExpense,
+            updateExpenses: _updateExpense
         };
-
-        function _loginUser(username) {
-            return $http({
-                url: "/api/user/" + username,
-                method: "GET",
-                headers: { 'Content-Type': 'application/json' }
-            });
-        }
 
         function _getEnums(enumType) {
             var url = "/api/config/enums/";
@@ -65,16 +55,9 @@
             });
         }
 
-        function _getAllCharts() {
-            return $http({
-                method: "GET",
-                url: "/api/charts/all"
-            });
-        }
-
         function _getAllChartsByUser() {
             return $http({
-                url: "/api/charts/user/" + page.user.username,
+                url: "/api/charts/user",
                 method: "GET",
                 headers: { 'Content-Type': 'application/json' }
             });
@@ -129,7 +112,7 @@
 
         function _getAllCardsByUser() {
             return $http({
-                url: "/api/cards/user/" + page.user.username,
+                url: "/api/cards/user",
                 method: "GET",
                 headers: { 'Content-Type': 'application/json' }
             });
@@ -240,7 +223,7 @@
             });
         }
 
-        function _insertExpenses(model) {
+        function _insertExpense(model) {
             return $http({
                 url: "/api/bill/expenses",
                 method: "POST",
@@ -275,7 +258,7 @@
             });
         }
 
-        function _deleteExpenses(id) {
+        function _deleteExpense(id) {
             return $http({
                 url: "/api/bill/expenses/" + id,
                 method: "DELETE",
@@ -283,7 +266,7 @@
             });
         }
 
-        function _updateExpenses(model) {
+        function _updateExpense(model) {
             return $http({
                 url: "/api/bill/expenses",
                 method: "PUT",

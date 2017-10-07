@@ -9,9 +9,9 @@
 
 Array.prototype.findByKey = function (key)
 {
-    if (this.findIndex((a) => a.key === obj.key) !== -1)
+    if (this.findIndex((a) => a.key === key) !== -1)
     {
-        return this[this.findIndex((a) => a.key === obj.key)];
+        return this[this.findIndex((a) => a.key === key)];
     }
     else { return null; }
 }
@@ -44,3 +44,33 @@ String.prototype.toValue = function (keyAndValueArr)
     return value;
 }
 
+Promise.prototype.toObject = function (promise) {
+    if (!promise) { promise = this; }
+
+    // Don't modify any promise that has been already modified.
+    if (promise.isResolved) return promise;
+
+    // Set initial state
+    var isPending = true;
+    var isRejected = false;
+    var isFulfilled = false;
+
+    // Observe the promise, saving the fulfillment in a closure scope.
+    var result = promise.then(
+        function(v) {
+            isFulfilled = true;
+            isPending = false;
+            return v; 
+        }, 
+        function(e) {
+            isRejected = true;
+            isPending = false;
+            throw e; 
+        }
+    );
+
+    result.isFulfilled = function() { return isFulfilled; };
+    result.isPending = function() { return isPending; };
+    result.isRejected = function() { return isRejected; };
+    return result;
+}
