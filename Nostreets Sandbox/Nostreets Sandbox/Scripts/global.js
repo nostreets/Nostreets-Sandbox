@@ -42,9 +42,6 @@
 
         base.tryAgain = function (maxLoops, miliseconds, promise, method) {
 
-            if (!maxLoops) { maxLoops = 1; }
-            if (!miliseconds) { miliseconds = 1000; }
-
             var rootObj = {};
 
             rootObj.isSuccessful = false;
@@ -67,11 +64,11 @@
                     setInterval(() => {
                         //promise.then(() => isSuccessful = true, () => isSuccessful = false);
 
-                        rootObj.isSuccessful = promise.toObject().isFulfilled();
+                        isSuccessful = promise.toObject().isFulfilled();
                         method();
 
                         if (maxLoops <= rootObj.index) { _stop(); return; }
-                        else if (rootObj.isSuccessful) { _stop(); return; }
+                        else if (isSuccessful) { _stop(); return; }
 
                     }, miliseconds);
 
@@ -90,19 +87,7 @@
 
         base.loginPopup = function () {
 
-            alert(
-                input => brodcastUpdate(input, null,
-                    base.tryAgain(2, 3000, brodcastUpdate(input, null, null), brodcastUpdate)
-                ),
-
-                () => base.tryAgain(3, 10000,
-                    alert(
-                        input => brodcastUpdate(input, null,
-                            base.tryAgain(2, 3000, brodcastUpdate(input, null, null), brodcastUpdate))
-                    ), alert)
-            );
-
-            function alert(onSuccess, onError) {
+            var alert = (onSuccess, onError) => {
                 return swal({
                     title: "Enter your session's username",
                     type: "info",
@@ -122,9 +107,9 @@
                         });
                     }
                 }).then(onSuccess, onError);
-            }
+            };
 
-            function brodcastUpdate(input, onSuccess, onError) {
+            var brodcastUpdate = (input, onSuccess, onError) => {
                 return base.login(input).then((data) => {
                     if (base.cookies.get("loggedIn")) {
                         page.loggedIn = true;
@@ -132,40 +117,40 @@
                     }
                 }).then(onSuccess, onError);
             };
+
+            alert(
+                input => brodcastUpdate(input, null,
+
+                    base.tryAgain(2, 3000,
+                        brodcastUpdate(input, null, null), brodcastUpdate)),
+
+                () => base.tryAgain(4, 5000,
+                    alert(input => brodcastUpdate(input, null,
+
+                        base.tryAgain(2, 3000,
+                            brodcastUpdate(input, null, null), brodcastUpdate))
+                    ), alert));
         }
 
         base.errorCheck = function (err, tryAgainObj) {
             if (!tryAgainObj) {
                 tryAgainObj = {
-                    maxLoops: 1,
-                    miliseconds: 1000,
-                    method: () => { base.alertService.error(err.data.exceptionMessage); },
+                    maxLoops: 0,
+                    miliseconds: 10,
+                    method: () => { return null; },
                     promise: new Promise((onSuccess, onError) => onSuccess())
                 };
             }
 
-            if (err.data.errors) {
-                for (var error of err.data.errors) {
-                    switch (error) {
-                        case "User is not logged in...":
-                            base.loginPopup();
-                            break;
-
-                        default:
-                            if (!tryAgainObj || !tryAgainObj.maxLoops || !tryAgainObj.miliseconds || !tryAgainObj.method || !tryAgainObj.predicate) { return; }
-                            base.tryAgain(tryAgainObj.maxLoops, tryAgainObj.miliseconds, tryAgainObj.method, tryAgainObj.predicate);
-                            break;
-                    }
-                }
-            }
-            else if (err.data.exceptionMessage) {
-                switch (err.data.exceptionMessage) {
+            for (var error of err.data.errors) {
+                switch (error) {
                     case "User is not logged in...":
                         base.loginPopup();
                         break;
 
                     default:
-                        base.tryAgain(tryAgainObj.maxLoops, tryAgainObj.miliseconds, tryAgainObj.promise, tryAgainObj.method);
+                        if (!tryAgainObj || !tryAgainObj.maxLoops || !tryAgainObj.miliseconds || !tryAgainObj.method || !tryAgainObj.predicate) { return; }
+                        base.tryAgain(tryAgainObj.maxLoops, tryAgainObj.miliseconds, tryAgainObj.method, tryAgainObj.predicate);
                         break;
                 }
             }

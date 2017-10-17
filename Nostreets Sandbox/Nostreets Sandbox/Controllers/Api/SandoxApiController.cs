@@ -17,22 +17,24 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using System.Net.Http.Headers;
+using NostreetsInterceptor;
 
 namespace Nostreets_Sandbox.Controllers.Api
 {
     [RoutePrefix("api")]
     public class SandoxApiController : ApiController
     {
+        #region Global Objects
         IChartsExtended _chartsSrv = null;
         ISendGridService _sendGridSrv = null;
         IDBService<StyledCard> _cardSrv = null;
         IUserService _userSrv = null;
         IBillService _billSrv = null;
+        #endregion
 
         public SandoxApiController(IChartsExtended chartsInject, ISendGridService sendGridInject, IDBService<StyledCard> cardInject, IUserService userInject, IBillService billsInject)
         {
-            _chartsSrv = chartsInject;
+            _chartsSrv = chartsInject;//UnityConfig.GetContainer().Resolve<ChartsService>();
             _sendGridSrv = sendGridInject;
             _cardSrv = cardInject;
             _userSrv = userInject;
@@ -41,6 +43,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         }
 
         #region Private Members
+
         private string GetStringWithinLines(int begining, int ending, string[] file)
         {
 
@@ -62,12 +65,12 @@ namespace Nostreets_Sandbox.Controllers.Api
 
                 User user = _userSrv.Get(uid);
                 if (user == null) { return null; }
-
                 return user;
             }
         }
 
         private bool IsLoggedIn { get { return GetCurrentUser() != null ? true : false; } }
+
         #endregion
 
         #region User Service Endpoints
@@ -109,14 +112,13 @@ namespace Nostreets_Sandbox.Controllers.Api
         #endregion
 
         #region Bill Service Endpoints
+        [Intercept("UserLogIn")]
         [Route("bill/income/all")]
         [HttpGet]
         public HttpResponseMessage GetAllIncome()
         {
             try
             {
-                if (!IsLoggedIn) { throw new Exception("User is not logged in..."); }
-
                 List<Income> result = null;
                 result = _billSrv.GetAllIncome(GetCurrentUser().Id);
                 ItemsResponse<Income> response = new ItemsResponse<Income>(result);
@@ -129,13 +131,14 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Intercept("UserLogIn")]
         [Route("bill/expenses/all")]
         [HttpGet]
         public HttpResponseMessage GetAllExpenses()
         {
             try
             {
-                if (!IsLoggedIn) { throw new Exception("User is not logged in..."); }
+
 
                 List<Expenses> result = null;
                 result = _billSrv.GetAllExpenses(GetCurrentUser().Id);
@@ -149,13 +152,14 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Intercept("UserLogIn")]
         [Route("bill/income")]
         [HttpGet]
         public HttpResponseMessage GetIncome(int id = 0, string name = null, ScheduleTypes scheduleType = ScheduleTypes.Any, IncomeTypes incomeType = IncomeTypes.Any)
         {
             try
             {
-                if (!IsLoggedIn) { throw new Exception("User is not logged in..."); }
+
 
                 Income result = null;
                 result = _billSrv.GetIncome(GetCurrentUser().Id, name);
@@ -169,13 +173,14 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Intercept("UserLogIn")]
         [Route("bill/expenses")]
         [HttpGet]
         public HttpResponseMessage GetExpense(int id = 0, string name = null, ScheduleTypes scheduleType = ScheduleTypes.Any, ExpenseTypes billType = ExpenseTypes.Any)
         {
             try
             {
-                if (!IsLoggedIn) { throw new Exception("User is not logged in..."); }
+
 
                 Expenses result = null;
                 result = _billSrv.GetExpense(GetCurrentUser().Id, name);
@@ -189,13 +194,14 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Intercept("UserLogIn")]
         [Route("bill/income/chart")]
         [HttpGet]
         public HttpResponseMessage GetIncomeChart(DateTime? startDate = null, DateTime? endDate = null)
         {
             try
             {
-                if (!IsLoggedIn) { throw new Exception("User is not logged in..."); }
+
 
                 Chart<List<float>> result = null;
                 result = _billSrv.GetIncomeChart(GetCurrentUser().Id, startDate, endDate);
@@ -209,13 +215,14 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Intercept("UserLogIn")]
         [Route("bill/expenses/chart")]
         [HttpGet]
         public HttpResponseMessage GetExpensesChart(DateTime? startDate = null, DateTime? endDate = null)
         {
             try
             {
-                if (!IsLoggedIn) { throw new Exception("User is not logged in..."); }
+
 
                 Chart<List<float>> result = null;
                 result = _billSrv.GetExpensesChart(GetCurrentUser().Id, startDate, endDate);
@@ -229,13 +236,14 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Intercept("UserLogIn")]
         [Route("bill/combined/chart")]
         [HttpGet]
         public HttpResponseMessage GetCombinedChart(DateTime? startDate = null, DateTime? endDate = null)
         {
             try
             {
-                if (!IsLoggedIn) { throw new Exception("User is not logged in..."); }
+
 
                 Chart<List<float>> result = null;
                 result = _billSrv.GetCombinedChart(GetCurrentUser().Id, startDate, endDate);
@@ -249,6 +257,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Intercept("UserLogIn")]
         [Route("bill/income")]
         [HttpPost]
         public HttpResponseMessage InsertIncome(Income income)
@@ -257,8 +266,8 @@ namespace Nostreets_Sandbox.Controllers.Api
             {
                 BaseResponse response = null;
 
-                if (!IsLoggedIn) { throw new Exception("User is not logged in..."); }
-                else if (!ModelState.IsValid)
+
+                if (!ModelState.IsValid)
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest);
                 }
@@ -280,6 +289,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Intercept("UserLogIn")]
         [Route("bill/expenses")]
         [HttpPost]
         public HttpResponseMessage InsertExpense(Expenses expense)
@@ -288,8 +298,8 @@ namespace Nostreets_Sandbox.Controllers.Api
             {
                 BaseResponse response = null;
 
-                if (!IsLoggedIn) { throw new Exception("User is not logged in..."); }
-                else if (!ModelState.IsValid)
+
+                if (!ModelState.IsValid)
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest);
                 }
@@ -311,6 +321,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Intercept("UserLogIn")]
         [Route("bill/income")]
         [HttpPut]
         public HttpResponseMessage UpdateIncome(Income income)
@@ -318,8 +329,8 @@ namespace Nostreets_Sandbox.Controllers.Api
             try
             {
                 BaseResponse response = null;
-                if (!IsLoggedIn) { throw new Exception("User is not logged in..."); }
-                else if (!ModelState.IsValid)
+
+                if (!ModelState.IsValid)
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest);
                 }
@@ -340,6 +351,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Intercept("UserLogIn")]
         [Route("bill/expenses")]
         [HttpPut]
         public HttpResponseMessage UpdateExpense(Expenses expense)
@@ -347,8 +359,8 @@ namespace Nostreets_Sandbox.Controllers.Api
             try
             {
                 BaseResponse response = null;
-                if (!IsLoggedIn) { throw new Exception("User is not logged in..."); }
-                else if (!ModelState.IsValid)
+
+                if (!ModelState.IsValid)
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest);
                 }
@@ -369,13 +381,14 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Intercept("UserLogIn")]
         [Route("bill/income/{id:int}")]
         [HttpDelete]
         public HttpResponseMessage DeleteIncome(int id)
         {
             try
             {
-                if (!IsLoggedIn) { throw new Exception("User is not logged in..."); }
+
 
                 _billSrv.DeleteIncome(id);
                 SuccessResponse response = new SuccessResponse();
@@ -388,13 +401,14 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Intercept("UserLogIn")]
         [Route("bill/expenses/{id:int}")]
         [HttpDelete]
         public HttpResponseMessage DeleteExpense(int id)
         {
             try
             {
-                if (!IsLoggedIn) { throw new Exception("User is not logged in..."); }
+
 
                 _billSrv.DeleteExpense(id);
                 SuccessResponse response = new SuccessResponse();
@@ -410,13 +424,14 @@ namespace Nostreets_Sandbox.Controllers.Api
         #endregion
 
         #region Card Service Endpoints
+        [Intercept("UserLogIn")]
         [Route("cards/user")]
         [HttpGet]
         public HttpResponseMessage GetAllCardsByUser()
         {
             try
             {
-                if (!IsLoggedIn) { throw new Exception("User is not logged in..."); }
+
 
                 List<StyledCard> list = _cardSrv.GetAll();
                 List<StyledCard> filteredList = list != null ? list.Where(a => a.UserId == GetCurrentUser().Id).ToList() : null;
@@ -430,13 +445,14 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Intercept("UserLogIn")]
         [Route("cards/{id:int}")]
         [HttpGet]
         public HttpResponseMessage GetCard(int id)
         {
             try
             {
-                if (!IsLoggedIn) { throw new Exception("User is not logged in..."); }
+
 
                 StyledCard card = _cardSrv.Get(id);
                 ItemResponse<StyledCard> response = new ItemResponse<StyledCard>(card);
@@ -449,14 +465,15 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Intercept("UserLogIn")]
         [Route("cards")]
         [HttpPost]
         public HttpResponseMessage InsertCard(StyledCard model, string username)
         {
             try
             {
-                if (!IsLoggedIn) { throw new Exception("User is not logged in..."); }
-                else if (!ModelState.IsValid)
+
+                if (!ModelState.IsValid)
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest);
                 }
@@ -478,6 +495,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Intercept("UserLogIn")]
         [Route("cards")]
         [HttpPut]
         public HttpResponseMessage UpdateCard(StyledCard model, string username)
@@ -485,8 +503,8 @@ namespace Nostreets_Sandbox.Controllers.Api
             try
             {
                 BaseResponse response = null;
-                if (!IsLoggedIn) { throw new Exception("User is not logged in..."); }
-                else if (!ModelState.IsValid)
+
+                if (!ModelState.IsValid)
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest);
                 }
@@ -506,13 +524,14 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Intercept("UserLogIn")]
         [Route("cards/delete/{id:int}")]
         [HttpDelete]
         public HttpResponseMessage DeleteCard(int id)
         {
             try
             {
-                if (!IsLoggedIn) { throw new Exception("User is not logged in..."); }
+
 
                 _chartsSrv.Delete(id);
                 SuccessResponse response = new SuccessResponse();
@@ -528,16 +547,17 @@ namespace Nostreets_Sandbox.Controllers.Api
         #endregion
 
         #region Chart Service Endpoints
+        [Intercept("UserLogIn")]
         [Route("charts/all")]
         [HttpGet]
         public HttpResponseMessage GetAllCharts()
         {
             try
             {
-                if (!IsLoggedIn) { throw new Exception("User is not logged in..."); }
+
 
                 List<Chart<object>> list = _chartsSrv.GetAll();
-                ItemsResponse<Chart<object>>  response = new ItemsResponse<Chart<object>>(list);
+                ItemsResponse<Chart<object>> response = new ItemsResponse<Chart<object>>(list);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -547,13 +567,14 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Route("charts/user")]
+        [Intercept("UserLogIn")]
+        [Route("charts/user/{username}")]
         [HttpGet]
-        public HttpResponseMessage GetAllChartsByUser()
+        public HttpResponseMessage GetAllChartsByUser(string username)
         {
             try
             {
-                if (!IsLoggedIn) { throw new Exception("User is not logged in..."); }
+
 
                 List<Chart<object>> list = _chartsSrv.GetAll();
                 List<Chart<object>> filteredList = list != null ? list.Where(a => a.UserId == GetCurrentUser().Id).ToList() : null;
@@ -567,13 +588,14 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Intercept("UserLogIn")]
         [Route("charts/{id:int}")]
         [HttpGet]
         public HttpResponseMessage GetChart(int id)
         {
             try
             {
-                if (!IsLoggedIn) { throw new Exception("User is not logged in..."); }
+
 
                 Chart<object> chart = _chartsSrv.Get(id);
                 ItemResponse<Chart<object>> response = new ItemResponse<Chart<object>>(chart);
@@ -586,6 +608,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Intercept("UserLogIn")]
         [Route("charts/int")]
         [HttpPost]
         public HttpResponseMessage InsertChart(ChartAddRequest<int> model, string username)
@@ -593,8 +616,8 @@ namespace Nostreets_Sandbox.Controllers.Api
             try
             {
                 BaseResponse response = null;
-                if (!IsLoggedIn) { throw new Exception("User is not logged in..."); }
-                else if (!ModelState.IsValid)
+
+                if (!ModelState.IsValid)
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest);
                 }
@@ -614,6 +637,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Intercept("UserLogIn")]
         [Route("charts/list/int")]
         [HttpPost]
         public HttpResponseMessage InsertChart(ChartAddRequest<List<int>> model, string username)
@@ -621,8 +645,8 @@ namespace Nostreets_Sandbox.Controllers.Api
             try
             {
                 BaseResponse response = null;
-                if (!IsLoggedIn) { throw new Exception("User is not logged in..."); }
-                else if (!ModelState.IsValid)
+
+                if (!ModelState.IsValid)
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest);
                 }
@@ -642,6 +666,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Intercept("UserLogIn")]
         [Route("charts/int")]
         [HttpPut]
         public HttpResponseMessage UpdateChart(ChartUpdateRequest<int> model, string username)
@@ -649,8 +674,8 @@ namespace Nostreets_Sandbox.Controllers.Api
             try
             {
                 BaseResponse response = null;
-                if (!IsLoggedIn) { throw new Exception("User is not logged in..."); }
-                else if (!ModelState.IsValid)
+
+                if (!ModelState.IsValid)
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest);
                 }
@@ -669,6 +694,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Intercept("UserLogIn")]
         [Route("charts/list/int")]
         [HttpPut]
         public HttpResponseMessage UpdateChart(ChartUpdateRequest<List<int>> model, string username)
@@ -676,8 +702,8 @@ namespace Nostreets_Sandbox.Controllers.Api
             try
             {
                 BaseResponse response = null;
-                if (!IsLoggedIn) { throw new Exception("User is not logged in..."); }
-                else if (!ModelState.IsValid)
+
+                if (!ModelState.IsValid)
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest);
                 }
@@ -696,6 +722,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Intercept("UserLogIn")]
         [Route("charts/delete/{id:int}")]
         [HttpDelete]
         public HttpResponseMessage DeleteChart(int id)
@@ -704,13 +731,12 @@ namespace Nostreets_Sandbox.Controllers.Api
             {
 
                 BaseResponse response = null;
-                if (!IsLoggedIn) { throw new Exception("User is not logged in..."); }
-                else
-                {
-                    _chartsSrv.Delete(id);
-                    response = new SuccessResponse();
-                    return Request.CreateResponse(HttpStatusCode.OK, response);
-                }
+
+
+                _chartsSrv.Delete(id);
+                response = new SuccessResponse();
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+
             }
             catch (Exception ex)
             {

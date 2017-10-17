@@ -71,7 +71,23 @@
                     };
                     vm.charts.add(incomeChart);
                 },
-                (err) => $baseController.errorCheck(err)
+                err => $baseController.tryAgain(
+                    3,
+                    2000,
+                    () => {
+                        $sandboxService.getIncomesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
+                            (data) => {
+                                var incomeChart = {
+                                    key: "income",
+                                    value: data.data.item
+                                };
+                                vm.charts.add(incomeChart);
+                            });
+                    },
+                    () => {
+                        return (vm.charts.findByKey("income") === null) ? false : true;
+                    }
+                )
             );
         }
 
@@ -84,7 +100,23 @@
                     };
                     vm.charts.add(expensesChart);
                 },
-                (err) => $baseController.errorCheck(err)
+                err => $baseController.tryAgain(
+                    3,
+                    2000,
+                    () => {
+                        $sandboxService.getExpensesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
+                            (data) => {
+                                var incomeChart = {
+                                    key: "expense",
+                                    value: data.data.item
+                                };
+                                vm.charts.add(incomeChart);
+                            });
+                    },
+                    () => {
+                        return (vm.charts.findByKey("expense") === null) ? false : true;
+                    }
+                )
             );
         }
 
@@ -97,21 +129,37 @@
                     };
                     vm.charts.add(combinedChart);
                 },
-                (err) => $baseController.errorCheck(err)
+                err => $baseController.tryAgain(
+                    3,
+                    2000,
+                    () => {
+                        $sandboxService.getCombinedChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
+                            (data) => {
+                                var incomeChart = {
+                                    key: "combined",
+                                    value: data.data.item
+                                };
+                                vm.charts.add(incomeChart);
+                            });
+                    },
+                    () => {
+                        return (vm.charts.findByKey("combined") === null) ? false : true;
+                    }
+                )
             );
         }
 
         function _getIncome(id, name, scheduleType, incomeType) {
             $sandboxService.getIncome(id, name, scheduleType, incomeType).then(
                 (data) => console.log(data),
-                (err) => $baseController.errorCheck(err)
+                (data) => $baseController.timeout(2000, $sandboxService.getIncome()) //console.log(data)
             );
         }
 
         function _getExpense(id, name, scheduleType, incomeType) {
             $sandboxService.getExpense(id, name, scheduleType, incomeType).then(
                 (data) => console.log(data),
-                (err) => $baseController.errorCheck(err)
+                (data) => $baseController.timeout(2000, $sandboxService.getExpense()) //console.log(data)
             );
         }
 

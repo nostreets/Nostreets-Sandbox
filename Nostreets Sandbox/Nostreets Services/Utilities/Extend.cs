@@ -17,6 +17,8 @@ using System.Xml.Serialization;
 using System.Net.Http.Headers;
 using System.Linq.Expressions;
 using System.Collections.Specialized;
+using Microsoft.Practices.Unity;
+using System.Web;
 
 namespace Nostreets_Services.Utilities
 {
@@ -369,13 +371,21 @@ namespace Nostreets_Services.Utilities
 
         public static string GetCookie(this HttpRequestMessage request, string cookieName)
         {
-            CookieHeaderValue cookie = request.Headers.GetCookies(cookieName).FirstOrDefault();
+            CookieHeaderValue cookie = request.Headers.GetCookies(cookieName).FirstOrDefault() ?? default(CookieHeaderValue);
+
+            return cookie[cookieName].Value;
+        }
+
+        public static string GetCookie(this HttpRequest request, string cookieName)
+        {
+            string result = null;
+            HttpCookie cookie = request.Cookies[cookieName] ?? default(HttpCookie);
             if (cookie != null)
             {
-                return cookie[cookieName].Value;
+                result = cookie.Value;
             }
 
-            return null;
+            return result;
         }
 
         public static void SetCookie(this HttpRequestMessage request, ref HttpResponseMessage response, string cookieName, string value, DateTimeOffset? expires = null)
@@ -476,6 +486,240 @@ namespace Nostreets_Services.Utilities
             }
 
             return nameValueCollection;
+        }
+
+        public static bool HasDuplicates<T>(this IEnumerable<T> enumerable, string propertyName) where T : class
+        {
+
+            var dict = new Dictionary<string, int>();
+            foreach (var item in enumerable)
+            {
+                if (!dict.ContainsKey((string)typeof(T).GetProperty(propertyName).GetValue(item)))
+                {
+                    dict.Add((string)typeof(T).GetProperty(propertyName).GetValue(item), 0);
+                }
+                if (dict[(string)typeof(T).GetProperty(propertyName).GetValue(item)] > 0)
+                {
+                    dict = null;
+                    return true;
+                }
+                dict[(string)typeof(T).GetProperty(propertyName).GetValue(item)]++;
+            }
+            dict = null;
+            return false;
+        }
+
+        public static List<Type> GetTypesWith<TAttribute>(this AppDomain app, bool searchDervied) where TAttribute : Attribute
+        {
+            //return from a in AppDomain.CurrentDomain.GetAssemblies()
+            //       from t in a.GetTypes()
+            //       where t.IsDefined(typeof(TAttribute), searchDervied)
+            //       select t;
+
+            List<Type> result = new List<Type>();
+            var assemblies = app.GetAssemblies();
+
+            foreach (var assembly in assemblies)
+            {
+                var types = assembly.GetTypes();
+                foreach (var item in types)
+                {
+                    if (Attribute.GetCustomAttribute(item, typeof(TAttribute)) != null) { result.Add(item); }
+                }
+            }
+
+            return result;
+        }
+
+        public static MethodInfo GetMethodInfo<T, T2>(this Expression<Func<T, T2>> expression)
+        {
+            var member = expression.Body as MethodCallExpression;
+
+            if (member != null)
+                return member.Method;
+
+            throw new ArgumentException("Expression is not a method", "expression");
+        }
+
+        public static MethodInfo GetMethodInfo<T>(this Expression<Action<T>> expression)
+        {
+            var member = expression.Body as MethodCallExpression;
+
+            if (member != null)
+                return member.Method;
+
+            throw new ArgumentException("Expression is not a method", "expression");
+        }
+
+        public static MethodInfo GetMethodInfo<T>(this T obj, string methodName, BindingFlags searchSettings = BindingFlags.NonPublic | BindingFlags.Instance) where T : new()
+        {
+            return typeof(T).GetMethod(methodName, searchSettings);
+        }
+
+        public static MethodInfo GetMethodInfo(this Type type, string methodName, BindingFlags searchSettings = BindingFlags.NonPublic | BindingFlags.Instance)
+        {
+            return type.GetMethod(methodName, searchSettings);
+        }
+
+        public static MethodInfo GetMethodInfo(this string fullMethodName)
+        {
+            return (MethodInfo)fullMethodName.ScanAssemblies();
+        }
+
+        public static List<Tuple<TAttribute, object>> GetObjectsWithAttribute<TAttribute>(this List<Tuple<TAttribute, object>> obj, ClassTypes types = ClassTypes.Any) where TAttribute : Attribute
+        {
+            return AttributeTargetHelper<TAttribute>.GetAttributes(types);
+        }
+
+        public static List<TAttribute> GetAttributes<TAttribute>(this List<TAttribute> obj) where TAttribute : Attribute
+        {
+            List<TAttribute> result = new List<TAttribute>();
+
+            foreach (var item in AttributeTargetHelper<TAttribute>.GetAttributes()) { result.Add(item.Item1); }
+
+            return result;
+        }
+
+        public static List<object> GetObjectsWithAttribute<TAttribute>(this List<object> obj) where TAttribute : Attribute
+        {
+            List<object> result = new List<object>();
+
+            foreach (var item in AttributeTargetHelper<TAttribute>.GetAttributes()) { result.Add(item.Item2); }
+
+            return result;
+        }
+
+        public static List<string> GetDuplicates<T>(this IEnumerable<T> enumerable, string propertyName) where T : class
+        {
+
+            var dict = new Dictionary<string, int>();
+            foreach (var item in enumerable)
+            {
+                if (!dict.ContainsKey((string)typeof(T).GetProperty(propertyName).GetValue(item)))
+                {
+                    dict.Add((string)typeof(T).GetProperty(propertyName).GetValue(item), 0);
+                }
+                else
+                {
+                    dict[(string)typeof(T).GetProperty(propertyName).GetValue(item)]++;
+                }
+            }
+            var duplicates = new List<string>();
+            foreach (var value in dict)
+            {
+                if (value.Value > 0)
+                {
+                    duplicates.Add(value.Key);
+                }
+            }
+            return duplicates;
+        }
+
+        public static bool IsActionDelegate<T>(this T source)
+        {
+            return typeof(T).FullName.StartsWith("System.Action");
+        }
+
+        public static bool IsType<T>(this object obj, out T output) where T : class
+        {
+            bool result = false;
+            output = null;
+            if (typeof(T) == obj.GetType())
+            {
+                result = true;
+                output = (T)obj;
+            }
+
+            return result;
+        }
+
+        public static bool IsType(this object obj, Type type)
+        {
+            bool result = false;
+            if (type == obj.GetType())
+            {
+                result = true;
+            }
+
+            return result;
+        }
+
+        public static object Instantiate(this Type type)
+        {
+
+            return Activator.CreateInstance(type);
+        }
+
+        public static T Instantiate<T>(this T type)
+        {
+            return Activator.CreateInstance<T>();
+        }
+
+        public static T UnityInstantiate<T>(this T type, UnityContainer containter)
+        {
+            return containter.Resolve<T>();
+        }
+
+        public static object UnityInstantiate(this Type type, UnityContainer containter)
+        {
+            return containter.Resolve(type);
+        }
+
+        public static object ScanAssemblies(this string nameToCheckFor, IList<string> skipAssemblies = null)
+        {
+            object result = null;
+            if (skipAssemblies == null) { skipAssemblies = new List<string>(); }
+            const BindingFlags memberInfoBinding = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
+
+
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                if (!skipAssemblies.Contains(assembly.FullName))
+                {
+                    skipAssemblies.Add(assembly.FullName);
+
+                    foreach (Type type in assembly.GetTypes())
+                    {
+                        if (type.Name != nameToCheckFor)
+                        {
+                            foreach (MemberInfo member in type.GetMembers(memberInfoBinding))
+                            {
+                                if (member.MemberType == MemberTypes.Method && member.Name != nameToCheckFor)
+                                {
+                                    foreach (ParameterInfo parameter in ((MethodInfo)member).GetParameters())
+                                    {
+                                        if (parameter.Name == nameToCheckFor)
+                                        {
+                                            result = parameter;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    result = member;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            result = type;
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+
+        public static UnityContainer ExternalContainer()
+        {
+            return
+                (UnityContainer)
+                    ((MethodInfo)"UnityConfig.GetContainer".ScanAssemblies(new[] { "NostreetsInterceptor" }).Instantiate())
+                        .Invoke("UnityConfig".ScanAssemblies(new[] { "NostreetsInterceptor" }).Instantiate(), null)
+                    ??
+                (UnityContainer)
+                    ((MethodInfo)"UnityConfig.GetContainer".ScanAssemblies().Instantiate())
+                        .Invoke("UnityConfig".ScanAssemblies().Instantiate(), null);
         }
     }
 }
