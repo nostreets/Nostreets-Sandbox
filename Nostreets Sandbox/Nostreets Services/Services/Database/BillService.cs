@@ -3,11 +3,11 @@ using Nostreets_Services.Domain.Bills;
 using Nostreets_Services.Domain.Charts;
 using Nostreets_Services.Enums;
 using Nostreets_Services.Interfaces.Services;
-using Nostreets_Services.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using NostreetsExtensions;
 
 namespace Nostreets_Services.Services.Database
 {

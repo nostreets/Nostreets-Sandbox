@@ -19,6 +19,7 @@ using System.Linq.Expressions;
 using System.Collections.Specialized;
 using Microsoft.Practices.Unity;
 using System.Web;
+using NostreetsInterceptor.Utilities;
 
 namespace Nostreets_Services.Utilities
 {
@@ -388,24 +389,42 @@ namespace Nostreets_Services.Utilities
             return result;
         }
 
+        public static void SetCookie(this HttpRequestHeaders headers, string name, string value)
+        {
+            string[] temp = null;
+            string result = null;
+            if (headers.Contains("Cookie"))
+            {
+                temp = headers.GetValues("Cookie").ToArray();
+                headers.Remove("Cookie");
+            }
+
+            foreach (string cookie in temp) { if (!cookie.Contains(name)) { string[] coll = cookie.Split('='); result += String.Format("{0}={1}; ", coll[0], coll[1]); } }
+            result += name + '=' + value;
+
+
+            headers.Add("Cookie", result);
+        }
         public static void SetCookie(this HttpRequestMessage request, ref HttpResponseMessage response, string cookieName, string value, DateTimeOffset? expires = null)
         {
             try
             {
                 CookieHeaderValue storedCookie = request.Headers.GetCookies(cookieName).FirstOrDefault();
+                request.Headers.SetCookie(cookieName, value);
 
-                if (storedCookie != null)
-                {
-                    storedCookie.Expires = expires;
-                    storedCookie[cookieName].Value = value;
-                }
-                else
-                {
-                    CookieHeaderValue currentCookie = new CookieHeaderValue(cookieName, value);
-                    currentCookie.Expires = expires;
+                //if (storedCookie != null)
+                //{
+                //   // storedCookie.Expires = expires;
+                //    //storedCookie[cookieName].Value = value;
+                //}
+                //else
+                //{
+                //    storedCookie = new CookieHeaderValue(cookieName, value);
+                //    storedCookie.Expires = expires;
+                //}
 
-                    response.Headers.AddCookies(new CookieHeaderValue[] { currentCookie });
-                }
+                //response.Headers.AddCookies(new CookieHeaderValue[] { storedCookie });
+
             }
             catch (Exception ex)
             {
@@ -563,19 +582,19 @@ namespace Nostreets_Services.Utilities
 
         public static MethodInfo GetMethodInfo(this string fullMethodName)
         {
-            return (MethodInfo)fullMethodName.ScanAssemblies();
+            return (MethodInfo)fullMethodName.ScanAssembliesForObject();
         }
 
         public static List<Tuple<TAttribute, object>> GetObjectsWithAttribute<TAttribute>(this List<Tuple<TAttribute, object>> obj, ClassTypes types = ClassTypes.Any) where TAttribute : Attribute
         {
-            return AttributeTargetHelper<TAttribute>.GetAttributes(types);
+            return AttributeScanner<TAttribute>.ScanAssembliesForAttributes(types);
         }
 
         public static List<TAttribute> GetAttributes<TAttribute>(this List<TAttribute> obj) where TAttribute : Attribute
         {
             List<TAttribute> result = new List<TAttribute>();
 
-            foreach (var item in AttributeTargetHelper<TAttribute>.GetAttributes()) { result.Add(item.Item1); }
+            foreach (var item in AttributeScanner<TAttribute>.ScanAssembliesForAttributes()) { result.Add(item.Item1); }
 
             return result;
         }
@@ -584,7 +603,7 @@ namespace Nostreets_Services.Utilities
         {
             List<object> result = new List<object>();
 
-            foreach (var item in AttributeTargetHelper<TAttribute>.GetAttributes()) { result.Add(item.Item2); }
+            foreach (var item in AttributeScanner<TAttribute>.ScanAssembliesForAttributes()) { result.Add(item.Item2); }
 
             return result;
         }
@@ -665,61 +684,11 @@ namespace Nostreets_Services.Utilities
             return containter.Resolve(type);
         }
 
-        public static object ScanAssemblies(this string nameToCheckFor, IList<string> skipAssemblies = null)
+        public static object ScanAssembliesForObject(this string nameToCheckFor, params string[] assembliesToSkip)
         {
-            object result = null;
-            if (skipAssemblies == null) { skipAssemblies = new List<string>(); }
-            const BindingFlags memberInfoBinding = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
-
-
-            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                if (!skipAssemblies.Contains(assembly.FullName))
-                {
-                    skipAssemblies.Add(assembly.FullName);
-
-                    foreach (Type type in assembly.GetTypes())
-                    {
-                        if (type.Name != nameToCheckFor)
-                        {
-                            foreach (MemberInfo member in type.GetMembers(memberInfoBinding))
-                            {
-                                if (member.MemberType == MemberTypes.Method && member.Name != nameToCheckFor)
-                                {
-                                    foreach (ParameterInfo parameter in ((MethodInfo)member).GetParameters())
-                                    {
-                                        if (parameter.Name == nameToCheckFor)
-                                        {
-                                            result = parameter;
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    result = member;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            result = type;
-                        }
-                    }
-                }
-            }
+            object result = AssemblyScanner.ScanAssembliesForObject(nameToCheckFor, assembliesToSkip);
             return result;
         }
 
-        public static UnityContainer ExternalContainer()
-        {
-            return
-                (UnityContainer)
-                    ((MethodInfo)"UnityConfig.GetContainer".ScanAssemblies(new[] { "NostreetsInterceptor" }).Instantiate())
-                        .Invoke("UnityConfig".ScanAssemblies(new[] { "NostreetsInterceptor" }).Instantiate(), null)
-                    ??
-                (UnityContainer)
-                    ((MethodInfo)"UnityConfig.GetContainer".ScanAssemblies().Instantiate())
-                        .Invoke("UnityConfig".ScanAssemblies().Instantiate(), null);
-        }
     }
 }

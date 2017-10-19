@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using NostreetsInterceptor;
+using NostreetsExtensions;
 
 namespace Nostreets_Sandbox.Controllers.Api
 {
@@ -68,8 +69,6 @@ namespace Nostreets_Sandbox.Controllers.Api
                 return user;
             }
         }
-
-        private bool IsLoggedIn { get { return GetCurrentUser() != null ? true : false; } }
 
         #endregion
 

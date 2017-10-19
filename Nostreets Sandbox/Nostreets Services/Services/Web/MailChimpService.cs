@@ -11,6 +11,7 @@ using RestSharp.Authenticators;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using Nostreets_Services.Utilities;
 
 namespace Nostreets_Services.Services.Web
 {

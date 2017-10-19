@@ -1,5 +1,4 @@
-﻿using Microsoft.Practices.Unity;
-using Nostreets_Services.Domain.Cards;
+﻿using Nostreets_Services.Domain.Cards;
 using Nostreets_Services.Interfaces.Services;
 using Nostreets_Services.Services.Database;
 using Nostreets_Services.Services.Web;
@@ -14,6 +13,7 @@ using System.Web.Mvc;
 using Unity.Mvc5;
 using System;
 using System.Net.Http;
+using Microsoft.Practices.Unity;
 
 namespace Nostreets_Sandbox.App_Start
 {
