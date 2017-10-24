@@ -405,6 +405,7 @@ namespace Nostreets_Services.Utilities
 
             headers.Add("Cookie", result);
         }
+
         public static void SetCookie(this HttpRequestMessage request, ref HttpResponseMessage response, string cookieName, string value, DateTimeOffset? expires = null)
         {
             try

@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NostreetsRouter", "..\..\No
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NostreetsInterceptor", "..\..\NostreetsInterceptor\NostreetsInterceptor\NostreetsInterceptor.csproj", "{9152C751-21F4-4587-BA93-DD0C139B17F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NostreetsExtensions", "..\..\NostreetsExtensions\NostreetsExtensions.csproj", "{D75EF23C-2E65-4BF7-90D3-C21C73A3E9C3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NostreetsExtensions", "..\..\NostreetsExtensions\NostreetsExtensions\NostreetsExtensions.csproj", "{D75EF23C-2E65-4BF7-90D3-C21C73A3E9C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

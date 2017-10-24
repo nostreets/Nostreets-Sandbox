@@ -1,11 +1,12 @@
-﻿using Microsoft.Practices.Unity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Web.Http.Dependencies;
+using Unity;
+using Unity.Exceptions;
 
 namespace Nostreets_Sandbox.App_Start
 {
-    public class UnityResolver : IDependencyResolver
+    public class UnityResolver : IDependencyResolver, System.Web.Mvc.IDependencyResolver
     {
         protected IUnityContainer container;
 

@@ -13,7 +13,9 @@ using System.Web.Mvc;
 using Unity.Mvc5;
 using System;
 using System.Net.Http;
-using Microsoft.Practices.Unity;
+using Unity.Lifetime;
+using Unity.Injection;
+using Unity;
 
 namespace Nostreets_Sandbox.App_Start
 {
@@ -43,7 +45,7 @@ namespace Nostreets_Sandbox.App_Start
             container.RegisterType(typeof(IEFDBService<>), typeof(EFDBService<>), new ContainerControlledLifetimeManager(), new InjectionConstructor(/*"AzureDBConnection"*/"DefaultConnection"));
 
             ///Setting Resolvers for MVC and WebApi
-            DependencyResolver.SetResolver(new UnityDependencyResolver(container));
+            DependencyResolver.SetResolver(new UnityResolver(container));
             config.DependencyResolver = new UnityResolver(container);
 
             _container = container;
