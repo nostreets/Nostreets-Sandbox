@@ -5,23 +5,28 @@
         .controller("modalMainMenuController", modalMainMenuController)
         .controller("modalInsertController", modalInsertController);
 
-    billManagerController.$inject = ["$scope", "$baseController", '$uibModal', '$sandboxService'];
+    billManagerController.$inject = ["$scope", "$baseController", '$uibModal', '$sandboxService', '$filter'];
     modalMainMenuController.$inject = ["$scope", "$baseController", '$uibModalInstance', '$sandboxService', '$uibModal', 'data'];
     modalInsertController.$inject = ["$scope", "$baseController", '$uibModalInstance', '$sandboxService', 'model'];
 
 
-    function billManagerController($scope, $baseController, $uibModal, $sandboxService) {
+    function billManagerController($scope, $baseController, $uibModal, $sandboxService, $filter) {
 
         var vm = this;
         vm.changeCurrentTab = _changeTab;
         vm.openMainMenuModal = _openMainMenuModal;
         vm.openDatePicker = _openDatePicker;
+        vm.updateChart = _getUserData;
+
+
+        $baseController.systemEventService.listen("refreshedUsername", () => { _setUp(); _getUserData(); });
+
 
         _render();
 
         function _render() {
             _setUp();
-            _getUserData(_changeTab);
+            _getUserData();
         }
 
         function _setUp() {
@@ -32,13 +37,14 @@
             vm.renderedChart = null;
             vm.beginDate = new Date();
             vm.endDate = new Date(new Date().setTime(vm.beginDate.getTime() + 14 * 86400000));
+            vm.chartOptions = null;
         }
 
-        function _getUserData(func) {
+        function _getUserData() {
             _getIncomeChart().then(
                 () => _getExpensesChart().then(
                     () => _getCombinedChart().then(
-                        () => func()
+                        () => _changeTab()
                     )));
         }
 
@@ -62,7 +68,35 @@
             return arr;
         }
 
+        function _getDailyDateRange(start, end) {
+
+            if ((!start instanceof Date && !start instanceof Date) || (!typeof (start) === "string" && !typeof (end) === "string")) {
+                throw Error("_getDateRange params needs to be a Date object or a valid date string...");
+            }
+
+            if (typeof (start) === "string" && typeof (end) === "string") {
+                start = new Date(start);
+                end = new Date(end);
+            }
+
+            var day;
+            //var end = new Date();
+            var result = [$filter("date")(end, "M/d")];
+
+            while (start < end) {
+                day = end.getDate();
+                end = new Date(end.setDate(--day));
+
+                formattedDate = $filter("date")(end, "M/d");
+
+                result.unshift(formattedDate);
+            }
+
+            return result;
+        }
+
         function _getIncomeChart() {
+
             return $sandboxService.getIncomesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
                 (data) => {
                     var incomeChart = {
@@ -71,23 +105,22 @@
                     };
                     vm.charts.add(incomeChart);
                 },
-                err => $baseController.tryAgain(
-                    3,
-                    2000,
-                    () => {
-                        $sandboxService.getIncomesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
-                            (data) => {
-                                var incomeChart = {
-                                    key: "income",
-                                    value: data.data.item
-                                };
-                                vm.charts.add(incomeChart);
-                            });
-                    },
-                    () => {
-                        return (vm.charts.findByKey("income") === null) ? false : true;
-                    }
-                )
+
+                err => $baseController.errorCheck(err,
+                    {
+                        maxLoops: 3,
+                        miliseconds: 2000,
+                        method: () => {
+                            $sandboxService.getIncomesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
+                                (data) => {
+                                    var chart = {
+                                        key: "income",
+                                        value: data.data.item
+                                    };
+                                    vm.charts.add(chart);
+                                });
+                        }
+                    })
             );
         }
 
@@ -100,23 +133,22 @@
                     };
                     vm.charts.add(expensesChart);
                 },
-                err => $baseController.tryAgain(
-                    3,
-                    2000,
-                    () => {
-                        $sandboxService.getExpensesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
-                            (data) => {
-                                var incomeChart = {
-                                    key: "expense",
-                                    value: data.data.item
-                                };
-                                vm.charts.add(incomeChart);
-                            });
-                    },
-                    () => {
-                        return (vm.charts.findByKey("expense") === null) ? false : true;
-                    }
-                )
+
+                err => $baseController.errorCheck(err,
+                    {
+                        maxLoops: 3,
+                        miliseconds: 2000,
+                        method: () => {
+                            $sandboxService.getExpensesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
+                                (data) => {
+                                    var chart = {
+                                        key: "expense",
+                                        value: data.data.item
+                                    };
+                                    vm.charts.add(chart);
+                                });
+                        }
+                    })
             );
         }
 
@@ -129,55 +161,75 @@
                     };
                     vm.charts.add(combinedChart);
                 },
-                err => $baseController.tryAgain(
-                    3,
-                    2000,
-                    () => {
-                        $sandboxService.getCombinedChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
-                            (data) => {
-                                var incomeChart = {
-                                    key: "combined",
-                                    value: data.data.item
-                                };
-                                vm.charts.add(incomeChart);
-                            });
-                    },
-                    () => {
-                        return (vm.charts.findByKey("combined") === null) ? false : true;
-                    }
-                )
+
+                err => $baseController.errorCheck(err,
+                    {
+                        maxLoops: 3,
+                        miliseconds: 2000,
+                        method: () => {
+                            $sandboxService.getCombinedChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
+                                (data) => {
+                                    var chart = {
+                                        key: "combined",
+                                        value: data.data.item
+                                    };
+                                    vm.charts.add(chart);
+                                });
+                        }
+                    })
             );
         }
 
         function _getIncome(id, name, scheduleType, incomeType) {
+            var isSuccessful = false;
             $sandboxService.getIncome(id, name, scheduleType, incomeType).then(
                 (data) => console.log(data),
-                (data) => $baseController.timeout(2000, $sandboxService.getIncome()) //console.log(data)
+                err => $baseController.errorCheck(err,
+                    {
+                        maxLoops: 3,
+                        miliseconds: 2000,
+                        method: () => {
+                            $sandboxService.getIncome(id, name, scheduleType, incomeType).then((data) => { console.log(data); isSuccessful = true; });
+                        }
+                    })
             );
         }
 
-        function _getExpense(id, name, scheduleType, incomeType) {
-            $sandboxService.getExpense(id, name, scheduleType, incomeType).then(
+        function _getExpense(id, name, scheduleType, billType) {
+            $sandboxService.getExpense(id, name, scheduleType, billType).then(
                 (data) => console.log(data),
-                (data) => $baseController.timeout(2000, $sandboxService.getExpense()) //console.log(data)
+                err => $baseController.errorCheck(err,
+                    {
+                        maxLoops: 3,
+                        miliseconds: 2000,
+                        method: () => {
+                            $sandboxService.getExpense(id, name, scheduleType, billType).then((data) => { console.log(data); isSuccessful = true; });
+                        }
+                    })
             );
         }
 
         function _targetGraph(type, elementId) {
+
+            var chart = vm.charts.filter((a) => a.key === type)[0].value;
             var options = {
                 axisX: {
                     labelOffset: {
                         x: 0,
                         y: 0
                     }
-                }
+                },
+                plugins: [
+                    chatistScroll()
+                ]
+
             };
 
-            var chart = vm.charts.filter((a) => a.key === type)[0].value;
+            _adjustChartLabels(chart, options);
+
             if (chart.series.length === 0) {
                 chart.series.push(_arrayOfZeros(chart.labels.length));
             }
-
 
             if (vm.renderedChart === null) {
                 var renderedChart = new Chartist.Line(elementId, chart, options);
@@ -192,7 +244,72 @@
                 });
             }
 
+            page.__chart = renderedChart;
+            page.__chartStyle = document.getElementById(page.__chart.container.id).style;
+
             vm.renderedChart = chart;
+            vm.chartOptions = options;
+
+        }
+
+        function _adjustChartLabels(chart, options) {
+
+            //options.width = Math.round(chart.labels.length / 1.5) + "00px"
+
+            if (angular.element("#assetChartTabContainer")[0].clientWidth < 1150) {
+
+                switch (_findScheduleType(chart.labels)) {
+
+                    case "Daily":
+                        var minimizedLabels = _getDailyDateRange(vm.beginDate, vm.endDate);
+
+                        if (chart.labels.length === minimizedLabels.length) {
+                            chart.labels = _getDailyDateRange(vm.beginDate, vm.endDate);
+                        }
+                        break;
+                }
+            }
+        }
+
+        function _findScheduleType(arr) {
+            var item = arr[0];
+
+
+            if (
+                item === "January" ||
+                item === "February" ||
+                item === "March" ||
+                item === "April" ||
+                item === "May" ||
+                item === "June" ||
+                item === "July" ||
+                item === "August" ||
+                item === "September" ||
+                item === "October" ||
+                item === "November" ||
+                item === "December") {
+
+                return "Monthly";
+
+            }
+            else if (item.substr(item.length - 3, 3) === "day") {
+
+                return "Daily";
+
+            }
+            else if (item.includes("AM") || item.includes("PM")) {
+
+                return "Hourly";
+
+            }
+            else if (item.includes("Year")) {
+
+                return "Yearly";
+
+            }
+            else {
+                return "Weekly";
+            }
 
         }
 
@@ -433,6 +550,41 @@
                 _openCodeModal(data.data.item);
             });
         }
+
+        //REMOVE WHEN FUNCTIONAL
+        function chatistScroll() {
+
+            return _chartistScoll;
+
+            function _chartistScoll(chart) {
+
+                var options = {
+                    width: Math.round(chart.data.labels.length / 1) + "00px"
+                };
+
+                options = Chartist.extend({}, options, chart.options);
+
+                var styleTag = document.createElement('style');
+
+                var cssRules = [
+                    '#' + chart.container.id + ' { overflow-x: scroll; overflow-y: hidden; }',
+                    '#' + chart.container.id + '::-webkit-scrollbar  { width: 0px; }',
+                    '#' + chart.container.id + '::-webkit-scrollbar * { background: transparent; }',
+                    '#' + chart.container.id + '::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.4) !important; }',
+                    '#' + chart.container.id + '::-webkit-scrollbar-track {  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); border-radius: 10px; background-color: #F5F5F5; }',
+                    '#' + chart.container.id + '::-webkit-scrollbar {  width: 12px; background-color: #F5F5F5; }',
+                    '#' + chart.container.id + '::-webkit-scrollbar-thumb {  border-radius: 14px; -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3); background-color: #555; }'
+                ];
+
+                for (var css of cssRules) {
+                    styleTag.appendChild(document.createTextNode(css));
+                }
+
+                chart.container.appendChild(styleTag);
+
+            }
+
+        };
     }
 
     function modalMainMenuController($scope, $baseController, $uibModalInstance, $sandboxService, $uibModal, data) {
@@ -494,7 +646,7 @@
                 }
             });
 
-            modalInstance.closed.then(_refreshData());
+            modalInstance.closed.then(_refreshData);
         }
 
         function _close() {
@@ -506,65 +658,29 @@
 
                 $sandboxService.getAllIncomes().then(
                     a => vm.items = a.data.items,
-                    err => $baseController.tryAgain(5, 2000,
-                        () => {
-                            $sandboxService.getAllIncomes().then(a => vm.items = a.data.items)
-                        },
-                        () => {
-                            return (vm.charts.findByKey("income") === null) ? false : true;
-                        }
-                    )
+                    err => $baseController.errorCheck(err,
+                        {
+                            maxLoops: 3,
+                            miliseconds: 2000,
+                            method: () => {
+                                $sandboxService.getAllIncomes().then(a => vm.items = a.data.items);
+                            }
+                        })
                 )
 
-                : (vm.type === "expense") ?
+                :
 
-                    $sandboxService.getAllExpenses().then(
-                        a => vm.items = a.data.items,
-                        err => $baseController.tryAgain(5, 2000,
-                            () => {
-                                $sandboxService.getAllExpenses().then(a => vm.items = a.data.items)
-                            },
-                            () => {
-                                return (vm.charts.findByKey("expense") === null) ? false : true;
+                $sandboxService.getAllExpenses().then(
+                    a => vm.items = a.data.items,
+                    err => $baseController.errorCheck(err,
+                        {
+                            maxLoops: 3,
+                            miliseconds: 2000,
+                            method: () => {
+                                $sandboxService.getAllExpenses().then(a => vm.items = a.data.items);
                             }
-                        )
-                    )
-
-                    : $sandboxService.getAllExpenses().then(
-                        (a) => {
-                            vm.items = a.data.items;
-                            $sandboxService.getAllIncomes().then(
-                                a => vm.items.concat(a.data.items),
-                                err => $baseController.tryAgain(5, 2000,
-                                    () => {
-                                        $sandboxService.getAllIncomes().then(a => vm.items = a.data.items)
-                                    },
-                                    () => {
-                                        return (vm.charts.findByKey("combined") === null) ? false : true;
-                                    }
-                                )
-                            )
-                        },
-                        err => $baseController.tryAgain(5, 2000,
-                            (a) => {
-                                vm.items = a.data.items;
-                                $sandboxService.getAllIncomes().then(
-                                    a => vm.items.concat(a.data.items),
-                                    err => $baseController.tryAgain(5, 2000,
-                                        () => {
-                                            $sandboxService.getAllIncomes().then(a => vm.items = a.data.items)
-                                        },
-                                        () => {
-                                            return (vm.charts.findByKey("combined") === null) ? false : true;
-                                        }
-                                    )
-                                )
-                            },
-                            () => {
-                                return (vm.charts.findByKey("combined") === null) ? false : true;
-                            }
-                        )
-                    );
+                        })
+                )
         }
 
         function _deleteAsset(obj) {
@@ -572,27 +688,27 @@
             if (obj.incomeType) {
                 $sandboxService.deleteIncome(obj.id).then(
                     (data) => console.log(data),
-                    err => $baseController.tryAgain(3, 1000,
-                        () => {
-                            $sandboxService.deleteIncome(obj.id).then((data) => console.log(data), err => hasError = true);
-                        },
-                        () => {
-                            return (hasError) ? false : true;
-                        }
-                    )
+                    err => $baseController.errorCheck(err,
+                        {
+                            maxLoops: 3,
+                            miliseconds: 2000,
+                            method: () => {
+                                $sandboxService.deleteIncome(obj.id).then((data) => console.log(data));
+                            }
+                        })
                 );
             }
             else {
                 $sandboxService.deleteExpense(obj.id).then(
                     (data) => console.log(data),
-                    err => $baseController.tryAgain(3, 1000,
-                        () => {
-                            $sandboxService.deleteExpense(obj.id).then((data) => console.log(data), err => hasError = true);
-                        },
-                        () => {
-                            return (hasError) ? false : true;
-                        }
-                    )
+                    err => $baseController.errorCheck(err,
+                        {
+                            maxLoops: 3,
+                            miliseconds: 2000,
+                            method: () => {
+                                $sandboxService.deleteExpense(obj.id).then((data) => console.log(data));
+                            }
+                        })
                 );
             }
 
@@ -685,27 +801,27 @@
 
                             () => vm.$uibModalInstance.close(),
 
-                            err => $baseController.tryAgain(3, 1000,
-                                () => {
-                                    $sandboxService.updateIncome(obj).then(() => { hasError = true; vm.$uibModalInstance.close(); });
-                                },
-                                () => {
-                                    return (hasError) ? false : true;
-                                }
-                            )
+                            err => $baseController.errorCheck(err,
+                                {
+                                    maxLoops: 3,
+                                    miliseconds: 2000,
+                                    method: () => {
+                                        $sandboxService.updateIncome(obj).then(() => vm.$uibModalInstance.close());
+                                    }
+                                })
                         );
                     }
                     else {
                         $sandboxService.insertIncome(obj).then(
                             () => vm.$uibModalInstance.close(),
-                            err => $baseController.tryAgain(3, 1000,
-                                () => {
-                                    $sandboxService.insertIncome(obj).then(() => { hasError = true; vm.$uibModalInstance.close(); });
-                                },
-                                () => {
-                                    return (hasError) ? false : true;
-                                }
-                            )
+                            err => $baseController.errorCheck(err,
+                                {
+                                    maxLoops: 3,
+                                    miliseconds: 2000,
+                                    method: () => {
+                                        $sandboxService.insertIncome(obj).then(() => vm.$uibModalInstance.close());
+                                    }
+                                })
                         );
                     }
                     break;
@@ -717,27 +833,27 @@
                         obj.id = vm.id
                         $sandboxService.updateExpense(obj).then(
                             () => vm.$uibModalInstance.close(),
-                            err => $baseController.tryAgain(3, 1000,
-                                () => {
-                                    $sandboxService.updateExpense(obj).then(() => { hasError = true; vm.$uibModalInstance.close(); });
-                                },
-                                () => {
-                                    return (hasError) ? false : true;
-                                }
-                            )
+                            err => $baseController.errorCheck(err,
+                                {
+                                    maxLoops: 3,
+                                    miliseconds: 2000,
+                                    method: () => {
+                                        $sandboxService.updateExpense(obj).then(() => vm.$uibModalInstance.close());
+                                    }
+                                })
                         );
                     }
                     else {
                         $sandboxService.insertExpense(obj).then(
                             () => vm.$uibModalInstance.close(),
-                            err => $baseController.tryAgain(3, 1000,
-                                () => {
-                                    $sandboxService.insertExpense(obj).then(() => { hasError = true; vm.$uibModalInstance.close(); });
-                                },
-                                () => {
-                                    return (hasError) ? false : true;
-                                }
-                            )
+                            err => $baseController.errorCheck(err,
+                                {
+                                    maxLoops: 3,
+                                    miliseconds: 2000,
+                                    method: () => {
+                                        $sandboxService.insertExpense(obj).then(() => vm.$uibModalInstance.close());
+                                    }
+                                })
                         );
                     }
                     break;

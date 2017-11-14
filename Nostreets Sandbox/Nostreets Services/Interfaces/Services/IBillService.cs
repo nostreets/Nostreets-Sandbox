@@ -1,5 +1,6 @@
 ﻿using Nostreets_Services.Domain.Bills;
 using Nostreets_Services.Domain.Charts;
+using Nostreets_Services.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,11 +19,11 @@ namespace Nostreets_Services.Interfaces.Services
 
         Income GetIncome(string userId, string incomeName);
 
-        Chart<List<float>> GetIncomeChart(string userId, DateTime? startDate = null, DateTime? endDate = null, string preferedLabel = null);
+        Chart<List<float>> GetIncomeChart(string userId, ref ScheduleTypes chartSchuduleType, DateTime? startDate = null, DateTime? endDate = null);
 
-        Chart<List<float>> GetExpensesChart(string userId, DateTime? startDate = null, DateTime? endDate = null, string preferedLabel = null);
+        Chart<List<float>> GetExpensesChart(string userId, ref ScheduleTypes chartSchuduleType, DateTime? startDate = null, DateTime? endDate = null);
 
-        Chart<List<float>> GetCombinedChart(string userId, DateTime? startDate = null, DateTime? endDate = null, string preferedLabel = null);
+        Chart<List<float>> GetCombinedChart(string userId, ref ScheduleTypes chartSchuduleType, DateTime? startDate = null, DateTime? endDate = null);
 
         void InsertExpense(Expenses request);
 

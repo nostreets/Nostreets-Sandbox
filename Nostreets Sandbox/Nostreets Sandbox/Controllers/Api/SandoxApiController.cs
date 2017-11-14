@@ -79,7 +79,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-                HttpResponseMessage responseMessage = null;
+               // HttpResponseMessage responseMessage = null;
                 var offset = new DateTimeOffset(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.AddDays(1).Day, DateTime.Now.Hour, 0, 0, default(TimeSpan));
 
                 if (!_userSrv.CheckIfUserExist(username))
@@ -94,11 +94,13 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
 
                 ItemResponse<string> response = new ItemResponse<string>(username);
-                responseMessage = Request.CreateResponse(HttpStatusCode.OK, response);
-                Request.SetCookie(ref responseMessage, "loggedIn", "true", offset);
+                //responseMessage = Request.CreateResponse(HttpStatusCode.OK, response);
 
+                //Request.SetCookie(ref responseMessage, "loggedIn", "true", offset);
 
-                return responseMessage;
+                HttpContext.Current.SetCookie("loggedIn", "true", DateTime.Now.AddDays(1));
+
+                return Request.CreateResponse(HttpStatusCode.OK, response); //responseMessage;
 
             }
             catch (Exception ex)
@@ -196,15 +198,22 @@ namespace Nostreets_Sandbox.Controllers.Api
         [Intercept("UserLogIn")]
         [Route("bill/income/chart")]
         [HttpGet]
-        public HttpResponseMessage GetIncomeChart(DateTime? startDate = null, DateTime? endDate = null)
+        public HttpResponseMessage GetIncomeChart(DateTime? startDate = null, DateTime? endDate = null, ScheduleTypes chartSchedule = ScheduleTypes.Any)
         {
             try
             {
 
 
-                Chart<List<float>> result = null;
-                result = _billSrv.GetIncomeChart(GetCurrentUser().Id, startDate, endDate);
-                ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(result);
+                Chart<List<float>> chart = null;
+                chart = _billSrv.GetIncomeChart(GetCurrentUser().Id, ref chartSchedule, startDate, endDate);
+
+                //var result = new {
+                //    chart = chart,
+                //    schuduleType = chartSchedule
+                //};
+
+                //ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(chart);
+                ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(chart);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -217,14 +226,14 @@ namespace Nostreets_Sandbox.Controllers.Api
         [Intercept("UserLogIn")]
         [Route("bill/expenses/chart")]
         [HttpGet]
-        public HttpResponseMessage GetExpensesChart(DateTime? startDate = null, DateTime? endDate = null)
+        public HttpResponseMessage GetExpensesChart(DateTime? startDate = null, DateTime? endDate = null, ScheduleTypes chartSchedule = ScheduleTypes.Any)
         {
             try
             {
 
 
                 Chart<List<float>> result = null;
-                result = _billSrv.GetExpensesChart(GetCurrentUser().Id, startDate, endDate);
+                result = _billSrv.GetExpensesChart(GetCurrentUser().Id, ref chartSchedule, startDate, endDate);
                 ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -238,14 +247,14 @@ namespace Nostreets_Sandbox.Controllers.Api
         [Intercept("UserLogIn")]
         [Route("bill/combined/chart")]
         [HttpGet]
-        public HttpResponseMessage GetCombinedChart(DateTime? startDate = null, DateTime? endDate = null)
+        public HttpResponseMessage GetCombinedChart(DateTime? startDate = null, DateTime? endDate = null, ScheduleTypes chartSchedule = ScheduleTypes.Any)
         {
             try
             {
 
 
                 Chart<List<float>> result = null;
-                result = _billSrv.GetCombinedChart(GetCurrentUser().Id, startDate, endDate);
+                result = _billSrv.GetCombinedChart(GetCurrentUser().Id, ref chartSchedule, startDate, endDate);
                 ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -272,7 +281,6 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                 {
-                    income.UserId = GetCurrentUser().Id;
                     income.DateCreated = DateTime.Now;
                     income.DateModified = DateTime.Now;
                     _billSrv.InsertIncome(income);

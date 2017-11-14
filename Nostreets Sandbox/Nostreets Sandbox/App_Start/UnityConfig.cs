@@ -13,9 +13,7 @@ using System.Web.Mvc;
 using Unity.Mvc5;
 using System;
 using System.Net.Http;
-using Unity.Lifetime;
-using Unity.Injection;
-using Unity;
+using Microsoft.Practices.Unity;
 
 namespace Nostreets_Sandbox.App_Start
 {

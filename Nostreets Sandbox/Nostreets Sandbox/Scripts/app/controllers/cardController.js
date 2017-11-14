@@ -16,11 +16,13 @@
         vm.selectElement = _selectElement;
         vm.activateMode = _activateMode;
 
+
         $baseController.systemEventService.listen("refreshedUsername", () => { _setUp(); _getUserData(); });
 
-        _startUp();
 
-        function _startUp() {
+        _render();
+
+        function _render() {
             _setUp();
             _getUserData();
         }

@@ -1,5 +1,6 @@
 ﻿using Nostreets_Services.Domain.Base;
 using Nostreets_Services.Enums;
+using Nostreets_Services.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,6 +13,7 @@ namespace Nostreets_Services.Domain.Bills
 {
     public abstract class Asset : DBObject
     {
+
         [Key]
         [Required]
         public int Id { get; set; }
@@ -33,6 +35,8 @@ namespace Nostreets_Services.Domain.Bills
         public bool IsHiddenOnChart { get; set; }
 
         public float Cost { get; set; }
+
+        public override string UserId { get => CacheManager.Contains("uid") ? CacheManager.GetItem<string>("uid") : null; }
 
     }
 }
