@@ -11,7 +11,40 @@
     user: {
         loggedIn: false,
     },
-    getStyle: (id) => { return document.getElementById(id).style; }
+
+    utilities: {
+
+        getStyle: (id) => {
+            return document.getElementById(id).style;
+        },
+
+        writeStyles: (styleName, cssRules) => {
+            var styleElement = document.getElementById(styleName);
+            var pastCssRules = styleElement.textContent;
+
+            if (styleElement) {
+                document.getElementsByTagName('head')[0].removeChild(
+                    styleElement);
+            }
+
+            styleElement = document.createElement('style');
+            styleElement.type = 'text/css';
+            styleElement.id = styleName;
+
+
+            if (cssRules.length) {
+                for (var css of cssRules) {
+                    styleElement.appendChild(document.createTextNode(css));
+                }
+            }
+            else {
+                styleElement.innerHTML = cssText;
+            }
+
+            document.getElementsByTagName('head')[0].appendChild(styleElement);
+        }
+
+    }
 };
 
 (function () {
@@ -151,19 +184,16 @@
 
         base.errorCheck = function (err, tryAgainObj) {
 
-            if (!tryAgainObj || !tryAgainObj.method) {
+            if (!tryAgainObj) {
 
                 tryAgainObj = {};
             }
-
             if (!tryAgainObj.maxLoops) {
                 tryAgainObj.maxLoops = 1;
             }
-
             if (!tryAgainObj.miliseconds) {
                 tryAgainObj.miliseconds = 100;
             }
-
             if (!tryAgainObj.method) {
 
                 tryAgainObj.method = () => {
@@ -173,14 +203,27 @@
                 }
 
             }
-
             if (!tryAgainObj.onSuccess) {
                 tryAgainObj.onSuccess = (data) => console.log(data);
             }
 
-            for (var error of err.data.errors) {
-                switch (error) {
-                    case "User is not logged in...":
+            if (err.data.errors && err.data.errors.length) {
+                for (var error of err.data.errors) {
+                    switch (error) {
+                        case "User is not logged in...":
+                            base.loginPopup();
+                            break;
+
+                        default:
+                            if (!tryAgainObj || !tryAgainObj.maxLoops || !tryAgainObj.miliseconds || !tryAgainObj.method) { return; }
+                            base.tryAgain(tryAgainObj.maxLoops, tryAgainObj.miliseconds, tryAgainObj.method, tryAgainObj.onSuccess);
+                            break;
+                    }
+                }
+            }
+            else {
+                switch (err.status) {
+                    case 401:
                         base.loginPopup();
                         break;
 
@@ -191,8 +234,6 @@
                 }
             }
         }
-
-        base.appName = angular.element('[ng-app]').attr('ng-app');
 
         return base;
     }

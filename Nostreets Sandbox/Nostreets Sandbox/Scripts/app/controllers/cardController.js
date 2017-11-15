@@ -41,10 +41,6 @@
         }
 
         function _getUserData() {
-            if (!page.user.loggedIn) {
-                $baseController.loginPopup();
-            }
-
             $sandboxService.getAllCardsByUser().then(
                 _cardResponse,
                 (err) => {

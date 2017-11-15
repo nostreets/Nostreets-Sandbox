@@ -28,6 +28,8 @@ namespace Nostreets_Services.Domain.Bills
 
         public DateTime? EndDate { get; set; }
 
+        public DateTime? ExperationDate { get; set; }
+
         public DateTime? DateCreated { get; set; }
 
         public DateTime? DateModified { get; set; }
@@ -36,7 +38,7 @@ namespace Nostreets_Services.Domain.Bills
 
         public float Cost { get; set; }
 
-        public override string UserId { get => CacheManager.Contains("uid") ? CacheManager.GetItem<string>("uid") : null; }
+        public override string UserId { get => CacheManager.Contains("user") ? CacheManager.GetItem<User>("user").Id : null; }
 
     }
 }

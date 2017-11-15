@@ -28,10 +28,10 @@ namespace Nostreets_Sandbox.Services.Database
             if (app.Request.GetCookie("loggedIn") == null || app.Request.GetCookie("loggedIn") == "false") { NotLoggedIn(app); }
             else
             {
-                string uid = CacheManager.GetItem<string>("uid");
-                if (uid == null) { NotLoggedIn(app); }
+                // string uid = CacheManager.GetItem<string>("user");
+                // if (uid == null) { NotLoggedIn(app); }
 
-                User user = _userSrv.Get(uid);
+                User user = CacheManager.GetItem<User>("user");
                 if (user == null) { NotLoggedIn(app); }
             }
         }
@@ -39,9 +39,9 @@ namespace Nostreets_Sandbox.Services.Database
         void NotLoggedIn(HttpApplication app)
         {
             app.Response.SetCookie(new HttpCookie("loggedIn", "false"));
-            if (CacheManager.Contains("uid"))
+            if (CacheManager.Contains("user"))
             {
-                CacheManager.DeleteItem("uid");
+                CacheManager.DeleteItem("user");
             }
 
             app.CreateResponse(HttpStatusCode.Unauthorized, new ErrorResponse("User is not logged in..."));

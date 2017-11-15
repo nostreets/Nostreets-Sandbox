@@ -405,13 +405,6 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Keys.config" />
-    <Content Include="Scripts\angular-cookies.js" />
-    <Content Include="Scripts\angular-cookies.min.js" />
-    <Content Include="Scripts\angular-drag-and-drop-lists.js" />
-    <Content Include="Scripts\angular-mocks.js" />
-    <Content Include="Scripts\angular-modal-service.js" />
-    <Content Include="Scripts\angular-moment-picker.js" />
-    <Content Include="Scripts\angular-moment-picker.min.js" />
     <Content Include="Content\angular-toastr.min.css" />
     <Content Include="Scripts\angular-toastr.min.js" />
     <Content Include="Scripts\angular-toastr.tpls.min.js" />
@@ -430,7 +423,6 @@
     <Content Include="Scripts\app\directives\renderGraphDirective.js" />
     <Content Include="Scripts\app\directives\signInDirective.js" />
     <Content Include="Scripts\app\directives\templates\cardBuilderModal.html" />
-    <Content Include="Scripts\app\directives\templates\cardPartials.html" />
     <Content Include="Scripts\app\services\alert.service.js" />
     <Content Include="Scripts\app\services\nostreetsChatistScrollPlugin.js" />
     <Content Include="Scripts\app\services\sandboxService.js" />
@@ -478,7 +470,6 @@
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Scripts\angular.min.js.map" />
-    <Content Include="Scripts\angular-cookies.min.js.map" />
     <None Include="Scripts\jquery-3.2.1.intellisense.js" />
     <Content Include="Scripts\extend.js" />
     <Content Include="Scripts\jquery-3.2.1.js" />

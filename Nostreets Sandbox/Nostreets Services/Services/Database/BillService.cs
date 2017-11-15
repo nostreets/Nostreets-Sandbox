@@ -637,9 +637,10 @@ namespace Nostreets_Services.Services.Database
 
         private bool IsPayDay(DateTime start, int interval, ScheduleTypes schedule, Asset asset, out float pay)
         {
+            //int day = 0;
             float lastPayment = 0;
             bool result = false;
-            DateTime intervalDay;
+            DateTime intervalDay = start;
             pay = 0;
 
             if (interval != 0) { IsPayDay(start, interval - 1, schedule, asset, out lastPayment); };
@@ -647,35 +648,37 @@ namespace Nostreets_Services.Services.Database
             switch (schedule)
             {
                 case ScheduleTypes.Hourly:
-                    int day = 0;
-                    day += ((interval + 1) % 24 == 0) ? 1 : 0;
-                    intervalDay = start.AddDays(day);
+
+                    //day += ((interval + 1) % 24 == 0) ? 1 : 0;
+                    //intervalDay = start.AddDays(day);
+                    intervalDay = start.AddHours(interval);
+
 
                     switch (asset.PaySchedule)
                     {
                         case ScheduleTypes.Hourly:
-                            result = true;
+                            result = (asset.BeginDate?.Hour < intervalDay.Hour && asset.EndDate?.Hour > intervalDay.Hour) ? true : false;
                             pay = lastPayment + asset.Cost;
                             break;
 
                         case ScheduleTypes.Daily:
                             result = (asset.TimePaid.Value.Hour == intervalDay.Hour) ? true : false;
-                            pay = (result) ? ((day + 1) * asset.Cost) + lastPayment : lastPayment;
+                            pay = (result) ? (asset.Cost * 24) + lastPayment : lastPayment;
                             break;
 
                         case ScheduleTypes.Weekly:
                             result = (asset.TimePaid.Value.DayOfWeek == intervalDay.DayOfWeek && asset.TimePaid.Value.Hour == intervalDay.Hour) ? true : false;
-                            pay = (result) ? (day + 1) * asset.Cost : (day == 0) ? asset.Cost : lastPayment;
+                            pay = (result) ? ((asset.Cost * 24) * 7) + lastPayment : lastPayment;
                             break;
 
                         case ScheduleTypes.BiWeekly:
                             result = (asset.TimePaid.Value.DayOfWeek == intervalDay.DayOfWeek && asset.TimePaid.Value.Hour == intervalDay.Hour && ((asset.TimePaid.Value.GetWeekOfYear().IsEven() && intervalDay.GetWeekOfYear().IsEven()) || (asset.TimePaid.Value.GetWeekOfYear().IsOdd() && intervalDay.GetWeekOfYear().IsOdd()))) ? true : false;
-                            pay = (result) ? (day + 1) * asset.Cost : (day == 0) ? asset.Cost : day * asset.Cost;
+                            pay = (result) ? ((asset.Cost * 24) * 14) + lastPayment : lastPayment;
                             break;
 
                         default:
                             result = (asset.TimePaid.Value.Year == intervalDay.Year && asset.TimePaid.Value.Month == intervalDay.Month && asset.TimePaid.Value.Day == intervalDay.Day && asset.TimePaid.Value.Hour == intervalDay.Hour) ? true : false;
-                            pay = (result) ? (day + 1) * asset.Cost : (day == 0) ? asset.Cost : day * asset.Cost;
+                            pay = (result) ? asset.Cost + lastPayment : lastPayment;
                             break;
                     }
                     break;

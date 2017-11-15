@@ -16,7 +16,7 @@
         vm.changeCurrentTab = _changeTab;
         vm.openMainMenuModal = _openMainMenuModal;
         vm.openDatePicker = _openDatePicker;
-        vm.updateChart = _getUserData;
+        vm.updateChart = _updateChart;
 
 
         $baseController.systemEventService.listen("refreshedUsername", () => { _setUp(); _getUserData(); });
@@ -44,8 +44,13 @@
             _getIncomeChart().then(
                 () => _getExpensesChart().then(
                     () => _getCombinedChart().then(
-                        () => _changeTab()
+                        () => _updateChart()
                     )));
+        }
+
+        function _updateChart() {
+            _getUserData();
+            _targetGraph(vm.currentTab, ((vm.currentTab === "income") ? "#incomeChart" : (vm.currentTab === "expense") ? "#expenseChart" : "#combinedChart"));
         }
 
         function _openDatePicker(prop) {
@@ -111,7 +116,7 @@
                         maxLoops: 3,
                         miliseconds: 2000,
                         method: () => {
-                            $sandboxService.getIncomesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
+                            return $sandboxService.getIncomesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
                                 (data) => {
                                     var chart = {
                                         key: "income",
@@ -139,7 +144,7 @@
                         maxLoops: 3,
                         miliseconds: 2000,
                         method: () => {
-                            $sandboxService.getExpensesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
+                            return $sandboxService.getExpensesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
                                 (data) => {
                                     var chart = {
                                         key: "expense",
@@ -167,7 +172,7 @@
                         maxLoops: 3,
                         miliseconds: 2000,
                         method: () => {
-                            $sandboxService.getCombinedChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
+                            return $sandboxService.getCombinedChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
                                 (data) => {
                                     var chart = {
                                         key: "combined",
@@ -189,7 +194,7 @@
                         maxLoops: 3,
                         miliseconds: 2000,
                         method: () => {
-                            $sandboxService.getIncome(id, name, scheduleType, incomeType).then((data) => { console.log(data); isSuccessful = true; });
+                            return $sandboxService.getIncome(id, name, scheduleType, incomeType).then((data) => { console.log(data); isSuccessful = true; });
                         }
                     })
             );
@@ -203,7 +208,7 @@
                         maxLoops: 3,
                         miliseconds: 2000,
                         method: () => {
-                            $sandboxService.getExpense(id, name, scheduleType, billType).then((data) => { console.log(data); isSuccessful = true; });
+                            return $sandboxService.getExpense(id, name, scheduleType, billType).then((data) => { console.log(data); isSuccessful = true; });
                         }
                     })
             );
@@ -213,6 +218,8 @@
 
             var chart = vm.charts.filter((a) => a.key === type)[0].value;
             var options = {
+                lineSmooth: false,
+                width: Math.round(chart.labels.length / 1.5) + "00px",
                 axisX: {
                     labelOffset: {
                         x: 0,
@@ -220,32 +227,36 @@
                     }
                 },
                 plugins: [
-                    chatistScroll()
+                    chartistScroll({ height: "8px" })
                 ]
 
             };
-
-            _adjustChartLabels(chart, options);
 
             if (chart.series.length === 0) {
                 chart.series.push(_arrayOfZeros(chart.labels.length));
             }
 
-            if (vm.renderedChart === null) {
-                var renderedChart = new Chartist.Line(elementId, chart, options);
-                _animateGraph(renderedChart);
-            }
-            else {
-                $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-                    //e.target // newly activated tab
-                    //e.relatedTarget // previous active tab
-                    var renderedChart = new Chartist.Line(elementId, chart, options);
-                    _animateGraph(renderedChart);
-                });
-            }
+            _adjustChartLabels(chart, options);
 
-            page.__chart = renderedChart;
-            page.__chartStyle = document.getElementById(page.__chart.container.id).style;
+            var renderedChart = new Chartist.Line(elementId, chart, options);
+            _animateGraph(renderedChart);
+
+            //if (vm.renderedChart === null) {
+            //    var renderedChart = new Chartist.Line(elementId, chart, options);
+            //    _animateGraph(renderedChart);
+            //}
+            //else {
+            //    $('a[data-toggle="tab"]').on('shown.bs.tab',
+            //        function (e) {
+            //            //e.target // newly activated tab
+            //            //e.relatedTarget // previous active tab
+            //            var renderedChart = new Chartist.Line(elementId, chart, options);
+            //            _animateGraph(renderedChart);
+            //        });
+            //}
+
+            //page.__chart = renderedChart;
+            //page.__chartStyle = document.getElementById(page.__chart.container.id).style;
 
             vm.renderedChart = chart;
             vm.chartOptions = options;
@@ -489,7 +500,13 @@
             }
 
             if (vm.currentTab) {
-                _targetGraph(vm.currentTab, ((vm.currentTab === "income") ? "#incomeChart" : (vm.currentTab === "expense") ? "#expenseChart" : "#combinedChart"));
+
+                $('a[data-toggle="tab"]').on('shown.bs.tab',
+                    function (e) {
+                        //e.target // newly activated tab
+                        //e.relatedTarget // previous active tab
+                        _targetGraph(vm.currentTab, ((vm.currentTab === "income") ? "#incomeChart" : (vm.currentTab === "expense") ? "#expenseChart" : "#combinedChart"));
+                    });
             }
         }
 
@@ -551,40 +568,6 @@
             });
         }
 
-        //REMOVE WHEN FUNCTIONAL
-        function chatistScroll() {
-
-            return _chartistScoll;
-
-            function _chartistScoll(chart) {
-
-                var options = {
-                    width: Math.round(chart.data.labels.length / 1) + "00px"
-                };
-
-                options = Chartist.extend({}, options, chart.options);
-
-                var styleTag = document.createElement('style');
-
-                var cssRules = [
-                    '#' + chart.container.id + ' { overflow-x: scroll; overflow-y: hidden; }',
-                    '#' + chart.container.id + '::-webkit-scrollbar  { width: 0px; }',
-                    '#' + chart.container.id + '::-webkit-scrollbar * { background: transparent; }',
-                    '#' + chart.container.id + '::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.4) !important; }',
-                    '#' + chart.container.id + '::-webkit-scrollbar-track {  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); border-radius: 10px; background-color: #F5F5F5; }',
-                    '#' + chart.container.id + '::-webkit-scrollbar {  width: 12px; background-color: #F5F5F5; }',
-                    '#' + chart.container.id + '::-webkit-scrollbar-thumb {  border-radius: 14px; -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3); background-color: #555; }'
-                ];
-
-                for (var css of cssRules) {
-                    styleTag.appendChild(document.createTextNode(css));
-                }
-
-                chart.container.appendChild(styleTag);
-
-            }
-
-        };
     }
 
     function modalMainMenuController($scope, $baseController, $uibModalInstance, $sandboxService, $uibModal, data) {
@@ -663,7 +646,7 @@
                             maxLoops: 3,
                             miliseconds: 2000,
                             method: () => {
-                                $sandboxService.getAllIncomes().then(a => vm.items = a.data.items);
+                                return $sandboxService.getAllIncomes().then(a => vm.items = a.data.items);
                             }
                         })
                 )
@@ -677,7 +660,7 @@
                             maxLoops: 3,
                             miliseconds: 2000,
                             method: () => {
-                                $sandboxService.getAllExpenses().then(a => vm.items = a.data.items);
+                                return $sandboxService.getAllExpenses().then(a => vm.items = a.data.items);
                             }
                         })
                 )
@@ -693,7 +676,7 @@
                             maxLoops: 3,
                             miliseconds: 2000,
                             method: () => {
-                                $sandboxService.deleteIncome(obj.id).then((data) => console.log(data));
+                                return $sandboxService.deleteIncome(obj.id).then((data) => console.log(data));
                             }
                         })
                 );
@@ -706,7 +689,7 @@
                             maxLoops: 3,
                             miliseconds: 2000,
                             method: () => {
-                                $sandboxService.deleteExpense(obj.id).then((data) => console.log(data));
+                                return $sandboxService.deleteExpense(obj.id).then((data) => console.log(data));
                             }
                         })
                 );
@@ -806,7 +789,7 @@
                                     maxLoops: 3,
                                     miliseconds: 2000,
                                     method: () => {
-                                        $sandboxService.updateIncome(obj).then(() => vm.$uibModalInstance.close());
+                                        return $sandboxService.updateIncome(obj).then(() => vm.$uibModalInstance.close());
                                     }
                                 })
                         );
@@ -819,7 +802,7 @@
                                     maxLoops: 3,
                                     miliseconds: 2000,
                                     method: () => {
-                                        $sandboxService.insertIncome(obj).then(() => vm.$uibModalInstance.close());
+                                        return $sandboxService.insertIncome(obj).then(() => vm.$uibModalInstance.close());
                                     }
                                 })
                         );
@@ -838,7 +821,7 @@
                                     maxLoops: 3,
                                     miliseconds: 2000,
                                     method: () => {
-                                        $sandboxService.updateExpense(obj).then(() => vm.$uibModalInstance.close());
+                                        return $sandboxService.updateExpense(obj).then(() => vm.$uibModalInstance.close());
                                     }
                                 })
                         );
@@ -851,7 +834,7 @@
                                     maxLoops: 3,
                                     miliseconds: 2000,
                                     method: () => {
-                                        $sandboxService.insertExpense(obj).then(() => vm.$uibModalInstance.close());
+                                        return $sandboxService.insertExpense(obj).then(() => vm.$uibModalInstance.close());
                                     }
                                 })
                         );
