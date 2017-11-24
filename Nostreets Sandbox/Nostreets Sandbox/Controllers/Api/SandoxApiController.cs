@@ -7,7 +7,6 @@ using Nostreets_Services.Domain.Charts;
 using Nostreets_Services.Enums;
 using Nostreets_Services.Interfaces.Services;
 using Nostreets_Services.Models.Request;
-using Nostreets_Services.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,6 +18,7 @@ using System.Web;
 using System.Web.Http;
 using NostreetsInterceptor;
 using NostreetsExtensions;
+using NostreetsExtensions.Utilities;
 
 namespace Nostreets_Sandbox.Controllers.Api
 {

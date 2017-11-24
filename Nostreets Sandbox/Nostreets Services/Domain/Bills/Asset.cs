@@ -1,6 +1,6 @@
 ﻿using Nostreets_Services.Domain.Base;
 using Nostreets_Services.Enums;
-using Nostreets_Services.Utilities;
+using NostreetsExtensions.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

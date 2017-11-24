@@ -41,9 +41,9 @@
         }
 
         function _getUserData() {
-            _getIncomeChart().then(
-                () => _getExpensesChart().then(
-                    () => _getCombinedChart().then(
+            _getIncomeChart(
+                () => _getExpensesChart(
+                    () => _getCombinedChart(
                         () => _updateChart()
                     )));
         }
@@ -100,9 +100,9 @@
             return result;
         }
 
-        function _getIncomeChart() {
+        function _getIncomeChart(onSucess) {
 
-            return $sandboxService.getIncomesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
+            $sandboxService.getIncomesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
                 (data) => {
                     var incomeChart = {
                         key: "income",
@@ -116,7 +116,7 @@
                         maxLoops: 3,
                         miliseconds: 2000,
                         method: () => {
-                            return $sandboxService.getIncomesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
+                            $sandboxService.getIncomesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
                                 (data) => {
                                     var chart = {
                                         key: "income",
@@ -126,11 +126,11 @@
                                 });
                         }
                     })
-            );
+            ).then(onSucess);
         }
 
-        function _getExpensesChart() {
-            return $sandboxService.getExpensesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
+        function _getExpensesChart(onSucess) {
+            $sandboxService.getExpensesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
                 (data) => {
                     var expensesChart = {
                         key: "expense",
@@ -144,7 +144,7 @@
                         maxLoops: 3,
                         miliseconds: 2000,
                         method: () => {
-                            return $sandboxService.getExpensesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
+                            $sandboxService.getExpensesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
                                 (data) => {
                                     var chart = {
                                         key: "expense",
@@ -154,11 +154,11 @@
                                 });
                         }
                     })
-            );
+            ).then(onSucess);
         }
 
-        function _getCombinedChart() {
-            return $sandboxService.getCombinedChart(vm.beginDate, vm.endDate).then(
+        function _getCombinedChart(onSucess) {
+            $sandboxService.getCombinedChart(vm.beginDate, vm.endDate).then(
                 (data) => {
                     var combinedChart = {
                         key: "combined",
@@ -172,7 +172,7 @@
                         maxLoops: 3,
                         miliseconds: 2000,
                         method: () => {
-                            return $sandboxService.getCombinedChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
+                            $sandboxService.getCombinedChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
                                 (data) => {
                                     var chart = {
                                         key: "combined",
@@ -182,7 +182,7 @@
                                 });
                         }
                     })
-            );
+            ).then(onSucess);
         }
 
         function _getIncome(id, name, scheduleType, incomeType) {

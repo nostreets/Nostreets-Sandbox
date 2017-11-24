@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace Nostreets_Services.Providers
+namespace Nostreets_Services.Helpers
 {
     public class RdlGenerator : BaseService
     {

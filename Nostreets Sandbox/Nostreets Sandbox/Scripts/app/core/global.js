@@ -11,7 +11,9 @@
     user: {
         loggedIn: false,
     },
+    isPoppedUp: {
 
+    },
     utilities: {
 
         getStyle: (id) => {
@@ -59,7 +61,6 @@
 
     function baseController($document, $route, $routeParams, $systemEventService, $alertService, $window, $uibModal, $timeout, $http, $sce, $cookies, $q) {
 
-        //PUBLIC
         var base = {
             document: $document,
             systemEventService: $systemEventService,
@@ -167,19 +168,24 @@
                     }).then(onSuccess, onError);
             };
 
-            alert(
 
-                input => brodcastUpdate(input, null,
-                    () => base.tryAgain(2, 3000, () => brodcastUpdate(input, null, null))
-                ),
+            if (!base.hasPopup) {
+
+                base.hasPopup = true;
+                alert(
+
+                    input => brodcastUpdate(input, null,
+                        () => base.tryAgain(2, 3000, () => brodcastUpdate(input, null, null), (i) => { base.hasPopup = false; })
+                    ),
 
 
-                () => base.tryAgain(4, 5000,
-                    () => alert(input => brodcastUpdate(input, null,
-                        () => base.tryAgain(2, 3000, () => brodcastUpdate(input, null, null))
-                    ))
-                )
-            );
+                    () => base.tryAgain(4, 5000,
+                        () => alert(input => brodcastUpdate(input, null,
+                            () => base.tryAgain(2, 3000, () => brodcastUpdate(input, null, null), (i) => { base.hasPopup = false; })
+                        ))
+                    )
+                );
+            }
         }
 
         base.errorCheck = function (err, tryAgainObj) {

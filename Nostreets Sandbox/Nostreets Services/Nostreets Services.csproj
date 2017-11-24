@@ -74,9 +74,8 @@
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\RestSharp.105.2.3\lib\net452\RestSharp.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="RestSharp, Version=106.0.1.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.106.0.1\lib\net452\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="SendGrid, Version=9.8.0.0, Culture=neutral, PublicKeyToken=4f047e93159395ca, processorArchitecture=MSIL">
       <HintPath>..\packages\Sendgrid.9.9.0\lib\net452\SendGrid.dll</HintPath>
@@ -120,6 +119,7 @@
       <HintPath>..\packages\System.Security.Cryptography.X509Certificates.4.3.1\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Abstractions" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -176,18 +176,18 @@
     <Compile Include="Enums\IncomeTypes.cs" />
     <Compile Include="Enums\ScheduleTypes.cs" />
     <Compile Include="Enums\StyledCardTypes.cs" />
+    <Compile Include="Helpers\RdlGenerator.cs" />
+    <Compile Include="Helpers\NostreetsWinService.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Interfaces\Services\IBillService.cs" />
     <Compile Include="Interfaces\Services\ICacheService.cs" />
     <Compile Include="Interfaces\Services\IChartExtended.cs" />
     <Compile Include="Interfaces\Services\IMailChimpService.cs" />
     <Compile Include="Interfaces\Services\IUserService.cs" />
     <Compile Include="Models\Requests\BillRequestModels.cs" />
-    <Compile Include="Providers\CacheService.cs" />
-    <Compile Include="Providers\CloningService.cs" />
-    <Compile Include="Providers\RdlGenerator.cs" />
     <Compile Include="Services\Database\BillService.cs" />
     <Compile Include="Services\Database\ChartsService.cs" />
-    <Compile Include="Utilities\CustomSerializer.cs" />
     <Compile Include="Domain\Charts\Chart.cs" />
     <Compile Include="Enums\ChartTypeId.cs" />
     <Compile Include="Interfaces\Services\ISendGridService.cs" />
@@ -200,8 +200,6 @@
     <Compile Include="Services\Database\UserService.cs" />
     <Compile Include="Services\Web\MailChimpService.cs" />
     <Compile Include="Services\Web\SendGridService.cs" />
-    <Compile Include="Utilities\CacheManager.cs" />
-    <Compile Include="Utilities\TimeOut.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

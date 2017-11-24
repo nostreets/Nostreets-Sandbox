@@ -406,6 +406,13 @@
     <Content Include="Content\Site.css" />
     <Content Include="Keys.config" />
     <Content Include="Content\angular-toastr.min.css" />
+    <Content Include="Scripts\angular-cookies.js" />
+    <Content Include="Scripts\angular-cookies.min.js" />
+    <Content Include="Scripts\angular-drag-and-drop-lists.js" />
+    <Content Include="Scripts\angular-mocks.js" />
+    <Content Include="Scripts\angular-modal-service.js" />
+    <Content Include="Scripts\angular-moment-picker.js" />
+    <Content Include="Scripts\angular-moment-picker.min.js" />
     <Content Include="Scripts\angular-toastr.min.js" />
     <Content Include="Scripts\angular-toastr.tpls.min.js" />
     <Content Include="Scripts\angular.js" />
@@ -424,7 +431,7 @@
     <Content Include="Scripts\app\directives\signInDirective.js" />
     <Content Include="Scripts\app\directives\templates\cardBuilderModal.html" />
     <Content Include="Scripts\app\services\alert.service.js" />
-    <Content Include="Scripts\app\services\nostreetsChatistScrollPlugin.js" />
+    <Content Include="Scripts\app\services\nostreetsChartistScrollPlugin.js" />
     <Content Include="Scripts\app\services\sandboxService.js" />
     <Content Include="Scripts\app\services\systemEvent.service.js" />
     <Content Include="Scripts\app\templates\about.html" />
@@ -470,6 +477,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Scripts\angular.min.js.map" />
+    <Content Include="Scripts\angular-cookies.min.js.map" />
     <None Include="Scripts\jquery-3.2.1.intellisense.js" />
     <Content Include="Scripts\extend.js" />
     <Content Include="Scripts\jquery-3.2.1.js" />
@@ -491,13 +499,13 @@
     <None Include="Properties\PublishProfiles\nostreets - Web Deploy.pubxml" />
     <Content Include="Scripts\jquery-3.2.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.2.1.min.map" />
+    <Content Include="Views\Shared\_MobileNavBar.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
-    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\chartist.min.js" />
     <Content Include="Scripts\dateformatter.js" />
     <Content Include="Scripts\featherlight.js" />
