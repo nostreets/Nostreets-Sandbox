@@ -1,11 +1,11 @@
 ﻿using Newtonsoft.Json;
 using NostreetsORM;
-using NostreetsORM.Utilities;
 using Nostreets_Services.Domain.Charts;
 using Nostreets_Services.Interfaces.Services;
 using Nostreets_Services.Models.Request;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using NostreetsExtensions.Helpers;
 
 namespace Nostreets_Services.Services.Database
 {

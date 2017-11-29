@@ -1,6 +1,6 @@
 ﻿using Nostreets_Services.Domain.Charts;
 using Nostreets_Services.Models.Request;
-using NostreetsORM.Interfaces;
+using NostreetsExtensions.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;

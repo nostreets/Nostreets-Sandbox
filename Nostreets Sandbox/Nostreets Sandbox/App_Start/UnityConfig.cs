@@ -4,7 +4,6 @@ using Nostreets_Services.Services.Database;
 using Nostreets_Services.Services.Web;
 using NostreetsEntities;
 using NostreetsORM;
-using NostreetsORM.Interfaces;
 using System.Web.Configuration;
 using System.Web.Http;
 using System.Web.Http.Controllers;
@@ -14,6 +13,7 @@ using Unity.Mvc5;
 using System;
 using System.Net.Http;
 using Microsoft.Practices.Unity;
+using NostreetsExtensions.Interfaces;
 
 namespace Nostreets_Sandbox.App_Start
 {

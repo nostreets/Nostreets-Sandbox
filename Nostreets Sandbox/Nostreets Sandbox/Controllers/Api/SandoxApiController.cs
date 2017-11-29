@@ -1,5 +1,4 @@
-﻿using NostreetsORM.Interfaces;
-using NostreetsRouter.Models.Responses;
+﻿using NostreetsRouter.Models.Responses;
 using Nostreets_Services.Domain;
 using Nostreets_Services.Domain.Bills;
 using Nostreets_Services.Domain.Cards;
@@ -19,6 +18,7 @@ using System.Web.Http;
 using NostreetsInterceptor;
 using NostreetsExtensions;
 using NostreetsExtensions.Utilities;
+using NostreetsExtensions.Interfaces;
 
 namespace Nostreets_Sandbox.Controllers.Api
 {

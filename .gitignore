@@ -286,6 +286,7 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
-/Nostreets Sandbox/Nostreets Sandbox/Web.config
+
+# Ignored Files
 /Nostreets Sandbox/Nostreets Sandbox/Keys.config
 /Nostreets Sandbox/Nostreets Sandbox/Connections.config

@@ -1,7 +1,7 @@
 ﻿using Nostreets_Services.Domain;
 using Nostreets_Services.Interfaces.Services;
-using Nostreets_Services.Utilities;
 using NostreetsExtensions;
+using NostreetsExtensions.Utilities;
 using NostreetsInterceptor;
 using NostreetsRouter.Models.Responses;
 using System;

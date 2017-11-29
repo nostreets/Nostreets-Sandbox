@@ -33,11 +33,11 @@ namespace Nostreets_Services.Helpers
 
         public NostreetsWinService(string serviceName, string directoryPath, Action<ManualResetEvent> method)
         {
-            if (!serviceName.IsWindowsServiceInstalled())
-            {
-                string cmd = "SC CREATE \"" + serviceName + "\" binpath= \"" + directoryPath + "\"";
-                cmd.RunConsoleCommand(System.Diagnostics.ProcessWindowStyle.Maximized);
-            }
+            //if (!serviceName.IsWindowsServiceInstalled())
+            //{
+            //    string cmd = "SC CREATE \"" + serviceName + "\" binpath= \"" + directoryPath + "\"";
+            //    cmd.RunConsoleCommand(System.Diagnostics.ProcessWindowStyle.Maximized);
+            //}
 
             _serviceController = new ServiceController(serviceName, Environment.MachineName);
             _method = new Tuple<
@@ -53,11 +53,11 @@ namespace Nostreets_Services.Helpers
 
         public NostreetsWinService(string serviceName, string directoryPath, object parameter, Action<ManualResetEvent> method)
         {
-            if (!serviceName.IsWindowsServiceInstalled())
-            {
-                string cmd = "SC CREATE \"" + serviceName + "\" binpath= \"" + directoryPath + "\"";
-                cmd.RunConsoleCommand(System.Diagnostics.ProcessWindowStyle.Maximized);
-            }
+            //if (!serviceName.IsWindowsServiceInstalled())
+            //{
+            //    string cmd = "SC CREATE \"" + serviceName + "\" binpath= \"" + directoryPath + "\"";
+            //    cmd.RunConsoleCommand(System.Diagnostics.ProcessWindowStyle.Maximized);
+            //}
 
             _serviceController = new ServiceController(serviceName, Environment.MachineName);
             _method = new Tuple<
@@ -74,11 +74,11 @@ namespace Nostreets_Services.Helpers
         public NostreetsWinService(string serviceName, string directoryPath, IEnumerable<object> parameters, Action<ManualResetEvent> method)
         {
 
-            if (!serviceName.IsWindowsServiceInstalled())
-            {
-                string cmd = "SC CREATE \"" + serviceName + "\" binpath= \"" + directoryPath + "\"";
-                cmd.RunConsoleCommand(System.Diagnostics.ProcessWindowStyle.Maximized);
-            }
+            //if (!serviceName.IsWindowsServiceInstalled())
+            //{
+            //    string cmd = "SC CREATE \"" + serviceName + "\" binpath= \"" + directoryPath + "\"";
+            //    cmd.RunConsoleCommand(System.Diagnostics.ProcessWindowStyle.Maximized);
+            //}
 
             _serviceController = new ServiceController(serviceName, Environment.MachineName);
             _method = new Tuple<
@@ -94,11 +94,11 @@ namespace Nostreets_Services.Helpers
         public NostreetsWinService(string serviceName, string directoryPath, Func<ManualResetEvent, object> method)
         {
 
-            if (!serviceName.IsWindowsServiceInstalled())
-            {
-                string cmd = "SC CREATE \"" + serviceName + "\" binpath= \"" + directoryPath + "\"";
-                cmd.RunConsoleCommand(System.Diagnostics.ProcessWindowStyle.Maximized);
-            }
+            //if (!serviceName.IsWindowsServiceInstalled())
+            //{
+            //    string cmd = "SC CREATE \"" + serviceName + "\" binpath= \"" + directoryPath + "\"";
+            //    cmd.RunConsoleCommand(System.Diagnostics.ProcessWindowStyle.Maximized);
+            //}
 
             _serviceController = new ServiceController(serviceName, Environment.MachineName);
             _method = new Tuple<
@@ -114,11 +114,11 @@ namespace Nostreets_Services.Helpers
         public NostreetsWinService(string serviceName, string directoryPath, object parameter, Func<ManualResetEvent, object> method)
         {
 
-            if (!serviceName.IsWindowsServiceInstalled())
-            {
-                string cmd = "SC CREATE \"" + serviceName + "\" binpath= \"" + directoryPath + "\"";
-                cmd.RunConsoleCommand(System.Diagnostics.ProcessWindowStyle.Maximized);
-            }
+            //if (!serviceName.IsWindowsServiceInstalled())
+            //{
+            //    string cmd = "SC CREATE \"" + serviceName + "\" binpath= \"" + directoryPath + "\"";
+            //    cmd.RunConsoleCommand(System.Diagnostics.ProcessWindowStyle.Maximized);
+            //}
 
             _serviceController = new ServiceController(serviceName, Environment.MachineName);
             _method = new Tuple<
@@ -134,11 +134,11 @@ namespace Nostreets_Services.Helpers
 
         public NostreetsWinService(string serviceName, string directoryPath, IEnumerable<object> parameters, Func<ManualResetEvent, object> method)
         {
-            if (!serviceName.IsWindowsServiceInstalled())
-            {
-                string cmd = "SC CREATE \"" + serviceName + "\" binpath= \"" + directoryPath + "\"";
-                cmd.RunConsoleCommand(System.Diagnostics.ProcessWindowStyle.Maximized);
-            }
+            //if (!serviceName.IsWindowsServiceInstalled())
+            //{
+            //    string cmd = "SC CREATE \"" + serviceName + "\" binpath= \"" + directoryPath + "\"";
+            //    cmd.RunConsoleCommand(System.Diagnostics.ProcessWindowStyle.Maximized);
+            //}
 
             _serviceController = new ServiceController(serviceName, Environment.MachineName);
             _method = new Tuple<
@@ -153,11 +153,11 @@ namespace Nostreets_Services.Helpers
 
         public NostreetsWinService(string serviceName, string directoryPath, Func<ManualResetEvent, IEnumerable<object>> method)
         {
-            if (!serviceName.IsWindowsServiceInstalled())
-            {
-                string cmd = "SC CREATE \"" + serviceName + "\" binpath= \"" + directoryPath + "\"";
-                cmd.RunConsoleCommand(System.Diagnostics.ProcessWindowStyle.Maximized);
-            }
+            //if (!serviceName.IsWindowsServiceInstalled())
+            //{
+            //    string cmd = "SC CREATE \"" + serviceName + "\" binpath= \"" + directoryPath + "\"";
+            //    cmd.RunConsoleCommand(System.Diagnostics.ProcessWindowStyle.Maximized);
+            //}
 
             _serviceController = new ServiceController(serviceName, Environment.MachineName);
             _method = new Tuple<
@@ -172,11 +172,11 @@ namespace Nostreets_Services.Helpers
 
         public NostreetsWinService(string serviceName, string directoryPath, object parameter, Func<ManualResetEvent, IEnumerable<object>> method)
         {
-            if (!serviceName.IsWindowsServiceInstalled())
-            {
-                string cmd = "SC CREATE \"" + serviceName + "\" binpath= \"" + directoryPath + "\"";
-                cmd.RunConsoleCommand(System.Diagnostics.ProcessWindowStyle.Maximized);
-            }
+            //if (!serviceName.IsWindowsServiceInstalled())
+            //{
+            //    string cmd = "SC CREATE \"" + serviceName + "\" binpath= \"" + directoryPath + "\"";
+            //    cmd.RunConsoleCommand(System.Diagnostics.ProcessWindowStyle.Maximized);
+            //}
 
             _serviceController = new ServiceController(serviceName, Environment.MachineName);
             _method = new Tuple<
@@ -192,11 +192,11 @@ namespace Nostreets_Services.Helpers
 
         public NostreetsWinService(string serviceName, string directoryPath, IEnumerable<object> parameters, Func<ManualResetEvent, IEnumerable<object>> method)
         {
-            if (!serviceName.IsWindowsServiceInstalled())
-            {
-                string cmd = "SC CREATE \"" + serviceName + "\" binpath= \"" + directoryPath + "\"";
-                cmd.RunConsoleCommand(System.Diagnostics.ProcessWindowStyle.Maximized);
-            }
+            //if (!serviceName.IsWindowsServiceInstalled())
+            //{
+            //    string cmd = "SC CREATE \"" + serviceName + "\" binpath= \"" + directoryPath + "\"";
+            //    cmd.RunConsoleCommand(System.Diagnostics.ProcessWindowStyle.Maximized);
+            //}
 
             _serviceController = new ServiceController(serviceName, Environment.MachineName);
             _method = new Tuple<

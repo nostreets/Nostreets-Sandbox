@@ -1,4 +1,5 @@
-﻿using NostreetsORM;
+﻿using NostreetsExtensions.Helpers;
+using NostreetsORM;
 using System;
 using System.Collections;
 using System.Collections.Generic;
