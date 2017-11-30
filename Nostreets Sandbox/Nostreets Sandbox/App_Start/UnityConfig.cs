@@ -14,6 +14,7 @@ using System;
 using System.Net.Http;
 using Microsoft.Practices.Unity;
 using NostreetsExtensions.Interfaces;
+using NostreetsExtensions;
 
 namespace Nostreets_Sandbox.App_Start
 {
@@ -29,8 +30,6 @@ namespace Nostreets_Sandbox.App_Start
         public static void RegisterInterfaces(HttpConfiguration config)
         {
             UnityContainer container = new UnityContainer();
-
-            //container.RegisterType<>
 
             container.RegisterType<IMailChimpService, MailChimpService>(new ContainerControlledLifetimeManager());
             container.RegisterType<ISendGridService, SendGridService>(new ContainerControlledLifetimeManager(), new InjectionConstructor(WebConfigurationManager.AppSettings["SendGrid.ApiKey"]));
@@ -51,23 +50,4 @@ namespace Nostreets_Sandbox.App_Start
 
     }
 
-    //public class UnityHttpControllerActivator : IHttpControllerActivator
-    //{
-    //    private IUnityContainer _container;
-
-    //    public UnityHttpControllerActivator(IUnityContainer container)
-    //    {
-    //        _container = container;
-    //    }
-
-    //    public IHttpController Create(HttpControllerContext controllerContext, Type controllerType)
-    //    {
-    //        return (IHttpController)_container.Resolve(controllerType);
-    //    }
-
-    //    public IHttpController Create(HttpRequestMessage request, HttpControllerDescriptor controllerDescriptor, Type controllerType)
-    //    {
-    //        return (IHttpController)_container.Resolve(controllerType);
-    //    }
-    //}
 }

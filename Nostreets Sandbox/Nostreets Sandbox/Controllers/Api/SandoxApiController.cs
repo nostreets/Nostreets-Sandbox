@@ -424,7 +424,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
 
                 List<StyledCard> list = _cardSrv.GetAll();
-                List<StyledCard> filteredList = list != null ? list.Where(a => a.UserId == CurrentUser.Id).ToList() : null;
+                List<StyledCard> filteredList = list?.Where(a => a.UserId == CurrentUser.Id).ToList();
                 ItemsResponse<StyledCard> response = new ItemsResponse<StyledCard>(filteredList);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -567,7 +567,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
 
                 List<Chart<object>> list = _chartsSrv.GetAll();
-                List<Chart<object>> filteredList = list != null ? list.Where(a => a.UserId == CurrentUser.Id).ToList() : null;
+                List<Chart<object>> filteredList = list?.Where(a => a.UserId == CurrentUser.Id).ToList();
                 ItemsResponse<Chart<object>> response = new ItemsResponse<Chart<object>>(filteredList);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }

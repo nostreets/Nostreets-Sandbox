@@ -16,7 +16,7 @@
         vm.changeCurrentTab = _changeTab;
         vm.openMainMenuModal = _openMainMenuModal;
         vm.openDatePicker = _openDatePicker;
-        vm.updateChart = _updateChart;
+        vm.updateChart = _getUserData;
 
 
         $baseController.systemEventService.listen("refreshedUsername", () => { _setUp(); _getUserData(); });
@@ -41,16 +41,11 @@
         }
 
         function _getUserData() {
-            _getIncomeChart(
-                () => _getExpensesChart(
-                    () => _getCombinedChart(
-                        () => _updateChart()
+            _getIncomeChart().then(
+                () => _getExpensesChart().then(
+                    () => _getCombinedChart().then(
+                        () => _changeTab()
                     )));
-        }
-
-        function _updateChart() {
-            _getUserData();
-            _targetGraph(vm.currentTab, ((vm.currentTab === "income") ? "#incomeChart" : (vm.currentTab === "expense") ? "#expenseChart" : "#combinedChart"));
         }
 
         function _openDatePicker(prop) {
@@ -100,9 +95,9 @@
             return result;
         }
 
-        function _getIncomeChart(onSucess) {
+        function _getIncomeChart() {
 
-            $sandboxService.getIncomesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
+            return $sandboxService.getIncomesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
                 (data) => {
                     var incomeChart = {
                         key: "income",
@@ -126,11 +121,11 @@
                                 });
                         }
                     })
-            ).then(onSucess);
+            );
         }
 
-        function _getExpensesChart(onSucess) {
-            $sandboxService.getExpensesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
+        function _getExpensesChart() {
+            return $sandboxService.getExpensesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
                 (data) => {
                     var expensesChart = {
                         key: "expense",
@@ -154,11 +149,11 @@
                                 });
                         }
                     })
-            ).then(onSucess);
+            );
         }
 
-        function _getCombinedChart(onSucess) {
-            $sandboxService.getCombinedChart(vm.beginDate, vm.endDate).then(
+        function _getCombinedChart() {
+            return $sandboxService.getCombinedChart(vm.beginDate, vm.endDate).then(
                 (data) => {
                     var combinedChart = {
                         key: "combined",
@@ -182,7 +177,7 @@
                                 });
                         }
                     })
-            ).then(onSucess);
+            );
         }
 
         function _getIncome(id, name, scheduleType, incomeType) {
@@ -194,7 +189,7 @@
                         maxLoops: 3,
                         miliseconds: 2000,
                         method: () => {
-                            return $sandboxService.getIncome(id, name, scheduleType, incomeType).then((data) => { console.log(data); isSuccessful = true; });
+                            $sandboxService.getIncome(id, name, scheduleType, incomeType).then((data) => { console.log(data); isSuccessful = true; });
                         }
                     })
             );
@@ -208,7 +203,7 @@
                         maxLoops: 3,
                         miliseconds: 2000,
                         method: () => {
-                            return $sandboxService.getExpense(id, name, scheduleType, billType).then((data) => { console.log(data); isSuccessful = true; });
+                            $sandboxService.getExpense(id, name, scheduleType, billType).then((data) => { console.log(data); isSuccessful = true; });
                         }
                     })
             );
@@ -646,7 +641,7 @@
                             maxLoops: 3,
                             miliseconds: 2000,
                             method: () => {
-                                return $sandboxService.getAllIncomes().then(a => vm.items = a.data.items);
+                                $sandboxService.getAllIncomes().then(a => vm.items = a.data.items);
                             }
                         })
                 )
@@ -660,7 +655,7 @@
                             maxLoops: 3,
                             miliseconds: 2000,
                             method: () => {
-                                return $sandboxService.getAllExpenses().then(a => vm.items = a.data.items);
+                                $sandboxService.getAllExpenses().then(a => vm.items = a.data.items);
                             }
                         })
                 )
@@ -676,7 +671,7 @@
                             maxLoops: 3,
                             miliseconds: 2000,
                             method: () => {
-                                return $sandboxService.deleteIncome(obj.id).then((data) => console.log(data));
+                                $sandboxService.deleteIncome(obj.id).then((data) => console.log(data));
                             }
                         })
                 );
@@ -689,7 +684,7 @@
                             maxLoops: 3,
                             miliseconds: 2000,
                             method: () => {
-                                return $sandboxService.deleteExpense(obj.id).then((data) => console.log(data));
+                                $sandboxService.deleteExpense(obj.id).then((data) => console.log(data));
                             }
                         })
                 );
@@ -789,7 +784,7 @@
                                     maxLoops: 3,
                                     miliseconds: 2000,
                                     method: () => {
-                                        return $sandboxService.updateIncome(obj).then(() => vm.$uibModalInstance.close());
+                                        $sandboxService.updateIncome(obj).then(() => vm.$uibModalInstance.close());
                                     }
                                 })
                         );
@@ -802,7 +797,7 @@
                                     maxLoops: 3,
                                     miliseconds: 2000,
                                     method: () => {
-                                        return $sandboxService.insertIncome(obj).then(() => vm.$uibModalInstance.close());
+                                        $sandboxService.insertIncome(obj).then(() => vm.$uibModalInstance.close());
                                     }
                                 })
                         );
@@ -821,7 +816,7 @@
                                     maxLoops: 3,
                                     miliseconds: 2000,
                                     method: () => {
-                                        return $sandboxService.updateExpense(obj).then(() => vm.$uibModalInstance.close());
+                                        $sandboxService.updateExpense(obj).then(() => vm.$uibModalInstance.close());
                                     }
                                 })
                         );
@@ -834,7 +829,7 @@
                                     maxLoops: 3,
                                     miliseconds: 2000,
                                     method: () => {
-                                        return $sandboxService.insertExpense(obj).then(() => vm.$uibModalInstance.close());
+                                        $sandboxService.insertExpense(obj).then(() => vm.$uibModalInstance.close());
                                     }
                                 })
                         );

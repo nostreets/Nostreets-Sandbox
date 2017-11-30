@@ -18,13 +18,16 @@ namespace Nostreets_Sandbox
     {
         protected void Application_Start()
         {
+
             AreaRegistration.RegisterAllAreas();
+
+            UnityConfig.RegisterInterfaces(GlobalConfiguration.Configuration);
+
             GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            UnityConfig.RegisterInterfaces(GlobalConfiguration.Configuration);
 
             Database.SetInitializer(new DropCreateDatabaseIfModelChanges<UserDbContext>());
             Database.SetInitializer(new DropCreateDatabaseIfModelChanges<EFDBContext<Income>>());

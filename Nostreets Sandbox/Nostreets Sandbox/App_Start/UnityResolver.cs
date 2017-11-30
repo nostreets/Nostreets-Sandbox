@@ -5,7 +5,7 @@ using System.Web.Http.Dependencies;
 
 namespace Nostreets_Sandbox.App_Start
 {
-    public class UnityResolver : IDependencyResolver, System.Web.Mvc.IDependencyResolver
+    public class UnityResolver : /*IDependencyResolver,*/ System.Web.Mvc.IDependencyResolver
     {
         protected IUnityContainer container;
 
