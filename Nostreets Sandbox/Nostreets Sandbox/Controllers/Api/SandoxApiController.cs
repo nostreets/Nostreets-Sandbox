@@ -19,6 +19,7 @@ using NostreetsInterceptor;
 using NostreetsExtensions;
 using NostreetsExtensions.Utilities;
 using NostreetsExtensions.Interfaces;
+using Microsoft.Practices.Unity;
 
 namespace Nostreets_Sandbox.Controllers.Api
 {
@@ -33,13 +34,13 @@ namespace Nostreets_Sandbox.Controllers.Api
         IBillService _billSrv = null;
         #endregion
 
-        public SandoxApiController(IChartsExtended chartsInject, ISendGridService sendGridInject, IDBService<StyledCard> cardInject, IUserService userInject, IBillService billsInject)
+        public SandoxApiController(/*IChartsExtended chartsInject, ISendGridService sendGridInject, IDBService<StyledCard> cardInject, IUserService userInject, IBillService billsInject*/)
         {
-            _chartsSrv = chartsInject;//UnityConfig.GetContainer().Resolve<ChartsService>();
-            _sendGridSrv = sendGridInject;
-            _cardSrv = cardInject;
-            _userSrv = userInject;
-            _billSrv = billsInject;
+            _chartsSrv = App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.ChartsService>(); //chartsInject;
+            _sendGridSrv = App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Web.SendGridService>(); //sendGridInject;
+            _cardSrv = App_Start.UnityConfig.GetContainer().Resolve<NostreetsORM.DBService<StyledCard>>(); //cardInject;
+            _userSrv = App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.UserService>(); //userInject;
+            _billSrv = App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.BillService>(); //billsInject;
 
         }
 

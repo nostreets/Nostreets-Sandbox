@@ -17,7 +17,8 @@ namespace Nostreets_Services.Enums
     {
         Text = 1,
         Image,
-        Video
+        Video,
+        Music
     }
 
     public enum AlignmentType : int

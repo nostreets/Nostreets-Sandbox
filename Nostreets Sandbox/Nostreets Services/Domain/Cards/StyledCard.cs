@@ -1,5 +1,6 @@
 ﻿using Nostreets_Services.Enums;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
 namespace Nostreets_Services.Domain.Cards
@@ -16,7 +17,6 @@ namespace Nostreets_Services.Domain.Cards
         public AlignmentType MainAlignment { get; set; }
         public ContentType FooterType { get; set; }
         public AlignmentType FooterAlignment { get; set; }
-
         public string _HTML { get; set; }
 
     }
