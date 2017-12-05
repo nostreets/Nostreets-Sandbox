@@ -9,7 +9,7 @@ using NostreetsExtensions.Helpers;
 
 namespace Nostreets_Services.Services.Database
 {
-    public class ChartsService : BaseService, IChartsExtended
+    public class ChartsService : SqlService, IChartsExtended
     {
         public ChartsService() : base() { }
 

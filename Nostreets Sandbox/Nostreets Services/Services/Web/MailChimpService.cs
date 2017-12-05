@@ -15,7 +15,7 @@ using NostreetsExtensions.Helpers;
 
 namespace Nostreets_Services.Services.Web
 {
-    public class MailChimpService : BaseService, IMailChimpService
+    public class MailChimpService : SqlService, IMailChimpService
     {
         public MailChimpService(string domain, string apiKey)
         {

@@ -13,7 +13,7 @@ using System.Xml;
 
 namespace Nostreets_Services.Helpers
 {
-    public class RdlGenerator : BaseService
+    public class RdlGenerator : SqlService
     {
         SqlConnection _connection;
         string _connectString;
