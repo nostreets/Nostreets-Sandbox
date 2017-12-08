@@ -19,5 +19,6 @@ namespace Nostreets_Services.Domain.Cards
         public AlignmentType FooterAlignment { get; set; }
         public string _HTML { get; set; }
 
+        public Newsletter.Lists.MailChimpList TestTable { get; set; }
     }
 }
