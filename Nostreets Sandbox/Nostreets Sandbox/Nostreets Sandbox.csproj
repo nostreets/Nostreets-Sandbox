@@ -435,7 +435,7 @@
     <Content Include="Scripts\app\directives\particles.js" />
     <Content Include="Scripts\app\directives\renderGraphDirective.js" />
     <Content Include="Scripts\app\directives\signInDirective.js" />
-    <Content Include="Scripts\app\directives\templates\cardBuilderModal.html" />
+    <Content Include="Scripts\app\templates\cardBuilderModal.html" />
     <Content Include="Scripts\app\services\alert.service.js" />
     <Content Include="Scripts\app\services\nostreetsChartistScrollPlugin.js" />
     <Content Include="Scripts\app\services\sandboxService.js" />
@@ -447,6 +447,7 @@
     <Content Include="Scripts\app\templates\dynamicGraphs.html" />
     <Content Include="Scripts\app\templates\home.html" />
     <Content Include="Scripts\app\templates\billManager.html" />
+    <Content Include="Scripts\app\templates\cardPartials.html" />
     <Content Include="Scripts\app\templates\pastProjects.html" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />

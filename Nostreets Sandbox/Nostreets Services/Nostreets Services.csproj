@@ -217,10 +217,6 @@
       <Project>{d75ef23c-2e65-4bf7-90d3-c21c73a3e9c3}</Project>
       <Name>NostreetsExtensions</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\NostreetsInterceptor\NostreetsInterceptor\NostreetsInterceptor.csproj">
-      <Project>{9152c751-21f4-4587-ba93-dd0c139b17f7}</Project>
-      <Name>NostreetsInterceptor</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\NostreetsORM\NostreetsORM\NostreetsORM.csproj">
       <Project>{6e132f1c-f285-4535-abee-f02fc0bd18cb}</Project>
       <Name>NostreetsORM</Name>
