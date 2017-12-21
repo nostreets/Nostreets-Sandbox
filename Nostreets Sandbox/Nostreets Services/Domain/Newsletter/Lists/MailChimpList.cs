@@ -7,7 +7,7 @@ namespace Nostreets_Services.Domain.Newsletter.Lists
 {
     public class MailChimpList
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         [JsonProperty("web_id")]
         public int WebId { get; set; }
         public string Name { get; set; }

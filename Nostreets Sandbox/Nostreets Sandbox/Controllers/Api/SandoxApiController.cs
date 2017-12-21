@@ -524,7 +524,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             {
 
 
-                _chartsSrv.Delete(id);
+                _cardSrv.Delete(id);
                 SuccessResponse response = new SuccessResponse();
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
