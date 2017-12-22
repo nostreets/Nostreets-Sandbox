@@ -41,15 +41,17 @@
         }
 
         function _getUserData() {
+
             $sandboxService.getAllCardsByUser().then(
-                _cardResponse,
+                (response) => _cardResponse(response),
                 (err) => {
                     $baseController.errorCheck(err,
                         {
-                            maxLoops: 3,
-                            miliseconds: 3000,
-                            method: () => { $sandboxService.getAllCardsByUser().then(_cardResponse); },
-                            promise: $sandboxService.getAllCardsByUser().then(_cardResponse)
+                            //maxLoops: 3,
+                            //miliseconds: 3000,
+                            method: () => { $sandboxService.getAllCardsByUser().then((response) => _cardResponse(response)); },
+                            onSuccess: (response) => _cardResponse(response)
+                            //promise: $sandboxService.getAllCardsByUser().then((response) => _cardResponse(response))
                         }
                     )
                 }
@@ -110,26 +112,26 @@
                 }).then(
                     () => {
                         $sandboxService.deleteCard(index).then(
-                            console.log(vm.cards[index].id),
+                            () => console.log(vm.cards[index].id),
                             (err) => {
                                 $baseController.errorCheck(err,
                                     {
                                         maxLoops: 3,
                                         miliseconds: 3000,
-                                        method: () => { $sandboxService.getAllCardsByUser().then(_cardResponse); },
-                                        promise: $sandboxService.getAllCardsByUser().then(_cardResponse)
+                                        method: () => { $sandboxService.getAllCardsByUser().then((response) => _cardResponse(response)); },
+                                        promise: $sandboxService.getAllCardsByUser().then((response) => _cardResponse(response))
                                     }
                                 )
                             });
                         $sandboxService.getAllCardsByUser().then(
-                            _cardResponse,
+                            (response) => _cardResponse(response),
                             (err) => {
                                 $baseController.errorCheck(err,
                                     {
                                         maxLoops: 3,
                                         miliseconds: 1000,
-                                        method: () => { $sandboxService.getAllCardsByUser().then(_cardResponse); },
-                                        promise: $sandboxService.getAllCardsByUser().then(_cardResponse)
+                                        method: () => { $sandboxService.getAllCardsByUser().then((response) => _cardResponse(response)); },
+                                        promise: $sandboxService.getAllCardsByUser().then((response) => _cardResponse(response))
                                     }
                                 )
                             }
@@ -184,15 +186,16 @@
                         html: $baseController.sce.trustAsHtml(card[0].outerHTML)
                     };
 
+
                     $sandboxService.insertCard(lastestCard).then(
-                        $sandboxService.getAllCardsByUser().then(
-                            _cardResponse,
+                        () => $sandboxService.getAllCardsByUser().then(
+                            (response) => _cardResponse(response),
                             (err) => {
                                 $baseController.errorCheck(err,
                                     {
                                         maxLoops: 3,
                                         miliseconds: 1000,
-                                        method: () => { $sandboxService.getAllCardsByUser().then(_cardResponse, ); },
+                                        method: () => { $sandboxService.getAllCardsByUser().then((response) => _cardResponse(response), ); },
                                         predicate: () => { page.user.loggedIn === true; }
                                     }
                                 )
@@ -205,14 +208,15 @@
                                     miliseconds: 1000,
                                     method: () => {
                                         $sandboxService.insertCard(lastestCard)
-                                            .then($sandboxService.getAllCardsByUser.then(
-                                                _cardResponse,
+                                            .then(
+                                            () => $sandboxService.getAllCardsByUser.then(
+                                                (response) => _cardResponse(response),
                                                 (err) => {
                                                     $baseController.errorCheck(err,
                                                         {
                                                             maxLoops: 3,
                                                             miliseconds: 1000,
-                                                            method: () => { $sandboxService.getAllCardsByUser().then(_cardResponse); },
+                                                            method: () => { $sandboxService.getAllCardsByUser().then((response) => _cardResponse(response)); },
                                                             predicate: () => { page.user.loggedIn === true; }
                                                         }
                                                     )
@@ -436,6 +440,17 @@
             }
         }
 
+        function _errorHandler(func, err, loops = 3, milseconds = 1000) {
+
+            $baseController.errorCheck(err,
+                {
+                    maxLoops: 3,
+                    miliseconds: 1000,
+                    method: () => { $sandboxService.getAllCardsByUser().then((response) => _cardResponse(response)); },
+                    promise: $sandboxService.getAllCardsByUser().then((response) => _cardResponse(response))
+                }
+            );
+        }
     }
 
 })();

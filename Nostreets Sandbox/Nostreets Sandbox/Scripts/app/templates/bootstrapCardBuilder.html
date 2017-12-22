@@ -13,7 +13,7 @@
     </div>
     <div class="row">
         <div ng-repeat="item in pg.cards" ng-class="{'delete': pg.deleteMode, 'update': pg.updateMode}">
-            <div ng-bind-html="item.html" ng-click="pg.selectElement($index)"></div>
+            <div ng-bind-html="item.html" ng-click="pg.selectElement(item.id)"></div>
         </div>
     </div>
 </div>

@@ -189,10 +189,10 @@
                 tryAgainObj = {};
             }
             if (!tryAgainObj.maxLoops) {
-                tryAgainObj.maxLoops = 1;
+                tryAgainObj.maxLoops = 3;
             }
             if (!tryAgainObj.miliseconds) {
-                tryAgainObj.miliseconds = 100;
+                tryAgainObj.miliseconds = 1000;
             }
             if (!tryAgainObj.method) {
 
