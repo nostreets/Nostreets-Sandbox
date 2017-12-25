@@ -111,7 +111,7 @@
                     showCancelButton: true
                 }).then(
                     () => {
-                        $sandboxService.deleteCard(index).then(
+                        $sandboxService.deleteCard(vm.cards[index].id).then(
                             () => console.log(vm.cards[index].id),
                             (err) => {
                                 $baseController.errorCheck(err,
@@ -187,7 +187,10 @@
                     };
 
 
-                    $sandboxService.insertCard(lastestCard).then(
+                    var saveCard = (!vm.updateMode) ? (model) => { return $sandboxService.insertCard(model); } : (model) => { return $sandboxService.updateCard(model); };
+
+
+                    saveCard(lastestCard).then(
                         () => $sandboxService.getAllCardsByUser().then(
                             (response) => _cardResponse(response),
                             (err) => {
