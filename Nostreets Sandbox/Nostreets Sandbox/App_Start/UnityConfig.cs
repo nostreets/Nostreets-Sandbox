@@ -39,7 +39,7 @@ namespace Nostreets_Sandbox.App_Start
             container.RegisterType<IBillService, BillService>(new ContainerControlledLifetimeManager(), new InjectionConstructor(/*"AzureDBConnection"*/"DefaultConnection"));
 
             container.RegisterType(typeof(IDBService<>), typeof(DBService<>), new ContainerControlledLifetimeManager(), new InjectionConstructor(/*"AzureDBConnection"*/"DefaultConnection"));
-            container.RegisterType(typeof(IEFDBService<>), typeof(EFDBService<>), new ContainerControlledLifetimeManager(), new InjectionConstructor(/*"AzureDBConnection"*/"DefaultConnection"));
+            //container.RegisterType(typeof(IDBService<>), typeof(EFDBService<>), new ContainerControlledLifetimeManager(), new InjectionConstructor(/*"AzureDBConnection"*/"DefaultConnection"));
 
             ///Setting Resolvers for MVC and WebApi
             DependencyResolver.SetResolver(new UnityResolver(container));

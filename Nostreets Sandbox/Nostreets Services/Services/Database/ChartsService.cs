@@ -6,6 +6,8 @@ using Nostreets_Services.Models.Request;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using NostreetsExtensions.Helpers;
+using System;
+using System.Linq;
 
 namespace Nostreets_Services.Services.Database
 {
@@ -109,5 +111,9 @@ namespace Nostreets_Services.Services.Database
                        }));
         }
 
+        public IEnumerable<Chart<object>> Where(Func<Chart<object>, bool> predicate)
+        {
+            return GetAll().Where(predicate);
+        }
     }
 }

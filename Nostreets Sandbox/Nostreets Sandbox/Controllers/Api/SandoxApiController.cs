@@ -34,13 +34,13 @@ namespace Nostreets_Sandbox.Controllers.Api
         IBillService _billSrv = null;
         #endregion
 
-        public SandoxApiController(/*IChartsExtended chartsInject, ISendGridService sendGridInject, IDBService<StyledCard> cardInject, IUserService userInject, IBillService billsInject*/)
+        public SandoxApiController(IChartsExtended chartsInject, ISendGridService sendGridInject, IDBService<StyledCard> cardInject, IUserService userInject, IBillService billsInject)
         {
-            _chartsSrv = App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.ChartsService>(); //chartsInject;
-            _sendGridSrv = App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Web.SendGridService>(); //sendGridInject;
-            _cardSrv = App_Start.UnityConfig.GetContainer().Resolve<NostreetsORM.DBService<StyledCard>>(); //cardInject;
-            _userSrv = App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.UserService>(); //userInject;
-            _billSrv = App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.BillService>(); //billsInject;
+            _chartsSrv = /*App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.ChartsService>(); //*/chartsInject;
+            _sendGridSrv = /*App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Web.SendGridService>(); //*/sendGridInject;
+            _cardSrv = /*App_Start.UnityConfig.GetContainer().Resolve<NostreetsORM.DBService<StyledCard>>(); //*/cardInject;
+            _userSrv = /*App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.UserService>(); //*/userInject;
+            _billSrv = /*App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.BillService>(); //*/billsInject;
 
         }
 
@@ -424,8 +424,8 @@ namespace Nostreets_Sandbox.Controllers.Api
             {
 
 
-                List<StyledCard> list = _cardSrv.GetAll();
-                List<StyledCard> filteredList = list?.Where(a => a.UserId == CurrentUser.Id).ToList();
+                //List<StyledCard> list = _cardSrv.GetAll();
+                List<StyledCard> filteredList = _cardSrv.Where(a => a.UserId == CurrentUser.Id).ToList();
                 ItemsResponse<StyledCard> response = new ItemsResponse<StyledCard>(filteredList);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }

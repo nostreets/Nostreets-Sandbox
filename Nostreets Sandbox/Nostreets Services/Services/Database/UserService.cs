@@ -77,6 +77,10 @@ namespace Nostreets_Services.Services.Database
 
         }
 
+        public IEnumerable<User> Where(Func<User, bool> predicate)
+        {
+            return GetAll().Where(predicate);
+        }
     }
 
 
@@ -92,9 +96,6 @@ namespace Nostreets_Services.Services.Database
         {
             OnModelCreating(new DbModelBuilder());
         }
-
-       
-
 
         public IDbSet<User> Users { get; set; }
     }
