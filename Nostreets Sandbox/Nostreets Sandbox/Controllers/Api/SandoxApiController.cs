@@ -459,7 +459,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         [Intercept("UserLogIn")]
         [Route("cards")]
         [HttpPost]
-        public HttpResponseMessage InsertCard(StyledCard model, string username)
+        public HttpResponseMessage InsertCard(StyledCard model)
         {
             try
             {
@@ -489,7 +489,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         [Intercept("UserLogIn")]
         [Route("cards")]
         [HttpPut]
-        public HttpResponseMessage UpdateCard(StyledCard model, string username)
+        public HttpResponseMessage UpdateCard(StyledCard model)
         {
             try
             {
@@ -561,7 +561,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         [Intercept("UserLogIn")]
         [Route("charts/user/{username}")]
         [HttpGet]
-        public HttpResponseMessage GetAllChartsByUser(string username)
+        public HttpResponseMessage GetAllChartsByUser()
         {
             try
             {
@@ -602,7 +602,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         [Intercept("UserLogIn")]
         [Route("charts/int")]
         [HttpPost]
-        public HttpResponseMessage InsertChart(ChartAddRequest<int> model, string username)
+        public HttpResponseMessage InsertChart(ChartAddRequest<int> model)
         {
             try
             {
@@ -631,7 +631,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         [Intercept("UserLogIn")]
         [Route("charts/list/int")]
         [HttpPost]
-        public HttpResponseMessage InsertChart(ChartAddRequest<List<int>> model, string username)
+        public HttpResponseMessage InsertChart(ChartAddRequest<List<int>> model)
         {
             try
             {
@@ -660,7 +660,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         [Intercept("UserLogIn")]
         [Route("charts/int")]
         [HttpPut]
-        public HttpResponseMessage UpdateChart(ChartUpdateRequest<int> model, string username)
+        public HttpResponseMessage UpdateChart(ChartUpdateRequest<int> model)
         {
             try
             {
@@ -688,7 +688,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         [Intercept("UserLogIn")]
         [Route("charts/list/int")]
         [HttpPut]
-        public HttpResponseMessage UpdateChart(ChartUpdateRequest<List<int>> model, string username)
+        public HttpResponseMessage UpdateChart(ChartUpdateRequest<List<int>> model)
         {
             try
             {
@@ -846,6 +846,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [Intercept("UserLogIn")]
         [Route("config/site")]
         [HttpGet]
         public HttpResponseMessage GetSite(string url)
