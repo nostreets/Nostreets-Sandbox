@@ -19,7 +19,7 @@
                             </div>
                             <div class="col-sm-3">
                                 <ul class="nav nav-stacked nav-pills">
-                                    <li><a data-target="#form-headerTab" data-toggle="tab">Head</a></li>
+                                    <li class="active"><a data-target="#form-headerTab" data-toggle="tab">Head</a></li>
                                     <li><a data-target="#form-contentTab" data-toggle="tab">Main</a></li>
                                     <li><a data-target="#form-footerTab" data-toggle="tab">Foot</a></li>
                                 </ul>
@@ -128,8 +128,10 @@
                                                       ng-model="pg.headerContent"
                                                       id="headerText"></textarea>
                                             <input type="url"
+                                                   name="headerContent"
                                                    ng-if="pg.headerType === 'img' || pg.headerType === 'vid' || pg.headerType ===  2 || pg.headerType ===  3"
-                                                   id="headerUrl" />
+                                                   id="headerUrl"
+                                                   ng-model="pg.headerContent"/>
                                         </div>
                                     </div>
 
@@ -202,10 +204,12 @@
                                                       id="contentText"
                                                       name="mainContent"
                                                       ng-model="pg.mainContent"></textarea>
-                                            <input ng-if="pg.mainType === 'img' ||pg.mainType === 'vid' || pg.mainType ===  2 || pg.mainType ===  3"
+                                            <input ng-if="pg.mainType === 'img' || pg.mainType === 'vid' || pg.mainType ===  2 || pg.mainType ===  3"
                                                    type="url"
                                                    class=""
-                                                   id="contentUrl" />
+                                                   name="mainContent"
+                                                   id="contentUrl"
+                                                   ng-model="pg.mainContent"/>
                                         </div>
                                     </div>
 
@@ -246,14 +250,14 @@
                                                 <span><strong>Footer Content: </strong></span>
                                                 <label for="formFooter-textCheckbox" class="label">
                                                     Text: <input type="radio"
-                                                                 name="footer-content"
+                                                                 name="footerContent"
                                                                  ng-checked="pg.footerType === 1 ? true : false"
                                                                  value="text" ng-model="pg.footerType"
                                                                  id="formFooter-textCheckbox" />
                                                 </label>
                                                 <label for="formFooter-imageCheckbox" class="label">
                                                     Image: <input type="radio"
-                                                                  name="footer-content"
+                                                                  name="footerContent"
                                                                   value="img"
                                                                   ng-checked="pg.footerType === 2 ? true : false"
                                                                   ng-model="pg.footerType"
@@ -261,7 +265,7 @@
                                                 </label>
                                                 <label for="formFooter-videoCheckbox" class="label">
                                                     Video: <input type="radio"
-                                                                  name="footer-content"
+                                                                  name="footerContent"
                                                                   value="vid"
                                                                   ng-checked="pg.footerType === 3 ? true : false"
                                                                   ng-model="pg.footerType"
@@ -275,10 +279,13 @@
                                                       cols="50"
                                                       ng-if="pg.footerType === 'text' || pg.footerType ===  1"
                                                       id="footerText"
+                                                      name="footerContent"
                                                       ng-model="pg.footerContent"></textarea>
                                             <input type="url"
                                                    ng-if="pg.footerType === 'img' ||pg.footerType === 'vid' || pg.footerType ===  2 || pg.footerType ===  3"
-                                                   id="footerUrl" />
+                                                   name="footerContent"
+                                                   id="footerUrl"
+                                                   ng-model="pg.footerContent"/>
                                         </div>
                                     </div>
                                 </div>
@@ -288,8 +295,10 @@
                                     <small>*</small> Required fields
                                 </div>
                                 <div class="btn-group btn-group-sm">
+                                    <!--<button type="button" class="btn btn-round card-builder-formSubmit" ng-disabled="pg.isFormValid" ng-click="pg.submitCard()">Submit</button>-->
                                     <button type="button" class="btn btn-round card-builder-formSubmit" ng-disabled="!pg.validateForm('#cardBuilderForm')" ng-click="pg.submitCard()">Submit</button>
-                                    <button type="button" style="background-color: #914e4e" class="btn btn-round" data-dismiss="modal">Close</button>
+                                    <!--<button type="button" style="background-color: #914e4e" class="btn btn-round" data-dismiss="modal">Close</button>-->
+                                    <button type="button" style="background-color: #914e4e" class="btn btn-round" ng-click="pg.closeBuilder()">Close</button>
                                 </div>
                             </div>
                         </div>

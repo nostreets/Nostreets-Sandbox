@@ -42,6 +42,27 @@
             }
 
             document.getElementsByTagName('head')[0].appendChild(styleElement);
+        },
+
+        doesUrlExist: () => {
+
+            createCORSRequest = (method, url) => {
+                var xhr = new XMLHttpRequest();
+                if ("withCredentials" in xhr) {
+                    // XHR for Chrome/Firefox/Opera/Safari.
+                    xhr.open(method, url, true);
+                } else if (typeof XDomainRequest != "undefined") {
+                    // XDomainRequest for IE.
+                    xhr = new XDomainRequest();
+                    xhr.open(method, url);
+                } else {
+                    // CORS not supported.
+                    xhr = null;
+                }
+                return xhr;
+            }
+
+
         }
 
     }
@@ -80,13 +101,13 @@
             if (onSuccess === null) { onSuccess = (data) => console.log(data); }
             var root = {};
 
-            root.method = promiseMethod;
+            root.promiseMethod = promiseMethod;
             root.currentIndex = 0;
 
             _start();
 
             function _start() {
-                var method = () => _repeatUntilSuccessful(root.method(), miliseconds, maxLoops, data => onSuccess(data));
+                var method = () => _repeatUntilSuccessful(root.promiseMethod(), miliseconds, maxLoops, data => onSuccess(data));
                 base.timeout(method, miliseconds);
             }
 
@@ -111,8 +132,8 @@
                     if (root.currentIndex >= maxLoops) { return; }
                     else {
                         return delay(time).then(
-                            () => { root.currentIndex++; _repeatUntilSuccessful(root.method(), time, maxLoops, callback); },
-                            () => { root.currentIndex++; _repeatUntilSuccessful(root.method(), time, maxLoops, callback); }
+                            () => { root.currentIndex++; _repeatUntilSuccessful(root.promiseMethod(), time, maxLoops, callback); },
+                            () => { root.currentIndex++; _repeatUntilSuccessful(root.promiseMethod(), time, maxLoops, callback); }
                         );
                     }
                 }
@@ -194,9 +215,9 @@
             if (!tryAgainObj.miliseconds) {
                 tryAgainObj.miliseconds = 1000;
             }
-            if (!tryAgainObj.method) {
+            if (!tryAgainObj.promiseMethod) {
 
-                tryAgainObj.method = () => {
+                tryAgainObj.promiseMethod = () => {
                     return new Promise((resolve, reject) => {
                         resolve();
                     });
@@ -215,8 +236,8 @@
                             break;
 
                         default:
-                            if (!tryAgainObj || !tryAgainObj.maxLoops || !tryAgainObj.miliseconds || !tryAgainObj.method) { return; }
-                            base.tryAgain(tryAgainObj.maxLoops, tryAgainObj.miliseconds, tryAgainObj.method, tryAgainObj.onSuccess);
+                            if (!tryAgainObj || !tryAgainObj.maxLoops || !tryAgainObj.miliseconds || !tryAgainObj.promiseMethod) { return; }
+                            base.tryAgain(tryAgainObj.maxLoops, tryAgainObj.miliseconds, tryAgainObj.promiseMethod, tryAgainObj.onSuccess);
                             break;
                     }
                 }
@@ -228,8 +249,8 @@
                         break;
 
                     default:
-                        if (!tryAgainObj || !tryAgainObj.maxLoops || !tryAgainObj.miliseconds || !tryAgainObj.method) { return; }
-                        base.tryAgain(tryAgainObj.maxLoops, tryAgainObj.miliseconds, tryAgainObj.method, tryAgainObj.onSuccess);
+                        if (!tryAgainObj || !tryAgainObj.maxLoops || !tryAgainObj.miliseconds || !tryAgainObj.promiseMethod) { return; }
+                        base.tryAgain(tryAgainObj.maxLoops, tryAgainObj.miliseconds, tryAgainObj.promiseMethod, tryAgainObj.onSuccess);
                         break;
                 }
             }

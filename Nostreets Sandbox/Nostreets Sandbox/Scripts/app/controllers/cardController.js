@@ -15,7 +15,7 @@
         vm.viewCode = _viewCode;
         vm.selectElement = _selectElement;
         vm.activateMode = _activateMode;
-
+        vm.closeBuilder = _closeBuilder;
 
         $baseController.systemEventService.listen("refreshedUsername", () => { _setUp(); _getUserData(); });
 
@@ -34,6 +34,10 @@
             vm.headerAlignment = null;
             vm.mainAlignment = null;
             vm.footerAlignment = null;
+            vm.headerContent = null;
+            vm.mainContent = null;
+            vm.footerContent = null;
+
 
             if (!vm.cards) {
                 vm.cards = [];
@@ -47,11 +51,8 @@
                 (err) => {
                     $baseController.errorCheck(err,
                         {
-                            //maxLoops: 3,
-                            //miliseconds: 3000,
-                            method: () => { $sandboxService.getAllCardsByUser().then((response) => _cardResponse(response)); },
+                            promiseMethod: () => $sandboxService.getAllCardsByUser(),
                             onSuccess: (response) => _cardResponse(response)
-                            //promise: $sandboxService.getAllCardsByUser().then((response) => _cardResponse(response))
                         }
                     )
                 }
@@ -104,60 +105,77 @@
             }
         }
 
-        function _selectElement(index) {
-            if (vm.deleteMode) {
-                swal({
-                    title: "Do you want to delete this card?",
-                    showCancelButton: true
-                }).then(
-                    () => {
-                        $sandboxService.deleteCard(vm.cards[index].id).then(
-                            () => console.log(vm.cards[index].id),
-                            (err) => {
-                                $baseController.errorCheck(err,
-                                    {
-                                        maxLoops: 3,
-                                        miliseconds: 3000,
-                                        method: () => { $sandboxService.getAllCardsByUser().then((response) => _cardResponse(response)); },
-                                        promise: $sandboxService.getAllCardsByUser().then((response) => _cardResponse(response))
-                                    }
-                                )
-                            });
-                        $sandboxService.getAllCardsByUser().then(
+        function _chooseCard(index) {
+            vm.id = vm.cards[index].id;
+            vm.name = vm.cards[index].name;
+            vm.size = vm.cards[index].size;
+            vm.headerType = vm.cards[index].headerType;
+            vm.headerAlignment = vm.cards[index].headerAlignment;
+            vm.mainType = vm.cards[index].mainType;
+            vm.mainAlignment = vm.cards[index].mainAlignment;
+            vm.footerType = vm.cards[index].footerType;
+            vm.footerAlignment = vm.cards[index].footerAlignment;
+
+            var html = $($.parseHTML(vm.cards[index]._HTML));
+            var h_type = vm.headerType === 1 ? "Text" : vm.headerType === 2 ? "Img" : "Vid";
+            var m_type = vm.mainType === 1 ? "Text" : vm.headerType === 2 ? "Img" : "Vid";
+            var f_type = vm.footerType === 1 ? "Text" : vm.headerType === 2 ? "Img" : "Vid";
+
+            vm.headerContent = html.find(".header" + h_type).text();
+            vm.mainContent = html.find(".content" + m_type).text();
+            vm.footerContent = html.find(".footer" + f_type).text();
+
+
+        }
+
+        function _deleteCard(index) {
+            swal({
+                title: "Do you want to delete this card?",
+                showCancelButton: true
+            }).then(
+                () => {
+                    $sandboxService.deleteCard(vm.cards[index].id).then(
+                        () => $sandboxService.getAllCardsByUser().then(
                             (response) => _cardResponse(response),
                             (err) => {
                                 $baseController.errorCheck(err,
                                     {
-                                        maxLoops: 3,
-                                        miliseconds: 1000,
-                                        method: () => { $sandboxService.getAllCardsByUser().then((response) => _cardResponse(response)); },
-                                        promise: $sandboxService.getAllCardsByUser().then((response) => _cardResponse(response))
+                                        promiseMethod: () => $sandboxService.getAllCardsByUser(),
+                                        onSuccess: (response) => _cardResponse(response)
                                     }
                                 )
                             }
-                        );
-                    });
+                        ),
+                        (err) => {
+                            $baseController.errorCheck(err,
+                                {
+                                    promiseMethod: () => $sandboxService.deleteCard(vm.cards[index].id),
+                                    onSuccess: () => $sandboxService.getAllCardsByUser().then(
+                                        (response) => _cardResponse(response),
+                                        (err) => {
+                                            $baseController.errorCheck(err,
+                                                {
+                                                    promiseMethod: () => $sandboxService.getAllCardsByUser(),
+                                                    onSuccess: (response) => _cardResponse(response)
+                                                }
+                                            )
+                                        }
+                                    )
+                                }
+                            )
+                        });
+
+                },
+                () => { $scope.$apply(() => { vm.deleteMode = false; }); });
+        }
+
+        function _selectElement(index) {
+
+            if (vm.deleteMode) {
+                _deleteCard(index);
             }
             else if (vm.updateMode) {
-                vm.id = vm.cards[index].id;
-                vm.name = vm.cards[index].name;
-                vm.size = vm.cards[index].size;
-                vm.headerType = vm.cards[index].headerType;
-                vm.headerAlignment = vm.cards[index].headerAlignment;
-                vm.mainType = vm.cards[index].mainType;
-                vm.mainAlignment = vm.cards[index].mainAlignment;
-                vm.footerType = vm.cards[index].footerType;
-                vm.footerAlignment = vm.cards[index].footerAlignment;
-
-                var html = $($.parseHTML(vm.cards[index]._HTML));
-                var h_type = vm.headerType === 1 ? "Text" : vm.headerType === 2 ? "Img" : "Vid";
-                var m_type = vm.mainType === 1 ? "Text" : vm.headerType === 2 ? "Img" : "Vid";
-                var f_type = vm.footerType === 1 ? "Text" : vm.headerType === 2 ? "Img" : "Vid";
-
-                vm.headerContent = html.find(".header" + h_type).text();
-                vm.mainContent = html.find(".content" + m_type).text();
-                vm.footerContent = html.find(".footer" + f_type).text();
-
+                _chooseCard(index);
                 $(".card-builder-formModal").modal("show");
             }
         }
@@ -167,72 +185,64 @@
                 swal({
                     title: "Do you want to save this card?",
                     showCancelButton: true
-                }).then(function () {
-                    var card = vm.loadPreBuiltCard();
-                    card = vm.buildCard(card);
-                    card = vm.populateCard(card);
+                }).then(
+                    () => {
+                        var card = vm.loadPreBuiltCard();
+                        card = vm.buildCard(card);
+                        card = vm.populateCard(card);
 
-                    var lastestCard = {
-                        id: vm.id || 0,
-                        name: vm.name,
-                        size: vm.size,
-                        headerType: vm.headerType === "text" ? 1 : vm.headerType === "img" ? 2 : 3,
-                        headerAlignment: vm.headerAlignmentId === "right" ? 1 : vm.headerAlignmentId === "center" ? 2 : 3,
-                        mainType: vm.mainType === "text" ? 1 : vm.mainType === "img" ? 2 : 3,
-                        mainAlignment: vm.mainAlignment === "right" ? 1 : vm.mainAlignment === "center" ? 2 : 3,
-                        footerType: vm.footerType === "text" ? 1 : vm.footerType === "img" ? 2 : 3,
-                        footerAlignment: vm.footerAlignment === "right" ? 1 : vm.footerAlignment === "center" ? 2 : 3,
-                        _HTML: card[0].outerHTML,
-                        html: $baseController.sce.trustAsHtml(card[0].outerHTML)
-                    };
-
-
-                    var saveCard = (!vm.updateMode) ? (model) => { return $sandboxService.insertCard(model); } : (model) => { return $sandboxService.updateCard(model); };
+                        var lastestCard = {
+                            id: vm.id || 0,
+                            name: vm.name,
+                            size: vm.size,
+                            headerType: vm.headerType === "text" ? 1 : vm.headerType === "img" ? 2 : 3,
+                            headerAlignment: vm.headerAlignmentId === "right" ? 1 : vm.headerAlignmentId === "center" ? 2 : 3,
+                            mainType: vm.mainType === "text" ? 1 : vm.mainType === "img" ? 2 : 3,
+                            mainAlignment: vm.mainAlignment === "right" ? 1 : vm.mainAlignment === "center" ? 2 : 3,
+                            footerType: vm.footerType === "text" ? 1 : vm.footerType === "img" ? 2 : 3,
+                            footerAlignment: vm.footerAlignment === "right" ? 1 : vm.footerAlignment === "center" ? 2 : 3,
+                            _HTML: card[0].outerHTML,
+                            html: $baseController.sce.trustAsHtml(card[0].outerHTML)
+                        };
 
 
-                    saveCard(lastestCard).then(
-                        () => $sandboxService.getAllCardsByUser().then(
-                            (response) => _cardResponse(response),
+                        var saveCard = (!vm.updateMode) ? (model) => { return $sandboxService.insertCard(model); } : (model) => { return $sandboxService.updateCard(model); };
+
+
+                        saveCard(lastestCard).then(
+                            () => $sandboxService.getAllCardsByUser().then(
+                                (response) => _cardResponse(response),
+                                (err) => {
+                                    $baseController.errorCheck(err,
+                                        {
+                                            promiseMethod: () => $sandboxService.getAllCardsByUser(),
+                                            onSuccess: (response) => _cardResponse(response)
+                                        }
+                                    )
+                                }
+                            ),
                             (err) => {
                                 $baseController.errorCheck(err,
                                     {
-                                        maxLoops: 3,
-                                        miliseconds: 1000,
-                                        method: () => { $sandboxService.getAllCardsByUser().then((response) => _cardResponse(response), ); },
-                                        predicate: () => { page.user.loggedIn === true; }
+                                        promiseMethod: () => saveCard(lastestCard),
+                                        onSuccess: () => $sandboxService.getAllCardsByUser.then(
+                                            (response) => _cardResponse(response),
+                                            (err) => {
+                                                $baseController.errorCheck(err,
+                                                    {
+                                                        promiseMethod: () => $sandboxService.getAllCardsByUser(),
+                                                        onSuccess: (response) => _cardResponse(response)
+                                                    }
+                                                )
+                                            }
+                                        )
                                     }
                                 )
-                            }
-                        ),
-                        (err) => {
-                            $baseController.errorCheck(err,
-                                {
-                                    maxLoops: 3,
-                                    miliseconds: 1000,
-                                    method: () => {
-                                        $sandboxService.insertCard(lastestCard)
-                                            .then(
-                                            () => $sandboxService.getAllCardsByUser.then(
-                                                (response) => _cardResponse(response),
-                                                (err) => {
-                                                    $baseController.errorCheck(err,
-                                                        {
-                                                            maxLoops: 3,
-                                                            miliseconds: 1000,
-                                                            method: () => { $sandboxService.getAllCardsByUser().then((response) => _cardResponse(response)); },
-                                                            predicate: () => { page.user.loggedIn === true; }
-                                                        }
-                                                    )
-                                                }
-                                            ));
-                                    },
-                                    predicate: () => { page.user.loggedIn === true; }
-                                }
-                            )
-                        });
+                            });
 
-                    $(".card-builder-formModal").modal("hide");
-                });
+                        _closeBuilder();
+                    }
+                    );
             }
         }
 
@@ -255,6 +265,8 @@
         }
 
         function _buildCard(template) {
+
+            //Header Content
             if ($("#formHeader-textCheckbox").is(":checked")) {
                 template.find(".card-header").empty();
                 var element = $($("#small-Temp").html());
@@ -275,6 +287,8 @@
             }
 
 
+
+            //Header Alignment
             if ($("#formHeader-leftCheckbox").is(":checked")) {
                 template.find(".card-header").removeClass("text-center");
                 template.find(".card-header").removeClass("pull-right");
@@ -292,6 +306,8 @@
             }
 
 
+
+            //Body Content
             if ($("#formContent-textCheckbox").is(":checked")) {
                 template.find(".card-content").empty();
                 var element = $($("#small-Temp").html());
@@ -312,6 +328,8 @@
             }
 
 
+
+            //Body Alignment
             if ($("#formContent-leftCheckbox").is(":checked")) {
                 template.find(".card-content").removeClass("text-center");
                 template.find(".card-content").removeClass("pull-right");
@@ -329,6 +347,8 @@
             }
 
 
+
+            //Footer Conetnt
             if ($("#formFooter-textCheckbox").is(":checked")) {
                 template.find(".card-footer").empty();
                 var element = $($("#small-Temp").html());
@@ -349,6 +369,8 @@
             }
 
 
+
+            //Footer Alignment
             if ($("#formFooter-leftCheckbox").is(":checked")) {
                 template.find(".card-footer").removeClass("text-center");
                 template.find(".card-footer").removeClass("pull-right");
@@ -405,54 +427,95 @@
         }
 
         function _validateForm(selector) {
-            $.validator.setDefaults({ debug: true });
-            $(selector).validate({
-                rules: {
-                    "size": {
-                        required: true
-                    },
-                    "headerType": {
-                        required: true
-                    },
-                    "headerContent": {
-                        required: true,
-                        minlength: 10,
-                        maxlength: 2000
-                    },
-                    "mainType": {
-                        required: true
-                    },
-                    "mainContent": {
-                        required: true,
-                        minlength: 10,
-                        maxlength: 2000
-                    }
-                },
-                errorPlacement: function (error, element) {
-                    $(element).parent('div').addClass('has-error');
-                }
-            });
-            if (!$(selector).valid()) { return false; }
-            else {
-                if (!vm.headerType || !vm.headerAlignment || !vm.mainType || !vm.mainAlignment || !vm.footerType || !vm.footerAlignment || !vm.name || !vm.size) {
-                    return false;
-                }
-                else {
-                    return true;
-                }
+            //$.validator.setDefaults({ debug: true });
+            //$(selector).validate({
+            //    rules: {
+            //        "size": {
+            //            required: true
+            //        },
+            //        "headerType": {
+            //            required: true
+            //        },
+            //        "headerContent": {
+            //            required: true,
+            //            minlength: 10,
+            //            maxlength: 2000
+            //        },
+            //        "mainType": {
+            //            required: true
+            //        },
+            //        "mainContent": {
+            //            required: true,
+            //            minlength: 10,
+            //            maxlength: 2000
+            //        },
+            //        "footerType": {
+            //            required: true
+            //        },
+            //        "footerContent": {
+            //            required: true,
+            //            minlength: 10,
+            //            maxlength: 2000
+            //        },
+            //    },
+            //    errorPlacement: function (error, element) {
+            //        $(element).parent('div').addClass('has-error');
+            //    }
+            //});
+            var result = false;
+
+            //if (!$(selector).valid()) {  result = false; }
+            //else {
+            if (!vm.headerType || !vm.headerAlignment || !vm.mainType || !vm.mainAlignment || !vm.footerType || !vm.footerAlignment || !vm.name || !vm.size) {
+                result = false;
             }
+            else {
+                if (vm.headerType === 2 || vm.headerType === 3 || vm.headerType === "img" || vm.headerType === "vid")
+                    if (/^(http|https|ftp):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i.test($("#headerUrl").val()))
+                        result = true;
+                    else
+                        result = false;
+
+
+                if (vm.mainType === 2 || vm.mainType === 3 || vm.mainType === "img" || vm.mainType === "vid")
+                    if (/^(http|https|ftp):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i.test($("#contentUrl").val()))
+                        result = true;
+                    else
+                        result = false;
+
+                if (vm.footerType === 2 || vm.footerType === 3 || vm.footerType === "img" || vm.footerType === "vid")
+                    if (/^(http|https|ftp):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i.test($("#footerUrl").val()))
+                        result = true;
+                    else
+                        result = false;
+
+                if (vm.headerType === 1 || vm.headerType === "text")
+                    if ($("#headerText").val() && $("#headerText").val().length > 9 && $("#headerText").val().length < 2000)
+                        result = true;
+                    else
+                        result = false;
+
+                if (vm.mainType === 1 || vm.mainType === "text")
+                    if ($("#contentText").val() && $("#contentText").val().length > 9 && $("#contentText").val().length < 2000)
+                        result = true;
+                    else
+                        result = false;
+
+                if (vm.footerType === 1 || vm.footerType === "text")
+                    if ($("#footerText").val() && $("#footerText").val().length > 9 && $("#footerText").val().length < 2000)
+                        result = true;
+                    else
+                        result = false;
+
+            }
+            //}
+
+            return result;
         }
 
-        function _errorHandler(func, err, loops = 3, milseconds = 1000) {
-
-            $baseController.errorCheck(err,
-                {
-                    maxLoops: 3,
-                    miliseconds: 1000,
-                    method: () => { $sandboxService.getAllCardsByUser().then((response) => _cardResponse(response)); },
-                    promise: $sandboxService.getAllCardsByUser().then((response) => _cardResponse(response))
-                }
-            );
+        function _closeBuilder() {
+            $(".card-builder-formModal").modal("hide");
+            vm.updateMode = false;
         }
     }
 

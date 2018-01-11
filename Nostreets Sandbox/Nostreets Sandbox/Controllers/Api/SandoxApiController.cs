@@ -845,6 +845,30 @@ namespace Nostreets_Sandbox.Controllers.Api
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
             }
         }
+
+        [Route("config/site")]
+        [HttpGet]
+        public HttpResponseMessage GetSite(string url)
+        {
+            try
+            {
+                BaseResponse response = null;
+                if (url.HitEndpoint() != null)
+                    response = new SuccessResponse();
+                else
+                    response = new ErrorResponse("Could not get a response to the site " + url);
+
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+            catch (Exception ex)
+            {
+
+                ErrorResponse response = new ErrorResponse(ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
+
+
         #endregion
 
     }

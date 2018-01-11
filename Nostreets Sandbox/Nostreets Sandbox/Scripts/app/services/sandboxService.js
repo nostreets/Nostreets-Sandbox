@@ -6,6 +6,7 @@
 
     function sandboxService($http) {
         return {
+            validateUrl: _validateUrl,
             getEnums: _getEnums,
 
             getChartById: _getChartById,
@@ -36,6 +37,15 @@
             updateExpenses: _updateExpense
         };
 
+        function _validateUrl(url) {
+
+            return $http({
+                url: "/config/site?url=" + encodeURIComponent(url),
+                method: "GET",
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
+
         function _getEnums(enumType) {
             var url = "/api/config/enums/";
             url += (Array.isArray(enumType)) ? enumType.join(",") : enumType;
@@ -46,6 +56,7 @@
                 headers: { 'Content-Type': 'application/json' }
             });
         }
+
 
 
         function _getChartById(id) {

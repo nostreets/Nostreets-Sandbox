@@ -1,5 +1,4 @@
 ﻿
-//Controller
 (function () {
 
     angular.module(page.APPNAME).controller("dynamicGraphsController", pageController)
