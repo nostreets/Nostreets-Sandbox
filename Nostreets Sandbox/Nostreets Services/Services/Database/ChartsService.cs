@@ -8,160 +8,98 @@ using System.Data.SqlClient;
 using NostreetsExtensions.Helpers;
 using System;
 using System.Linq;
+using NostreetsExtensions.Interfaces;
+using NostreetsExtensions;
 
 namespace Nostreets_Services.Services.Database
 {
-    public class ChartsService :  IChartsExtended
+    public class ChartsService : IChartSrv
     {
-        public ChartsService() : base() { }
-
-        public ChartsService(string connectionKey) : base(connectionKey) { }
-
-        //public List<Chart<object>> GetAll()
-        //{
-        //    List<Chart<object>> list = null;
-        //    DataProvider.ExecuteCmd(() => Connection, "dbo.Charts_SelectAll",
-        //        null,
-        //        (reader, set) =>
-        //        {
-        //            Chart<object> chart = DataMapper<Chart<object>>.Instance.MapToObject(reader);
-        //            if (list == null) { list = new List<Chart<object>>(); }
-        //            list.Add(chart);
-        //        });
-        //    return list;
-        //}
-
-        //public void Delete(int id)
-        //{
-        //    DataProvider.ExecuteNonQuery(() => Connection, "dbo.Charts_Delete",
-        //        param => param.Add(new SqlParameter("ChartId", id)));
-        //}
-
-        //public Chart<object> Get(int id)
-        //{
-        //    Chart<object> chart = null;
-        //    DataProvider.ExecuteCmd(() => Connection, "dbo.Charts_SelectById",
-        //        param => param.Add(new SqlParameter("ChartId", id)),
-        //        (reader, set) =>
-        //        {
-        //            chart = DataMapper<Chart<object>>.Instance.MapToObject(reader);
-        //        });
-        //    return chart;
-        //}
-
-        public int Insert(ChartAddRequest model)
+        public ChartsService()
         {
-            //int id = 0;
-            //DataProvider.ExecuteNonQuery(() => Connection, "dbo.Charts_Insert",
-            //           param => param.AddRange(new[] {
-            //               new SqlParameter("Name", model.Name),
-            //               new SqlParameter("UserId", model.UserId),
-            //               new SqlParameter("TypeId", (int)model.TypeId),
-            //               new SqlParameter("Legend", JsonConvert.SerializeObject(model.Legend)),
-            //               new SqlParameter("Series", JsonConvert.SerializeObject(model.Series)),
-            //               new SqlParameter("Labels", JsonConvert.SerializeObject(model.Labels)),
-            //               new SqlParameter { ParameterName = "@Id", DbType = System.Data.DbType.Int32, Direction = System.Data.ParameterDirection.Output  }
-            //           }),
-            //           param => int.TryParse(param["@Id"].Value.ToString(), out id));
-            //return id;
+            _chartSrv = new DBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest>();
+            _pieChartSrv = new DBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>>();
         }
 
-        public int Insert<T>(ChartAddRequest<T> model)
+        public ChartsService(string connectionKey)
         {
-            //int id = 0;
-            //DataProvider.ExecuteNonQuery(() => Connection, "dbo.Charts_Insert",
-            //           param => param.AddRange(new[] {
-            //               new SqlParameter("Name", model.Name),
-            //               new SqlParameter("UserId", model.UserId),
-            //               new SqlParameter("TypeId", (int)model.TypeId),
-            //               new SqlParameter("Legend", JsonConvert.SerializeObject(model.Legend)),
-            //               new SqlParameter("Series", JsonConvert.SerializeObject(model.Series)),
-            //               new SqlParameter("Labels", JsonConvert.SerializeObject(model.Labels)),
-            //               new SqlParameter { ParameterName = "@Id", DbType = System.Data.DbType.Int32, Direction = System.Data.ParameterDirection.Output  }
-            //           }),
-            //           param => int.TryParse(param["@Id"].Value.ToString(), out id));
-            //return id;
-
-            Chart<T> chart = new Chart<T>
-            {
-                Labels = model.Labels,
-                Legend = model.Legend,
-                Name = model.Name,
-                Series = model.Series,
-                TypeId = model.TypeId,
-                UserId = model.UserId,
-                DateModified = DateTime.Now
-            };
-
-            base.Insert(chart);
-
+            _chartSrv = new DBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest>(connectionKey);
+            _pieChartSrv = new DBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>>(connectionKey);
         }
 
-        public int Insert(ChartAddRequest model, Converter<ChartAddRequest, Chart<object>> converter)
+        DBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest> _chartSrv = null;
+        DBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>> _pieChartSrv = null;
+
+        public void Delete(int id)
         {
-            throw new NotImplementedException();
+            _chartSrv.Delete(id);
         }
 
-        public void Update(ChartUpdateRequest model)
+        public Chart<object> Get(int id)
         {
-            //DataProvider.ExecuteNonQuery(() => Connection, "dbo.Charts_Update",
-            //           param => param.AddRange(new[] {
-            //               new SqlParameter("ChartId", model.ChartId),
-            //               model.Name != null ? new SqlParameter("Name", model.Name) : new SqlParameter("Name", null),
-            //               new SqlParameter("UserId", model.UserId),
-            //               new SqlParameter("TypeId", (int)model.TypeId),
-            //               model.Legend != null ? new SqlParameter("Legend", JsonConvert.SerializeObject(model.Legend)) : new SqlParameter("Legend", null),
-            //               model.Series != null ? new SqlParameter("Series", JsonConvert.SerializeObject(model.Series)) : new SqlParameter("Series", null),
-            //               model.Labels != null ? new SqlParameter("Labels", JsonConvert.SerializeObject(model.Labels)) : new SqlParameter("Labels", null)
-            //           }));
-
-            Chart<List<int>> chart = new Chart<List<int>>
-            {
-                ChartId = model.ChartId,
-                Labels = model.Labels,
-                Legend = model.Legend,
-                Name = model.Name,
-                Series = model.Series,
-                TypeId = model.TypeId,
-                UserId = model.UserId,
-                DateModified = DateTime.Now
-            };
-
-            base.Update(chart);
+            return (Chart<object>)typeof(Chart<object>).Cast(_chartSrv.Get(id));
         }
 
-        public void Update<T>(ChartUpdateRequest<T> model)
+        public List<Chart<object>> GetAll()
         {
-            //DataProvider.ExecuteNonQuery(() => Connection, "dbo.Charts_Update",
-            //           param => param.AddRange(new[] {
-            //               new SqlParameter("ChartId", model.ChartId),
-            //               model.Name != null ? new SqlParameter("Name", model.Name) : new SqlParameter("Name", null),
-            //               new SqlParameter("UserId", model.UserId),
-            //               new SqlParameter("TypeId", (int)model.TypeId),
-            //               model.Legend != null ? new SqlParameter("Legend", JsonConvert.SerializeObject(model.Legend)) : new SqlParameter("Legend", null),
-            //               model.Series != null ? new SqlParameter("Series", JsonConvert.SerializeObject(model.Series)) : new SqlParameter("Series", null),
-            //               model.Labels != null ? new SqlParameter("Labels", JsonConvert.SerializeObject(model.Labels)) : new SqlParameter("Labels", null)
-            //           }));
-
-            Chart<T> chart = new Chart<T>
-            {
-                ChartId = model.ChartId,
-                Labels = model.Labels,
-                Legend = model.Legend,
-                Name = model.Name,
-                Series = model.Series,
-                TypeId = model.TypeId,
-                UserId = model.UserId,
-                DateModified = DateTime.Now
-            };
-
-            base.Update(chart);
-
+            List<Chart<object>> result = null;
+            var charts =_chartSrv.GetAll();
+            var pieCharts = _pieChartSrv.GetAll();
+            result = charts.Cast<Chart<object>>()
+                           .Concat(pieCharts.Cast<Chart<object>>())
+                           .ToList();
+            return result;
         }
 
-        public void Update(ChartUpdateRequest model, Converter<ChartUpdateRequest, Chart<object>> converter)
+        public int Insert(Chart<List<int>> model)
         {
-            throw new NotImplementedException();
+            return _chartSrv.Insert(model);
         }
+
+        public int Insert(ChartAddRequest model, Converter<ChartAddRequest, Chart<List<int>>> converter)
+        {
+            return _chartSrv.Insert(converter(model));
+        }
+
+        public int Insert(Chart<int> model)
+        {
+            return _pieChartSrv.Insert(model);
+        }
+
+        public int Insert(ChartAddRequest<int> model, Converter<ChartAddRequest<int>, Chart<int>> converter)
+        {
+            return _pieChartSrv.Insert(converter(model));
+        }
+
+        public void Update(ChartUpdateRequest model, Converter<ChartUpdateRequest, Chart<List<int>>> converter)
+        {
+            _chartSrv.Update(converter(model));
+        }
+
+        public void Update(Chart<List<int>> model)
+        {
+            _chartSrv.Update(model);
+        }
+
+        public void Update(ChartUpdateRequest<int> model, Converter<ChartUpdateRequest<int>, Chart<int>> converter)
+        {
+            _pieChartSrv.Update(converter(model));
+        }
+
+        public void Update(Chart<int> model)
+        {
+            _pieChartSrv.Update(model);
+        }
+
+        public IEnumerable<Chart<List<int>>> Where(Func<Chart<List<int>>, bool> predicate)
+        {
+            return _chartSrv.GetAll().Where(predicate);
+        }
+
+        public IEnumerable<Chart<int>> Where(Func<Chart<int>, bool> predicate)
+        {
+            return _pieChartSrv.GetAll().Where(predicate);
+        }
+
     }
 }

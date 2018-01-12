@@ -27,21 +27,28 @@ namespace Nostreets_Sandbox.Controllers.Api
     public class SandoxApiController : ApiController
     {
         #region Global Objects
-        IChartsExtended _chartsSrv = null;
+        IChartSrv _chartsSrv = null;
         ISendGridService _sendGridSrv = null;
         IDBService<StyledCard> _cardSrv = null;
         IUserService _userSrv = null;
         IBillService _billSrv = null;
         #endregion
 
-        public SandoxApiController(IChartsExtended chartsInject, ISendGridService sendGridInject, IDBService<StyledCard> cardInject, IUserService userInject, IBillService billsInject)
+        public SandoxApiController(IChartSrv chartsInject, ISendGridService sendGridInject, IDBService<StyledCard> cardInject, IUserService userInject, IBillService billsInject)
         {
-            _chartsSrv = /*App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.ChartsService>(); //*/chartsInject;
-            _sendGridSrv = /*App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Web.SendGridService>(); //*/sendGridInject;
-            _cardSrv = /*App_Start.UnityConfig.GetContainer().Resolve<NostreetsORM.DBService<StyledCard>>(); //*/cardInject;
-            _userSrv = /*App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.UserService>(); //*/userInject;
-            _billSrv = /*App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.BillService>(); //*/billsInject;
+            try
+            {
+                _chartsSrv = /*App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.ChartsService>(); //*/chartsInject;
+                _sendGridSrv = /*App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Web.SendGridService>(); //*/sendGridInject;
+                _cardSrv = /*App_Start.UnityConfig.GetContainer().Resolve<NostreetsORM.DBService<StyledCard>>(); //*/cardInject;
+                _userSrv = /*App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.UserService>(); //*/userInject;
+                _billSrv = /*App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.BillService>(); //*/billsInject;
 
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         #region Private Members
@@ -615,7 +622,19 @@ namespace Nostreets_Sandbox.Controllers.Api
                 else
                 {
                     model.UserId = CurrentUser.Id;
-                    int id = _chartsSrv.Insert(model);
+                    int id = _chartsSrv.Insert(model, (a) =>
+                        {
+                            return new Chart<int>
+                            {
+                                Labels = a.Labels,
+                                Legend = a.Legend,
+                                Name = a.Name,
+                                Series = a.Series,
+                                TypeId = a.TypeId,
+                                UserId = a.UserId,
+                                DateModified = DateTime.Now
+                            };
+                        });
                     if (id == 0) { throw new Exception("Insert Failed"); }
                     response = new ItemResponse<int>(id);
                 }
@@ -631,7 +650,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         [Intercept("UserLogIn")]
         [Route("charts/list/int")]
         [HttpPost]
-        public HttpResponseMessage InsertChart(ChartAddRequest<List<int>> model)
+        public HttpResponseMessage InsertChart(ChartAddRequest model)
         {
             try
             {
@@ -644,7 +663,22 @@ namespace Nostreets_Sandbox.Controllers.Api
                 else
                 {
                     model.UserId = CurrentUser.Id;
-                    int id = _chartsSrv.Insert(model);
+
+                    int id = _chartsSrv.Insert(model,
+                        (a) =>
+                        {
+                            return new Chart<List<int>>
+                            {
+                                Labels = a.Labels,
+                                Legend = a.Legend,
+                                Name = a.Name,
+                                Series = a.Series,
+                                TypeId = a.TypeId,
+                                UserId = a.UserId,
+                                DateModified = DateTime.Now
+                            };
+                        });
+
                     if (id == 0) { throw new Exception("Insert Failed"); }
                     response = new ItemResponse<int>(id);
                 }
@@ -673,7 +707,19 @@ namespace Nostreets_Sandbox.Controllers.Api
                 else
                 {
                     model.UserId = CurrentUser.Id;
-                    _chartsSrv.Update(model);
+                    _chartsSrv.Update(model, (a) =>
+                        {
+                        return new Chart<int>
+                        {
+                            Labels = a.Labels,
+                            Legend = a.Legend,
+                            Name = a.Name,
+                            Series = a.Series,
+                            TypeId = a.TypeId,
+                            UserId = a.UserId,
+                            DateModified = DateTime.Now
+                        };
+                    });
                     response = new SuccessResponse();
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, response);
@@ -688,7 +734,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         [Intercept("UserLogIn")]
         [Route("charts/list/int")]
         [HttpPut]
-        public HttpResponseMessage UpdateChart(ChartUpdateRequest<List<int>> model)
+        public HttpResponseMessage UpdateChart(ChartUpdateRequest model)
         {
             try
             {
@@ -701,7 +747,19 @@ namespace Nostreets_Sandbox.Controllers.Api
                 else
                 {
                     model.UserId = CurrentUser.Id;
-                    _chartsSrv.Update(model);
+                    _chartsSrv.Update(model, (a) =>
+                        {
+                            return new Chart<List<int>>
+                            {
+                                Labels = a.Labels,
+                                Legend = a.Legend,
+                                Name = a.Name,
+                                Series = a.Series,
+                                TypeId = a.TypeId,
+                                UserId = a.UserId,
+                                DateModified = DateTime.Now
+                            };
+                        });
                     response = new SuccessResponse();
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, response);

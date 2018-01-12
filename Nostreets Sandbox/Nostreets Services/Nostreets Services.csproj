@@ -182,7 +182,7 @@
     </Compile>
     <Compile Include="Interfaces\Services\IBillService.cs" />
     <Compile Include="Interfaces\Services\ICacheService.cs" />
-    <Compile Include="Interfaces\Services\IChartExtended.cs" />
+    <Compile Include="Interfaces\Services\IChartSrv.cs" />
     <Compile Include="Interfaces\Services\IMailChimpService.cs" />
     <Compile Include="Interfaces\Services\IUserService.cs" />
     <Compile Include="Models\Requests\BillRequestModels.cs" />

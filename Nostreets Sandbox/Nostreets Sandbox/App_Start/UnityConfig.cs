@@ -2,19 +2,12 @@
 using Nostreets_Services.Interfaces.Services;
 using Nostreets_Services.Services.Database;
 using Nostreets_Services.Services.Web;
-using NostreetsEntities;
 using NostreetsORM;
 using System.Web.Configuration;
 using System.Web.Http;
-using System.Web.Http.Controllers;
-using System.Web.Http.Dispatcher;
 using System.Web.Mvc;
-using Unity.Mvc5;
-using System;
-using System.Net.Http;
 using Microsoft.Practices.Unity;
 using NostreetsExtensions.Interfaces;
-using NostreetsExtensions;
 
 namespace Nostreets_Sandbox.App_Start
 {
@@ -33,8 +26,8 @@ namespace Nostreets_Sandbox.App_Start
 
             container.RegisterType<IMailChimpService, MailChimpService>(new ContainerControlledLifetimeManager());
             container.RegisterType<ISendGridService, SendGridService>(new ContainerControlledLifetimeManager(), new InjectionConstructor(WebConfigurationManager.AppSettings["SendGrid.ApiKey"]));
-            container.RegisterType<IChartsExtended, ChartsService>(new ContainerControlledLifetimeManager(), new InjectionConstructor(/*"AzureDBConnection"*/"DefaultConnection"));
-            container.RegisterType<IDBService<StyledCard>, DBService<StyledCard>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(/*"AzureDBConnection"*/"DefaultConnection"));
+            container.RegisterType<IChartSrv, ChartsService>(new ContainerControlledLifetimeManager(), new InjectionConstructor(/*"AzureDBConnection"*/"DefaultConnection"));
+            //container.RegisterType<IDBService<StyledCard>, DBService<StyledCard>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(/*"AzureDBConnection"*/"DefaultConnection"));
             container.RegisterType<IUserService, UserService>(new ContainerControlledLifetimeManager(), new InjectionConstructor(/*"AzureDBConnection"*/"DefaultConnection"));
             container.RegisterType<IBillService, BillService>(new ContainerControlledLifetimeManager(), new InjectionConstructor(/*"AzureDBConnection"*/"DefaultConnection"));
 

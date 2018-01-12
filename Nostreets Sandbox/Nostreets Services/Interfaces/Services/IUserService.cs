@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Nostreets_Services.Interfaces.Services
 {
-    public interface IUserService : IDBService<User, string, User, User>
+    public interface IUserService : IDBService<User, string>
     {
         bool CheckIfUserExist(string username);
         User GetByUsername(string username);
