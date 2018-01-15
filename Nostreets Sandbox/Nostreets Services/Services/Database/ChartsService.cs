@@ -45,7 +45,7 @@ namespace Nostreets_Services.Services.Database
             List<Chart<object>> result = null;
             var charts =_chartSrv.GetAll();
             var pieCharts = _pieChartSrv.GetAll();
-            result = charts.Cast<Chart<object>>()
+            result = charts?.Cast<Chart<object>>()
                            .Concat(pieCharts.Cast<Chart<object>>())
                            .ToList();
             return result;
@@ -93,12 +93,12 @@ namespace Nostreets_Services.Services.Database
 
         public IEnumerable<Chart<List<int>>> Where(Func<Chart<List<int>>, bool> predicate)
         {
-            return _chartSrv.GetAll().Where(predicate);
+            return _chartSrv.Where(predicate);
         }
 
         public IEnumerable<Chart<int>> Where(Func<Chart<int>, bool> predicate)
         {
-            return _pieChartSrv.GetAll().Where(predicate);
+            return _pieChartSrv.Where(predicate);
         }
 
     }

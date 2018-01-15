@@ -34,16 +34,15 @@ namespace Nostreets_Sandbox.Controllers.Api
         IBillService _billSrv = null;
         #endregion
 
-        public SandoxApiController(IChartSrv chartsInject, ISendGridService sendGridInject, IDBService<StyledCard> cardInject, IUserService userInject, IBillService billsInject)
+        public SandoxApiController(/*IChartSrv chartsInject, ISendGridService sendGridInject, IDBService<StyledCard> cardInject, IUserService userInject, IBillService billsInject*/)
         {
             try
             {
-                _chartsSrv = /*App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.ChartsService>(); //*/chartsInject;
-                _sendGridSrv = /*App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Web.SendGridService>(); //*/sendGridInject;
-                _cardSrv = /*App_Start.UnityConfig.GetContainer().Resolve<NostreetsORM.DBService<StyledCard>>(); //*/cardInject;
-                _userSrv = /*App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.UserService>(); //*/userInject;
-                _billSrv = /*App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.BillService>(); //*/billsInject;
-
+                _sendGridSrv = App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Web.SendGridService>(); //sendGridInject;
+                _userSrv = App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.UserService>(); //userInject;
+                _chartsSrv = App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.ChartsService>(); //chartsInject;
+                _cardSrv = App_Start.UnityConfig.GetContainer().Resolve<NostreetsORM.DBService<StyledCard>>(); //cardInject;
+                _billSrv = App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.BillService>(); //billsInject;
             }
             catch (Exception ex)
             {
@@ -429,10 +428,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-
-
-                //List<StyledCard> list = _cardSrv.GetAll();
-                List<StyledCard> filteredList = _cardSrv.Where(a => a.UserId == CurrentUser.Id).ToList();
+                List<StyledCard> filteredList = _cardSrv.Where(a => a.UserId == CurrentUser.Id)?.ToList();
                 ItemsResponse<StyledCard> response = new ItemsResponse<StyledCard>(filteredList);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -560,13 +556,13 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex.Message);
+                ErrorResponse response = new ErrorResponse(ex);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
             }
         }
 
         [Intercept("UserLogIn")]
-        [Route("charts/user/{username}")]
+        [Route("charts/user")]
         [HttpGet]
         public HttpResponseMessage GetAllChartsByUser()
         {
@@ -581,7 +577,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex.Message);
+                ErrorResponse response = new ErrorResponse(ex);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
             }
         }
@@ -601,7 +597,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex.Message);
+                ErrorResponse response = new ErrorResponse(ex);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
             }
         }
@@ -632,7 +628,8 @@ namespace Nostreets_Sandbox.Controllers.Api
                                 Series = a.Series,
                                 TypeId = a.TypeId,
                                 UserId = a.UserId,
-                                DateModified = DateTime.Now
+                                DateModified = DateTime.Now,
+                                DateCreated = DateTime.Now
                             };
                         });
                     if (id == 0) { throw new Exception("Insert Failed"); }
@@ -642,7 +639,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex.Message);
+                ErrorResponse response = new ErrorResponse(ex);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
             }
         }
@@ -675,7 +672,8 @@ namespace Nostreets_Sandbox.Controllers.Api
                                 Series = a.Series,
                                 TypeId = a.TypeId,
                                 UserId = a.UserId,
-                                DateModified = DateTime.Now
+                                DateModified = DateTime.Now,
+                                DateCreated = DateTime.Now
                             };
                         });
 
@@ -686,7 +684,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex.Message);
+                ErrorResponse response = new ErrorResponse(ex);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
             }
         }
@@ -726,7 +724,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex.Message);
+                ErrorResponse response = new ErrorResponse(ex);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
             }
         }
@@ -766,7 +764,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex.Message);
+                ErrorResponse response = new ErrorResponse(ex);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
             }
         }
@@ -789,7 +787,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex.Message);
+                ErrorResponse response = new ErrorResponse(ex);
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
             }
         }
