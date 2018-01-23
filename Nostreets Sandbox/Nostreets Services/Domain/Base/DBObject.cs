@@ -9,6 +9,10 @@ namespace Nostreets_Services.Domain.Base
 {
     public abstract partial class DBObject
     {
+        [Key]
+        [Required]
+        public int Id { get; set; }
+
         [Required]
         public virtual string UserId { get; set; }
 

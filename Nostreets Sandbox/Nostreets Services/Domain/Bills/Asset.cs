@@ -14,10 +14,6 @@ namespace Nostreets_Services.Domain.Bills
     public abstract class Asset : DBObject
     {
 
-        [Key]
-        [Required]
-        public int Id { get; set; }
-
         [Required]
         public ScheduleTypes PaySchedule { get; set; }
 

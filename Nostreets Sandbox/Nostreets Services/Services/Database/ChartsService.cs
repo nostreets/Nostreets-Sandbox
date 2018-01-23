@@ -43,11 +43,93 @@ namespace Nostreets_Services.Services.Database
         public List<Chart<object>> GetAll()
         {
             List<Chart<object>> result = null;
-            var charts =_chartSrv.GetAll();
-            var pieCharts = _pieChartSrv.GetAll();
-            result = charts?.Cast<Chart<object>>()
-                           .Concat(pieCharts.Cast<Chart<object>>())
-                           .ToList();
+            var charts = _chartSrv.GetAll().Where(a => a.Series != null).ToArray();
+            var pieCharts = _pieChartSrv.GetAll().Where(a => a.Series != null).ToArray();
+
+            if (pieCharts.Length == 0 && charts.Length > 0)
+                foreach (Chart<List<int>> c in charts)
+                {
+                    Chart<object> newChart = new Chart<object>
+                    {
+                        ChartId = c.ChartId,
+                        DateCreated = c.DateCreated,
+                        DateModified = c.DateModified,
+                        Labels = c.Labels,
+                        Legend = c.Legend,
+                        Name = c.Name,
+                        TypeId = c.TypeId,
+                        UserId = c.UserId
+                    };
+                    newChart.SetPropertyValue("Series", c.Series.Cast(typeof(object)));
+
+                    if (result == null)
+                        result = new List<Chart<object>>();
+                    result.Add(newChart);
+                }
+            else if (charts.Length == 0 && pieCharts.Length > 0)
+                foreach (Chart<int> p in pieCharts)
+                {
+                    Chart<object> newChart = new Chart<object>
+                    {
+                        ChartId = p.ChartId,
+                        DateCreated = p.DateCreated,
+                        DateModified = p.DateModified,
+                        Labels = p.Labels,
+                        Legend = p.Legend,
+                        Name = p.Name,
+                        TypeId = p.TypeId,
+                        UserId = p.UserId
+                    };
+                    newChart.SetPropertyValue("Series", p.Series.Cast(typeof(object)));
+
+                    if (result == null)
+                        result = new List<Chart<object>>();
+                    result.Add(newChart);
+                }
+            else if (charts.Length > 0 && pieCharts.Length > 0)
+            {
+                foreach (Chart<int> p in pieCharts)
+                {
+                    Chart<object> newChart = new Chart<object>
+                    {
+                        ChartId = p.ChartId,
+                        DateCreated = p.DateCreated,
+                        DateModified = p.DateModified,
+                        Labels = p.Labels,
+                        Legend = p.Legend,
+                        Name = p.Name,
+                        TypeId = p.TypeId,
+                        UserId = p.UserId
+                    };
+                    newChart.SetPropertyValue("Series", p.Series.Cast(typeof(object)));
+
+                    if (result == null)
+                        result = new List<Chart<object>>();
+                    result.Add(newChart);
+                }
+                foreach (Chart<List<int>> c in charts)
+                {
+                    Chart<object> newChart = new Chart<object>
+                    {
+                        ChartId = c.ChartId,
+                        DateCreated = c.DateCreated,
+                        DateModified = c.DateModified,
+                        Labels = c.Labels,
+                        Legend = c.Legend,
+                        Name = c.Name,
+                        TypeId = c.TypeId,
+                        UserId = c.UserId
+                    };
+                    newChart.SetPropertyValue("Series", c.Series.Cast(typeof(object)));
+
+                    if (result == null)
+                        result = new List<Chart<object>>();
+                    result.Add(newChart);
+                }
+            }
+
+
+
             return result;
         }
 
