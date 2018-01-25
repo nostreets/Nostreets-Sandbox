@@ -6,10 +6,10 @@ using System.Linq;
 
 namespace Nostreets_Services.Domain.Bills
 {
-    public class Expenses : Asset
+    public class Expense : Asset
     {
         [Required]
-        public ExpenseTypes ExpenseType { get; set; }
+        public ExpenseType ExpenseType { get; set; }
 
     }
 }

@@ -9,7 +9,7 @@ namespace Nostreets_Services.Domain.Bills
     public class Income : Asset
     {
         [Required]
-        public IncomeTypes IncomeType { get; set; }
+        public IncomeType IncomeType { get; set; }
 
     }
 

@@ -31,7 +31,7 @@ namespace Nostreets_Sandbox
 
             Database.SetInitializer(new DropCreateDatabaseIfModelChanges<UserDbContext>());
             Database.SetInitializer(new DropCreateDatabaseIfModelChanges<EFDBContext<Income>>());
-            Database.SetInitializer(new DropCreateDatabaseIfModelChanges<EFDBContext<Expenses>>());
+            Database.SetInitializer(new DropCreateDatabaseIfModelChanges<EFDBContext<Expense>>());
 
         }
     }

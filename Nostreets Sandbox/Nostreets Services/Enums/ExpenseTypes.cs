@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Nostreets_Services.Enums
 {
-    public enum ExpenseTypes
+    public enum ExpenseType
     {
         Any,
         Shelter,

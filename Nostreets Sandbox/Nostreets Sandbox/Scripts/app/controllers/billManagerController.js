@@ -44,7 +44,7 @@
             _getIncomeChart().then(
                 () => _getExpensesChart().then(
                     () => _getCombinedChart().then(
-                        () => _changeTab()
+                        () => _targetGraph(vm.currentTab, ((vm.currentTab === "income") ? "#incomeChart" : (vm.currentTab === "expense") ? "#expenseChart" : "#combinedChart"))
                     )));
         }
 
@@ -235,23 +235,6 @@
 
             var renderedChart = new Chartist.Line(elementId, chart, options);
             _animateGraph(renderedChart);
-
-            //if (vm.renderedChart === null) {
-            //    var renderedChart = new Chartist.Line(elementId, chart, options);
-            //    _animateGraph(renderedChart);
-            //}
-            //else {
-            //    $('a[data-toggle="tab"]').on('shown.bs.tab',
-            //        function (e) {
-            //            //e.target // newly activated tab
-            //            //e.relatedTarget // previous active tab
-            //            var renderedChart = new Chartist.Line(elementId, chart, options);
-            //            _animateGraph(renderedChart);
-            //        });
-            //}
-
-            //page.__chart = renderedChart;
-            //page.__chartStyle = document.getElementById(page.__chart.container.id).style;
 
             vm.renderedChart = chart;
             vm.chartOptions = options;

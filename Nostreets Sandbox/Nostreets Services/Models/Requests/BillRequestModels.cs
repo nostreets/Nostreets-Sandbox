@@ -20,7 +20,7 @@ namespace Nostreets_Services.Models.Requests
         public decimal Price { get; set; }
 
         [Required]
-        public ExpenseTypes BillType { get; set; }
+        public ExpenseType BillType { get; set; }
 
         [Required]
 
@@ -41,7 +41,7 @@ namespace Nostreets_Services.Models.Requests
         public ScheduleTypes PaySchedule { get; set; }
 
         [Required]
-        public IncomeTypes Type { get; set; }
+        public IncomeType Type { get; set; }
 
     }
 
@@ -60,7 +60,7 @@ namespace Nostreets_Services.Models.Requests
         public decimal Price { get; set; }
 
         [Required]
-        public ExpenseTypes BillType { get; set; }
+        public ExpenseType BillType { get; set; }
 
         [Required]
 
@@ -83,7 +83,7 @@ namespace Nostreets_Services.Models.Requests
         public ScheduleTypes PaySchedule { get; set; }
 
         [Required]
-        public IncomeTypes Type { get; set; }
+        public IncomeType Type { get; set; }
 
     }
 

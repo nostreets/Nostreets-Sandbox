@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Nostreets_Services.Enums
 {
-    public enum IncomeTypes
+    public enum IncomeType
     {
         Any,
         Paycheck,

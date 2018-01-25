@@ -17,24 +17,24 @@ namespace Nostreets_Services.Services.Database
         {
             _connectionKey = "DefaultConnection";
             _incomeSrv = new DBService<Income>(_connectionKey);
-            _expenseSrv = new DBService<Expenses>(_connectionKey);
+            _expenseSrv = new DBService<Expense>(_connectionKey);
         }
 
         public BillService(string connectionKey)
         {
             _connectionKey = connectionKey;
             _incomeSrv = new DBService<Income>(_connectionKey);
-            _expenseSrv = new DBService<Expenses>(_connectionKey);
+            _expenseSrv = new DBService<Expense>(_connectionKey);
         }
 
 
         private string _connectionKey = null;
-        private DBService<Expenses> _expenseSrv = null;
+        private DBService<Expense> _expenseSrv = null;
         private DBService<Income> _incomeSrv = null;
 
-        public List<Expenses> GetAllExpenses(string userId)
+        public List<Expense> GetAllExpenses(string userId)
         {
-            List<Expenses> expenses = _expenseSrv.Where((a) => a.UserId == userId)?.ToList();
+            List<Expense> expenses = _expenseSrv.Where((a) => a.UserId == userId)?.ToList();
             expenses?.Sort((a, b) => DateTime.Compare(a.DateModified.Value, b.DateModified.Value));
             return expenses;
         }
@@ -46,27 +46,27 @@ namespace Nostreets_Services.Services.Database
             return incomes;
         }
 
-        public Expenses GetExpense(string userId, int id)
+        public Expense GetExpense(string userId, int id)
         {
             return _expenseSrv.Get(id);
         }
 
-        public Expenses GetExpense(string userId, string expenseName)
+        public Expense GetExpense(string userId, string expenseName)
         {
             return _expenseSrv.Where(a => a.UserId == userId && a.Name == expenseName).FirstOrDefault();
         }
 
-        public List<Expenses> GetExpenses(string userId, ExpenseTypes type)
+        public List<Expense> GetExpenses(string userId, ExpenseType type)
         {
             return _expenseSrv.Where((a) => a.UserId == userId && a.ExpenseType == type).ToList();
         }
 
-        public List<Expenses> GetExpenses(string userId, ScheduleTypes type)
+        public List<Expense> GetExpenses(string userId, ScheduleTypes type)
         {
             return _expenseSrv.Where((a) => a.UserId == userId && a.PaySchedule == type).ToList();
         }
 
-        public List<Expenses> GetExpenses(string userId, ExpenseTypes billType, ScheduleTypes scheduleType)
+        public List<Expense> GetExpenses(string userId, ExpenseType billType, ScheduleTypes scheduleType)
         {
             return _expenseSrv.Where((a) => a.UserId == userId && a.ExpenseType == billType && a.PaySchedule == scheduleType).ToList();
         }
@@ -81,7 +81,7 @@ namespace Nostreets_Services.Services.Database
             return _incomeSrv.Where(a => a.UserId == userId && a.Name == incomeName).FirstOrDefault();
         }
 
-        public List<Income> GetIncomes(string userId, IncomeTypes type)
+        public List<Income> GetIncomes(string userId, IncomeType type)
         {
             return _incomeSrv.Where((a) => a.UserId == userId && a.IncomeType == type).ToList();
         }
@@ -91,7 +91,7 @@ namespace Nostreets_Services.Services.Database
             return _incomeSrv.Where((a) => a.UserId == userId && a.PaySchedule == type).ToList();
         }
 
-        public List<Income> GetIncomes(string userId, IncomeTypes incomeType, ScheduleTypes scheduleType)
+        public List<Income> GetIncomes(string userId, IncomeType incomeType, ScheduleTypes scheduleType)
         {
             return _incomeSrv.Where((a) => a.UserId == userId && a.IncomeType == incomeType && a.PaySchedule == scheduleType).ToList();
         }
@@ -110,11 +110,13 @@ namespace Nostreets_Services.Services.Database
 
             result.Labels = CalculateLabelRange(ref chartSchedule, start, end);
             result.Name = String.Format("Income {0} Chart", chartSchedule.ToString());
-            result.TypeId = ChartTypes.Line;
+            result.TypeId = ChartType.Line;
             result.UserId = userId;
 
-            if (result.Series == null) { result.Series = new List<List<float>>(); }
-            if (result.Legend == null) { result.Legend = new List<string>(); }
+            if (result.Series == null)
+                result.Series = new List<List<float>>(); 
+            if (result.Legend == null)
+                result.Legend = new List<string>(); 
 
             if (incomes != null)
                 for (int n = 0; n < incomes.Count; n++)
@@ -228,8 +230,6 @@ namespace Nostreets_Services.Services.Database
                     }
 
                 }
-            else
-                result = null;
 
 
             return result;
@@ -238,7 +238,7 @@ namespace Nostreets_Services.Services.Database
         public Chart<List<float>> GetExpensesChart(string userId, ref ScheduleTypes chartSchedule, DateTime? startDate = null, DateTime? endDate = null)
         {
             Chart<List<float>> result = new Chart<List<float>>();
-            List<Expenses> expenses = GetAllExpenses(userId);
+            List<Expense> expenses = GetAllExpenses(userId);
 
             DateTime start = (startDate == null) ? DateTime.Now : startDate.Value,
                      end = (endDate == null) ? DateTime.Now.AddDays(14) : endDate.Value;
@@ -247,11 +247,13 @@ namespace Nostreets_Services.Services.Database
 
             result.Labels = CalculateLabelRange(ref chartSchedule, start, end);
             result.Name = String.Format("Expenses {0} Chart", chartSchedule.ToString());
-            result.TypeId = ChartTypes.Line;
+            result.TypeId = ChartType.Line;
             result.UserId = userId;
 
-            if (result.Series == null) { result.Series = new List<List<float>>(); }
-            if (result.Legend == null) { result.Legend = new List<string>(); }
+            if (result.Series == null)
+                result.Series = new List<List<float>>(); 
+            if (result.Legend == null)
+                result.Legend = new List<string>(); 
 
             if (expenses != null)
                 for (int n = 0; n < expenses.Count; n++)
@@ -383,8 +385,6 @@ namespace Nostreets_Services.Services.Database
                             break;
                     }
                 }
-            else
-                result = null;
 
 
             return result;
@@ -400,14 +400,27 @@ namespace Nostreets_Services.Services.Database
             result.Labels = CalculateLabelRange(ref chartSchedule, (startDate != null) ? startDate.Value : DateTime.Now, (endDate != null) ? endDate.Value : DateTime.Now.AddDays(14));
             result.Name = String.Format("Complete {0} Chart", chartSchedule.ToString());
             result.UserId = userId;
-            result.TypeId = ChartTypes.Line;
-            result.Series = incomeChart?.Series.Concat(expensesChart.Series).ToList();
-            result.Legend = incomeChart?.Legend.Concat(expensesChart.Legend).ToList();
+            result.TypeId = ChartType.Line;
+            result.Series = (incomeChart.Series.Count > 0 && expensesChart.Series.Count > 0) 
+                                ? incomeChart.Series.Concat(expensesChart.Series).ToList()
+                                : (incomeChart.Series.Count > 0)
+                                ? incomeChart.Series
+                                : (expensesChart.Series.Count > 0)
+                                ? expensesChart.Series
+                                : new List<List<float>>();
+            result.Legend = (incomeChart.Legend.Count > 0 && expensesChart.Legend.Count > 0)
+                                ? incomeChart.Legend.Concat(expensesChart.Legend).ToList()
+                                : (incomeChart.Legend.Count > 0)
+                                ? incomeChart.Legend
+                                : (expensesChart.Legend.Count > 0)
+                                ? expensesChart.Legend
+                                : new List<string>();
+                //incomeChart?.Legend.Concat(expensesChart.Legend).ToList();
 
             return result;
         }
 
-        public void InsertExpense(Expenses request)
+        public void InsertExpense(Expense request)
         {
             _expenseSrv.Insert(request);
         }
@@ -417,7 +430,7 @@ namespace Nostreets_Services.Services.Database
             _incomeSrv.Insert(request);
         }
 
-        public void UpdateExpense(Expenses request)
+        public void UpdateExpense(Expense request)
         {
             _expenseSrv.Update(/*(a) => a.Id == request.Id, */request);
         }

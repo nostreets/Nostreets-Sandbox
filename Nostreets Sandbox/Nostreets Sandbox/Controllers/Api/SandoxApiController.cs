@@ -138,9 +138,9 @@ namespace Nostreets_Sandbox.Controllers.Api
             {
 
 
-                List<Expenses> result = null;
+                List<Expense> result = null;
                 result = _billSrv.GetAllExpenses(CurrentUser.Id);
-                ItemsResponse<Expenses> response = new ItemsResponse<Expenses>(result);
+                ItemsResponse<Expense> response = new ItemsResponse<Expense>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -153,7 +153,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         [Intercept("UserLogIn")]
         [Route("bill/income")]
         [HttpGet]
-        public HttpResponseMessage GetIncome(int id = 0, string name = null, ScheduleTypes scheduleType = ScheduleTypes.Any, IncomeTypes incomeType = IncomeTypes.Any)
+        public HttpResponseMessage GetIncome(int id = 0, string name = null, ScheduleTypes scheduleType = ScheduleTypes.Any, IncomeType incomeType = IncomeType.Any)
         {
             try
             {
@@ -174,15 +174,15 @@ namespace Nostreets_Sandbox.Controllers.Api
         [Intercept("UserLogIn")]
         [Route("bill/expenses")]
         [HttpGet]
-        public HttpResponseMessage GetExpense(int id = 0, string name = null, ScheduleTypes scheduleType = ScheduleTypes.Any, ExpenseTypes billType = ExpenseTypes.Any)
+        public HttpResponseMessage GetExpense(int id = 0, string name = null, ScheduleTypes scheduleType = ScheduleTypes.Any, ExpenseType billType = ExpenseType.Any)
         {
             try
             {
 
 
-                Expenses result = null;
+                Expense result = null;
                 result = _billSrv.GetExpense(CurrentUser.Id, name);
-                ItemResponse<Expenses> response = new ItemResponse<Expenses>(result);
+                ItemResponse<Expense> response = new ItemResponse<Expense>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -289,7 +289,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         [Intercept("UserLogIn")]
         [Route("bill/expenses")]
         [HttpPost]
-        public HttpResponseMessage InsertExpense(Expenses expense)
+        public HttpResponseMessage InsertExpense(Expense expense)
         {
             try
             {
@@ -351,7 +351,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         [Intercept("UserLogIn")]
         [Route("bill/expenses")]
         [HttpPut]
-        public HttpResponseMessage UpdateExpense(Expenses expense)
+        public HttpResponseMessage UpdateExpense(Expense expense)
         {
             try
             {
@@ -873,12 +873,12 @@ namespace Nostreets_Sandbox.Controllers.Api
 
                 if (enumTypes.FirstOrDefault(a => a == "income") != null)
                 {
-                    result.Add("income", typeof(IncomeTypes).ToDictionary<IncomeTypes>());
+                    result.Add("income", typeof(IncomeType).ToDictionary<IncomeType>());
                 }
 
                 if (enumTypes.FirstOrDefault(a => a == "expense") != null)
                 {
-                    result.Add("expense", typeof(ExpenseTypes).ToDictionary<ExpenseTypes>());
+                    result.Add("expense", typeof(ExpenseType).ToDictionary<ExpenseType>());
                 }
 
                 if (enumTypes.FirstOrDefault(a => a == "schedule") != null)
@@ -888,7 +888,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
                 if (enumTypes.FirstOrDefault(a => a == "chart") != null)
                 {
-                    result.Add("chart", typeof(ChartTypes).ToDictionary<ChartTypes>());
+                    result.Add("chart", typeof(ChartType).ToDictionary<ChartType>());
                 }
 
                 response = new ItemsResponse<string, Dictionary<int, string>>(result);

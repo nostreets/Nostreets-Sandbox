@@ -11,7 +11,7 @@ namespace Nostreets_Services.Models.Request
     {
         [Required]
         public int ChartId { get; set; }
-        public ChartTypes TypeId { get; set; }
+        public ChartType TypeId { get; set; }
         public string Name { get; set; }
         public List<List<int>> Series { get; set; }
         public List<string> Legend { get; set; }

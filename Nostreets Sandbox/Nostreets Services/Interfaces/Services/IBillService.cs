@@ -11,11 +11,11 @@ namespace Nostreets_Services.Interfaces.Services
 {
     public interface IBillService
     {
-        List<Expenses> GetAllExpenses(string userId);
+        List<Expense> GetAllExpenses(string userId);
 
         List<Income> GetAllIncome(string userId);
 
-        Expenses GetExpense(string userId, string expenseName);
+        Expense GetExpense(string userId, string expenseName);
 
         Income GetIncome(string userId, string incomeName);
 
@@ -25,11 +25,11 @@ namespace Nostreets_Services.Interfaces.Services
 
         Chart<List<float>> GetCombinedChart(string userId, ref ScheduleTypes chartSchuduleType, DateTime? startDate = null, DateTime? endDate = null);
 
-        void InsertExpense(Expenses request);
+        void InsertExpense(Expense request);
 
         void InsertIncome(Income request);
 
-        void UpdateExpense(Expenses request);
+        void UpdateExpense(Expense request);
 
         void UpdateIncome(Income request);
 

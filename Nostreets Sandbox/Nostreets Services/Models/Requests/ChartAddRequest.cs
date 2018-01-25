@@ -10,7 +10,7 @@ namespace Nostreets_Services.Models.Request
     public class ChartAddRequest
     {
         [Required]
-        public ChartTypes TypeId { get; set; }
+        public ChartType TypeId { get; set; }
 
         [Required]
         public string Name { get; set; }

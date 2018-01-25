@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Nostreets_Services.Enums
 {
-    public enum ChartTypes : int
+    public enum ChartType : int
     {
         Line = 1,
         Bar = 2,
