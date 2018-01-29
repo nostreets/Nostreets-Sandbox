@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Nostreets_Services.Domain.Bills
 {
-    public abstract class Asset : DBObject
+    public abstract class FinicialAsset : DBObject
     {
 
         [Required]
@@ -25,10 +25,6 @@ namespace Nostreets_Services.Domain.Bills
         public DateTime? EndDate { get; set; }
 
         public DateTime? ExperationDate { get; set; }
-
-        public DateTime? DateCreated { get; set; }
-
-        public DateTime? DateModified { get; set; }
 
         public bool IsHiddenOnChart { get; set; }
 

@@ -34,15 +34,15 @@ namespace Nostreets_Sandbox.Controllers.Api
         IBillService _billSrv = null;
         #endregion
 
-        public SandoxApiController(IChartSrv chartsInject, ISendGridService sendGridInject, IDBService<StyledCard> cardInject, IUserService userInject, IBillService billsInject)
+        public SandoxApiController(/*IChartSrv chartsInject, ISendGridService sendGridInject, IDBService<StyledCard> cardInject, IUserService userInject, IBillService billsInject*/)
         {
             try
             {
-                _sendGridSrv = /*App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Web.SendGridService>(); //*/sendGridInject;
-                _userSrv = /*App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.UserService>(); //*/userInject;
-                _chartsSrv = /*App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.ChartsService>(); //*/chartsInject;
-                _cardSrv = /*App_Start.UnityConfig.GetContainer().Resolve<NostreetsORM.DBService<StyledCard>>(); //*/cardInject;
-                _billSrv = /*App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.BillService>(); //*/billsInject;
+                _sendGridSrv = App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Web.SendGridService>(); //sendGridInject;
+                _userSrv = App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.UserService>(); //userInject;
+                _chartsSrv = App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.ChartsService>(); //chartsInject;
+                _cardSrv = App_Start.UnityConfig.GetContainer().Resolve<NostreetsORM.DBService<StyledCard>>(); //cardInject;
+                _billSrv = App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.BillService>(); //billsInject;
             }
             catch (Exception ex)
             {
@@ -271,8 +271,6 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                 {
-                    income.DateCreated = DateTime.Now;
-                    income.DateModified = DateTime.Now;
                     _billSrv.InsertIncome(income);
                     response = new SuccessResponse();
                 }
@@ -302,9 +300,6 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                 {
-                    expense.UserId = CurrentUser.Id;
-                    expense.DateCreated = DateTime.Now;
-                    expense.DateModified = DateTime.Now;
                     _billSrv.InsertExpense(expense);
                     response = new SuccessResponse();
                 }
@@ -333,8 +328,6 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                 {
-                    income.UserId = CurrentUser.Id;
-                    income.DateModified = DateTime.Now;
                     _billSrv.UpdateIncome(income);
                     response = new SuccessResponse();
                 }
@@ -363,8 +356,6 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                 {
-                    expense.UserId = CurrentUser.Id;
-                    expense.DateModified = DateTime.Now;
                     _billSrv.UpdateExpense(expense);
                     response = new SuccessResponse();
                 }

@@ -18,5 +18,12 @@ namespace Nostreets_Services.Domain.Base
 
         [Required]
         public virtual string Name { get; set; }
+
+        public virtual DateTime? DateCreated { get; set; }
+
+        public virtual DateTime? DateModified { get; set; }
+
+        public virtual string ModifiedUserId { get; set; }
+
     }
 }

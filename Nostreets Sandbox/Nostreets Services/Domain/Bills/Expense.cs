@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Nostreets_Services.Domain.Bills
 {
-    public class Expense : Asset
+    public class Expense : FinicialAsset
     {
         [Required]
         public ExpenseType ExpenseType { get; set; }
