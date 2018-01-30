@@ -18,7 +18,7 @@ namespace Nostreets_Services.Domain.Bills
         public ScheduleTypes PaySchedule { get; set; }
 
         [Required]
-        public DateTime? TimePaid { get; set; }
+        public DateTime TimePaid { get; set; }
 
         public DateTime? BeginDate { get; set; }
 
@@ -30,7 +30,11 @@ namespace Nostreets_Services.Domain.Bills
 
         public float Cost { get; set; }
 
+        public float CostMultilplier { get => _costMultilplier; set => _costMultilplier = value; }
+
         public override string UserId { get => CacheManager.Contains("user") ? CacheManager.GetItem<User>("user").Id : null; }
+
+        private float _costMultilplier = 1;
 
     }
 }
