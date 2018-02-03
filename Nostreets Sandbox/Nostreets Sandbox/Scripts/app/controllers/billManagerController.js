@@ -16,17 +16,17 @@
         vm.changeCurrentTab = _changeTab;
         vm.openMainMenuModal = _openMainMenuModal;
         vm.openDatePicker = _openDatePicker;
-        vm.updateChart = _getUserData;
+        vm.updateChart = _getUserCharts;
 
 
-        $baseController.systemEventService.listen("refreshedUsername", () => { _setUp(); _getUserData(); });
+        $baseController.systemEventService.listen("refreshedUsername", () => { _setUp(); _getUserCharts(); });
 
 
         _render();
 
         function _render() {
             _setUp();
-            _getUserData();
+            _getUserCharts();
         }
 
         function _setUp() {
@@ -40,7 +40,7 @@
             vm.chartOptions = null;
         }
 
-        function _getUserData() {
+        function _getUserCharts() {
             _getIncomeChart().then(
                 () => _getExpensesChart().then(
                     () => _getCombinedChart().then(
@@ -494,20 +494,6 @@
                 type: typeId
             };
 
-            //switch (typeId) {
-            //    case "income":
-            //        data.items = vm.income;
-            //        break;
-
-            //    case "expense":
-            //        data.items = vm.expenses;
-            //        break;
-
-            //    case "combined":
-            //        var newArr = vm.expenses.concat(vm.income);
-            //        data.items = newArr;
-            //}
-
             var modalInstance = $uibModal.open({
                 animation: true
                 , templateUrl: "modelBillMainMenu.html"
@@ -519,6 +505,9 @@
                     }
                 }
             });
+
+            modalInstance.closed.then(_getUserCharts);
+
         }
 
         function _openCodeModal(code) {
