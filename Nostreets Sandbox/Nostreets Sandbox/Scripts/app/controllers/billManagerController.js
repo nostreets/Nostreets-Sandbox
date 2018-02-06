@@ -38,6 +38,8 @@
             vm.beginDate = new Date();
             vm.endDate = new Date(new Date().setTime(vm.beginDate.getTime() + 14 * 86400000));
             vm.chartOptions = null;
+            vm.chartType = 'line';
+            vm.chartLineStyle = 'none';
         }
 
         function _getUserCharts() {
@@ -48,6 +50,105 @@
                     )));
         }
 
+        function _getUserAssets() {
+            _getIncomes().then(
+                () => _getExpenses().then(
+                    () => _getChartLengend()
+                ));
+        }
+
+        function _getChartLengend() {
+            if (vm.currentTab == 'income') {
+                for (var i = 0; i < vm.income.length; i++) {
+                    var color = _chartColors(i);
+                    vm.income[i].color = color;
+                }
+            }
+            else if (vm.currentTab == 'expense') {
+                for (var i = 0; i < vm.expenses.length; i++) {
+                    var color = _chartColors(i);
+                    vm.expenses[i].color = color;
+                }
+            }
+            else {
+                for (var i = 0; i < vm.income.length; i++) {
+                    var color = _chartColors(i);
+                    vm.income[i].color = color;
+                }
+                for (var i = vm.income.length; i < vm.expenses.length + vm.income.length; i++) {
+                    var color = _chartColors(i);
+                    vm.expenses[i - vm.income.length].color = color;
+                }
+            }
+        }
+
+        function _chartColors(index) {
+            var result,
+                char = String.fromCharCode(97 + index);
+            switch (char) {
+                case 'a':
+                    result = '#00bcd4';
+                    break;
+
+                case 'b':
+                    result = '#f44336';
+                    break;
+
+                case 'c':
+                    result = '#ff9800';
+                    break;
+
+                case 'd':
+                    result = '#9c27b0';
+                    break;
+
+                case 'e':
+                    result = '#4caf50';
+                    break;
+
+                case 'f':
+                    result = '#9C9B99';
+                    break;
+
+                case 'g':
+                    result = '#999999';
+                    break;
+
+                case 'h':
+                    result = '#dd4b39';
+                    break;
+
+                case 'i':
+                    result = '#35465c';
+                    break;
+
+                case 'j':
+                    result = '#e52d27';
+                    break;
+
+                case 'k':
+                    result = '#55acee';
+                    break;
+
+                case 'l':
+                    result = '#cc2127';
+                    break;
+
+                case 'm':
+                    result = '#1769ff';
+                    break;
+
+                case 'n':
+                    result = '#6188e2';
+                    break;
+
+                case 'o':
+                    result = '#a748ca';
+                    break;
+            }
+            return result;
+        }
+
         function _openDatePicker(prop) {
             switch (prop) {
                 case "start":
@@ -55,7 +156,7 @@
                     break;
 
                 case "end":
-                    vm.isEndding = true;
+                    vm.isEnding = true;
                     break;
             }
         }
@@ -79,9 +180,9 @@
                 end = new Date(end);
             }
 
-            var day;
-            //var end = new Date();
-            var result = [$filter("date")(end, "M/d")];
+            var day,
+                utcEnd = end.toUTCString(),
+                result = [$filter("date")(end, "M/d")];
 
             while (start < end) {
                 day = end.getDate();
@@ -92,6 +193,8 @@
                 result.unshift(formattedDate);
             }
 
+            vm.beginDate = new Date(start);
+            vm.endDate = new Date(utcEnd);
             return result;
         }
 
@@ -180,6 +283,36 @@
             );
         }
 
+        function _getIncomes() {
+
+            return $sandboxService.getAllIncomes().then(
+                a => vm.income = a.data.items,
+                err => $baseController.errorCheck(err,
+                    {
+                        maxLoops: 3,
+                        miliseconds: 2000,
+                        method: () => {
+                            $sandboxService.getAllIncomes().then(a => vm.income = a.data.items);
+                        }
+                    })
+            );
+        }
+
+        function _getExpenses() {
+
+            return $sandboxService.getAllExpenses().then(
+                a => vm.expenses = a.data.items,
+                err => $baseController.errorCheck(err,
+                    {
+                        maxLoops: 3,
+                        miliseconds: 2000,
+                        method: () => {
+                            $sandboxService.getAllExpenses().then(a => vm.expenses = a.data.items);
+                        }
+                    })
+            );
+        }
+
         function _getIncome(id, name, scheduleType, incomeType) {
             var isSuccessful = false;
             $sandboxService.getIncome(id, name, scheduleType, incomeType).then(
@@ -212,8 +345,48 @@
         function _targetGraph(type, elementId) {
 
             var chart = vm.charts.filter((a) => a.key === type)[0].value;
+            var options = _getChartOptions(chart);
+
+            if (chart.series.length === 0) {
+                chart.series.push(_arrayOfZeros(chart.labels.length));
+            }
+
+            _adjustTimeLabels(chart);
+
+            var renderedChart = new Chartist.Line(elementId, chart, options);
+
+            _getUserAssets();
+            _animateGraph(renderedChart);
+
+            vm.renderedChart = chart;
+            vm.chartOptions = options;
+
+
+        }
+
+        function _getChartOptions(chart) {
+            var lineSmooth = false;
+            switch (vm.chartType) {
+                case 'line':
+                    switch (vm.chartLineStyle) {
+                        case 'none':
+                            lineSmooth = false;
+                            break;
+
+                        case 'smooth':
+                            lineSmooth = true;
+                            break;
+
+                        case 'step':
+                            lineSmooth = Chartist.Interpolation.step();
+                            break;
+                    }
+                    break;
+            }
+
+
             var options = {
-                lineSmooth: false,
+                lineSmooth: lineSmooth,
                 width: Math.round(chart.labels.length / 1.5) + "00px",
                 axisX: {
                     labelOffset: {
@@ -227,23 +400,10 @@
 
             };
 
-            if (chart.series.length === 0) {
-                chart.series.push(_arrayOfZeros(chart.labels.length));
-            }
-
-            _adjustChartLabels(chart, options);
-
-            var renderedChart = new Chartist.Line(elementId, chart, options);
-            _animateGraph(renderedChart);
-
-            vm.renderedChart = chart;
-            vm.chartOptions = options;
-
+            return options;
         }
 
-        function _adjustChartLabels(chart, options) {
-
-            //options.width = Math.round(chart.labels.length / 1.5) + "00px"
+        function _adjustTimeLabels(chart) {
 
             if (angular.element("#assetChartTabContainer")[0].clientWidth < 1150) {
 

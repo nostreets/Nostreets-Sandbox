@@ -10,26 +10,35 @@
             <li role="presentation"><a role="tab" data-target="#expenseTab" data-toggle="tab" ng-click="pg.changeCurrentTab('expense')">Expenses</a></li>
         </ul>
     </div>
+
     <div class="row">
-        <div class="col-sm-5 col-sm-offset-1 text-center">
+        <div class="col-sm-4 col-sm-offset-1 text-center" style="margin-top: 2%">
+            <strong>Beginning Date:</strong>
             <div class="input-group">
-                <strong>Beginning Date:</strong>
-                <input type="text" uib-datepicker-popup ng-model="pg.beginDate" ng-change="pg.updateChart()" class="form-control well well-sm" is-open="pg.isStart" close-text="Close" />
+                <input type="text" uib-datepicker-popup ng-model="pg.beginDate" ng-change="pg.updateChart()" class="form-control well well-sm text-center" is-open="pg.isStart" close-text="Close" />
                 <span class="input-group-btn">
                     <button type="button" class="btn btn-xs btn-simple" ng-click="pg.openDatePicker('start')"><i class="glyphicon glyphicon-calendar"></i></button>
                 </span>
             </div>
         </div>
-        <div class="col-sm-5 col-sm-offset-1 text-center">
+        <div class="col-sm-2 text-center" style="margin: 3% 0% 3% 0%;">
+            <select ng-if="pg.chartType == 'line'" ng-change="pg.updateChart()" ng-model="pg.chartLineStyle">
+                <option value="none">None</option>
+                <option value="smooth">Smooth</option>
+                <option value="step">Step</option>
+            </select>
+        </div>
+        <div class="col-sm-4 col-sm-offset-1 text-center" style="margin-top: 2%">
+            <strong>Ending Date:</strong>
             <div class="input-group">
-                <strong>Ending Date:</strong>
-                <input type="text" uib-datepicker-popup ng-model="pg.endDate" ng-change="pg.updateChart()" class="form-control well well-sm" is-open="pg.isEndding" close-text="Close" />
+                <input type="text" uib-datepicker-popup ng-model="pg.endDate" ng-change="pg.updateChart()" class="form-control well well-sm text-center" is-open="pg.isEnding" close-text="Close" />
                 <span class="input-group-btn">
                     <button type="button" class="btn btn-xs btn-simple" ng-click="pg.openDatePicker('end')"><i class="glyphicon glyphicon-calendar"></i></button>
                 </span>
             </div>
         </div>
     </div>
+
     <div class="row">
         <div id="assetChartTabContainer" class="tab-content">
             <div id="incomeTab" class="tab-pane active fade in" role="tabpanel">
@@ -79,12 +88,25 @@
             </div>
         </div>
     </div>
+
     <div class="row">
         <div align="center">
             <button class="btn btn-xs btn-round" ng-click="pg.openMainMenuModal((pg.currentTab == 'income') ? 'income' : (pg.currentTab == 'expense') ? 'expense' : 'combined')">All {{ (pg.currentTab == 'income') ? 'Income' : (pg.currentTab == 'expense') ? 'Expense' : 'Incomes & Expenses' }}</button>
         </div>
     </div>
+    <div class="row">
+        <div align="center">
+            <div class="col-xs-12">
+                <div class="card">
+                    <div class="card-content text-center">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
 <script type="text/ng-template" id="modelBillMainMenu.html">
     <div class="card modal-body">
         <div class="row text-center">
@@ -110,7 +132,7 @@
                 </div>
                 <div>
                     <div>Hidden - <input type="checkbox" ng-checked="item.isHiddenOnChart" /></div>
-                    <div class="btn-group btn-group-xs" >
+                    <div class="btn-group btn-group-xs">
                         <button class="btn btn-round" style="background-color: #58AA42" ng-click="mm.openInsertModal(item)">Edit</button>
                         <button class="btn btn-round" style="background-color: #CB2A2A" ng-click="mm.deleteAsset(item)">X</button>
                     </div>
@@ -119,6 +141,7 @@
         </div>
     </div>
 </script>
+
 <script type="text/ng-template" id="modalExpenseBuilder.html">
     <div class="card modal-body">
         <form name="form" novalidate>

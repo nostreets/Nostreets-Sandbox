@@ -15,7 +15,7 @@
     utilities: {
 
         getStyle: (id) => {
-            return document.getElementById(id).style;
+            return document.getElementById(id) ? document.getElementById(id).style : document.querySelector('.ct-series-a').style;
         },
 
         writeStyles: (styleName, cssRules) => {
