@@ -283,7 +283,6 @@
     <Content Include="assets\css\twilio-chat.css" />
     <Content Include="assets\event.html" />
     <Content Include="assets\fonts\flexslider-icon.svg" />
-    <Content Include="assets\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="assets\fonts\ionicons.svg" />
     <Content Include="assets\img\1400-2000.png" />
     <Content Include="assets\img\1400x2000.jpg" />
@@ -413,6 +412,13 @@
     <Content Include="assets\js\modernizr-2.6.2.js" />
     <Content Include="assets\js\modernizr-2.8.3.js" />
     <Content Include="assets\js\moment.js" />
+    <Content Include="assets\js\ng\angular-drag-and-drop-lists.js" />
+    <Content Include="assets\js\ng\angular-modal-service.js" />
+    <Content Include="assets\js\ng\angular-moment-picker.js" />
+    <Content Include="assets\js\ng\angular-moment-picker.min.js" />
+    <Content Include="assets\js\ng\angular-toastr.min.js" />
+    <Content Include="assets\js\ng\angular-toastr.tpls.min.js" />
+    <Content Include="assets\js\ng\angularjs-geolocation.min.js" />
     <Content Include="assets\js\npm.js" />
     <Content Include="assets\js\particles.js" />
     <Content Include="assets\js\particles.min.js" />
@@ -432,7 +438,11 @@
     <Content Include="assets\wedding.html" />
     <Content Include="Content\font-awesome.css" />
     <Content Include="favicon.ico" />
-    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="assets\fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="assets\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="assets\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="assets\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="assets\fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Keys.config" />
@@ -464,10 +474,6 @@
     <Content Include="assets\fonts\flexslider-icon.eot" />
     <Content Include="assets\fonts\flexslider-icon.ttf" />
     <Content Include="assets\fonts\flexslider-icon.woff" />
-    <Content Include="assets\fonts\glyphicons-halflings-regular.eot" />
-    <Content Include="assets\fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="assets\fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="assets\fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="assets\fonts\ionicons.eot" />
     <Content Include="assets\fonts\ionicons.ttf" />
     <Content Include="assets\fonts\ionicons.woff" />
@@ -485,10 +491,6 @@
     <Content Include="assets\scss\_mixins.scss" />
     <Content Include="assets\scss\_style.scss" />
     <Content Include="assets\scss\_var.scss" />
-    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
-    <Content Include="fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Project_Readme.html" />
     <Content Include="assets\css\bootstrap-theme.css.map" />
     <Content Include="assets\css\bootstrap-theme.min.css.map" />

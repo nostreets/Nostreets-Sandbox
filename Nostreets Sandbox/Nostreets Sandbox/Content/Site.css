@@ -1,5 +1,8 @@
 ﻿
-
+/** {
+    font-family: 'Comic Sans MS';
+    font-size: medium;
+}*/
 
 body {
     background-color: #1e2329 !important;
@@ -10,6 +13,7 @@ p {
     color: #fff;
     font-family: 'Trebuchet MS';
 }
+
 
 h1 {
     font-size: xx-large !important;
@@ -96,10 +100,80 @@ form > div {
     z-index: -1;
 }
 
-/*Chartist Styles*/
+/*Border Styles*/
+.borderControl {
+    position: relative;
+    display: inline-block;
+    margin: 0;
+    padding: 2px;
+    font-size: 18px;
+    text-align: center;
+    vertical-align: top;
+    font-weight: 400;
+    border: 2px solid #962d3e;
+}
 
-line.ct-grid {
-    stroke: rgba(138, 138, 138, 0.74) !important;
+    .borderControl::before,
+    .borderControl::after {
+        content: "";
+        position: absolute;
+        background-color: white;
+        z-index: 0;
+        transition: 200ms ease-in;
+        transform-origin: center center;
+    }
+
+    .borderControl::before {
+        width: calc(100% + 2px * 2 - 10px);
+        height: calc(100% + 2px * 2);
+        top: -2px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .borderControl::after {
+        height: calc(100% + 2px * 2 - 10px);
+        width: calc(100% + 2px * 2);
+        left: -2px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .borderControl:hover::before {
+        width: 0;
+    }
+
+    .borderControl:hover::after {
+        height: 0;
+    }
+
+    .borderControl div {
+        position: relative;
+        display: inline-block;
+        color: #979c9c;
+        text-transform: uppercase;
+        text-decoration: none;
+        line-height: 1em;
+        font-size: 0.7em;
+        padding: 5px 20px;
+        margin: 0 2px;
+        z-index: 1;
+    }
+
+        .borderControl div::after {
+            content: attr(data-number);
+            display: block;
+            font-family: Lora;
+            font-style: italic;
+        }
+
+
+/*Chartist Styles*/
+.ct-label {
+    fill: rgba(0, 0, 0, 0.4);
+    color: rgba(0, 0, 0, 0.4);
+    font-size: 1.0rem;
+    line-height: 1;
 }
 
 .ct-series-a .ct-point, .ct-series-a .ct-line, .ct-series-a .ct-bar, .ct-series-a .ct-slice-donut {
@@ -226,6 +300,7 @@ foreignObject > span {
     color: rgba(138, 138, 138, 0.74) !important;
 }
 
+/*Circle Designs*/
 .circle {
     -webkit-border-radius: 50%;
     -moz-border-radius: 50%;

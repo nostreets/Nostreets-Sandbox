@@ -99,7 +99,9 @@
             <div class="col-xs-12">
                 <div class="card">
                     <div class="card-content text-center">
-
+                        <div class="col-sm-7" ng-repeat="item in pg.legend">
+                              <i class="material-icons">brightness_1</i> <strong>{{ item.name }}</strong> {{ (pg.currentTab == 'income') ? '+' : (pg.currentTab == 'expense') ? '-' : 'Incomes & Expenses' }} {{ item.cost }}
+                        </div>
                     </div>
                 </div>
             </div>

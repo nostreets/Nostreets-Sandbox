@@ -17,6 +17,8 @@
         vm.openMainMenuModal = _openMainMenuModal;
         vm.openDatePicker = _openDatePicker;
         vm.updateChart = _getUserCharts;
+        vm.openInsertModal = _openInsertModal;
+        vm.deleteAsset = _deleteAsset;
 
 
         $baseController.systemEventService.listen("refreshedUsername", () => { _setUp(); _getUserCharts(); });
@@ -33,6 +35,7 @@
             vm.income = [];
             vm.expenses = [];
             vm.charts = [];
+            vm.legend = [];
             vm.currentTab = 'income';
             vm.renderedChart = null;
             vm.beginDate = new Date();
@@ -40,6 +43,7 @@
             vm.chartOptions = null;
             vm.chartType = 'line';
             vm.chartLineStyle = 'none';
+            vm.incomeCap = 0;
         }
 
         function _getUserCharts() {
@@ -59,25 +63,33 @@
 
         function _getChartLengend() {
             if (vm.currentTab == 'income') {
-                for (var i = 0; i < vm.income.length; i++) {
+                _getIncomes();
+                for (var i = 0; i < vm.legend.length; i++) {
                     var color = _chartColors(i);
-                    vm.income[i].color = color;
+                    vm.legend[i].color = color;
                 }
             }
             else if (vm.currentTab == 'expense') {
+                _getExpenses();
                 for (var i = 0; i < vm.expenses.length; i++) {
                     var color = _chartColors(i);
-                    vm.expenses[i].color = color;
+                    vm.legend[i].color = color;
                 }
             }
             else {
-                for (var i = 0; i < vm.income.length; i++) {
+                _getCombinedAssets();
+                var cap = vm.legend.length;
+                for (var i = 0; i < cap; i++) {
                     var color = _chartColors(i);
-                    vm.income[i].color = color;
-                }
-                for (var i = vm.income.length; i < vm.expenses.length + vm.income.length; i++) {
-                    var color = _chartColors(i);
-                    vm.expenses[i - vm.income.length].color = color;
+                    vm.legend[i].color = color;
+                    //if (i < vm.incomeCap) {
+                    //    var color = _chartColors(i);
+                    //    vm.legend[i].color = color;
+                    //}
+                    //else {
+                    //    var color = _chartColors(i - vm.incomeCap);
+                    //    vm.legend[i - vm.incomeCap].color = color;
+                    //}
                 }
             }
         }
@@ -207,6 +219,7 @@
                         value: data.data.item
                     };
                     vm.charts.add(incomeChart);
+                    vm.incomeCap = data.data.item.series.length;
                 },
 
                 err => $baseController.errorCheck(err,
@@ -286,13 +299,20 @@
         function _getIncomes() {
 
             return $sandboxService.getAllIncomes().then(
-                a => vm.income = a.data.items,
+                a => {
+                    vm.incomeCap = a.data.items.length;
+                    vm.legend = a.data.items;
+                },
                 err => $baseController.errorCheck(err,
                     {
                         maxLoops: 3,
                         miliseconds: 2000,
                         method: () => {
-                            $sandboxService.getAllIncomes().then(a => vm.income = a.data.items);
+                            $sandboxService.getAllIncomes().then(
+                                a => {
+                                    vm.incomeCap = a.data.items.length;
+                                    vm.legend = a.data.items;
+                                });
                         }
                     })
             );
@@ -301,16 +321,57 @@
         function _getExpenses() {
 
             return $sandboxService.getAllExpenses().then(
-                a => vm.expenses = a.data.items,
+                a => vm.legend = a.data.items,
                 err => $baseController.errorCheck(err,
                     {
                         maxLoops: 3,
                         miliseconds: 2000,
                         method: () => {
-                            $sandboxService.getAllExpenses().then(a => vm.expenses = a.data.items);
+                            $sandboxService.getAllExpenses().then(a => vm.legend = a.data.items);
                         }
                     })
             );
+        }
+
+        function _getCombinedAssets() {
+            $sandboxService.getAllIncomes().then(
+                a => vm.legend = a.data.items,
+                err => $baseController.errorCheck(err,
+                    {
+                        maxLoops: 3,
+                        miliseconds: 2000,
+                        method: () => {
+                            $sandboxService.getAllIncomes()
+                                .then(a => vm.legend = a.data.items).then(
+                                () => {
+                                    $sandboxService.getAllExpenses().then(
+                                        a => vm.legend.concat(a.data.items),
+                                        err => $baseController.errorCheck(err,
+                                            {
+                                                maxLoops: 3,
+                                                miliseconds: 2000,
+                                                method: () => {
+                                                    $sandboxService.getAllExpenses().then(a => vm.legend.concat(a.data.items));
+                                                }
+                                            })
+                                    );
+                                });
+                        }
+                    })
+            ).then(
+                () => {
+                    $sandboxService.getAllExpenses().then(
+                        a => vm.legend.concat(a.data.items),
+                        err => $baseController.errorCheck(err,
+                            {
+                                maxLoops: 3,
+                                miliseconds: 2000,
+                                method: () => {
+                                    $sandboxService.getAllExpenses().then(a => vm.legend.concat(a.data.items));
+                                }
+                            })
+                    );
+                });
         }
 
         function _getIncome(id, name, scheduleType, incomeType) {
@@ -342,6 +403,37 @@
             );
         }
 
+        function _deleteAsset(obj) {
+            var hasError = false;
+            if (obj.incomeType) {
+                $sandboxService.deleteIncome(obj.id).then(
+                    (data) => console.log(data),
+                    err => $baseController.errorCheck(err,
+                        {
+                            maxLoops: 3,
+                            miliseconds: 2000,
+                            method: () => {
+                                $sandboxService.deleteIncome(obj.id).then((data) => console.log(data));
+                            }
+                        })
+                );
+            }
+            else {
+                $sandboxService.deleteExpense(obj.id).then(
+                    (data) => console.log(data),
+                    err => $baseController.errorCheck(err,
+                        {
+                            maxLoops: 3,
+                            miliseconds: 2000,
+                            method: () => {
+                                $sandboxService.deleteExpense(obj.id).then((data) => console.log(data));
+                            }
+                        })
+                );
+            }
+
+        }
+
         function _targetGraph(type, elementId) {
 
             var chart = vm.charts.filter((a) => a.key === type)[0].value;
@@ -355,7 +447,7 @@
 
             var renderedChart = new Chartist.Line(elementId, chart, options);
 
-            _getUserAssets();
+            _getChartLengend();
             _animateGraph(renderedChart);
 
             vm.renderedChart = chart;
@@ -646,6 +738,39 @@
                         _targetGraph(vm.currentTab, ((vm.currentTab === "income") ? "#incomeChart" : (vm.currentTab === "expense") ? "#expenseChart" : "#combinedChart"));
                     });
             }
+        }
+
+         function _openInsertModal(data) {
+
+            data = (data) ? data : {};
+
+            var obj = {
+                type: vm.type,
+                id: (data.id) ? data.id : 0,
+                name: (data.name) ? data.name : null,
+                cost: (data.cost) ? data.cost : null,
+                paySchedule: (data.paySchedule) ? data.paySchedule : null,
+                timePaid: (data.timePaid) ? new Date(data.timePaid) : null,
+                beginDate: (data.beginDate) ? new Date(data.beginDate) : null,
+                endDate: (data.endDate) ? new Date(data.endDate) : null,
+                isHiddenOnChart: (typeof (data.isHiddenOnChart) !== "boolean" && data.isHiddenOnChart === true) ? true : false
+            };
+
+            if (vm.type === "combined") { obj.type = (data.incomeType) ? "income" : "expense"; }
+
+            var modalInstance = $uibModal.open({
+                animation: true
+                , templateUrl: "modalExpenseBuilder.html"
+                , controller: "modalInsertController as mc"
+                , size: "lg"
+                , resolve: {
+                    model: function () {
+                        return obj;
+                    }
+                }
+            });
+
+            modalInstance.closed.then(_refreshData);
         }
 
         function _openMainMenuModal(typeId) {

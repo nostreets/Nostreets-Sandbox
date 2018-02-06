@@ -29,9 +29,9 @@ namespace Nostreets_Sandbox
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
 
-            Database.SetInitializer(new DropCreateDatabaseIfModelChanges<UserDbContext>());
-            Database.SetInitializer(new DropCreateDatabaseIfModelChanges<EFDBContext<Income>>());
-            Database.SetInitializer(new DropCreateDatabaseIfModelChanges<EFDBContext<Expense>>());
+            //Database.SetInitializer(new DropCreateDatabaseIfModelChanges<UserDbContext>());
+            //Database.SetInitializer(new DropCreateDatabaseIfModelChanges<EFDBContext<Income>>());
+            //Database.SetInitializer(new DropCreateDatabaseIfModelChanges<EFDBContext<Expense>>());
 
         }
     }
