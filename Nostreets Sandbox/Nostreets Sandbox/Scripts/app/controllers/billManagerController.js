@@ -28,12 +28,11 @@
 
         function _render() {
             _setUp();
+            _getEnums();
             _getUserCharts();
         }
 
         function _setUp() {
-            vm.income = [];
-            vm.expenses = [];
             vm.charts = [];
             vm.legend = [];
             vm.currentTab = 'income';
@@ -43,7 +42,7 @@
             vm.chartOptions = null;
             vm.chartType = 'line';
             vm.chartLineStyle = 'none';
-            vm.incomeCap = 0;
+            vm.enums = null;
         }
 
         function _getUserCharts() {
@@ -52,113 +51,6 @@
                     () => _getCombinedChart().then(
                         () => _targetGraph(vm.currentTab, ((vm.currentTab === "income") ? "#incomeChart" : (vm.currentTab === "expense") ? "#expenseChart" : "#combinedChart"))
                     )));
-        }
-
-        function _getUserAssets() {
-            _getIncomes().then(
-                () => _getExpenses().then(
-                    () => _getChartLengend()
-                ));
-        }
-
-        function _getChartLengend() {
-            if (vm.currentTab == 'income') {
-                _getIncomes();
-                for (var i = 0; i < vm.legend.length; i++) {
-                    var color = _chartColors(i);
-                    vm.legend[i].color = color;
-                }
-            }
-            else if (vm.currentTab == 'expense') {
-                _getExpenses();
-                for (var i = 0; i < vm.expenses.length; i++) {
-                    var color = _chartColors(i);
-                    vm.legend[i].color = color;
-                }
-            }
-            else {
-                _getCombinedAssets();
-                var cap = vm.legend.length;
-                for (var i = 0; i < cap; i++) {
-                    var color = _chartColors(i);
-                    vm.legend[i].color = color;
-                    //if (i < vm.incomeCap) {
-                    //    var color = _chartColors(i);
-                    //    vm.legend[i].color = color;
-                    //}
-                    //else {
-                    //    var color = _chartColors(i - vm.incomeCap);
-                    //    vm.legend[i - vm.incomeCap].color = color;
-                    //}
-                }
-            }
-        }
-
-        function _chartColors(index) {
-            var result,
-                char = String.fromCharCode(97 + index);
-            switch (char) {
-                case 'a':
-                    result = '#00bcd4';
-                    break;
-
-                case 'b':
-                    result = '#f44336';
-                    break;
-
-                case 'c':
-                    result = '#ff9800';
-                    break;
-
-                case 'd':
-                    result = '#9c27b0';
-                    break;
-
-                case 'e':
-                    result = '#4caf50';
-                    break;
-
-                case 'f':
-                    result = '#9C9B99';
-                    break;
-
-                case 'g':
-                    result = '#999999';
-                    break;
-
-                case 'h':
-                    result = '#dd4b39';
-                    break;
-
-                case 'i':
-                    result = '#35465c';
-                    break;
-
-                case 'j':
-                    result = '#e52d27';
-                    break;
-
-                case 'k':
-                    result = '#55acee';
-                    break;
-
-                case 'l':
-                    result = '#cc2127';
-                    break;
-
-                case 'm':
-                    result = '#1769ff';
-                    break;
-
-                case 'n':
-                    result = '#6188e2';
-                    break;
-
-                case 'o':
-                    result = '#a748ca';
-                    break;
-            }
-            return result;
         }
 
         function _openDatePicker(prop) {
@@ -208,6 +100,13 @@
             vm.beginDate = new Date(start);
             vm.endDate = new Date(utcEnd);
             return result;
+        }
+
+        function _getEnums() {
+            $sandboxService.getEnums('income,expense,schedule').then(
+                (obj) => vm.enums = obj.data.items,
+                (err) => console.log(err)
+            );
         }
 
         function _getIncomeChart() {
@@ -334,7 +233,7 @@
         }
 
         function _getCombinedAssets() {
-            $sandboxService.getAllIncomes().then(
+            return $sandboxService.getAllIncomes().then(
                 a => vm.legend = a.data.items,
                 err => $baseController.errorCheck(err,
                     {
@@ -454,6 +353,104 @@
             vm.chartOptions = options;
 
 
+        }
+
+        function _getChartLengend() {
+
+            var getAssets = () => { return (vm.currentTab == 'income') ? _getIncomes() : (vm.currentTab == 'expense') ? _getExpenses() : _getCombinedAssets(); };
+
+            getAssets().then(
+                () => {
+                    for (var i = 0; i < vm.legend.length; i++) {
+                        var style = _chartStyles(i);
+                        vm.legend[i].style = style;
+                    }
+                },
+                err => $baseController.errorCheck(err,
+                    {
+                        maxLoops: 3,
+                        miliseconds: 2000,
+                        method: () => {
+                            getAssets().then(
+                                () => {
+                                    for (var i = 0; i < vm.legend.length; i++) {
+                                        var style = _chartStyles(i);
+                                        vm.legend[i].style = style;
+                                    }
+                                });
+                        }
+                    })
+
+            );
+
+
+        }
+
+        function _chartStyles(index) {
+            var result,
+                char = String.fromCharCode(97 + index);
+            switch (char) {
+                case 'a':
+                    result = {color: '#00bcd4'};
+                    break;
+
+                case 'b':
+                    result = {color: '#f44336'};
+                    break;
+
+                case 'c':
+                    result = {color: '#ff9800'};
+                    break;
+
+                case 'd':
+                    result = {color: '#9c27b0'};
+                    break;
+
+                case 'e':
+                    result = '{color: #4caf50}';
+                    break;
+
+                case 'f':
+                    result = '{color: #9C9B99}';
+                    break;
+
+                case 'g':
+                    result = '{color: #999999}';
+                    break;
+
+                case 'h':
+                    result = '{color: #dd4b39}';
+                    break;
+
+                case 'i':
+                    result = '{color: #35465c}';
+                    break;
+
+                case 'j':
+                    result = '{color: #e52d27}';
+                    break;
+
+                case 'k':
+                    result = '{color: #55acee}';
+                    break;
+
+                case 'l':
+                    result = '{color: #cc2127}';
+                    break;
+
+                case 'm':
+                    result = '{color: #1769ff}';
+                    break;
+
+                case 'n':
+                    result = '{color: #6188e2}';
+                    break;
+
+                case 'o':
+                    result = '{color: #a748ca}';
+                    break;
+            }
+            return result;
         }
 
         function _getChartOptions(chart) {
@@ -740,7 +737,7 @@
             }
         }
 
-         function _openInsertModal(data) {
+        function _openInsertModal(data) {
 
             data = (data) ? data : {};
 
