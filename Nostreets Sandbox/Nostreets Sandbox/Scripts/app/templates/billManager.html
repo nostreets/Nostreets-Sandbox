@@ -105,25 +105,16 @@
                             <div class="col-xs-6 col-xs-offset-2">
                                 <h4>{{ item.name }}</h4>
 
-                                <div class="btn-group btn-group-xs btn-group-toggle" data-toggle="buttons">
-                                    <button class="btn btn-round" style="background-color: #58AA42" ng-click="pg.openInsertModal(item)">Edit</button>
-                                    <label class="btn btn-secondary btn-round" style="background-color: rgb(185, 152, 72)">
-                                        <input type="radio" ng-checked="item.isHiddenOnChart" > Hide
-                                    </label>
-                                    <button class="btn btn-round" style="background-color: #CB2A2A" ng-click="pg.deleteAsset(item)">X</button>
-                                </div>
 
-
-                                <!--<div class="btn-group btn-group-xs">
-                                    <!-- <small data-toggle="tooltip" data-placement="top" title="Hide Asset"><input type="checkbox" ng-checked="item.isHiddenOnChart" /></small>
-                                    <button class="btn btn-round" style="background-color: #58AA42" ng-click="mm.openInsertModal(item)">Edit</button>
-                                    <label class="btn btn-round">
-                                        <input type="radio" ng-checked="item.isHiddenOnChart" />
-                                    </label>
-                                    <button class="btn btn-round" style="background-color: #CB2A2A" ng-click="mm.deleteAsset(item)">X</button>
-                                </div>-->
+                            </div>
+                            <div class="btn-group btn-group-xs btn-group-toggle" data-toggle="buttons">
+                                <button class="btn btn-round" style="background-color: #58AA42" ng-click="pg.openInsertModal(item)">Edit</button>
+                                <button class="btn btn-round" style="background-color: rgb(185, 163, 128)" ng-click="pg.showorHideLine(item, true)"> </button>
+                                <button class="btn btn-round" style="background-color: rgb(185, 163, 128)" ng-click="pg.showorHideLine(item, false)"></button>
+                                <button class="btn btn-round" style="background-color: #CB2A2A" ng-click="pg.deleteAsset(item)">X</button>
                             </div>
                         </div>
+
 
                         <div class="col-xs-6">
                             <small>

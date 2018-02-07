@@ -73,6 +73,14 @@
             return arr;
         }
 
+        function _showorHideLine(chart, bool)
+        {
+            if (!chart || typeof (chart.isHiddenOnChart) != 'undefined' )
+                return;
+            else
+                chart.isHiddenOnChart = bool;
+        }
+
         function _getDailyDateRange(start, end) {
 
             if ((!start instanceof Date && !start instanceof Date) || (!typeof (start) === "string" && !typeof (end) === "string")) {
@@ -105,7 +113,14 @@
         function _getEnums() {
             $sandboxService.getEnums('income,expense,schedule').then(
                 (obj) => vm.enums = obj.data.items,
-                (err) => console.log(err)
+                 err => $baseController.errorCheck(err,
+                    {
+                        maxLoops: 3,
+                        miliseconds: 2000,
+                        method: () => {
+                           $sandboxService.getEnums('income,expense,schedule').then((obj) => vm.enums = obj.data.items);
+                        }
+                    })
             );
         }
 
