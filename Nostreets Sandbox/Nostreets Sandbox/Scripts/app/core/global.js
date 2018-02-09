@@ -44,25 +44,32 @@
             document.getElementsByTagName('head')[0].appendChild(styleElement);
         },
 
-        doesUrlExist: () => {
+        doesUrlExist: (method, url) => {
 
-            createCORSRequest = (method, url) => {
-                var xhr = new XMLHttpRequest();
-                if ("withCredentials" in xhr) {
-                    // XHR for Chrome/Firefox/Opera/Safari.
-                    xhr.open(method, url, true);
-                } else if (typeof XDomainRequest != "undefined") {
-                    // XDomainRequest for IE.
-                    xhr = new XDomainRequest();
-                    xhr.open(method, url);
-                } else {
-                    // CORS not supported.
-                    xhr = null;
-                }
-                return xhr;
+            var xhr = new XMLHttpRequest();
+            if ("withCredentials" in xhr) {
+                // XHR for Chrome/Firefox/Opera/Safari.
+                xhr.open(method, url, true);
+            } else if (typeof XDomainRequest != "undefined") {
+                // XDomainRequest for IE.
+                xhr = new XDomainRequest();
+                xhr.open(method, url);
+            } else {
+                // CORS not supported.
+                xhr = null;
             }
+            return xhr;
 
 
+        },
+
+        getRandomColor: () => {
+            var letters = '0123456789ABCDEF';
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
         }
 
     }

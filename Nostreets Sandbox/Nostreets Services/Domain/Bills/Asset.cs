@@ -34,6 +34,8 @@ namespace Nostreets_Services.Domain.Bills
 
         public override string UserId { get => CacheManager.Contains("user") ? CacheManager.GetItem<User>("user").Id : null; }
 
+        public string Style { get; set; }
+
         private float _costMultilplier = 1;
 
     }

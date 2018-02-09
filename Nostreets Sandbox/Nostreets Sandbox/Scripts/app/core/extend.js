@@ -36,16 +36,3 @@ String.prototype.toValue = function (keyAndValueArr) {
     return value;
 }
 
-Object.prototype.isBool = function () {
-    if (typeof (this) === "boolean")
-        return true;
-    else
-        return false;
-}
-
-Object.prototype.isUndefined = function () {
-    if (typeof (this) === "undefined")
-        return true;
-    else
-        return false;
-}

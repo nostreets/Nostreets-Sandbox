@@ -100,6 +100,16 @@ form > div {
     z-index: -1;
 }
 
+/*Button Styles*/
+.btn-toggle0 {
+    background-color: rgb(138, 138, 138);
+}
+
+.btn-toggle1 {
+    background-color: rgb(35, 35, 35);
+}
+
+
 /*Border Styles*/
 .borderControl {
     position: relative;

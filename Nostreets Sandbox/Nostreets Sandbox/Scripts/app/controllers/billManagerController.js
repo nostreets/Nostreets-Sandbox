@@ -19,6 +19,7 @@
         vm.updateChart = _getUserCharts;
         vm.openInsertModal = _openInsertModal;
         vm.deleteAsset = _deleteAsset;
+        vm.toggleVisiblity = _toggleVisiblity;
 
 
         $baseController.systemEventService.listen("refreshedUsername", () => { _setUp(); _getUserCharts(); });
@@ -73,12 +74,82 @@
             return arr;
         }
 
-        function _showorHideLine(chart, bool)
-        {
-            if (!chart || typeof (chart.isHiddenOnChart) != 'undefined' )
+        function _toggleVisiblity(chart) {
+            if (!chart || typeof (chart.isHiddenOnChart) === 'undefined')
                 return;
-            else
-                chart.isHiddenOnChart = bool;
+            else {
+                if (chart.isHiddenOnChart === false)
+                    chart.isHiddenOnChart = true;
+                else
+                    chart.isHiddenOnChart = false;
+
+                switch (vm.currentTab) {
+                    case "income":
+                        if (chart.id) {
+                            $sandboxService.updateIncome(chart).then(
+
+                                () => vm.$uibModalInstance.close(),
+
+                                err => $baseController.errorCheck(err,
+                                    {
+                                        maxLoops: 3,
+                                        miliseconds: 2000,
+                                        method: () => {
+                                            $sandboxService.updateIncome(chart);
+                                        }
+                                    })
+                            );
+                        }
+                        else {
+                            $sandboxService.insertIncome(chart).then(
+                                () => vm.$uibModalInstance.close(),
+                                err => $baseController.errorCheck(err,
+                                    {
+                                        maxLoops: 3,
+                                        miliseconds: 2000,
+                                        method: () => {
+                                            $sandboxService.insertIncome(chart);
+                                        }
+                                    })
+                            );
+                        }
+                        break;
+
+                    case "expense":
+                        chart.expenseType = parseInt(vm.expenseType);
+
+                        if (vm.id) {
+                            chart.id = vm.id
+                            $sandboxService.updateExpense(chart).then(
+                                () => vm.$uibModalInstance.close(),
+                                err => $baseController.errorCheck(err,
+                                    {
+                                        maxLoops: 3,
+                                        miliseconds: 2000,
+                                        method: () => {
+                                            $sandboxService.updateExpense(chart);
+                                        }
+                                    })
+                            );
+                        }
+                        else {
+                            $sandboxService.insertExpense(chart).then(
+                                () => vm.$uibModalInstance.close(),
+                                err => $baseController.errorCheck(err,
+                                    {
+                                        maxLoops: 3,
+                                        miliseconds: 2000,
+                                        method: () => {
+                                            $sandboxService.insertExpense(chart);
+                                        }
+                                    })
+                            );
+                        }
+                        break;
+                }
+
+                _getUserCharts();
+            }
         }
 
         function _getDailyDateRange(start, end) {
@@ -113,12 +184,12 @@
         function _getEnums() {
             $sandboxService.getEnums('income,expense,schedule').then(
                 (obj) => vm.enums = obj.data.items,
-                 err => $baseController.errorCheck(err,
+                err => $baseController.errorCheck(err,
                     {
                         maxLoops: 3,
                         miliseconds: 2000,
                         method: () => {
-                           $sandboxService.getEnums('income,expense,schedule').then((obj) => vm.enums = obj.data.items);
+                            $sandboxService.getEnums('income,expense,schedule').then((obj) => vm.enums = obj.data.items);
                         }
                     })
             );
@@ -372,31 +443,33 @@
 
         function _getChartLengend() {
 
-            var getAssets = () => { return (vm.currentTab == 'income') ? _getIncomes() : (vm.currentTab == 'expense') ? _getExpenses() : _getCombinedAssets(); };
+            return (vm.currentTab == 'income') ? _getIncomes() : (vm.currentTab == 'expense') ? _getExpenses() : _getCombinedAssets()
 
-            getAssets().then(
-                () => {
-                    for (var i = 0; i < vm.legend.length; i++) {
-                        var style = _chartStyles(i);
-                        vm.legend[i].style = style;
-                    }
-                },
-                err => $baseController.errorCheck(err,
-                    {
-                        maxLoops: 3,
-                        miliseconds: 2000,
-                        method: () => {
-                            getAssets().then(
-                                () => {
-                                    for (var i = 0; i < vm.legend.length; i++) {
-                                        var style = _chartStyles(i);
-                                        vm.legend[i].style = style;
-                                    }
-                                });
-                        }
-                    })
+            //var getAssets = () => { return (vm.currentTab == 'income') ? _getIncomes() : (vm.currentTab == 'expense') ? _getExpenses() : _getCombinedAssets(); };
 
-            );
+            //getAssets().then(
+            //    () => {
+            //        for (var i = 0; i < vm.legend.length; i++) {
+            //            var style = _chartStyles(i);
+            //            vm.legend[i].style = style;
+            //        }
+            //    },
+            //    err => $baseController.errorCheck(err,
+            //        {
+            //            maxLoops: 3,
+            //            miliseconds: 2000,
+            //            method: () => {
+            //                getAssets().then(
+            //                    () => {
+            //                        for (var i = 0; i < vm.legend.length; i++) {
+            //                            var style = _chartStyles(i);
+            //                            vm.legend[i].style = style;
+            //                        }
+            //                    });
+            //            }
+            //        })
+
+            //);
 
 
         }
@@ -406,27 +479,27 @@
                 char = String.fromCharCode(97 + index);
             switch (char) {
                 case 'a':
-                    result = {color: '#00bcd4'};
+                    result = { color: '#00bcd4' };
                     break;
 
                 case 'b':
-                    result = {color: '#f44336'};
+                    result = { color: '#f44336' };
                     break;
 
                 case 'c':
-                    result = {color: '#ff9800'};
+                    result = { color: '#ff9800' };
                     break;
 
                 case 'd':
-                    result = {color: '#9c27b0'};
+                    result = { color: '#9c27b0' };
                     break;
 
                 case 'e':
-                    result = '{color: #4caf50}';
+                    result = { color: '#4caf50' };
                     break;
 
                 case 'f':
-                    result = '{color: #9C9B99}';
+                    result = { color: '#9C9B99' };
                     break;
 
                 case 'g':
@@ -765,7 +838,9 @@
                 timePaid: (data.timePaid) ? new Date(data.timePaid) : null,
                 beginDate: (data.beginDate) ? new Date(data.beginDate) : null,
                 endDate: (data.endDate) ? new Date(data.endDate) : null,
-                isHiddenOnChart: (typeof (data.isHiddenOnChart) !== "boolean" && data.isHiddenOnChart === true) ? true : false
+                isHiddenOnChart: (data.isHiddenOnChart === true) ? true : false,
+                costMultilplier: (data.costMultilplier) ? data.costMultilplier : 1,
+                style: (data.style) ? data.style : null
             };
 
             if (vm.type === "combined") { obj.type = (data.incomeType) ? "income" : "expense"; }
@@ -972,6 +1047,7 @@
         vm.reset = _setUp;
         vm.cancel = _cancel;
         vm.openDatePicker = _openDatePicker;
+        vm.toggleVisiblity = _toggleVisiblity;
 
         _render();
 
@@ -991,7 +1067,9 @@
             vm.timePaid = data.timePaid || null;
             vm.beginDate = data.beginDate || null;
             vm.endDate = data.endDate || null;
-            vm.isHiddenOnChart = data.isHiddenOnChart || "0";
+            vm.isHiddenOnChart = data.isHiddenOnChart || false;
+            vm.costMultilplier = data.costMultilplier || 1;
+            vm.style = data.style || { color: page.utilities.getRandomColor() };
 
             vm.isTimePaidOpen = false;
             vm.isBeginDateOpen = false;
@@ -1035,7 +1113,9 @@
                     timePaid: vm.timePaid,
                     beginDate: (vm.beginDate) ? new Date(vm.beginDate) : null,
                     endDate: (vm.endDate) ? new Date(vm.endDate) : null,
-                    isHiddenOnChart: (vm.isHiddenOnChart === "1") ? true : false
+                    isHiddenOnChart: (vm.isHiddenOnChart) ? true : false,
+                    costMultilplier: (vm.costMultilplier) ? vm.costMultilplier : 1,
+                    style: (vm.style) ? vm.style : null
                 };
 
 
@@ -1105,6 +1185,13 @@
                     }
                     break;
             }
+        }
+
+        function _toggleVisiblity() {
+            if (chart.isHiddenOnChart === false)
+                chart.isHiddenOnChart = true;
+            else
+                chart.isHiddenOnChart = false;
         }
 
         function _cancel() {

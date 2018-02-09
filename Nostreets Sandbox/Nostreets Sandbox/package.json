@@ -1,0 +1,8 @@
+{
+  "name": "myproject",
+  "version": "1.0.0",
+  "devDependencies": {
+    "angularjs-color-picker": "^3.4.8",
+    "onsenui": "^2.9.1"
+  }
+}
