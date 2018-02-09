@@ -30,8 +30,6 @@
 
     function _chartistScoll(chart) {
 
-        var styleTag = document.createElement('style');
-
         var cssRules = [
             '#' + chart.container.id + ' { overflow-x: scroll; overflow-y: hidden; }',
             '#' + chart.container.id + '::-webkit-scrollbar {  width: ' + ((scrollbarOptions && scrollbarOptions.width) ? scrollbarOptions.width : '10px' ) +  '; height: ' + ((scrollbarOptions && scrollbarOptions.height) ? scrollbarOptions.height : '10px' ) +  '; background-color: #F5F5F5; }',

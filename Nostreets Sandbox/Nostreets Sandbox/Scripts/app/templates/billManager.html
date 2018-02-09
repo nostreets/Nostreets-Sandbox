@@ -199,9 +199,9 @@
                             <span><strong>{{ mc.type == "income" ? "Income" : "Expense" }} Price:</strong></span>
                             <input type="number" class="input-sm" required ng-model="mc.cost" />
                         </div>
-                         <div class="col-xs-1 col-xs-offset-2">
-                                <i class="material-icons" ng-style="mc.style">brightness_1</i>
-                            </div>
+                        <div class="col-xs-1 col-xs-offset-2">
+                            <color-picker  ng-model="mc.style.color" api="mc.cpApi" options="mc.cpOptions"></color-picker>
+                        </div>
                     </div>
                     <div class="row" style="margin-bottom: 2%;">
                         <div class="col-sm-6">
@@ -280,16 +280,16 @@
                                 Reset!
                             </button>
                             <button class="btn btn-round"
-                                        ng-class="{'.btn-toggle0': !item.isHiddenOnChart, '.btn-toggle1': item.isHiddenOnChart }"
-                                        ng-click="mc.toggleVisiblity(item)">
-                                    {{ (mc.isHiddenOnChart === false) ? 'Hide' : 'Show' }}
+                                    ng-class="{'.btn-toggle0': !item.isHiddenOnChart, '.btn-toggle1': item.isHiddenOnChart }"
+                                    ng-click="mc.toggleVisiblity(item)">
+                                {{ (mc.isHiddenOnChart === false) ? 'Hide' : 'Show' }}
                             </button>
                             <button style="background-color: #CB2A2A" class="btn btn-round" ng-click="mc.cancel()">
                                 Cancel
                             </button>
-                            
+
                         </div>
-                        
+
                         <!--<select ng-model="mc.isHiddenOnChart">
                             <option value="0">Show</option>
                             <option value="1">Hide</option>

@@ -8,24 +8,80 @@ namespace Nostreets_Sandbox
         // For more information on bundling, visit http://go.microsoft.com/fwlink/?LinkId=301862
         public static void RegisterBundles(BundleCollection bundles)
         {
-            //bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
-            //            "~/Scripts/jquery-{version}.js"));
 
-            //bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
-            //            "~/Scripts/jquery.validate*"));
+            bundles.Add(new StyleBundle("~/css").Include(
+                      "~/assets/css/theme-Dark.css",
+                      "~/assets/css/material-dashboard.css",
+                      "~/assets/Semantic-UI/semantic.css",
+                      "~/assets/css/Site.css",
+                      "~/assets/css/bootstrap-theme.css",
+                      "~/assets/css/font-awesome.css",
+                      "~/node_modules/angular-ui-bootstrap/dist/ui-bootstrap-csp.css",
+                      "~/node_modules/angularjs-color-picker/dist/angularjs-color-picker.css",
+                      "~/node_modules/angularjs-color-picker/dist/themes/angularjs-color-picker-bootstrap.min.css",
 
-            //// Use the development version of Modernizr to develop with and learn from. Then, when you're
-            //// ready for production, use the build tool at http://modernizr.com to pick only the tests you need.
-            //bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
-            //            "~/Scripts/modernizr-*"));
+                      "~/https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons",
+                      "~/https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.4.2/css/swiper.min.css"
+                      ));
 
-            //bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
-            //          "~/Scripts/bootstrap.js",
-            //          "~/Scripts/respond.js"));
 
-            //bundles.Add(new StyleBundle("~/Content/css").Include(
-            //          "~/Content/bootstrap.css",
-            //          "~/Content/site.css"));
+            bundles.Add(new ScriptBundle("~/requirements").Include(
+                    "~/assets/js/jquery-3.2.1.js",
+                    "~/assets/js/jquery.validate.js",
+                    "~/assets/js/bootstrap.js",
+                    "~/assets/Semantic-UI/semantic.js",
+                    "~/assets/onsenui/js/onsenui.js",
+                    "~/assets/js/material.min.js",
+                    "~/assets/js/sweetalert2.js",
+                    "~/assets/js/chartist.min.js",
+                // "~/assets/js/ui-bootstrap-tpls-2.5.0.min.js",
+
+                     
+                    "~/node_modules/angular/angular.js",
+                    "~/node_modules/angular-animate/angular-animate.js",
+                    "~/node_modules/angular-route/angular-route.js",
+                    "~/node_modules/angular-sanitize/angular-sanitize.js",
+                    "~/node_modules/angular-cookies/angular-cookies.js",
+                    "~/node_modules/angular-toastr/dist/angular-toastr.min.js",
+                    "~/node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js",
+                    "~/node_modules/tinycolor2/dist/tinycolor-min.js",
+                    "~/node_modules/angularjs-color-picker/dist/angularjs-color-picker.js",
+
+
+                    "~/https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.4.2/js/swiper.js",
+                    "~/https://maps.googleapis.com/maps/api/js?sensor=false"
+                        ));
+
+
+            bundles.Add(new ScriptBundle("~/personal").Include(
+                  "~/Scripts/app/core/global.js",
+                  "~/Scripts/app/core/extend.js",
+                  "~/Scripts/app/services/alert.service.js",
+                  "~/Scripts/app/services/systemEvent.service.js",
+                  "~/Scripts/app/configs/routeConfig.js",
+                  "~/Scripts/app/services/sandboxService.js",
+                  "~/Scripts/app/services/nostreetsChartistScrollPlugin.js"
+                       ));
+
+
+            bundles.Add(new ScriptBundle("~/other").Include(
+                    "~/assets/js/animsition.min.js",
+                    "~/assets/js/jquery.magnific-popup.min.js",
+                    "~/assets/js/jquery.countdown.min.js",
+                    "~/assets/js/twitterFetcher_min.js",
+                    "~/assets/js/masonry.pkgd.min.js",
+                    "~/assets/js/imagesloaded.pkgd.min.js",
+                    "~/assets/js/jquery.flexslider-min.js",
+                    "~/assets/js/photoswipe.min.js",
+                    "~/assets/js/photoswipe-ui-default.min.js",
+                    "~/assets/js/jqinstapics.min.js",
+                    "~/assets/js/particles.js",
+                    "~/assets/js/renderParticles.js",
+                    "~/assets/js/startUpPageScript.js"
+                      ));
+
+
+            
         }
     }
 }

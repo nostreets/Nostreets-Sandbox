@@ -285,6 +285,8 @@
 
             return $sandboxService.getAllIncomes().then(
                 a => {
+                    for (var item of a.data.items)
+                        item.style = JSON.parse(item.style);
                     vm.incomeCap = a.data.items.length;
                     vm.legend = a.data.items;
                 },
@@ -306,7 +308,11 @@
         function _getExpenses() {
 
             return $sandboxService.getAllExpenses().then(
-                a => vm.legend = a.data.items,
+                a => {
+                    for (var item of a.data.items)
+                        item.style = JSON.parse(item.style);
+                    vm.legend = a.data.items
+                },
                 err => $baseController.errorCheck(err,
                     {
                         maxLoops: 3,
@@ -443,9 +449,22 @@
 
         function _getChartLengend() {
 
-            return (vm.currentTab == 'income') ? _getIncomes() : (vm.currentTab == 'expense') ? _getExpenses() : _getCombinedAssets()
+            //return (vm.currentTab == 'income') ? _getIncomes() : (vm.currentTab == 'expense') ? _getExpenses() : _getCombinedAssets()
+            _getEnums();
+            var arr = [];
+            var getAssets = () => { return (vm.currentTab == 'income') ? _getIncomes() : (vm.currentTab == 'expense') ? _getExpenses() : _getCombinedAssets(); };
 
-            //var getAssets = () => { return (vm.currentTab == 'income') ? _getIncomes() : (vm.currentTab == 'expense') ? _getExpenses() : _getCombinedAssets(); };
+            getAssets().then(
+                () => {
+                    for (var i = 0; i < vm.legend.length; i++) {
+                        var backupColor = page.utilities.getRandomColor();
+                        if (!vm.legend[i].style)
+                            vm.legend[i].style = { color: backupColor };
+                        arr.push('.ct-series-' + String.fromCharCode(97 + i) + ' .ct-point, .ct-series-' + String.fromCharCode(97 + i) + ' .ct-line, .ct-series-' + String.fromCharCode(97 + i) + ' .ct-bar, .ct-series-' + String.fromCharCode(97 + i) + '{ stroke: ' + vm.legend[i].style.color + ' !important }');
+                    }
+                    page.utilities.writeStyles("_lineStyles", arr);
+                });
+
 
             //getAssets().then(
             //    () => {
@@ -830,7 +849,7 @@
             data = (data) ? data : {};
 
             var obj = {
-                type: vm.type,
+                type: vm.currentTab,
                 id: (data.id) ? data.id : 0,
                 name: (data.name) ? data.name : null,
                 cost: (data.cost) ? data.cost : null,
@@ -857,7 +876,7 @@
                 }
             });
 
-            modalInstance.closed.then(_refreshData);
+            modalInstance.closed.then(_getUserCharts());
         }
 
         function _openMainMenuModal(typeId) {
@@ -1070,6 +1089,19 @@
             vm.isHiddenOnChart = data.isHiddenOnChart || false;
             vm.costMultilplier = data.costMultilplier || 1;
             vm.style = data.style || { color: page.utilities.getRandomColor() };
+            vm.cpOptions = {
+                allowEmpty: false,
+                format: 'rgb',
+                hue: true,
+                saturation: true,
+                alpha: false,
+                swatch: true,
+                lightness: true,
+                swatchPos: 'left',
+                swatchOnly: true,
+                round: true,
+                //pos: ['bottom left', 'bottom right', 'top left', 'top right'],
+            };
 
             vm.isTimePaidOpen = false;
             vm.isBeginDateOpen = false;
@@ -1115,7 +1147,7 @@
                     endDate: (vm.endDate) ? new Date(vm.endDate) : null,
                     isHiddenOnChart: (vm.isHiddenOnChart) ? true : false,
                     costMultilplier: (vm.costMultilplier) ? vm.costMultilplier : 1,
-                    style: (vm.style) ? vm.style : null
+                    style: (vm.style) ? JSON.stringify(vm.style) : JSON.stringify({ color: page.utilities.getRandomColor() })
                 };
 
 

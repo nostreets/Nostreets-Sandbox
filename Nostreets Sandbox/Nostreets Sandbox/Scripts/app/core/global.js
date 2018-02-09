@@ -6,7 +6,8 @@
         "ngRoute",
         "toastr",
         "ngSanitize",
-        "ngCookies"
+        "ngCookies",
+        'color.picker'
     ],
     user: {
         loggedIn: false,
@@ -20,7 +21,8 @@
 
         writeStyles: (styleName, cssRules) => {
             var styleElement = document.getElementById(styleName);
-            var pastCssRules = styleElement.textContent;
+            var pastCssRules = (styleElement && styleElement.textContent) ? styleElement.textContent : null;
+
 
             if (styleElement) {
                 document.getElementsByTagName('head')[0].removeChild(
