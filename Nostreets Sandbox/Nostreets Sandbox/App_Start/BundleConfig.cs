@@ -18,10 +18,8 @@ namespace Nostreets_Sandbox
                       "~/assets/css/font-awesome.css",
                       "~/node_modules/angular-ui-bootstrap/dist/ui-bootstrap-csp.css",
                       "~/node_modules/angularjs-color-picker/dist/angularjs-color-picker.css",
-                      "~/node_modules/angularjs-color-picker/dist/themes/angularjs-color-picker-bootstrap.min.css",
-
-                      "~/https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons",
-                      "~/https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.4.2/css/swiper.min.css"
+                      "~/node_modules/angularjs-color-picker/dist/themes/angularjs-color-picker-bootstrap.min.css"
+                      
                       ));
 
 
