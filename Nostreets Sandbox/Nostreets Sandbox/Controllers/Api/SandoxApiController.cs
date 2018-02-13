@@ -202,7 +202,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
 
                 Chart<List<float>> chart = null;
-                chart = _billSrv.GetIncomeChart(CurrentUser.Id, ref chartSchedule, startDate, endDate);
+                chart = _billSrv.GetIncomeChart(CurrentUser.Id, out chartSchedule, startDate, endDate);
                 ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(chart);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -223,7 +223,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
 
                 Chart<List<float>> result = null;
-                result = _billSrv.GetExpensesChart(CurrentUser.Id, ref chartSchedule, startDate, endDate);
+                result = _billSrv.GetExpensesChart(CurrentUser.Id, out chartSchedule, startDate, endDate);
                 ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -244,7 +244,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
 
                 Chart<List<float>> result = null;
-                result = _billSrv.GetCombinedChart(CurrentUser.Id, ref chartSchedule, startDate, endDate);
+                result = _billSrv.GetCombinedChart(CurrentUser.Id, out chartSchedule, startDate, endDate);
                 ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }

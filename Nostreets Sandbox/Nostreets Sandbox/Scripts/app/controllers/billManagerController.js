@@ -20,6 +20,8 @@
         vm.openInsertModal = _openInsertModal;
         vm.deleteAsset = _deleteAsset;
         vm.toggleVisiblity = _toggleVisiblity;
+        vm.postChart = _postChart;
+        vm.dateEnding = _dateEnding;
 
 
         $baseController.systemEventService.listen("refreshedUsername", () => { _setUp(); _getUserCharts(); });
@@ -34,6 +36,7 @@
         }
 
         function _setUp() {
+            vm.scope = $scope;
             vm.charts = [];
             vm.legend = [];
             vm.currentTab = 'income';
@@ -44,6 +47,32 @@
             vm.chartType = 'line';
             vm.chartLineStyle = 'none';
             vm.enums = null;
+            vm.cpApi = null;
+            vm.cpOptions = {
+                allowEmpty: false,
+                format: 'rgb',
+                hue: true,
+                saturation: true,
+                alpha: false,
+                swatch: true,
+                lightness: true,
+                swatchPos: 'left',
+                swatchOnly: true,
+                round: true,
+                //pos: ['bottom left', 'bottom right', 'top left', 'top right'],
+            };
+            vm.cpEventApi =
+                {
+                    onChange: function (api, color, $event) { },
+                    onBlur: function (api, color, $event) { },
+                    onOpen: function (api, color, $event) { },
+                    onClose: function (api, color, $event) {
+                        _postChart($event);
+                    },
+                    onClear: function (api, color, $event) { },
+                    onReset: function (api, color, $event) { },
+                    onDestroy: function (api, color) { }
+                };
         }
 
         function _getUserCharts() {
@@ -52,6 +81,11 @@
                     () => _getCombinedChart().then(
                         () => _targetGraph(vm.currentTab, ((vm.currentTab === "income") ? "#incomeChart" : (vm.currentTab === "expense") ? "#expenseChart" : "#combinedChart"))
                     )));
+        }
+
+        function _dateEnding(date) {
+            date = new Date(date);
+            return ((date.getDate() === 1) ? 'st' : (date.getDate() === 2) ? 'nd' : 'th');
         }
 
         function _openDatePicker(prop) {
@@ -83,32 +117,53 @@
                 else
                     chart.isHiddenOnChart = false;
 
+                _postChart(chart);
+            }
+        }
+
+        function _postChart(chart) {
+            if (!chart)
+                return;
+            else {
+                var obj = {
+                    name: chart.name,
+                    cost: chart.cost,
+                    paySchedule: chart.paySchedule,
+                    timePaid: chart.timePaid,
+                    beginDate: (chart.beginDate) ? new Date(chart.beginDate) : null,
+                    endDate: (chart.endDate) ? new Date(chart.endDate) : null,
+                    isHiddenOnChart: (chart.isHiddenOnChart) ? true : false,
+                    costMultilplier: (chart.costMultilplier) ? chart.costMultilplier : 1,
+                    style: (chart.style) ? JSON.stringify(chart.style) : JSON.stringify({ color: page.utilities.getRandomColor() })
+                }
+
                 switch (vm.currentTab) {
                     case "income":
+                        obj.incomeType = parseInt(chart.incomeType);
+
                         if (chart.id) {
-                            $sandboxService.updateIncome(chart).then(
-
-                                () => vm.$uibModalInstance.close(),
-
+                            obj.id = chart.id;
+                            $sandboxService.updateIncome(obj).then(
+                                _getUserCharts(),
                                 err => $baseController.errorCheck(err,
                                     {
                                         maxLoops: 3,
                                         miliseconds: 2000,
                                         method: () => {
-                                            $sandboxService.updateIncome(chart);
+                                            $sandboxService.updateIncome(obj);
                                         }
                                     })
                             );
                         }
                         else {
-                            $sandboxService.insertIncome(chart).then(
-                                () => vm.$uibModalInstance.close(),
+                            $sandboxService.insertIncome(obj).then(
+                                _getUserCharts(),
                                 err => $baseController.errorCheck(err,
                                     {
                                         maxLoops: 3,
                                         miliseconds: 2000,
                                         method: () => {
-                                            $sandboxService.insertIncome(chart);
+                                            $sandboxService.insertIncome(obj);
                                         }
                                     })
                             );
@@ -116,39 +171,37 @@
                         break;
 
                     case "expense":
-                        chart.expenseType = parseInt(vm.expenseType);
+                        obj.expenseType = parseInt(chart.expenseType);
 
                         if (vm.id) {
-                            chart.id = vm.id
-                            $sandboxService.updateExpense(chart).then(
-                                () => vm.$uibModalInstance.close(),
+                            obj.id = chart.id
+                            $sandboxService.updateExpense(obj).then(
+                                _getUserCharts(),
                                 err => $baseController.errorCheck(err,
                                     {
                                         maxLoops: 3,
                                         miliseconds: 2000,
                                         method: () => {
-                                            $sandboxService.updateExpense(chart);
+                                            $sandboxService.updateExpense(obj);
                                         }
                                     })
                             );
                         }
                         else {
-                            $sandboxService.insertExpense(chart).then(
-                                () => vm.$uibModalInstance.close(),
+                            $sandboxService.insertExpense(obj).then(
+                                _getUserCharts(),
                                 err => $baseController.errorCheck(err,
                                     {
                                         maxLoops: 3,
                                         miliseconds: 2000,
                                         method: () => {
-                                            $sandboxService.insertExpense(chart);
+                                            $sandboxService.insertExpense(obj);
                                         }
                                     })
                             );
                         }
                         break;
                 }
-
-                _getUserCharts();
             }
         }
 
@@ -285,10 +338,11 @@
 
             return $sandboxService.getAllIncomes().then(
                 a => {
-                    for (var item of a.data.items)
-                        item.style = JSON.parse(item.style);
+                    for (var i = 0; i < a.data.items.length; i++)
+                        a.data.items[i].style = JSON.parse(a.data.items[i].style);
+
+                    vm.legend = a.data.items
                     vm.incomeCap = a.data.items.length;
-                    vm.legend = a.data.items;
                 },
                 err => $baseController.errorCheck(err,
                     {
@@ -297,8 +351,11 @@
                         method: () => {
                             $sandboxService.getAllIncomes().then(
                                 a => {
+                                    for (var i = 0; i < a.data.items.length; i++)
+                                        a.data.items[i].style = JSON.parse(a.data.items[i].style);
+
+                                    vm.legend = a.data.items
                                     vm.incomeCap = a.data.items.length;
-                                    vm.legend = a.data.items;
                                 });
                         }
                     })
@@ -309,8 +366,9 @@
 
             return $sandboxService.getAllExpenses().then(
                 a => {
-                    for (var item of a.data.items)
-                        item.style = JSON.parse(item.style);
+                    for (var i = 0; i < a.data.items.length; i++)
+                        a.data.items[i].style = JSON.parse(a.data.items[i].style);
+
                     vm.legend = a.data.items
                 },
                 err => $baseController.errorCheck(err,
@@ -318,7 +376,12 @@
                         maxLoops: 3,
                         miliseconds: 2000,
                         method: () => {
-                            $sandboxService.getAllExpenses().then(a => vm.legend = a.data.items);
+                            $sandboxService.getAllExpenses().then(a => {
+                                for (var i = 0; i < a.data.items.length; i++)
+                                    a.data.items[i].style = JSON.parse(a.data.items[i].style);
+
+                                vm.legend = a.data.items
+                            });
                         }
                     })
             );
@@ -326,23 +389,43 @@
 
         function _getCombinedAssets() {
             return $sandboxService.getAllIncomes().then(
-                a => vm.legend = a.data.items,
+                a => {
+                    for (var i = 0; i < a.data.items.length; i++)
+                        a.data.items[i].style = JSON.parse(a.data.items[i].style);
+
+                    vm.legend = a.data.items
+                },
                 err => $baseController.errorCheck(err,
                     {
                         maxLoops: 3,
                         miliseconds: 2000,
                         method: () => {
                             $sandboxService.getAllIncomes()
-                                .then(a => vm.legend = a.data.items).then(
+                                .then(a => {
+                                    for (var i = 0; i < a.data.items.length; i++)
+                                        a.data.items[i].style = JSON.parse(a.data.items[i].style);
+
+                                    vm.legend = a.data.items
+                                }).then(
                                 () => {
                                     $sandboxService.getAllExpenses().then(
-                                        a => vm.legend.concat(a.data.items),
+                                        a => {
+                                            for (var i = 0; i < a.data.items.length; i++)
+                                                a.data.items[i].style = JSON.parse(a.data.items[i].style);
+
+                                            vm.legend.concat(a.data.items)
+                                        },
                                         err => $baseController.errorCheck(err,
                                             {
                                                 maxLoops: 3,
                                                 miliseconds: 2000,
                                                 method: () => {
-                                                    $sandboxService.getAllExpenses().then(a => vm.legend.concat(a.data.items));
+                                                    $sandboxService.getAllExpenses().then(a => {
+                                                        for (var i = 0; i < a.data.items.length; i++)
+                                                            a.data.items[i].style = JSON.parse(a.data.items[i].style);
+
+                                                        vm.legend.concat(a.data.items)
+                                                    });
                                                 }
                                             })
                                     );
@@ -352,13 +435,23 @@
             ).then(
                 () => {
                     $sandboxService.getAllExpenses().then(
-                        a => vm.legend.concat(a.data.items),
+                        a => {
+                            for (var i = 0; i < a.data.items.length; i++)
+                                a.data.items[i].style = JSON.parse(a.data.items[i].style);
+
+                            vm.legend.concat(a.data.items)
+                        },
                         err => $baseController.errorCheck(err,
                             {
                                 maxLoops: 3,
                                 miliseconds: 2000,
                                 method: () => {
-                                    $sandboxService.getAllExpenses().then(a => vm.legend.concat(a.data.items));
+                                    $sandboxService.getAllExpenses().then(a => {
+                                        for (var i = 0; i < a.data.items.length; i++)
+                                            a.data.items[i].style = JSON.parse(a.data.items[i].style);
+
+                                        vm.legend.concat(a.data.items)
+                                    });
                                 }
                             })
                     );
@@ -439,7 +532,7 @@
             var renderedChart = new Chartist.Line(elementId, chart, options);
 
             _getChartLengend();
-            _animateGraph(renderedChart);
+            _animateGraph(renderedChart, 200);
 
             vm.renderedChart = chart;
             vm.chartOptions = options;
@@ -456,41 +549,24 @@
 
             getAssets().then(
                 () => {
+                    var hiddenLines = 0;
                     for (var i = 0; i < vm.legend.length; i++) {
-                        var backupColor = page.utilities.getRandomColor();
+                        var backupColor = page.utilities.getRandomColor(),
+                            lineChar = String.fromCharCode(97 + (i - hiddenLines));
+
+                        if (vm.legend[i].isHiddenOnChart) {
+                            hiddenLines++;
+                            continue;
+                        }
+
                         if (!vm.legend[i].style)
                             vm.legend[i].style = { color: backupColor };
-                        arr.push('.ct-series-' + String.fromCharCode(97 + i) + ' .ct-point, .ct-series-' + String.fromCharCode(97 + i) + ' .ct-line, .ct-series-' + String.fromCharCode(97 + i) + ' .ct-bar, .ct-series-' + String.fromCharCode(97 + i) + '{ stroke: ' + vm.legend[i].style.color + ' !important }');
+
+                        arr.push('.ct-series-' + lineChar + ' .ct-point, .ct-series-' + lineChar + ' .ct-line, .ct-series-' + lineChar + ' .ct-bar, .ct-series-' + lineChar + '{ stroke: ' + vm.legend[i].style.color + ' !important }');
                     }
                     page.utilities.writeStyles("_lineStyles", arr);
+                    vm.legend.reverse();
                 });
-
-
-            //getAssets().then(
-            //    () => {
-            //        for (var i = 0; i < vm.legend.length; i++) {
-            //            var style = _chartStyles(i);
-            //            vm.legend[i].style = style;
-            //        }
-            //    },
-            //    err => $baseController.errorCheck(err,
-            //        {
-            //            maxLoops: 3,
-            //            miliseconds: 2000,
-            //            method: () => {
-            //                getAssets().then(
-            //                    () => {
-            //                        for (var i = 0; i < vm.legend.length; i++) {
-            //                            var style = _chartStyles(i);
-            //                            vm.legend[i].style = style;
-            //                        }
-            //                    });
-            //            }
-            //        })
-
-            //);
-
-
         }
 
         function _chartStyles(index) {
@@ -618,7 +694,8 @@
 
         function _findScheduleType(arr) {
             var item = arr[0];
-
+            if (!item)
+                return;
 
             if (
                 item === "January" ||
@@ -671,7 +748,7 @@
                     clearTimeout(window.__anim21278907124);
                     window.__anim21278907124 = null;
                 }
-                window.__anim21278907124 = setTimeout(chart.update.bind(chart), 60000);
+                window.__anim21278907124 = setTimeout(chart.update.bind(chart), 1800000);
             });
 
             // On each drawn element by Chartist we use the Chartist.Svg API to trigger SMIL animations
@@ -876,7 +953,7 @@
                 }
             });
 
-            modalInstance.closed.then(_getUserCharts());
+            modalInstance.closed.then(_getUserCharts);
         }
 
         function _openMainMenuModal(typeId) {
@@ -1220,10 +1297,10 @@
         }
 
         function _toggleVisiblity() {
-            if (chart.isHiddenOnChart === false)
-                chart.isHiddenOnChart = true;
+            if (vm.isHiddenOnChart === false)
+                vm.isHiddenOnChart = true;
             else
-                chart.isHiddenOnChart = false;
+                vm.isHiddenOnChart = false;
         }
 
         function _cancel() {

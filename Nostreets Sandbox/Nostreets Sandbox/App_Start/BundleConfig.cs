@@ -12,14 +12,14 @@ namespace Nostreets_Sandbox
             bundles.Add(new StyleBundle("~/css").Include(
                       "~/assets/css/theme-Dark.css",
                       "~/assets/css/material-dashboard.css",
-                      "~/assets/Semantic-UI/semantic.css",
                       "~/assets/css/Site.css",
+                      //"~/assets/css/bootstrap.css",
                       "~/assets/css/bootstrap-theme.css",
+                      //"~/assets/Semantic-UI/semantic.css",
                       "~/assets/css/font-awesome.css",
                       "~/node_modules/angular-ui-bootstrap/dist/ui-bootstrap-csp.css",
                       "~/node_modules/angularjs-color-picker/dist/angularjs-color-picker.css",
                       "~/node_modules/angularjs-color-picker/dist/themes/angularjs-color-picker-bootstrap.min.css"
-                      
                       ));
 
 
@@ -27,12 +27,12 @@ namespace Nostreets_Sandbox
                     "~/assets/js/jquery-3.2.1.js",
                     "~/assets/js/jquery.validate.js",
                     "~/assets/js/bootstrap.js",
-                    "~/assets/Semantic-UI/semantic.js",
+                    //"~/assets/Semantic-UI/semantic.js",
                     "~/assets/onsenui/js/onsenui.js",
                     "~/assets/js/material.min.js",
                     "~/assets/js/sweetalert2.js",
                     "~/assets/js/chartist.min.js",
-                // "~/assets/js/ui-bootstrap-tpls-2.5.0.min.js",
+                    //"~/assets/js/ui-bootstrap-tpls-2.5.0.min.js",
 
                      
                     "~/node_modules/angular/angular.js",
