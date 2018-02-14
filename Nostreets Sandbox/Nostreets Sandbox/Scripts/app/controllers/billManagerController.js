@@ -59,7 +59,6 @@
                 swatchPos: 'left',
                 swatchOnly: true,
                 round: true,
-                //pos: ['bottom left', 'bottom right', 'top left', 'top right'],
             };
             vm.cpEventApi =
                 {
@@ -67,7 +66,7 @@
                     onBlur: function (api, color, $event) { },
                     onOpen: function (api, color, $event) { },
                     onClose: function (api, color, $event) {
-                        _postChart($event);
+                        _postChart(api.getScope().$parent.item);
                     },
                     onClear: function (api, color, $event) { },
                     onReset: function (api, color, $event) { },
@@ -144,7 +143,7 @@
                         if (chart.id) {
                             obj.id = chart.id;
                             $sandboxService.updateIncome(obj).then(
-                                _getUserCharts(),
+                                _getUserCharts,
                                 err => $baseController.errorCheck(err,
                                     {
                                         maxLoops: 3,
@@ -157,7 +156,7 @@
                         }
                         else {
                             $sandboxService.insertIncome(obj).then(
-                                _getUserCharts(),
+                                _getUserCharts,
                                 err => $baseController.errorCheck(err,
                                     {
                                         maxLoops: 3,
@@ -176,7 +175,7 @@
                         if (vm.id) {
                             obj.id = chart.id
                             $sandboxService.updateExpense(obj).then(
-                                _getUserCharts(),
+                                _getUserCharts,
                                 err => $baseController.errorCheck(err,
                                     {
                                         maxLoops: 3,
@@ -189,7 +188,7 @@
                         }
                         else {
                             $sandboxService.insertExpense(obj).then(
-                                _getUserCharts(),
+                                _getUserCharts,
                                 err => $baseController.errorCheck(err,
                                     {
                                         maxLoops: 3,
