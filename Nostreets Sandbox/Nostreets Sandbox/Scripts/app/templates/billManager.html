@@ -105,7 +105,7 @@
     <div class="row">
         <div align="center">
             <!--<button class="btn btn-xs btn-round" ng-click="pg.openMainMenuModal((pg.currentTab == 'income') ? 'income' : (pg.currentTab == 'expense') ? 'expense' : 'combined')">All {{ (pg.currentTab == 'income') ? 'Income' : (pg.currentTab == 'expense') ? 'Expense' : 'Incomes & Expenses' }}</button>-->
-            <button class="btn btn-xs btn-round" ng-if="pg.currentTab !== 'combined'" ng-click="pg.openInsertModal()">Add {{ mm.type == "income" ? "Income" : "Expense" }}</button>
+            <button class="btn btn-xs btn-round" ng-if="pg.currentTab !== 'combined'" ng-click="pg.openInsertModal()">Add {{ pg.currentTab == "income" ? "Income" : "Expense" }}</button>
 
         </div>
     </div>
