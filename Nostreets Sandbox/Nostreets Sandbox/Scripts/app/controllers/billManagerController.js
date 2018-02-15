@@ -1177,12 +1177,12 @@
                 swatchPos: 'left',
                 swatchOnly: true,
                 round: true,
-                //pos: ['bottom left', 'bottom right', 'top left', 'top right'],
             };
-
             vm.isTimePaidOpen = false;
             vm.isBeginDateOpen = false;
             vm.isEndDateOpen = false;
+            vm.rate = null;
+            vm.rateMultilplier = 1;
 
             switch (model.type) {
                 case "income":
@@ -1193,6 +1193,11 @@
                     vm.expenseType = data.expenseType || "1";
                     break;
             }
+
+        }
+
+        function _getCostMultilplier()
+        {
 
         }
 
