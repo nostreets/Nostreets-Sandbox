@@ -164,13 +164,11 @@
                             <br />
                             <small>
                                 Date Paid: {{ (item.paySchedule == 3 || item.paySchedule == 4) ? ((item.timePaid | date:'MMMM d') + pg.dateEnding(item.timePaid)) :  (item.paySchedule == 6 || item.paySchedule == 7) ? (item.timePaid | date:'EEEE') : (item.paySchedule == 8 || item.paySchedule == 9) ? (item.timePaid | date:'h:mma') : (item.paySchedule == 5) ? ((item.timePaid | date:'d') + pg.dateEnding(item.timePaid)) : (item.timePaid | date:'longDate') }}
-                                <!--+
-                                    (item.paySchedule == 5) ? (item.timePaid | date:'d') :
-                                    (item.timePaid.getDate() === 1) ? 'st' : (item.timePaid.getDate() === 2) ? 'nd' : 'st')
-                                    -->
                             </small>
                         </div>
-                        <div class="col-xs-5 col-xs-offset-7">{{ (pg.currentTab == 'income') ? '+' : (pg.currentTab == 'expense') ? '-' : 'Incomes & Expenses' }} {{ item.cost | currency }}</div>
+                        <div class="col-xs-5 col-xs-offset-7">{{ (pg.currentTab == 'income') ? '+' : (pg.currentTab == 'expense') ? '-' : 'Incomes & Expenses' }}
+                                                              {{ item.cost | currency }}
+                                                              {{ item.rate === 3 ? 'Per Year' : item.rate === 5 ? 'Per Month' : item.rate === 7 ? 'Per Week' : item.rate === 9 ? 'Per Hour' : item.rate === 8 ? 'Per Day' : '' }}</div>
                     </div>
                 </div>
             </div>
@@ -178,7 +176,7 @@
     </div>
 </div>
 
-<script type="text/ng-template" id="modelBillMainMenu.html">
+<!--<script type="text/ng-template" id="modelBillMainMenu.html">
     <div class="card modal-body">
         <div class="row text-center">
             <h4>All {{ mm.type == "income" ? "Incomes" : mm.type == "expense" ? "Expenses" : "Income & Expenses" }}</h4>
@@ -212,7 +210,7 @@
             </div>
         </div>
     </div>
-</script>
+</script>-->
 
 <script type="text/ng-template" id="modalExpenseBuilder.html">
     <div class="card modal-body">
@@ -237,18 +235,16 @@
                             <div><strong>Rate:</strong></div>
                             <select ng-model="mc.rate">
                                 <option value="2">Once</option>
-                                <option value="3">Yearly</option>
-                                <option value="4">Bi-Yearly</option>
-                                <option value="5">Monthly</option>
-                                <option value="6">Bi-Weekly</option>
-                                <option value="7">Weekly</option>
-                                <option value="8">Daily</option>
-                                <option value="9">Hourly</option>
+                                <option value="3" ng-if="mc.paySchedule != '3' && mc.paySchedule != '4' && mc.paySchedule != '5' && mc.paySchedule != '6' && mc.paySchedule != '7' && mc.paySchedule != '8'">Per Year</option>
+                                <option value="5" ng-if="mc.paySchedule != '5' && mc.paySchedule != '6' && mc.paySchedule != '7' && mc.paySchedule != '8'">Per Month</option>
+                                <option value="7" ng-if="mc.paySchedule != '7' && mc.paySchedule != '8'">Per Week</option>
+                                <option value="8" ng-if="mc.paySchedule != '8'">Per Day</option>
+                                <option value="9">Per Hour</option>
                             </select>
                         </div>
                     </div>
                     <div class="row" style="margin-bottom: 2%;">
-                        <div class="col-sm-6">
+                        <div class="col-sm-3">
                             <div><strong>{{ mc.type == "income" ? "Income" : "Expense" }} Type:</strong></div>
                             <select ng-if="mc.type == 'income'" ng-model="mc.incomeType">
                                 <option value="1">Paycheck</option>
@@ -282,14 +278,16 @@
                                 <!--<option value="9">Hourly</option>-->
                             </select>
                         </div>
-                        <div class="col-sm-3">
-                            <div><strong>Number of  Paid:</strong></div>
-                            <input class="input-sm"  ng-disabled="mc.rate == '2'" ng-model="mc.rateMultilplier" type="number" />
+                        <div ng-if="mc.rate != '2'" class="col-sm-6">
+                            <div><strong>Number of  Paid
+                                {{ (mc.rate === '9') ? 'Hours' : (mc.rate === '8') ? 'Days' : (mc.rate === '7') ? 'Weeks' : (mc.rate === '5') ? 'Months' : 'Years' }} 
+                                {{ (mc.paySchedule === '1') ? 'Per Occasion' : (mc.paySchedule === '3') ? 'Per Year' : (mc.rate === '4') ? 'Every 6 Months' : (mc.paySchedule === '5') ? 'Per Month' : (mc.paySchedule === '6') ? 'Every Other Week' : (mc.paySchedule === '7') ? 'Per Week' : (mc.paySchedule === '8') ? 'Per Day' : ''}}:</strong></div>
+                            <input class="input-sm"  ng-model="mc.rateMultilplier" type="number" />
                         </div>
                     </div>
                     <div class="row" style="margin-bottom: 4%;">
-                        <div class="col-sm-4">
-                            <div class="input-group">
+                        <div class="col-xm-4">
+                            <div class="input-group text-center">
                                 <span><strong>Date Paid:</strong></span>
                                 <input type="text" uib-datepicker-popup ng-model="mc.timePaid" class="form-control well well-sm" is-open="mc.isTimePaidOpen" close-text="Close" />
                                 <span class="input-group-btn">
@@ -297,7 +295,7 @@
                                 </span>
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <!--<div class="col-sm-4">
                             <div class="input-group">
                                 <span><strong>Beginning Pay Date:</strong></span>
                                 <input type="text" uib-datepicker-popup ng-model="mc.beginDate" class="form-control well well-sm" is-open="mc.isBeginDateOpen" close-text="Close" />
@@ -314,7 +312,7 @@
                                     <button type="button" class="btn btn-xs btn-simple" ng-click="mc.openDatePicker('endDate')"><i class="glyphicon glyphicon-calendar" style="color:black"></i></button>
                                 </span>
                             </div>
-                        </div>
+                        </div>-->
                     </div>
                     <div class="row">
                         <div class="btn-group btn-group-xs">

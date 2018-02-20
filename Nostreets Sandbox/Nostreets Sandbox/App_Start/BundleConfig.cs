@@ -32,9 +32,8 @@ namespace Nostreets_Sandbox
                     "~/assets/js/material.min.js",
                     "~/assets/js/sweetalert2.js",
                     "~/assets/js/chartist.min.js",
-                    //"~/assets/js/ui-bootstrap-tpls-2.5.0.min.js",
 
-                     
+
                     "~/node_modules/angular/angular.js",
                     "~/node_modules/angular-animate/angular-animate.js",
                     "~/node_modules/angular-route/angular-route.js",
@@ -43,11 +42,8 @@ namespace Nostreets_Sandbox
                     "~/node_modules/angular-toastr/dist/angular-toastr.min.js",
                     "~/node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js",
                     "~/node_modules/tinycolor2/dist/tinycolor-min.js",
-                    "~/node_modules/angularjs-color-picker/dist/angularjs-color-picker.js",
+                    "~/node_modules/angularjs-color-picker/dist/angularjs-color-picker.js"
 
-
-                    "~/https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.4.2/js/swiper.js",
-                    "~/https://maps.googleapis.com/maps/api/js?sensor=false"
                         ));
 
 
@@ -79,7 +75,7 @@ namespace Nostreets_Sandbox
                       ));
 
 
-            
+
         }
     }
 }

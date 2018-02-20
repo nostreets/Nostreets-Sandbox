@@ -14,7 +14,7 @@
 
         var vm = this;
         vm.changeCurrentTab = _changeTab;
-        vm.openMainMenuModal = _openMainMenuModal;
+        //vm.openMainMenuModal = _openMainMenuModal;
         vm.openDatePicker = _openDatePicker;
         vm.updateChart = _getUserCharts;
         vm.openInsertModal = _openInsertModal;
@@ -33,6 +33,7 @@
             _setUp();
             _getEnums();
             _getUserCharts();
+            //_dateZoomEvent();
         }
 
         function _setUp() {
@@ -72,6 +73,9 @@
                     onReset: function (api, color, $event) { },
                     onDestroy: function (api, color) { }
                 };
+            vm.wheelUpTick = false;
+            vm.wheelDownTick = false;
+            vm.dateRangeTick = false;
         }
 
         function _getUserCharts() {
@@ -85,6 +89,68 @@
         function _dateEnding(date) {
             date = new Date(date);
             return ((date.getDate() === 1) ? 'st' : (date.getDate() === 2) ? 'nd' : 'th');
+        }
+
+        function _dateZoomEvent() {
+            angular.element(".ct-golden-section").on("DOMMouseScroll mousewheel onmousewheel", (event) => {
+
+                // cross-browser wheel delta
+                var event = window.event || event; // old IE support
+                var delta = Math.max(-1, Math.min(1, (event.wheelDelta || -event.detail)));
+
+
+                if (delta > 0) {
+                    $scope.$apply(() => {
+                        vm.wheelUpTick = true;
+                        vm.wheelDownTick = false;
+                        vm.dateRangeTick = (vm.dateRangeTick === false) ? true : false;
+
+                    });
+
+                    // for IE
+                    event.returnValue = false;
+                    // for Chrome and Firefox
+                    if (event.preventDefault) {
+                        event.preventDefault();
+                    }
+
+                }
+                else if (delta < 0) {
+                    $scope.$apply(function () {
+                        vm.wheelDownTick = true;
+                        vm.wheelUpTick = false;
+                        vm.dateRangeTick = (vm.dateRangeTick === false) ? true : false;
+
+
+                    });
+
+                    // for IE
+                    event.returnValue = false;
+                    // for Chrome and Firefox
+                    if (event.preventDefault) {
+                        event.preventDefault();
+                    }
+
+                }
+
+                if (vm.wheelDownTick) {
+                    if (vm.dateRangeTick === true) {
+                       vm.beginDate.setTime(vm.beginDate.getTime() - (24 * 60 * 60 * 1000)); //24 hrs in nillseconds
+                    }
+                    else {
+                       vm.endDate.setTime(vm.endDate.getTime() + (24 * 60 * 60 * 1000)); 
+                    }
+                }
+                else {
+                    if (vm.dateRangeTick === true) {
+                        vm.beginDate.setTime(vm.beginDate.getTime() + (24 * 60 * 60 * 1000)); 
+                    }
+                    else {
+                        vm.endDate.setTime(vm.endDate.getTime() - (24 * 60 * 60 * 1000)); 
+                    }
+                }
+
+            });
         }
 
         function _openDatePicker(prop) {
@@ -935,7 +1001,9 @@
                 endDate: (data.endDate) ? new Date(data.endDate) : null,
                 isHiddenOnChart: (data.isHiddenOnChart === true) ? true : false,
                 costMultilplier: (data.costMultilplier) ? data.costMultilplier : 1,
-                style: (data.style) ? data.style : null
+                style: (data.style) ? data.style : null,
+                rate: (data.rate) ? data.rate : 2,
+                rateMultilplier: (data.rateMultilplier) ? data.rateMultilplier : 1
             };
 
             if (vm.type === "combined") { obj.type = (data.incomeType) ? "income" : "expense"; }
@@ -955,27 +1023,27 @@
             modalInstance.closed.then(_getUserCharts);
         }
 
-        function _openMainMenuModal(typeId) {
+        //function _openMainMenuModal(typeId) {
 
-            var data = {
-                type: typeId
-            };
+        //    var data = {
+        //        type: typeId
+        //    };
 
-            var modalInstance = $uibModal.open({
-                animation: true
-                , templateUrl: "modelBillMainMenu.html"
-                , controller: "modalMainMenuController as mm"
-                , size: "lg"
-                , resolve: {
-                    data: function () {
-                        return data;
-                    }
-                }
-            });
+        //    var modalInstance = $uibModal.open({
+        //        animation: true
+        //        , templateUrl: "modelBillMainMenu.html"
+        //        , controller: "modalMainMenuController as mm"
+        //        , size: "lg"
+        //        , resolve: {
+        //            data: function () {
+        //                return data;
+        //            }
+        //        }
+        //    });
 
-            modalInstance.closed.then(_getUserCharts);
+        //    modalInstance.closed.then(_getUserCharts);
 
-        }
+        //}
 
         function _openCodeModal(code) {
             var modalInstance = $uibModal.open({
@@ -1180,8 +1248,8 @@
             vm.isTimePaidOpen = false;
             vm.isBeginDateOpen = false;
             vm.isEndDateOpen = false;
-            vm.rate = null;
-            vm.rateMultilplier = 1;
+            vm.rate = data.rate + '' || '2';
+            vm.rateMultilplier = data.rateMultilplier || 1;
 
             switch (model.type) {
                 case "income":
@@ -1192,11 +1260,6 @@
                     vm.expenseType = data.expenseType || "1";
                     break;
             }
-
-        }
-
-        function _getCostMultilplier()
-        {
 
         }
 
@@ -1227,8 +1290,10 @@
                     beginDate: (vm.beginDate) ? new Date(vm.beginDate) : null,
                     endDate: (vm.endDate) ? new Date(vm.endDate) : null,
                     isHiddenOnChart: (vm.isHiddenOnChart) ? true : false,
-                    costMultilplier: (vm.costMultilplier) ? vm.costMultilplier : 1,
-                    style: (vm.style) ? JSON.stringify(vm.style) : JSON.stringify({ color: page.utilities.getRandomColor() })
+                    //costMultilplier: (vm.costMultilplier) ? vm.costMultilplier : 1,
+                    style: (vm.style) ? JSON.stringify(vm.style) : JSON.stringify({ color: page.utilities.getRandomColor() }),
+                    rate: (vm.rate) ? vm.rate : 2,
+                    rateMultilplier: (vm.rateMultilplier) ? vm.rateMultilplier : 1
                 };
 
 

@@ -30,7 +30,9 @@ namespace Nostreets_Services.Domain.Bills
 
         public float Cost { get; set; }
 
-        public float CostMultilplier { get => _costMultilplier; set => _costMultilplier = value; }
+        public ScheduleTypes Rate { get; set; }
+
+        public float RateMultilplier { get => _costMultilplier; set => _costMultilplier = value; }
 
         public override string UserId { get => CacheManager.Contains("user") ? CacheManager.GetItem<User>("user").Id : null; }
 
