@@ -2,7 +2,6 @@
 
     angular.module(page.APPNAME)
         .controller("billManagerController", billManagerController)
-        //.controller("modalMainMenuController", modalMainMenuController)
         .controller("modalInsertController", modalInsertController);
 
     billManagerController.$inject = ["$scope", "$baseController", '$uibModal', '$sandboxService', '$filter'];
@@ -68,6 +67,7 @@
                     onOpen: function (api, color, $event) { },
                     onClose: function (api, color, $event) {
                         _postChart(api.getScope().$parent.item);
+                        _getUserCharts();
                     },
                     onClear: function (api, color, $event) { },
                     onReset: function (api, color, $event) { },
@@ -135,18 +135,18 @@
 
                 if (vm.wheelDownTick) {
                     if (vm.dateRangeTick === true) {
-                       vm.beginDate.setTime(vm.beginDate.getTime() - (24 * 60 * 60 * 1000)); //24 hrs in nillseconds
+                        vm.beginDate.setTime(vm.beginDate.getTime() - (24 * 60 * 60 * 1000)); //24 hrs in nillseconds
                     }
                     else {
-                       vm.endDate.setTime(vm.endDate.getTime() + (24 * 60 * 60 * 1000)); 
+                        vm.endDate.setTime(vm.endDate.getTime() + (24 * 60 * 60 * 1000));
                     }
                 }
                 else {
                     if (vm.dateRangeTick === true) {
-                        vm.beginDate.setTime(vm.beginDate.getTime() + (24 * 60 * 60 * 1000)); 
+                        vm.beginDate.setTime(vm.beginDate.getTime() + (24 * 60 * 60 * 1000));
                     }
                     else {
-                        vm.endDate.setTime(vm.endDate.getTime() - (24 * 60 * 60 * 1000)); 
+                        vm.endDate.setTime(vm.endDate.getTime() - (24 * 60 * 60 * 1000));
                     }
                 }
 
@@ -199,7 +199,9 @@
                     endDate: (chart.endDate) ? new Date(chart.endDate) : null,
                     isHiddenOnChart: (chart.isHiddenOnChart) ? true : false,
                     costMultilplier: (chart.costMultilplier) ? chart.costMultilplier : 1,
-                    style: (chart.style) ? JSON.stringify(chart.style) : JSON.stringify({ color: page.utilities.getRandomColor() })
+                    style: (chart.style) ? JSON.stringify(chart.style) : JSON.stringify({ color: page.utilities.getRandomColor() }),
+                    rate: (vm.rate) ? vm.rate : 2,
+                    rateMultilplier: (vm.rateMultilplier) ? vm.rateMultilplier : 1
                 }
 
                 switch (vm.currentTab) {
@@ -1023,28 +1025,6 @@
             modalInstance.closed.then(_getUserCharts);
         }
 
-        //function _openMainMenuModal(typeId) {
-
-        //    var data = {
-        //        type: typeId
-        //    };
-
-        //    var modalInstance = $uibModal.open({
-        //        animation: true
-        //        , templateUrl: "modelBillMainMenu.html"
-        //        , controller: "modalMainMenuController as mm"
-        //        , size: "lg"
-        //        , resolve: {
-        //            data: function () {
-        //                return data;
-        //            }
-        //        }
-        //    });
-
-        //    modalInstance.closed.then(_getUserCharts);
-
-        //}
-
         function _openCodeModal(code) {
             var modalInstance = $uibModal.open({
                 animation: true
@@ -1071,135 +1051,6 @@
         }
 
     }
-
-    //function modalMainMenuController($scope, $baseController, $uibModalInstance, $sandboxService, $uibModal, data) {
-
-    //    var vm = this;
-    //    vm.$scope = $scope;
-    //    vm.$uibModalInstance = $uibModalInstance;
-    //    vm.openInsertModal = _openInsertModal;
-    //    vm.deleteAsset = _deleteAsset;
-
-    //    _render();
-
-    //    function _render() {
-    //        _setUp(data);
-    //        _refreshData();
-    //        _getBillingEnums([vm.type, "schedule"]);
-    //    }
-
-    //    function _setUp(data) {
-    //        vm.type = data.type;
-    //        vm.items = [];
-    //        vm.enums = [];
-    //    }
-
-    //    function _getBillingEnums(billTypes) {
-    //        $sandboxService.getEnums(billTypes).then(
-    //            (obj) => vm.enums = obj.data.items,
-    //            (err) => console.log(err)
-    //        );
-    //    }
-
-    //    function _openInsertModal(data) {
-
-    //        data = (data) ? data : {};
-
-    //        var obj = {
-    //            type: vm.type,
-    //            id: (data.id) ? data.id : 0,
-    //            name: (data.name) ? data.name : null,
-    //            cost: (data.cost) ? data.cost : null,
-    //            paySchedule: (data.paySchedule) ? data.paySchedule : null,
-    //            timePaid: (data.timePaid) ? new Date(data.timePaid) : null,
-    //            beginDate: (data.beginDate) ? new Date(data.beginDate) : null,
-    //            endDate: (data.endDate) ? new Date(data.endDate) : null,
-    //            isHiddenOnChart: (typeof (data.isHiddenOnChart) !== "boolean" && data.isHiddenOnChart === true) ? true : false
-    //        };
-
-    //        if (vm.type === "combined") { obj.type = (data.incomeType) ? "income" : "expense"; }
-
-    //        var modalInstance = $uibModal.open({
-    //            animation: true
-    //            , templateUrl: "modalExpenseBuilder.html"
-    //            , controller: "modalInsertController as mc"
-    //            , size: "lg"
-    //            , resolve: {
-    //                model: function () {
-    //                    return obj;
-    //                }
-    //            }
-    //        });
-
-    //        modalInstance.closed.then(_refreshData);
-    //    }
-
-    //    function _close() {
-    //        vm.$uibModalInstance.dismiss("cancel");
-    //    }
-
-    //    function _refreshData() {
-    //        return (vm.type === "income") ?
-
-    //            $sandboxService.getAllIncomes().then(
-    //                a => vm.items = a.data.items,
-    //                err => $baseController.errorCheck(err,
-    //                    {
-    //                        maxLoops: 3,
-    //                        miliseconds: 2000,
-    //                        method: () => {
-    //                            $sandboxService.getAllIncomes().then(a => vm.items = a.data.items);
-    //                        }
-    //                    })
-    //            )
-
-    //            :
-
-    //            $sandboxService.getAllExpenses().then(
-    //                a => vm.items = a.data.items,
-    //                err => $baseController.errorCheck(err,
-    //                    {
-    //                        maxLoops: 3,
-    //                        miliseconds: 2000,
-    //                        method: () => {
-    //                            $sandboxService.getAllExpenses().then(a => vm.items = a.data.items);
-    //                        }
-    //                    })
-    //            )
-    //    }
-
-    //    function _deleteAsset(obj) {
-    //        var hasError = false;
-    //        if (obj.incomeType) {
-    //            $sandboxService.deleteIncome(obj.id).then(
-    //                (data) => console.log(data),
-    //                err => $baseController.errorCheck(err,
-    //                    {
-    //                        maxLoops: 3,
-    //                        miliseconds: 2000,
-    //                        method: () => {
-    //                            $sandboxService.deleteIncome(obj.id).then((data) => console.log(data));
-    //                        }
-    //                    })
-    //            );
-    //        }
-    //        else {
-    //            $sandboxService.deleteExpense(obj.id).then(
-    //                (data) => console.log(data),
-    //                err => $baseController.errorCheck(err,
-    //                    {
-    //                        maxLoops: 3,
-    //                        miliseconds: 2000,
-    //                        method: () => {
-    //                            $sandboxService.deleteExpense(obj.id).then((data) => console.log(data));
-    //                        }
-    //                    })
-    //            );
-    //        }
-
-    //    }
-
-    //}
 
     function modalInsertController($scope, $baseController, $uibModalInstance, $sandboxService, model) {
 
@@ -1290,7 +1141,6 @@
                     beginDate: (vm.beginDate) ? new Date(vm.beginDate) : null,
                     endDate: (vm.endDate) ? new Date(vm.endDate) : null,
                     isHiddenOnChart: (vm.isHiddenOnChart) ? true : false,
-                    //costMultilplier: (vm.costMultilplier) ? vm.costMultilplier : 1,
                     style: (vm.style) ? JSON.stringify(vm.style) : JSON.stringify({ color: page.utilities.getRandomColor() }),
                     rate: (vm.rate) ? vm.rate : 2,
                     rateMultilplier: (vm.rateMultilplier) ? vm.rateMultilplier : 1

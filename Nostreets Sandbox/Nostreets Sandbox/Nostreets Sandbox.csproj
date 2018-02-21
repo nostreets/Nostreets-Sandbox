@@ -270,6 +270,9 @@
     <Content Include="assets\css\photoswipe.css" />
     <Content Include="assets\css\pictures-upload.css" />
     <Content Include="assets\css\pictures-uploadCrop.css" />
+    <Content Include="assets\css\chartist-plugin-tooltip.css" />
+    <Content Include="assets\js\chartist-plugin-tooltip.js" />
+    <Content Include="assets\js\chartist-plugin-tooltip.min.js" />
     <Content Include="assets\onsenui\css-components-src\gulpfile.js" />
     <Content Include="assets\onsenui\css-components-src\misc\screenshot-01.png" />
     <Content Include="assets\onsenui\css-components-src\misc\screenshot-02.png" />
@@ -2208,6 +2211,8 @@
     <Content Include="assets\js\imagesloaded.pkgd.min.js" />
     <Content Include="assets\js\jqinstapics.min.js" />
     <Content Include="assets\js\jquery-1.11.3.min.js" />
+    <Content Include="assets\css\chartist-plugin-tooltip.css.map" />
+    <Content Include="assets\js\chartist-plugin-tooltip.min.js.map" />
     <None Include="assets\js\jquery-3.2.1.intellisense.js" />
     <Content Include="assets\js\jquery-3.2.1.js" />
     <Content Include="assets\js\jquery-3.2.1.min.js" />

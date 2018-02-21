@@ -179,7 +179,7 @@ form > div {
 
 
 /*Chartist Styles*/
-.ct-label {
+/*.ct-label {
     fill: rgba(0, 0, 0, 0.4);
     color: rgba(0, 0, 0, 0.4);
     font-size: 1.0rem;
@@ -304,7 +304,7 @@ form > div {
 
 .ct-series-o .ct-slice-pie, .ct-series-o .ct-area {
     fill: #a748ca;
-}
+}*/
 
 foreignObject > span {
     color: rgba(138, 138, 138, 0.74) !important;
