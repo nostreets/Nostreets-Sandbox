@@ -2,7 +2,7 @@
 
     angular.module(page.APPNAME)
         .controller("billManagerController", billManagerController)
-        .controller("modalMainMenuController", modalMainMenuController)
+        //.controller("modalMainMenuController", modalMainMenuController)
         .controller("modalInsertController", modalInsertController);
 
     billManagerController.$inject = ["$scope", "$baseController", '$uibModal', '$sandboxService', '$filter'];
@@ -1072,134 +1072,134 @@
 
     }
 
-    function modalMainMenuController($scope, $baseController, $uibModalInstance, $sandboxService, $uibModal, data) {
+    //function modalMainMenuController($scope, $baseController, $uibModalInstance, $sandboxService, $uibModal, data) {
 
-        var vm = this;
-        vm.$scope = $scope;
-        vm.$uibModalInstance = $uibModalInstance;
-        vm.openInsertModal = _openInsertModal;
-        vm.deleteAsset = _deleteAsset;
+    //    var vm = this;
+    //    vm.$scope = $scope;
+    //    vm.$uibModalInstance = $uibModalInstance;
+    //    vm.openInsertModal = _openInsertModal;
+    //    vm.deleteAsset = _deleteAsset;
 
-        _render();
+    //    _render();
 
-        function _render() {
-            _setUp(data);
-            _refreshData();
-            _getBillingEnums([vm.type, "schedule"]);
-        }
+    //    function _render() {
+    //        _setUp(data);
+    //        _refreshData();
+    //        _getBillingEnums([vm.type, "schedule"]);
+    //    }
 
-        function _setUp(data) {
-            vm.type = data.type;
-            vm.items = [];
-            vm.enums = [];
-        }
+    //    function _setUp(data) {
+    //        vm.type = data.type;
+    //        vm.items = [];
+    //        vm.enums = [];
+    //    }
 
-        function _getBillingEnums(billTypes) {
-            $sandboxService.getEnums(billTypes).then(
-                (obj) => vm.enums = obj.data.items,
-                (err) => console.log(err)
-            );
-        }
+    //    function _getBillingEnums(billTypes) {
+    //        $sandboxService.getEnums(billTypes).then(
+    //            (obj) => vm.enums = obj.data.items,
+    //            (err) => console.log(err)
+    //        );
+    //    }
 
-        function _openInsertModal(data) {
+    //    function _openInsertModal(data) {
 
-            data = (data) ? data : {};
+    //        data = (data) ? data : {};
 
-            var obj = {
-                type: vm.type,
-                id: (data.id) ? data.id : 0,
-                name: (data.name) ? data.name : null,
-                cost: (data.cost) ? data.cost : null,
-                paySchedule: (data.paySchedule) ? data.paySchedule : null,
-                timePaid: (data.timePaid) ? new Date(data.timePaid) : null,
-                beginDate: (data.beginDate) ? new Date(data.beginDate) : null,
-                endDate: (data.endDate) ? new Date(data.endDate) : null,
-                isHiddenOnChart: (typeof (data.isHiddenOnChart) !== "boolean" && data.isHiddenOnChart === true) ? true : false
-            };
+    //        var obj = {
+    //            type: vm.type,
+    //            id: (data.id) ? data.id : 0,
+    //            name: (data.name) ? data.name : null,
+    //            cost: (data.cost) ? data.cost : null,
+    //            paySchedule: (data.paySchedule) ? data.paySchedule : null,
+    //            timePaid: (data.timePaid) ? new Date(data.timePaid) : null,
+    //            beginDate: (data.beginDate) ? new Date(data.beginDate) : null,
+    //            endDate: (data.endDate) ? new Date(data.endDate) : null,
+    //            isHiddenOnChart: (typeof (data.isHiddenOnChart) !== "boolean" && data.isHiddenOnChart === true) ? true : false
+    //        };
 
-            if (vm.type === "combined") { obj.type = (data.incomeType) ? "income" : "expense"; }
+    //        if (vm.type === "combined") { obj.type = (data.incomeType) ? "income" : "expense"; }
 
-            var modalInstance = $uibModal.open({
-                animation: true
-                , templateUrl: "modalExpenseBuilder.html"
-                , controller: "modalInsertController as mc"
-                , size: "lg"
-                , resolve: {
-                    model: function () {
-                        return obj;
-                    }
-                }
-            });
+    //        var modalInstance = $uibModal.open({
+    //            animation: true
+    //            , templateUrl: "modalExpenseBuilder.html"
+    //            , controller: "modalInsertController as mc"
+    //            , size: "lg"
+    //            , resolve: {
+    //                model: function () {
+    //                    return obj;
+    //                }
+    //            }
+    //        });
 
-            modalInstance.closed.then(_refreshData);
-        }
+    //        modalInstance.closed.then(_refreshData);
+    //    }
 
-        function _close() {
-            vm.$uibModalInstance.dismiss("cancel");
-        }
+    //    function _close() {
+    //        vm.$uibModalInstance.dismiss("cancel");
+    //    }
 
-        function _refreshData() {
-            return (vm.type === "income") ?
+    //    function _refreshData() {
+    //        return (vm.type === "income") ?
 
-                $sandboxService.getAllIncomes().then(
-                    a => vm.items = a.data.items,
-                    err => $baseController.errorCheck(err,
-                        {
-                            maxLoops: 3,
-                            miliseconds: 2000,
-                            method: () => {
-                                $sandboxService.getAllIncomes().then(a => vm.items = a.data.items);
-                            }
-                        })
-                )
+    //            $sandboxService.getAllIncomes().then(
+    //                a => vm.items = a.data.items,
+    //                err => $baseController.errorCheck(err,
+    //                    {
+    //                        maxLoops: 3,
+    //                        miliseconds: 2000,
+    //                        method: () => {
+    //                            $sandboxService.getAllIncomes().then(a => vm.items = a.data.items);
+    //                        }
+    //                    })
+    //            )
 
-                :
+    //            :
 
-                $sandboxService.getAllExpenses().then(
-                    a => vm.items = a.data.items,
-                    err => $baseController.errorCheck(err,
-                        {
-                            maxLoops: 3,
-                            miliseconds: 2000,
-                            method: () => {
-                                $sandboxService.getAllExpenses().then(a => vm.items = a.data.items);
-                            }
-                        })
-                )
-        }
+    //            $sandboxService.getAllExpenses().then(
+    //                a => vm.items = a.data.items,
+    //                err => $baseController.errorCheck(err,
+    //                    {
+    //                        maxLoops: 3,
+    //                        miliseconds: 2000,
+    //                        method: () => {
+    //                            $sandboxService.getAllExpenses().then(a => vm.items = a.data.items);
+    //                        }
+    //                    })
+    //            )
+    //    }
 
-        function _deleteAsset(obj) {
-            var hasError = false;
-            if (obj.incomeType) {
-                $sandboxService.deleteIncome(obj.id).then(
-                    (data) => console.log(data),
-                    err => $baseController.errorCheck(err,
-                        {
-                            maxLoops: 3,
-                            miliseconds: 2000,
-                            method: () => {
-                                $sandboxService.deleteIncome(obj.id).then((data) => console.log(data));
-                            }
-                        })
-                );
-            }
-            else {
-                $sandboxService.deleteExpense(obj.id).then(
-                    (data) => console.log(data),
-                    err => $baseController.errorCheck(err,
-                        {
-                            maxLoops: 3,
-                            miliseconds: 2000,
-                            method: () => {
-                                $sandboxService.deleteExpense(obj.id).then((data) => console.log(data));
-                            }
-                        })
-                );
-            }
+    //    function _deleteAsset(obj) {
+    //        var hasError = false;
+    //        if (obj.incomeType) {
+    //            $sandboxService.deleteIncome(obj.id).then(
+    //                (data) => console.log(data),
+    //                err => $baseController.errorCheck(err,
+    //                    {
+    //                        maxLoops: 3,
+    //                        miliseconds: 2000,
+    //                        method: () => {
+    //                            $sandboxService.deleteIncome(obj.id).then((data) => console.log(data));
+    //                        }
+    //                    })
+    //            );
+    //        }
+    //        else {
+    //            $sandboxService.deleteExpense(obj.id).then(
+    //                (data) => console.log(data),
+    //                err => $baseController.errorCheck(err,
+    //                    {
+    //                        maxLoops: 3,
+    //                        miliseconds: 2000,
+    //                        method: () => {
+    //                            $sandboxService.deleteExpense(obj.id).then((data) => console.log(data));
+    //                        }
+    //                    })
+    //            );
+    //        }
 
-        }
+    //    }
 
-    }
+    //}
 
     function modalInsertController($scope, $baseController, $uibModalInstance, $sandboxService, model) {
 

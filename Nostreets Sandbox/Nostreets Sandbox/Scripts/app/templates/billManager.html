@@ -117,100 +117,65 @@
                 </div>
                 <div class="card-content text-center">
                     <div ng-repeat="item in pg.legend">
-                        <div class="col-xs-12">
+                        <div class="col-xs-12 text-center">
                             <div class="col-xs-1">
                                 <!--<i class="material-icons" ng-style="item.style" >brightness_1</i>-->
                                 <color-picker ng-model="item.style.color"
                                               event-api="pg.cpEventApi"
-                                              options="pg.cpOptions"
-                                              style="background-color: #58AA42">
+                                              options="pg.cpOptions">
 
                                 </color-picker>
                             </div>
 
-                            <div class="col-xs-6 col-xs-offset-2">
-                                <h4>{{ item.name }}</h4>
-
-
-                            </div>
-                            <div class="btn-group btn-group-xs btn-group-toggle" data-toggle="buttons">
-                                <button class="btn btn-round"
-                                        style="background-color: #d1b100"
-                                        ng-click="pg.openInsertModal(item)">
-                                    Edit
-                                </button>
-                                <button class="btn btn-round"
-                                        ng-class="{'.btn-togglable': !item.isHiddenOnChart, '.btn-toggled': item.isHiddenOnChart }"
-                                        ng-click="pg.toggleVisiblity(item)">
-                                    {{ (item.isHiddenOnChart === false) ? 'Hide' : 'Show' }}
-                                </button>
-                                <button class="btn btn-round"
-                                        style="background-color: #CB2A2A"
-                                        ng-click="pg.deleteAsset(item)">
-                                    X
-                                </button>
+                            <div class="col-xs-7"></div>
+                            <div class="col-xs-4">
+                                <div class="btn-group btn-group-xs btn-group-toggle" data-toggle="buttons">
+                                    <button class="btn btn-round"
+                                            style="background-color: #d1b100"
+                                            ng-click="pg.openInsertModal(item)">
+                                        Edit
+                                    </button>
+                                    <button class="btn btn-round"
+                                            ng-class="{'.btn-togglable': !item.isHiddenOnChart, '.btn-toggled': item.isHiddenOnChart }"
+                                            ng-click="pg.toggleVisiblity(item)">
+                                        {{ (item.isHiddenOnChart === false) ? 'Hide' : 'Show' }}
+                                    </button>
+                                    <button class="btn btn-round"
+                                            style="background-color: #CB2A2A"
+                                            ng-click="pg.deleteAsset(item)">
+                                        X
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
 
-                        <div class="col-xs-6">
+                        <div class="col-xs-12 text-center">
+                            <h4>{{ item.name }}</h4>
+                            <div>
+                                {{ (pg.currentTab == 'income') ? '+' : (pg.currentTab == 'expense') ? '-' : 'Incomes & Expenses' }}
+                                {{ item.cost | currency }}
+                                {{ item.rate === 3 ? 'Per Year' : item.rate === 5 ? 'Per Month' : item.rate === 7 ? 'Per Week' : item.rate === 9 ? 'Per Hour' : item.rate === 8 ? 'Per Day' : '' }}
+                            </div>
+
                             <small>
-                                Type: {{ (item.incomeType) ? pg.enums.income[item.incomeType] : pg.enums.expense[item.expenseType] }}
+                                Income Type: {{ (item.incomeType) ? pg.enums.income[item.incomeType] : pg.enums.expense[item.expenseType] }}
                             </small>
                             <br />
                             <small>
-                                Schedule: {{  pg.enums.schedule[item.paySchedule] }}
+                                Paycheck Frequency: {{  pg.enums.schedule[item.paySchedule] }}
                             </small>
                             <br />
                             <small>
                                 Date Paid: {{ (item.paySchedule == 3 || item.paySchedule == 4) ? ((item.timePaid | date:'MMMM d') + pg.dateEnding(item.timePaid)) :  (item.paySchedule == 6 || item.paySchedule == 7) ? (item.timePaid | date:'EEEE') : (item.paySchedule == 8 || item.paySchedule == 9) ? (item.timePaid | date:'h:mma') : (item.paySchedule == 5) ? ((item.timePaid | date:'d') + pg.dateEnding(item.timePaid)) : (item.timePaid | date:'longDate') }}
                             </small>
                         </div>
-                        <div class="col-xs-5 col-xs-offset-7">{{ (pg.currentTab == 'income') ? '+' : (pg.currentTab == 'expense') ? '-' : 'Incomes & Expenses' }}
-                                                              {{ item.cost | currency }}
-                                                              {{ item.rate === 3 ? 'Per Year' : item.rate === 5 ? 'Per Month' : item.rate === 7 ? 'Per Week' : item.rate === 9 ? 'Per Hour' : item.rate === 8 ? 'Per Day' : '' }}</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<!--<script type="text/ng-template" id="modelBillMainMenu.html">
-    <div class="card modal-body">
-        <div class="row text-center">
-            <h4>All {{ mm.type == "income" ? "Incomes" : mm.type == "expense" ? "Expenses" : "Income & Expenses" }}</h4>
-            <button class="btn btn-xs btn-round" ng-if="mm.type !== 'combined'" ng-click="mm.openInsertModal()">Add {{ mm.type == "income" ? "Income" : "Expense" }}</button>
-        </div>
-        <div class="row">
-            <div ng-repeat="item in mm.items" class="col-xs-6 text-center">
-                <div>
-                    <h5>{{ item.name }}</h5>
-                </div>
-                <div>
-                    <strong>Cost: {{ item.cost | currency }}</strong>
-                </div>
-                <div>
-                    Type: {{ (item.incomeType) ? mm.enums.income[item.incomeType] : mm.enums.expense[item.expenseType] }}
-                </div>
-                <div>
-                    Schedule: {{  mm.enums.schedule[item.paySchedule] }}
-                </div>
-                <div>
-                    <strong>Date Paid: {{ (item.paySchedule == 3 || item.paySchedule == 4) ? (item.timePaid | date:'MMMM yyyy') :  (item.paySchedule == 6 || item.paySchedule == 7) ? (item.timePaid | date:'EEEE') : (item.paySchedule == 8 || item.paySchedule == 9) ? (item.timePaid | date:'h:mma') : (item.timePaid | date:'longDate') }}</strong>
-                </div>
-                <div>
-                    <div>Hidden - <input type="checkbox" ng-checked="item.isHiddenOnChart" /></div>
-                    <div class="btn-group btn-group-xs">
-                        <button class="btn btn-round" style="background-color: #58AA42" ng-click="mm.openInsertModal(item)">Edit</button>
-                        <button class="btn btn-round" style="background-color: #CB2A2A" ng-click="mm.deleteAsset(item)">X</button>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</script>-->
 
 <script type="text/ng-template" id="modalExpenseBuilder.html">
     <div class="card modal-body">
@@ -279,22 +244,24 @@
                             </select>
                         </div>
                         <div ng-if="mc.rate != '2'" class="col-sm-6">
-                            <div><strong>Number of  Paid
-                                {{ (mc.rate === '9') ? 'Hours' : (mc.rate === '8') ? 'Days' : (mc.rate === '7') ? 'Weeks' : (mc.rate === '5') ? 'Months' : 'Years' }} 
-                                {{ (mc.paySchedule === '1') ? 'Per Occasion' : (mc.paySchedule === '3') ? 'Per Year' : (mc.rate === '4') ? 'Every 6 Months' : (mc.paySchedule === '5') ? 'Per Month' : (mc.paySchedule === '6') ? 'Every Other Week' : (mc.paySchedule === '7') ? 'Per Week' : (mc.paySchedule === '8') ? 'Per Day' : ''}}:</strong></div>
-                            <input class="input-sm"  ng-model="mc.rateMultilplier" type="number" />
+                            <div>
+                                <strong>
+                                    Number of  Paid
+                                    {{ (mc.rate === '9') ? 'Hours' : (mc.rate === '8') ? 'Days' : (mc.rate === '7') ? 'Weeks' : (mc.rate === '5') ? 'Months' : 'Years' }}
+                                    {{ (mc.paySchedule === '1') ? 'Per Occasion' : (mc.paySchedule === '3') ? 'Per Year' : (mc.rate === '4') ? 'Every 6 Months' : (mc.paySchedule === '5') ? 'Per Month' : (mc.paySchedule === '6') ? 'Every Other Week' : (mc.paySchedule === '7') ? 'Per Week' : (mc.paySchedule === '8') ? 'Per Day' : ''}}:
+                                </strong>
+                            </div>
+                            <input class="input-sm" ng-model="mc.rateMultilplier" type="number" />
                         </div>
                     </div>
                     <div class="row" style="margin-bottom: 4%;">
-                        <div class="col-xm-4">
-                            <div class="input-group text-center">
+                            <div class="input-group" align="center">
                                 <span><strong>Date Paid:</strong></span>
-                                <input type="text" uib-datepicker-popup ng-model="mc.timePaid" class="form-control well well-sm" is-open="mc.isTimePaidOpen" close-text="Close" />
+                                <input type="datetime" uib-datepicker-popup ng-model="mc.timePaid" class="form-control well well-sm" is-open="mc.isTimePaidOpen" close-text="Close" />
                                 <span class="input-group-btn">
                                     <button type="button" class="btn btn-xs btn-simple" ng-click="mc.openDatePicker('timePaid')"><i class="glyphicon glyphicon-calendar" style="color:black"></i></button>
                                 </span>
                             </div>
-                        </div>
                         <!--<div class="col-sm-4">
                             <div class="input-group">
                                 <span><strong>Beginning Pay Date:</strong></span>
@@ -320,7 +287,7 @@
                                     ng-disabled="!mc.name || !mc.type || !mc.paySchedule || !mc.timePaid"
                                     ng-click="mc.submit()"
                                     style="background-color: #58AA42">
-                                Add {{ mc.type == "income" ? "Income" : "Expense" }}!
+                                {{ ((mc.id !== 0) ? 'Update' : 'Add') + ' ' + ((mc.type == "income") ? "Income" : "Expense") }}!
                             </button>
                             <button class="btn btn-round" style="background-color: #d1b100" ng-click="mc.reset()">
                                 Reset!
