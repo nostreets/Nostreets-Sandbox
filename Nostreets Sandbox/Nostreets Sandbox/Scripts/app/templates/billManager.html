@@ -111,10 +111,10 @@
         <div class="col-xs-12">
             <div class="card" style="padding-bottom: 2%;">
                 <div class="card-header">
-                    <h3> {{ (pg.currentTab == 'income') ? 'Income' : (pg.currentTab == 'expense') ? 'Expense' : 'Incomes & Expenses' }}</h3>
+                    <h3> {{ (pg.currentTab == 'income') ? 'Incomes' : (pg.currentTab == 'expense') ? 'Expenses' : 'Incomes & Expenses' }}</h3>
                 </div>
                 <div class="card-content text-center">
-                    <img src="/assets/css/default-skin/preloader.gif"/>
+                    <!--<img src="/assets/css/default-skin/preloader.gif"/>-->
                     <div ng-repeat="item in pg.legend">
                         <div class="col-xs-12 text-center">
                             <div class="col-sm-1">
@@ -151,7 +151,7 @@
                         <div class="col-xs-12 text-center">
                             <h4>{{ item.name }}</h4>
                             <div>
-                                {{ (pg.currentTab == 'income') ? '+' : (pg.currentTab == 'expense') ? '-' : 'Incomes & Expenses' }}
+                                {{ (item.incomeType) ? '+' :  '' }}
                                 {{ item.cost | currency }}
                                 {{ item.rate === 3 ? 'Per Year' : item.rate === 5 ? 'Per Month' : item.rate === 7 ? 'Per Week' : item.rate === 9 ? 'Per Hour' : item.rate === 8 ? 'Per Day' : '' }}
                             </div>
@@ -161,7 +161,7 @@
                             </small>
                             <br />
                             <small>
-                                Paycheck Frequency: {{  pg.enums.schedule[item.paySchedule] }}
+                                {{ (item.incomeType) ? 'Payment ' : 'Paycheck ' }} Frequency: {{  pg.enums.schedule[item.paySchedule] }}
                             </small>
                             <br />
                             <small>
@@ -228,7 +228,7 @@
                             </select>
                         </div>
                         <div ng-class="{'col-sm-6': mc.rate === '2', 'col-sm-3': mc.rate !== '2'}">
-                            <div><strong>Paycheck Frequency:</strong></div>
+                            <div><strong>{{ (mc.type === 'income') ? 'Paycheck' : 'Payment' }} Frequency:</strong></div>
                             <select ng-model="mc.paySchedule">
                                 <option value="1">Occasionally</option>
                                 <option value="2">Once</option>
@@ -254,7 +254,7 @@
                     </div>
                     <div class="row" style="margin-bottom: 4%;">
                             <div class="input-group" align="center">
-                                <span><strong>Date Paid:</strong></span>
+                                <span><strong>Pay Date:</strong></span>
                                 <input type="datetime" uib-datepicker-popup ng-model="mc.timePaid" class="form-control well well-sm" is-open="mc.isTimePaidOpen" close-text="Close" />
                                 <span class="input-group-btn">
                                     <button type="button" class="btn btn-xs btn-simple" ng-click="mc.openDatePicker('timePaid')"><i class="glyphicon glyphicon-calendar" style="color:black"></i></button>

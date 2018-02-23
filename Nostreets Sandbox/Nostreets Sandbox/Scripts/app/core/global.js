@@ -40,7 +40,7 @@
                 }
             }
             else {
-                styleElement.innerHTML = cssText;
+                styleElement.innerHTML = cssRules;
             }
 
             document.getElementsByTagName('head')[0].appendChild(styleElement);

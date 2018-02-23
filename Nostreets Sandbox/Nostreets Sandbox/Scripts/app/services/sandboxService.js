@@ -30,11 +30,11 @@
             getIncomeByName: _getIncome,
             deleteIncome: _deleteIncome,
             updateIncome: _updateIncome,
-            insertExpenses: _insertExpense,
+            insertExpense: _insertExpense,
             getAllExpenses: _getAllExpenses,
-            getExpensesByName: _getExpense,
-            deleteExpenses: _deleteExpense,
-            updateExpenses: _updateExpense
+            getExpenseByName: _getExpense,
+            deleteExpense: _deleteExpense,
+            updateExpense: _updateExpense
         };
 
         function _validateUrl(url) {

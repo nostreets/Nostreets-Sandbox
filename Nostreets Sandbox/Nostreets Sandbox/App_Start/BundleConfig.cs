@@ -10,12 +10,13 @@ namespace Nostreets_Sandbox
         {
 
             bundles.Add(new StyleBundle("~/css").Include(
-                                         
+
                       "~/assets/css/theme-Dark.css",
                       "~/assets/css/material-dashboard.css",
+                      "~/assets/css/chartist-plugin-tooltip.css",
 
-                      "~/node_modules/onsenui/css/onsenui.css",
-                      "~/node_modules/onsenui/css/onsen-css-components.min.css",
+                      //"~/node_modules/onsenui/css/onsenui.css",
+                      //"~/node_modules/onsenui/css/onsen-css-components.min.css",
                       "~/assets/css/Site.css",
 
                       //"~/assets/css/bootstrap.css",
@@ -36,6 +37,9 @@ namespace Nostreets_Sandbox
                     "~/assets/js/material.min.js",
                     "~/assets/js/sweetalert2.js",
                     "~/assets/js/chartist.min.js",
+                    "~/assets/js/chartist-plugin-tooltip.min.js",
+                    "~/assets/js/chartist-plugin-zoom.min.js",
+                    "~/Scripts/app/services/nostreetsChartistScrollPlugin.js",
 
 
                     "~/node_modules/angular/angular.js",
@@ -51,14 +55,13 @@ namespace Nostreets_Sandbox
                         ));
 
 
-            bundles.Add(new ScriptBundle("~/personal").Include(
+            bundles.Add(new ScriptBundle("~/angular").Include(
                   "~/Scripts/app/core/global.js",
                   "~/Scripts/app/core/extend.js",
                   "~/Scripts/app/services/alert.service.js",
                   "~/Scripts/app/services/systemEvent.service.js",
                   "~/Scripts/app/configs/routeConfig.js",
-                  "~/Scripts/app/services/sandboxService.js",
-                  "~/Scripts/app/services/nostreetsChartistScrollPlugin.js"
+                  "~/Scripts/app/services/sandboxService.js"
                        ));
 
 

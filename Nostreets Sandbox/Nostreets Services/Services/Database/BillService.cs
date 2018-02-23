@@ -169,7 +169,7 @@ namespace Nostreets_Services.Services.Database
 
                     for (int i = 0; i < result.Labels.Count; i++)
                     {
-                        float pay = PayOfDay(start, i, chartSchedule, expenses[n]);
+                        float pay = PayOfDay(start, i, chartSchedule, expenses[n]) * -1;
                         result.Series[n - numOfAssetsSkipped].Add(pay);
                     }
                 }

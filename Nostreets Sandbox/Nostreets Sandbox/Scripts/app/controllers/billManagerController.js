@@ -5,7 +5,6 @@
         .controller("modalInsertController", modalInsertController);
 
     billManagerController.$inject = ["$scope", "$baseController", '$uibModal', '$sandboxService', '$filter'];
-    modalMainMenuController.$inject = ["$scope", "$baseController", '$uibModalInstance', '$sandboxService', '$uibModal', 'data'];
     modalInsertController.$inject = ["$scope", "$baseController", '$uibModalInstance', '$sandboxService', 'model'];
 
 
@@ -76,14 +75,16 @@
             vm.wheelUpTick = false;
             vm.wheelDownTick = false;
             vm.dateRangeTick = false;
+            vm.resetFunc = null;
         }
 
         function _getUserCharts() {
             _getIncomeChart().then(
                 () => _getExpensesChart().then(
                     () => _getCombinedChart().then(
-                        () => _targetGraph(vm.currentTab, ((vm.currentTab === "income") ? "#incomeChart" : (vm.currentTab === "expense") ? "#expenseChart" : "#combinedChart"))
-                    )));
+                        () => _getChartLengend().then(
+                            () => _targetGraph(vm.currentTab, ((vm.currentTab === "income") ? "#incomeChart" : (vm.currentTab === "expense") ? "#expenseChart" : "#combinedChart"))
+                        ))));
         }
 
         function _dateEnding(date) {
@@ -323,6 +324,7 @@
                         key: "income",
                         value: data.data.item
                     };
+
                     vm.charts.add(incomeChart);
                     vm.incomeCap = data.data.item.series.length;
                 },
@@ -405,8 +407,9 @@
 
             return $sandboxService.getAllIncomes().then(
                 a => {
-                    for (var i = 0; i < a.data.items.length; i++)
-                        a.data.items[i].style = JSON.parse(a.data.items[i].style);
+                    if (a.data.items)
+                        for (var i = 0; i < a.data.items.length; i++)
+                            a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
                     vm.legend = a.data.items
                     vm.incomeCap = a.data.items.length;
@@ -418,8 +421,9 @@
                         method: () => {
                             $sandboxService.getAllIncomes().then(
                                 a => {
-                                    for (var i = 0; i < a.data.items.length; i++)
-                                        a.data.items[i].style = JSON.parse(a.data.items[i].style);
+                                    if (a.data.items)
+                                        for (var i = 0; i < a.data.items.length; i++)
+                                            a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
                                     vm.legend = a.data.items
                                     vm.incomeCap = a.data.items.length;
@@ -433,8 +437,9 @@
 
             return $sandboxService.getAllExpenses().then(
                 a => {
-                    for (var i = 0; i < a.data.items.length; i++)
-                        a.data.items[i].style = JSON.parse(a.data.items[i].style);
+                    if (a.data.items)
+                        for (var i = 0; i < a.data.items.length; i++)
+                            a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
                     vm.legend = a.data.items
                 },
@@ -444,8 +449,9 @@
                         miliseconds: 2000,
                         method: () => {
                             $sandboxService.getAllExpenses().then(a => {
-                                for (var i = 0; i < a.data.items.length; i++)
-                                    a.data.items[i].style = JSON.parse(a.data.items[i].style);
+                                if (a.data.items)
+                                    for (var i = 0; i < a.data.items.length; i++)
+                                        a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
                                 vm.legend = a.data.items
                             });
@@ -457,8 +463,9 @@
         function _getCombinedAssets() {
             return $sandboxService.getAllIncomes().then(
                 a => {
-                    for (var i = 0; i < a.data.items.length; i++)
-                        a.data.items[i].style = JSON.parse(a.data.items[i].style);
+                    if (a.data.items)
+                        for (var i = 0; i < a.data.items.length; i++)
+                            a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
                     vm.legend = a.data.items
                 },
@@ -469,16 +476,18 @@
                         method: () => {
                             $sandboxService.getAllIncomes()
                                 .then(a => {
-                                    for (var i = 0; i < a.data.items.length; i++)
-                                        a.data.items[i].style = JSON.parse(a.data.items[i].style);
+                                    if (a.data.items)
+                                        for (var i = 0; i < a.data.items.length; i++)
+                                            a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
                                     vm.legend = a.data.items
                                 }).then(
                                 () => {
                                     $sandboxService.getAllExpenses().then(
                                         a => {
-                                            for (var i = 0; i < a.data.items.length; i++)
-                                                a.data.items[i].style = JSON.parse(a.data.items[i].style);
+                                            if (a.data.items)
+                                                for (var i = 0; i < a.data.items.length; i++)
+                                                    a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
                                             vm.legend.concat(a.data.items)
                                         },
@@ -488,8 +497,9 @@
                                                 miliseconds: 2000,
                                                 method: () => {
                                                     $sandboxService.getAllExpenses().then(a => {
-                                                        for (var i = 0; i < a.data.items.length; i++)
-                                                            a.data.items[i].style = JSON.parse(a.data.items[i].style);
+                                                        if (a.data.items)
+                                                            for (var i = 0; i < a.data.items.length; i++)
+                                                                a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
                                                         vm.legend.concat(a.data.items)
                                                     });
@@ -590,15 +600,15 @@
             var chart = vm.charts.filter((a) => a.key === type)[0].value;
             var options = _getChartOptions(chart);
 
-            if (chart.series.length === 0) {
+            if (chart.series.length === 0)
                 chart.series.push(_arrayOfZeros(chart.labels.length));
-            }
+
 
             _adjustTimeLabels(chart);
+            _addTooltipDetials(chart);
 
             var renderedChart = new Chartist.Line(elementId, chart, options);
 
-            _getChartLengend();
             _animateGraph(renderedChart, 200);
 
             vm.renderedChart = chart;
@@ -614,7 +624,7 @@
             var arr = [];
             var getAssets = () => { return (vm.currentTab == 'income') ? _getIncomes() : (vm.currentTab == 'expense') ? _getExpenses() : _getCombinedAssets(); };
 
-            getAssets().then(
+            return getAssets().then(
                 () => {
                     var hiddenLines = 0;
                     for (var i = 0; i < vm.legend.length; i++) {
@@ -704,7 +714,12 @@
         }
 
         function _getChartOptions(chart) {
+
             var lineSmooth = false;
+
+            var onZoom = (chart, reset) => {
+                vm.resetFunc = reset;
+            }
             switch (vm.chartType) {
                 case 'line':
                     switch (vm.chartLineStyle) {
@@ -723,23 +738,44 @@
                     break;
             }
 
-
             var options = {
                 lineSmooth: lineSmooth,
                 width: Math.round(chart.labels.length / 1.5) + "00px",
+                axisY: {
+                    //type: Chartist.AutoScaleAxis
+                },
                 axisX: {
+                    //type: Chartist.AutoScaleAxis,
                     labelOffset: {
                         x: 0,
                         y: 0
                     }
                 },
                 plugins: [
-                    chartistScroll({ height: "8px" })
+                    chartistScroll({ height: "8px" }),
+                    Chartist.plugins.tooltip()
+                    //Chartist.plugins.zoom({ onZoom: onZoom })
                 ]
 
             };
 
             return options;
+        }
+
+        function _addTooltipDetials(chart) {
+            for (var a = 0; a < chart.series.length; a++) {
+                var chartObj = vm.legend[a];
+                for (var b = 0; b < chart.series[a].length; b++) {
+                    var label = chart.labels[b],
+                        value = chart.series[a][b],
+                        lastValue = (b === 0) ? 0 : chart.series[a][b - 1].value;
+                    var meta = '<div> Date ' + label + ' </div>' + '<div> ' + ((chartObj.incomeType) ? '+ ' : '- ') + (value - lastValue) + ' </div>';
+                    chart.series[a][b] = {
+                        meta: meta,
+                        value: value
+                    }
+                }
+            }
         }
 
         function _adjustTimeLabels(chart) {
@@ -983,7 +1019,10 @@
                     function (e) {
                         //e.target // newly activated tab
                         //e.relatedTarget // previous active tab
-                        _targetGraph(vm.currentTab, ((vm.currentTab === "income") ? "#incomeChart" : (vm.currentTab === "expense") ? "#expenseChart" : "#combinedChart"));
+
+                        _getChartLengend().then(
+                            () => _targetGraph(vm.currentTab, ((vm.currentTab === "income") ? "#incomeChart" : (vm.currentTab === "expense") ? "#expenseChart" : "#combinedChart"))
+                        );
                     });
             }
         }
