@@ -17,6 +17,10 @@ namespace Nostreets_Services.Enums
         Entertaiment,
         Recreational,
         Investment,
+        Medical,
+        Insurance,
+        AutoExpenses,
+        Maintenance,
         Other
 
     }

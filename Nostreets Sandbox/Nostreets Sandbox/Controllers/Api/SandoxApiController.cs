@@ -864,22 +864,42 @@ namespace Nostreets_Sandbox.Controllers.Api
 
                 if (enumTypes.FirstOrDefault(a => a == "income") != null)
                 {
-                    result.Add("income", typeof(IncomeType).ToDictionary<IncomeType>());
+                    var types = typeof(IncomeType).ToDictionary<IncomeType>();
+                    for (int i = 0; i < types.Count; i++)
+                    {
+                        types[i] = types[i].SafeName();
+                    }
+                    result.Add("income", types);
                 }
 
                 if (enumTypes.FirstOrDefault(a => a == "expense") != null)
                 {
-                    result.Add("expense", typeof(ExpenseType).ToDictionary<ExpenseType>());
+                    var types = typeof(ExpenseType).ToDictionary<ExpenseType>();
+                    for(int i = 0; i < types.Count; i++)
+                    {
+                        types[i] = types[i].SafeName();
+                    }
+                    result.Add("expense", types);
                 }
 
                 if (enumTypes.FirstOrDefault(a => a == "schedule") != null)
                 {
-                    result.Add("schedule", typeof(ScheduleTypes).ToDictionary<ScheduleTypes>());
+                    var types = typeof(ScheduleTypes).ToDictionary<ScheduleTypes>();
+                    for (int i = 0; i < types.Count; i++)
+                    {
+                        types[i] = types[i].SafeName();
+                    }
+                    result.Add("schedule", types);
                 }
 
                 if (enumTypes.FirstOrDefault(a => a == "chart") != null)
                 {
-                    result.Add("chart", typeof(ChartType).ToDictionary<ChartType>());
+                    var types = typeof(ChartType).ToDictionary<ChartType>();
+                    for (int i = 0; i < types.Count; i++)
+                    {
+                        types[i] = types[i].SafeName();
+                    }
+                    result.Add("chart", types);
                 }
 
                 response = new ItemsResponse<string, Dictionary<int, string>>(result);

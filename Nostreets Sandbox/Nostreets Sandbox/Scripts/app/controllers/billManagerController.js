@@ -376,7 +376,7 @@
         }
 
         function _getCombinedChart() {
-            return $sandboxService.getCombinedChart(vm.beginDate, vm.endDate).then(
+            return $sandboxService.getCombinedChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
                 (data) => {
                     var combinedChart = {
                         key: "combined",
@@ -461,62 +461,43 @@
         }
 
         function _getCombinedAssets() {
-            return $sandboxService.getAllIncomes().then(
-                a => {
-                    if (a.data.items)
-                        for (var i = 0; i < a.data.items.length; i++)
-                            a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
-                    vm.legend = a.data.items
-                },
-                err => $baseController.errorCheck(err,
-                    {
-                        maxLoops: 3,
-                        miliseconds: 2000,
-                        method: () => {
-                            $sandboxService.getAllIncomes()
-                                .then(a => {
-                                    if (a.data.items)
-                                        for (var i = 0; i < a.data.items.length; i++)
-                                            a.data.items[i].style = JSON.parse(a.data.items[i].style);
+            var incomePromise =
+                () => {
+                    return $sandboxService.getAllIncomes().then(
+                        a => {
+                            if (a.data.items)
+                                for (var i = 0; i < a.data.items.length; i++)
+                                    a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
-                                    vm.legend = a.data.items
-                                }).then(
-                                () => {
-                                    $sandboxService.getAllExpenses().then(
-                                        a => {
+                            vm.legend = a.data.items
+                        },
+                        err => $baseController.errorCheck(err,
+                            {
+                                maxLoops: 3,
+                                miliseconds: 2000,
+                                method: () => {
+                                    $sandboxService.getAllIncomes()
+                                        .then(a => {
                                             if (a.data.items)
                                                 for (var i = 0; i < a.data.items.length; i++)
                                                     a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
-                                            vm.legend.concat(a.data.items)
-                                        },
-                                        err => $baseController.errorCheck(err,
-                                            {
-                                                maxLoops: 3,
-                                                miliseconds: 2000,
-                                                method: () => {
-                                                    $sandboxService.getAllExpenses().then(a => {
-                                                        if (a.data.items)
-                                                            for (var i = 0; i < a.data.items.length; i++)
-                                                                a.data.items[i].style = JSON.parse(a.data.items[i].style);
+                                            vm.legend = a.data.items
+                                        });
+                                }
+                            })
+                    );
+                }
 
-                                                        vm.legend.concat(a.data.items)
-                                                    });
-                                                }
-                                            })
-                                    );
-                                });
-                        }
-                    })
-            ).then(
+            var expensePromise =
                 () => {
-                    $sandboxService.getAllExpenses().then(
+                    return $sandboxService.getAllExpenses().then(
                         a => {
                             for (var i = 0; i < a.data.items.length; i++)
                                 a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
-                            vm.legend.concat(a.data.items)
+                            vm.legend = vm.legend.concat(a.data.items)
                         },
                         err => $baseController.errorCheck(err,
                             {
@@ -527,12 +508,22 @@
                                         for (var i = 0; i < a.data.items.length; i++)
                                             a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
-                                        vm.legend.concat(a.data.items)
+                                        vm.legend = vm.legend.concat(a.data.items)
                                     });
                                 }
                             })
                     );
-                });
+                }
+
+
+            return incomePromise().then(expensePromise,
+                err => $baseController.errorCheck(err,
+                    {
+                        maxLoops: 3,
+                        miliseconds: 2000,
+                        method: expensePromise
+                    }));
+
         }
 
         function _getIncome(id, name, scheduleType, incomeType) {

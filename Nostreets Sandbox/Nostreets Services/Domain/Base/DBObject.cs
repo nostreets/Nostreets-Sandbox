@@ -25,5 +25,7 @@ namespace Nostreets_Services.Domain.Base
 
         public virtual string ModifiedUserId { get; set; }
 
+        public virtual bool IsDeleted { get; set; }
+
     }
 }

@@ -134,7 +134,7 @@
                                         Edit
                                     </button>
                                     <button class="btn btn-round"
-                                            ng-class="{'.btn-togglable': !item.isHiddenOnChart, '.btn-toggled': item.isHiddenOnChart }"
+                                            ng-class="{'btn-toggle0': !item.isHiddenOnChart, 'btn-toggle1': item.isHiddenOnChart }"
                                             ng-click="pg.toggleVisiblity(item)">
                                         {{ (item.isHiddenOnChart === false) ? 'Hide' : 'Show' }}
                                     </button>
@@ -161,7 +161,7 @@
                             </small>
                             <br />
                             <small>
-                                {{ (item.incomeType) ? 'Payment ' : 'Paycheck ' }} Frequency: {{  pg.enums.schedule[item.paySchedule] }}
+                                {{ (item.incomeType) ? 'Paycheck ' : 'Payment ' }} Frequency: {{  pg.enums.schedule[item.paySchedule] }}
                             </small>
                             <br />
                             <small>

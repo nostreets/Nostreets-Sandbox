@@ -10,8 +10,14 @@ namespace Nostreets_Services.Enums
     {
         Any,
         Paycheck,
+        Sales,
+        Interest,
         Residual,
-        Product,
-        Personal
+        SocialSecurity,
+        _401K,
+        Gift,
+        Royalties,
+        UnderTheTabe,
+        Other
     }
 }
