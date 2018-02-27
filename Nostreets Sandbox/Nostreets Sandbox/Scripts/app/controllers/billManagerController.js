@@ -12,7 +12,6 @@
 
         var vm = this;
         vm.changeCurrentTab = _changeTab;
-        //vm.openMainMenuModal = _openMainMenuModal;
         vm.openDatePicker = _openDatePicker;
         vm.updateChart = _getUserCharts;
         vm.openInsertModal = _openInsertModal;
@@ -29,9 +28,9 @@
 
         function _render() {
             _setUp();
+            _eventHandlers();
             _getEnums();
             _getUserCharts();
-            //_dateZoomEvent();
         }
 
         function _setUp() {
@@ -41,7 +40,7 @@
             vm.currentTab = 'income';
             vm.renderedChart = null;
             vm.beginDate = new Date();
-            vm.endDate = new Date(new Date().setTime(vm.beginDate.getTime() + 14 * 86400000));
+            vm.endDate = new Date(new Date().setTime(vm.beginDate.getTime() + (13 * 86400000) + 82800000)); //  1 hr === 3600000 miliseconds \\ 24 hr === 86400000 miliseconds
             vm.chartOptions = null;
             vm.chartType = 'line';
             vm.chartLineStyle = 'none';
@@ -75,7 +74,16 @@
             vm.wheelUpTick = false;
             vm.wheelDownTick = false;
             vm.dateRangeTick = false;
-            vm.resetFunc = null;
+            vm.totals = [];
+        }
+
+        function _eventHandlers()
+        {
+            angular.element('.assetSwitcher').on('shown.bs.tab',
+                    () => _getChartLengend().then(
+                        () => _targetGraph(vm.currentTab, ((vm.currentTab === "income") ? "#incomeChart" : (vm.currentTab === "expense") ? "#expenseChart" : "#combinedChart"))
+                    )
+                );
         }
 
         function _getUserCharts() {
@@ -84,7 +92,10 @@
                     () => _getCombinedChart().then(
                         () => _getChartLengend().then(
                             () => _targetGraph(vm.currentTab, ((vm.currentTab === "income") ? "#incomeChart" : (vm.currentTab === "expense") ? "#expenseChart" : "#combinedChart"))
-                        ))));
+                        )
+                    )
+                )
+            );
         }
 
         function _dateEnding(date) {
@@ -152,6 +163,12 @@
                 }
 
             });
+        }
+
+        function _changeTab(tab) {
+            if (tab) {
+                vm.currentTab = tab;
+            }
         }
 
         function _openDatePicker(prop) {
@@ -273,37 +290,8 @@
             }
         }
 
-        function _getDailyDateRange(start, end) {
-
-            if ((!start instanceof Date && !start instanceof Date) || (!typeof (start) === "string" && !typeof (end) === "string")) {
-                throw Error("_getDateRange params needs to be a Date object or a valid date string...");
-            }
-
-            if (typeof (start) === "string" && typeof (end) === "string") {
-                start = new Date(start);
-                end = new Date(end);
-            }
-
-            var day,
-                utcEnd = end.toUTCString(),
-                result = [$filter("date")(end, "M/d")];
-
-            while (start < end) {
-                day = end.getDate();
-                end = new Date(end.setDate(--day));
-
-                formattedDate = $filter("date")(end, "M/d");
-
-                result.unshift(formattedDate);
-            }
-
-            vm.beginDate = new Date(start);
-            vm.endDate = new Date(utcEnd);
-            return result;
-        }
-
         function _getEnums() {
-            $sandboxService.getEnums('income,expense,schedule').then(
+            return $sandboxService.getEnums('income,expense,schedule').then(
                 (obj) => vm.enums = obj.data.items,
                 err => $baseController.errorCheck(err,
                     {
@@ -516,7 +504,7 @@
                 }
 
 
-            return incomePromise().then(expensePromise,
+            return incomePromise().then(() => expensePromise(),
                 err => $baseController.errorCheck(err,
                     {
                         maxLoops: 3,
@@ -600,24 +588,23 @@
 
             var renderedChart = new Chartist.Line(elementId, chart, options);
 
+            _getTotals(chart);
             _animateGraph(renderedChart, 200);
 
             vm.renderedChart = chart;
             vm.chartOptions = options;
 
-
         }
 
         function _getChartLengend() {
 
-            //return (vm.currentTab == 'income') ? _getIncomes() : (vm.currentTab == 'expense') ? _getExpenses() : _getCombinedAssets()
-            _getEnums();
-            var arr = [];
-            var getAssets = () => { return (vm.currentTab == 'income') ? _getIncomes() : (vm.currentTab == 'expense') ? _getExpenses() : _getCombinedAssets(); };
+            var getAssets = () => { return (vm.currentTab == 'income') ? _getIncomes() : (vm.currentTab == 'expense') ? _getExpenses() : _getCombinedAssets() };
 
             return getAssets().then(
                 () => {
-                    var hiddenLines = 0;
+
+                    var hiddenLines = 0,
+                        arr = [];
                     for (var i = 0; i < vm.legend.length; i++) {
                         var backupColor = page.utilities.getRandomColor(),
                             lineChar = String.fromCharCode(97 + (i - hiddenLines));
@@ -626,7 +613,6 @@
                             hiddenLines++;
                             continue;
                         }
-
                         if (!vm.legend[i].style)
                             vm.legend[i].style = { color: backupColor };
 
@@ -634,74 +620,8 @@
                     }
                     page.utilities.writeStyles("_lineStyles", arr);
                     vm.legend.reverse();
+
                 });
-        }
-
-        function _chartStyles(index) {
-            var result,
-                char = String.fromCharCode(97 + index);
-            switch (char) {
-                case 'a':
-                    result = { color: '#00bcd4' };
-                    break;
-
-                case 'b':
-                    result = { color: '#f44336' };
-                    break;
-
-                case 'c':
-                    result = { color: '#ff9800' };
-                    break;
-
-                case 'd':
-                    result = { color: '#9c27b0' };
-                    break;
-
-                case 'e':
-                    result = { color: '#4caf50' };
-                    break;
-
-                case 'f':
-                    result = { color: '#9C9B99' };
-                    break;
-
-                case 'g':
-                    result = '{color: #999999}';
-                    break;
-
-                case 'h':
-                    result = '{color: #dd4b39}';
-                    break;
-
-                case 'i':
-                    result = '{color: #35465c}';
-                    break;
-
-                case 'j':
-                    result = '{color: #e52d27}';
-                    break;
-
-                case 'k':
-                    result = '{color: #55acee}';
-                    break;
-
-                case 'l':
-                    result = '{color: #cc2127}';
-                    break;
-
-                case 'm':
-                    result = '{color: #1769ff}';
-                    break;
-
-                case 'n':
-                    result = '{color: #6188e2}';
-                    break;
-
-                case 'o':
-                    result = '{color: #a748ca}';
-                    break;
-            }
-            return result;
         }
 
         function _getChartOptions(chart) {
@@ -754,16 +674,18 @@
         }
 
         function _addTooltipDetials(chart) {
-            for (var a = 0; a < chart.series.length; a++) {
-                var chartObj = vm.legend[a];
-                for (var b = 0; b < chart.series[a].length; b++) {
-                    var label = chart.labels[b],
-                        value = chart.series[a][b],
-                        lastValue = (b === 0) ? 0 : chart.series[a][b - 1].value;
-                    var meta = '<div> Date ' + label + ' </div>' + '<div> ' + ((chartObj.incomeType) ? '+ ' : '- ') + (value - lastValue) + ' </div>';
-                    chart.series[a][b] = {
-                        meta: meta,
-                        value: value
+            if (typeof (chart.series[0][0].value) === 'undefined') {
+                for (var a = 0; a < chart.series.length; a++) {
+                    var chartObj = vm.legend[a];
+                    for (var b = 0; b < chart.series[a].length; b++) {
+                        var label = chart.labels[b],
+                            value = chart.series[a][b],
+                            lastValue = (b === 0) ? 0 : chart.series[a][b - 1].value;
+                        var meta = 'Date ' + label + ' ' + ((chartObj.incomeType) ? '+ ' : '- ') + (value - lastValue); //'<div> Date ' + label + ' </div>' + '<div> ' + ((chartObj.incomeType) ? '+ ' : '- ') + (value - lastValue) + ' </div>';
+                        chart.series[a][b] = {
+                            meta: meta,
+                            value: value
+                        }
                     }
                 }
             }
@@ -784,6 +706,35 @@
                         break;
                 }
             }
+        }
+
+        function _getDailyDateRange(start, end) {
+
+            if ((!start instanceof Date && !start instanceof Date) || (!typeof (start) === "string" && !typeof (end) === "string")) {
+                throw Error("_getDateRange params needs to be a Date object or a valid date string...");
+            }
+
+            if (typeof (start) === "string" && typeof (end) === "string") {
+                start = new Date(start);
+                end = new Date(end);
+            }
+
+            var day,
+                utcEnd = end.toUTCString(),
+                result = [$filter("date")(end, "M/d")];
+
+            while (end > start) {
+                day = end.getDate();
+                end = new Date(end.setDate(--day));
+
+                formattedDate = $filter("date")(end, "M/d");
+
+                result.unshift(formattedDate);
+            }
+
+            vm.beginDate = new Date(start);
+            vm.endDate = new Date(utcEnd);
+            return result;
         }
 
         function _findScheduleType(arr) {
@@ -827,6 +778,43 @@
                 return "Weekly";
             }
 
+        }
+
+        function _getTotals(chart) {
+            var a = 0,
+                result = [];
+
+            while (chart.labels.length > a) {
+
+                var b = 0,
+                    date = chart.labels[a],
+                    costArr = [];
+
+                while (chart.series.length > b) {
+
+                    var cost = (typeof (chart.series[b][a].value) !== 'undefined')
+                        ? chart.series[b][a].value - ((a === 0) ? 0 : chart.series[b][a - 1].value)
+                        : chart.series[b][a] - ((a === 0) ? 0 : chart.series[b][a - 1]);
+
+                    if (cost !== 0)
+                        costArr.push({
+                            cost: ((cost > 0) ? '+' : '') + cost,
+                            name: chart.legend[b]
+                        });
+
+                    b++;
+                }
+
+                if (costArr.length > 0)
+                    result.push({
+                        date: date,
+                        costs: costArr
+                    });
+
+                a++;
+            }
+
+            vm.totals = result;
         }
 
         function _animateGraph(chart, time) {
@@ -997,25 +985,6 @@
                 }
             });
 
-        }
-
-        function _changeTab(tab) {
-            if (tab) {
-                vm.currentTab = tab;
-            }
-
-            if (vm.currentTab) {
-
-                $('a[data-toggle="tab"]').on('shown.bs.tab',
-                    function (e) {
-                        //e.target // newly activated tab
-                        //e.relatedTarget // previous active tab
-
-                        _getChartLengend().then(
-                            () => _targetGraph(vm.currentTab, ((vm.currentTab === "income") ? "#incomeChart" : (vm.currentTab === "expense") ? "#expenseChart" : "#combinedChart"))
-                        );
-                    });
-            }
         }
 
         function _openInsertModal(data) {

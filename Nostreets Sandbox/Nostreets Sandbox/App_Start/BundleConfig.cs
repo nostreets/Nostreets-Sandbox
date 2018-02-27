@@ -11,6 +11,8 @@ namespace Nostreets_Sandbox
 
             bundles.Add(new StyleBundle("~/css").Include(
 
+                      "~/assets/css/bootstrap.css",
+                      "~/assets/css/bootstrap-theme.css",
                       "~/assets/css/theme-Dark.css",
                       "~/assets/css/material-dashboard.css",
                       "~/assets/css/chartist-plugin-tooltip.css",
@@ -19,8 +21,7 @@ namespace Nostreets_Sandbox
                       //"~/node_modules/onsenui/css/onsen-css-components.min.css",
                       "~/assets/css/Site.css",
 
-                      //"~/assets/css/bootstrap.css",
-                      "~/assets/css/bootstrap-theme.css",
+                      
 
                       "~/assets/css/font-awesome.css",
                       "~/node_modules/angular-ui-bootstrap/dist/ui-bootstrap-csp.css",

@@ -447,6 +447,23 @@ foreignObject > span {
         background: rgba(0, 0, 0, 0.4) !important;
     }
 
+.tabs-basic {
+    background: inherit !important;
+}
+
+    .tabs-basic > li > a,
+    .tabs-basic > li > a:hover,
+    .tabs-basic > li > a:focus {
+        color: #000000 !important;
+    }
+
+    .tabs-basic > li.active > a {
+        font-size: large
+    }
+
+
+
+
 /*#region @medias and @keyframes */
 
 @media only screen and (max-width: 768px) {
