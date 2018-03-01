@@ -1,4 +1,5 @@
 ﻿using Nostreets_Services.Domain;
+using Nostreets_Services.Domain.Base;
 using NostreetsExtensions.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -10,11 +11,12 @@ namespace Nostreets_Services.Interfaces.Services
 {
     public interface IUserService : IDBService<User, string>
     {
-        bool CheckIfUserExist(string username, string password);
+        bool CheckIfUserCanLogIn(string username, string password, out string failureReason);
         User GetByUsername(string username);
         void LogOut();
         void LogIn(string username, string password, bool rememberDevice = false);
-        bool Register(User user);
+        string Register(User user);
+        bool ValidateEmail(Token token);
 
     }
 }

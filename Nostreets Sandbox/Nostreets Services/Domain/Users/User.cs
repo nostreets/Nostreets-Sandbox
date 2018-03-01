@@ -33,22 +33,24 @@ namespace Nostreets_Services.Domain
 
     public class UserSettings
     {
-        public UserSettings()
-        {
-            TwoFactorAuthEnabled = false;
-            IsLockedOut = true;
-            HasVaildatedEmail = false;
-            HasVaildatedPhone = false;
-            HasPlaidSecret = false;
-        }
 
-        public bool TwoFactorAuthEnabled { get; set; }
-        public bool IsLockedOut { get; set; }
-        public bool HasVaildatedEmail { get; set; }
-        public bool HasVaildatedPhone { get; set; }
-        public bool HasPlaidSecret { get; set; }
+        private bool _isLockedOut = true;
+        private bool _twoFactorAuthEnabled = false;
+        private bool _hasVaildatedEmail = false;
+        private bool _hasVaildatedPhone = false;
+        private bool _hasPlaidSecret = false;
+        private bool _TFAuthByEmail = false;
+        private bool _TFAuthByPhone = false;
+
+
         public List<Tuple<string, string, string>> IPAddresses { get; set; }
-
+        public bool TwoFactorAuthEnabled { get => _twoFactorAuthEnabled; set => _twoFactorAuthEnabled = value; }
+        public bool TFAuthByEmail { get => _TFAuthByEmail; set => _TFAuthByEmail = value; }
+        public bool TFAuthByPhone { get => _TFAuthByPhone; set => _TFAuthByPhone = value; }
+        public bool IsLockedOut { get => _isLockedOut; set => _isLockedOut = value; }
+        public bool HasVaildatedEmail { get => _hasVaildatedEmail; set => _hasVaildatedEmail = value; }
+        public bool HasVaildatedPhone { get => _hasVaildatedPhone; set => _hasVaildatedPhone = value; }
+        public bool HasPlaidSecret { get => _hasPlaidSecret; set => _hasPlaidSecret = value; }
 
     }
 

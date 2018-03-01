@@ -25,14 +25,12 @@ namespace Nostreets_Sandbox.App_Start
             UnityContainer container = new UnityContainer();
 
             container.RegisterType<IMailChimpService, MailChimpService>(new ContainerControlledLifetimeManager());
-            container.RegisterType<ISendGridService, SendGridService>(new ContainerControlledLifetimeManager(), new InjectionConstructor(WebConfigurationManager.AppSettings["SendGrid.ApiKey"]));
+            container.RegisterType<IEmailService, SendGridService>(new ContainerControlledLifetimeManager(), new InjectionConstructor(WebConfigurationManager.AppSettings["SendGrid.ApiKey"]));
             container.RegisterType<IChartSrv, ChartsService>(new ContainerControlledLifetimeManager(), new InjectionConstructor(/*"AzureDBConnection"*/"DefaultConnection"));
-            //container.RegisterType<IDBService<StyledCard>, DBService<StyledCard>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(/*"AzureDBConnection"*/"DefaultConnection"));
-            container.RegisterType<IUserService, UserEFService>(new ContainerControlledLifetimeManager(), new InjectionConstructor(/*"AzureDBConnection"*/"DefaultConnection"));
+            container.RegisterType<IUserService, UserService>(new ContainerControlledLifetimeManager(), new InjectionConstructor(/*"AzureDBConnection"*/"DefaultConnection"));
             container.RegisterType<IBillService, BillService>(new ContainerControlledLifetimeManager(), new InjectionConstructor(/*"AzureDBConnection"*/"DefaultConnection"));
 
             container.RegisterType(typeof(IDBService<>), typeof(DBService<>), new ContainerControlledLifetimeManager(), new InjectionConstructor(/*"AzureDBConnection"*/"DefaultConnection"));
-            //container.RegisterType(typeof(IDBService<>), typeof(EFDBService<>), new ContainerControlledLifetimeManager(), new InjectionConstructor(/*"AzureDBConnection"*/"DefaultConnection"));
 
             ///Setting Resolvers for MVC and WebApi
             DependencyResolver.SetResolver(new UnityResolver(container));

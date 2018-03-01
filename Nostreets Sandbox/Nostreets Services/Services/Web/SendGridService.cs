@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Nostreets_Services.Services.Web
 {
-    public class SendGridService : ISendGridService
+    public class SendGridService : IEmailService
     {
         public SendGridService(string apiKey)
         {

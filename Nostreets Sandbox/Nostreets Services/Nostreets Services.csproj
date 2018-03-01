@@ -156,6 +156,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Domain\Base\DBObject.cs" />
+    <Compile Include="Domain\Base\Token.cs" />
     <Compile Include="Domain\Bills\Asset.cs" />
     <Compile Include="Domain\Bills\Expense.cs" />
     <Compile Include="Domain\Bills\Income.cs" />
@@ -191,7 +192,7 @@
     <Compile Include="Services\Database\ChartsService.cs" />
     <Compile Include="Domain\Charts\Chart.cs" />
     <Compile Include="Enums\ChartTypeId.cs" />
-    <Compile Include="Interfaces\Services\ISendGridService.cs" />
+    <Compile Include="Interfaces\Services\IEmailService.cs" />
     <Compile Include="Models\PagedList.cs" />
     <Compile Include="Models\Requests\ChartAddRequest.cs" />
     <Compile Include="Models\Requests\ChartUpdateRequest.cs" />

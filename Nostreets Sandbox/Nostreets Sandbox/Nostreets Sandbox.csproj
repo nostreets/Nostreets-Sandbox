@@ -271,6 +271,9 @@
     <Content Include="assets\css\pictures-upload.css" />
     <Content Include="assets\css\pictures-uploadCrop.css" />
     <Content Include="assets\css\chartist-plugin-tooltip.css" />
+    <Content Include="assets\img\facebook%402x.png" />
+    <Content Include="assets\img\googleplus%402x.png" />
+    <Content Include="assets\img\twitter%402x.png" />
     <Content Include="assets\js\chartist-plugin-tooltip.js" />
     <Content Include="assets\js\chartist-plugin-tooltip.min.js" />
     <Content Include="assets\js\chartist-plugin-zoom.js" />
@@ -2238,6 +2241,7 @@
     <Content Include="assets\js\modernizr-2.6.2.js" />
     <Content Include="assets\js\modernizr-2.8.3.js" />
     <Content Include="assets\js\moment.js" />
+    <Content Include="assets\ValidateEmail.html" />
     <Content Include="node_modules\angular-animate\angular-animate.js" />
     <Content Include="node_modules\angular-animate\angular-animate.min.js" />
     <Content Include="node_modules\angular-animate\index.js" />

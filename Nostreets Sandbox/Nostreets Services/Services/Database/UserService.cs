@@ -1,6 +1,8 @@
 ﻿using Nostreets_Services.Domain;
+using Nostreets_Services.Domain.Base;
 using Nostreets_Services.Interfaces.Services;
 using NostreetsExtensions;
+using NostreetsExtensions.Interfaces;
 using NostreetsExtensions.Utilities;
 using NostreetsORM;
 using System;
@@ -15,50 +17,70 @@ namespace Nostreets_Services.Services.Database
     {
         public UserService()
         {
-            _userSrv = new DBService<User, string>("DefaultConnection");
+            UserDBService = new DBService<User, string>("DefaultConnection");
         }
 
         public UserService(string connectionKey)
         {
-
-            _userSrv = new DBService<User, string>(connectionKey);
+            UserDBService = new DBService<User, string>(connectionKey);
         }
 
-        DBService<User, string> _userSrv = null;
+        [Microsoft.Practices.Unity.Dependency]
+        private IEmailService EmailService { get; set; }
+        [Microsoft.Practices.Unity.Dependency]
+        private IDBService<User, string> UserDBService { get; set; }
+        [Microsoft.Practices.Unity.Dependency]
+        private IDBService<Token, string> TokenDBService { get; set; }
 
-        public bool CheckIfUserExist(string username, string password)
+        public bool CheckIfUserCanLogIn(string username, string password, out string failureReason)
         {
-            string encryptedPassword = Encryption.SimpleDecryptWithPassword(password, password);
-            return (_userSrv.Where(a => a.UserName == username) == null)
-                        ? false
-                   : _userSrv.Where(a => a.UserName == username && a.Password == encryptedPassword) != null
-                        ? true
-                        : false;
+            failureReason = null;
+            bool result = false;
+            string encryptedPassword = Encryption.SimpleEncryptWithPassword(password, password);
+            User user = UserDBService.Where(a => a.UserName == username).FirstOrDefault();
+            if (user == null)
+                failureReason = "User doesn't exist...";
+
+            else if (user.Password != encryptedPassword)
+                failureReason = "Invalid password for " + username + "...";
+
+            else if (!user.Settings.HasVaildatedEmail)
+                failureReason = "Email is not validated...";
+
+            else if (user.Settings.TwoFactorAuthEnabled)
+            {
+                //TODO
+                failureReason = "2nd Code was sent to " + ((user.Settings.TFAuthByPhone) ? "Phone" : "Email");
+            }
+            else
+                result = true;
+
+            return result;
         }
 
         public void Delete(string id)
         {
-            _userSrv.Delete(id);
+            UserDBService.Delete(id);
         }
 
         public User Get(string id)
         {
-            return _userSrv.Get(id);
+            return UserDBService.Get(id);
         }
 
         public List<User> GetAll()
         {
-            return _userSrv.GetAll();
+            return UserDBService.GetAll();
         }
 
         public User GetByUsername(string username)
         {
-            return _userSrv.Where(a => a.UserName == username).FirstOrDefault();
+            return UserDBService.Where(a => a.UserName == username).FirstOrDefault();
         }
 
         public string Insert(User model)
         {
-            return _userSrv.Insert(model);
+            return UserDBService.Insert(model);
         }
 
         public void Update(User model)
@@ -68,7 +90,7 @@ namespace Nostreets_Services.Services.Database
 
         public IEnumerable<User> Where(Func<User, bool> predicate)
         {
-            return _userSrv.Where(predicate);
+            return UserDBService.Where(predicate);
         }
 
         public void LogOut()
@@ -80,11 +102,15 @@ namespace Nostreets_Services.Services.Database
         public void LogIn(string username, string password, bool rememberDevice = false)
         {
             User user = null;
-            if (CheckIfUserExist(username, password))
+            if (CheckIfUserCanLogIn(username, password, out string reason))
             {
                 user = GetByUsername(username);
-                if (rememberDevice && (user.Settings.IPAddresses == null || !user.Settings.IPAddresses.Contains(new Tuple<string, string, string>(HttpContext.Current.GetRequestIPAddress(), username, password))))
-                    user.Settings.IPAddresses.Add(new Tuple<string, string, string>(HttpContext.Current.GetRequestIPAddress(), username, password));
+
+                if (user.Settings.IPAddresses == null)
+
+
+                    if (rememberDevice && (user.Settings.IPAddresses == null || !user.Settings.IPAddresses.Contains(new Tuple<string, string, string>(HttpContext.Current.GetRequestIPAddress(), username, password))))
+                        user.Settings.IPAddresses.Add(new Tuple<string, string, string>(HttpContext.Current.GetRequestIPAddress(), username, password));
 
                 SessionManager.Add(new Dictionary<SessionState, object>{
                         { SessionState.IsLoggedOn, true},
@@ -95,13 +121,31 @@ namespace Nostreets_Services.Services.Database
                 });
             }
             else
-                throw new Exception("User does not exist with inputted username and password...");
+                throw new Exception(reason);
 
         }
 
-        public bool Register(User user)
+        public string Register(User user)
         {
 
+            string result = UserDBService.Insert(user);
+            Token token = new Token
+            {
+                ExpirationDate = DateTime.Now.AddDays(7),
+                IsDisabled = false,
+                UserId = user.Id,
+                Value = Guid.NewGuid()
+            };
+
+            TokenDBService.Insert(token);
+            EmailService.Send("no-reply@nostreetssolutions.org", "Nostreets Solutions", user.Contact.PrimaryEmail, "Nostreets Sandbox Validation", "", HttpContext.Current.Server.MapPath("\\assets\\ValidateEmail.html").ReadFile());
+
+            return result;
+        }
+
+        public bool ValidateEmail(Token token)
+        {
+            throw new NotImplementedException();
         }
     }
 
