@@ -25,35 +25,24 @@ namespace Nostreets_Sandbox.Controllers.Api
     [RoutePrefix("api")]
     public class SandoxApiController : ApiController
     {
-        #region Properties
+        #region Injected Services (Only posible on classes that implement IHttpController)
+
         [Microsoft.Practices.Unity.Dependency]
         IChartSrv ChartsService { get; set; }
+
         [Microsoft.Practices.Unity.Dependency]
         IEmailService SendGridService { get; set; }
+
         [Microsoft.Practices.Unity.Dependency]
         IDBService<StyledCard> CardService { get; set; }
+
         [Microsoft.Practices.Unity.Dependency]
         IUserService UserService { get; set; }
+
         [Microsoft.Practices.Unity.Dependency]
         IBillService BillService { get; set; }
 
         #endregion
-
-        //public SandoxApiController(/*IChartSrv chartsInject, ISendGridService sendGridInject, IDBService<StyledCard> cardInject, IUserService userInject, IBillService billsInject*/)
-        //{
-        //    try
-        //    {
-        //        SendGridService = App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Web.SendGridService>(); //sendGridInject;
-        //        UserService = App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.UserService>(); //userInject;
-        //        ChartsService = App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.ChartsService>(); //chartsInject;
-        //        CardService = App_Start.UnityConfig.GetContainer().Resolve<NostreetsORM.DBService<StyledCard>>(); //cardInject;
-        //        BillService = App_Start.UnityConfig.GetContainer().Resolve<Nostreets_Services.Services.Database.BillService>(); //billsInject;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-        //}
 
         #region Private Members
 
@@ -68,7 +57,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             return result;
         }
 
-        private User CurrentUser { get { return SessionManager.Get<User>(SessionState.User); } }//CacheManager.GetItem<User>("user"); } }
+        private User CurrentUser { get { return SessionManager.Get<User>(SessionState.User); } }
 
 
         #endregion
@@ -793,7 +782,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                                                 + "<div>" + phoneNumber + "</div>"
                                                 + "<div>" + "Message: " + emailRequest["messageText"] + "</div>";
                 }
-                if (!await SendGridService.Send(emailRequest["fromEmail"], emailRequest["name"], emailRequest["toEmail"], emailRequest["subject"], emailRequest["messageText"], emailRequest["messageHtml"]))
+                if (!await SendGridService.Send(emailRequest["fromEmail"], emailRequest["toEmail"], emailRequest["subject"], emailRequest["messageText"], emailRequest["messageHtml"]))
                 { throw new Exception("Email Was Not Sent"); }
                 SuccessResponse response = new SuccessResponse();
                 return Request.CreateResponse(HttpStatusCode.OK, response);

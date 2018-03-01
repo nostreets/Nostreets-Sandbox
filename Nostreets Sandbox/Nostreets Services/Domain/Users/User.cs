@@ -43,7 +43,7 @@ namespace Nostreets_Services.Domain
         private bool _TFAuthByPhone = false;
 
 
-        public List<Tuple<string, string, string>> IPAddresses { get; set; }
+        public List<string> IPAddresses { get; set; }
         public bool TwoFactorAuthEnabled { get => _twoFactorAuthEnabled; set => _twoFactorAuthEnabled = value; }
         public bool TFAuthByEmail { get => _TFAuthByEmail; set => _TFAuthByEmail = value; }
         public bool TFAuthByPhone { get => _TFAuthByPhone; set => _TFAuthByPhone = value; }

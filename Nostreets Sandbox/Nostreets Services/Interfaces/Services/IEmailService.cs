@@ -9,6 +9,6 @@ namespace Nostreets_Services.Interfaces.Services
 {
     public interface IEmailService
     {
-        Task<bool> Send(string fromEmail, string name, string toEmail, string subject, string messageText, string messageHtml);
+        Task<bool> Send(string fromEmail, string toEmail, string subject, string messageText, string messageHtml);
     }
 }

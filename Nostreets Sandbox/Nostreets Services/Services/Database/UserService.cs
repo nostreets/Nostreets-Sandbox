@@ -1,5 +1,6 @@
 ﻿using Nostreets_Services.Domain;
 using Nostreets_Services.Domain.Base;
+using Nostreets_Services.Enums;
 using Nostreets_Services.Interfaces.Services;
 using NostreetsExtensions;
 using NostreetsExtensions.Interfaces;
@@ -15,29 +16,25 @@ namespace Nostreets_Services.Services.Database
 {
     public class UserService : IUserService
     {
-        public UserService()
+        public UserService(IEmailService emailInject, IDBService<Token> tokenInject, IDBService<User, string> userInject)
         {
-            UserDBService = new DBService<User, string>("DefaultConnection");
+            _emailService = emailInject;
+            _userDBService = userInject;
+            _tokenDBService = tokenInject;
         }
 
-        public UserService(string connectionKey)
-        {
-            UserDBService = new DBService<User, string>(connectionKey);
-        }
+        
+        private IEmailService _emailService = null;// { get; set; }
+        private IDBService<User, string> _userDBService = null;//{ get; set; }
+        private IDBService<Token> _tokenDBService = null;// { get; set; }
 
-        [Microsoft.Practices.Unity.Dependency]
-        private IEmailService EmailService { get; set; }
-        [Microsoft.Practices.Unity.Dependency]
-        private IDBService<User, string> UserDBService { get; set; }
-        [Microsoft.Practices.Unity.Dependency]
-        private IDBService<Token, string> TokenDBService { get; set; }
 
         public bool CheckIfUserCanLogIn(string username, string password, out string failureReason)
         {
             failureReason = null;
             bool result = false;
             string encryptedPassword = Encryption.SimpleEncryptWithPassword(password, password);
-            User user = UserDBService.Where(a => a.UserName == username).FirstOrDefault();
+            User user = _userDBService.Where(a => a.UserName == username).FirstOrDefault();
             if (user == null)
                 failureReason = "User doesn't exist...";
 
@@ -45,11 +42,19 @@ namespace Nostreets_Services.Services.Database
                 failureReason = "Invalid password for " + username + "...";
 
             else if (!user.Settings.HasVaildatedEmail)
-                failureReason = "Email is not validated...";
+                failureReason = username + "'s email is not validated...";
 
             else if (user.Settings.TwoFactorAuthEnabled)
             {
-                //TODO
+                if (user.Settings.TFAuthByPhone)
+                {
+                    //todo SMSService txt code dto users phone
+                }
+                else
+                {
+                    //todo SMSService txt code dto users email
+                }
+
                 failureReason = "2nd Code was sent to " + ((user.Settings.TFAuthByPhone) ? "Phone" : "Email");
             }
             else
@@ -60,27 +65,27 @@ namespace Nostreets_Services.Services.Database
 
         public void Delete(string id)
         {
-            UserDBService.Delete(id);
+            _userDBService.Delete(id);
         }
 
         public User Get(string id)
         {
-            return UserDBService.Get(id);
+            return _userDBService.Get(id);
         }
 
         public List<User> GetAll()
         {
-            return UserDBService.GetAll();
+            return _userDBService.GetAll();
         }
 
         public User GetByUsername(string username)
         {
-            return UserDBService.Where(a => a.UserName == username).FirstOrDefault();
+            return _userDBService.Where(a => a.UserName == username).FirstOrDefault();
         }
 
         public string Insert(User model)
         {
-            return UserDBService.Insert(model);
+            return _userDBService.Insert(model);
         }
 
         public void Update(User model)
@@ -90,7 +95,7 @@ namespace Nostreets_Services.Services.Database
 
         public IEnumerable<User> Where(Func<User, bool> predicate)
         {
-            return UserDBService.Where(predicate);
+            return _userDBService.Where(predicate);
         }
 
         public void LogOut()
@@ -106,18 +111,14 @@ namespace Nostreets_Services.Services.Database
             {
                 user = GetByUsername(username);
 
-                if (user.Settings.IPAddresses == null)
-
-
-                    if (rememberDevice && (user.Settings.IPAddresses == null || !user.Settings.IPAddresses.Contains(new Tuple<string, string, string>(HttpContext.Current.GetRequestIPAddress(), username, password))))
-                        user.Settings.IPAddresses.Add(new Tuple<string, string, string>(HttpContext.Current.GetRequestIPAddress(), username, password));
+                if (rememberDevice && (user.Settings.IPAddresses == null || !user.Settings.IPAddresses.Contains(HttpContext.Current.GetRequestIPAddress())))
+                    user.Settings.IPAddresses.Add(new Tuple<string, string, string>(HttpContext.Current.GetRequestIPAddress(), username, password));
 
                 SessionManager.Add(new Dictionary<SessionState, object>{
                         { SessionState.IsLoggedOn, true},
                         { SessionState.IsUser, true},
-                        { SessionState.LogOffTime, DateTime.Now.AddMinutes(30)},
                         { SessionState.LogInTime, DateTime.Now},
-                        { SessionState.LogOffTime, user }
+                        { SessionState.User, user }
                 });
             }
             else
@@ -128,24 +129,51 @@ namespace Nostreets_Services.Services.Database
         public string Register(User user)
         {
 
-            string result = UserDBService.Insert(user);
+            string result = _userDBService.Insert(user);
             Token token = new Token
             {
                 ExpirationDate = DateTime.Now.AddDays(7),
                 IsDisabled = false,
                 UserId = user.Id,
-                Value = Guid.NewGuid()
+                Value = Guid.NewGuid(),
+                Name = user.UserName + "'s Email Validtion Token",
+                DateCreated = DateTime.Now,
+                DateModified = DateTime.Now
             };
 
-            TokenDBService.Insert(token);
-            EmailService.Send("no-reply@nostreetssolutions.org", "Nostreets Solutions", user.Contact.PrimaryEmail, "Nostreets Sandbox Validation", "", HttpContext.Current.Server.MapPath("\\assets\\ValidateEmail.html").ReadFile());
+            _tokenDBService.Insert(token);
+            _emailService.Send("no-reply@nostreetssolutions.org", user.Contact.PrimaryEmail, "Nostreets Sandbox Validation", "", HttpContext.Current.Server.MapPath("\\assets\\ValidateEmail.html").ReadFile());
 
             return result;
         }
 
         public bool ValidateEmail(Token token)
         {
-            throw new NotImplementedException();
+            bool result = false;
+            Token userToken = _tokenDBService.Where(
+                a => !a.IsDisabled && a.ExpirationDate > DateTime.Now && a.Type == TokenType.EmailValidtion && a.UserId == token.UserId && a.Value == token.Value
+            ).FirstOrDefault();
+
+            if (userToken != null)
+            {
+                User user = Get(token.UserId);
+
+                result = true;
+                userToken.IsDisabled = true;
+                userToken.DateModified = DateTime.Now;
+                user.Settings.IsLockedOut = false;
+                user.Settings.HasVaildatedEmail = true;
+
+                if (user.Settings.IPAddresses == null)
+                    user.Settings.IPAddresses = new List<string> { HttpContext.Current.GetRequestIPAddress() };
+                else
+                    user.Settings.IPAddresses.Add(HttpContext.Current.GetRequestIPAddress());
+
+                _userDBService.Update(user);
+                _tokenDBService.Update(userToken);
+            }
+
+            return result;
         }
     }
 

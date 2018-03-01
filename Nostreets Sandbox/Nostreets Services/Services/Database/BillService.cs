@@ -10,29 +10,30 @@ using NostreetsExtensions;
 using NostreetsORM;
 using NostreetsExtensions.Utilities;
 using Nostreets_Services.Domain;
+using NostreetsExtensions.Interfaces;
 
 namespace Nostreets_Services.Services.Database
 {
     public class BillService : IBillService
     {
-        public BillService()
+        public BillService(IDBService<Income> incomeInject, IDBService<Expense> expenseInject)
         {
             _connectionKey = "DefaultConnection";
-            _incomeSrv = new DBService<Income>(_connectionKey);
-            _expenseSrv = new DBService<Expense>(_connectionKey);
+            _incomeSrv = incomeInject;//new DBService<Income>(_connectionKey);
+            _expenseSrv = expenseInject;//new DBService<Expense>(_connectionKey);
         }
 
-        public BillService(string connectionKey)
+        public BillService(IDBService<Income> incomeInject, IDBService<Expense> expenseInject, string connectionKey)
         {
             _connectionKey = connectionKey;
-            _incomeSrv = new DBService<Income>(_connectionKey);
-            _expenseSrv = new DBService<Expense>(_connectionKey);
+            _incomeSrv = incomeInject;//new DBService<Income>(_connectionKey);
+            _expenseSrv = expenseInject;//new DBService<Expense>(_connectionKey);
         }
 
 
         private string _connectionKey = null;
-        private DBService<Expense> _expenseSrv = null;
-        private DBService<Income> _incomeSrv = null;
+        private IDBService<Expense> _expenseSrv = null;
+        private IDBService<Income> _incomeSrv = null;
 
         public List<Expense> GetAllExpenses(string userId)
         {

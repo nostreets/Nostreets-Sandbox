@@ -1,10 +1,8 @@
-﻿using Nostreets_Services.Domain;
-using Nostreets_Services.Interfaces.Services;
+﻿using Nostreets_Services.Interfaces.Services;
 using NostreetsExtensions;
 using NostreetsExtensions.Utilities;
 using NostreetsInterceptor;
 using NostreetsRouter.Models.Responses;
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Net.Http;
@@ -29,8 +27,8 @@ namespace Nostreets_Sandbox.Services.Database
             else
             {
                 //User user = CacheManager.GetItem<User>("user");
-                bool user = SessionManager.Get<bool>(SessionState.IsLoggedOn);
-                if (user == null) { NotLoggedIn(app); }
+                bool isLoggedOn = SessionManager.Get<bool>(SessionState.IsLoggedOn);
+                if (!isLoggedOn) { NotLoggedIn(app); }
             }
         }
 

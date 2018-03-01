@@ -15,20 +15,20 @@ namespace Nostreets_Services.Services.Database
 {
     public class ChartsService : IChartSrv
     {
-        public ChartsService()
+        public ChartsService(IDBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest> chartInject, IDBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>> pieChartInject)
         {
-            _chartSrv = new DBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest>();
-            _pieChartSrv = new DBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>>();
+            _chartSrv = chartInject; //new DBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest>();
+            _pieChartSrv = pieChartInject; //new DBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>>();
         }
 
-        public ChartsService(string connectionKey)
+        public ChartsService(IDBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest> chartInject, IDBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>> pieChartInject, string connectionKey)
         {
-            _chartSrv = new DBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest>(connectionKey);
-            _pieChartSrv = new DBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>>(connectionKey);
+            _chartSrv = chartInject; //new DBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest>();
+            _pieChartSrv = pieChartInject; //new DBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>>();
         }
 
-        DBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest> _chartSrv = null;
-        DBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>> _pieChartSrv = null;
+        IDBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest> _chartSrv = null;
+        IDBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>> _pieChartSrv = null;
 
         public void Delete(int id)
         {

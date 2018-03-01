@@ -72,8 +72,28 @@
                 color += letters[Math.floor(Math.random() * 16)];
             }
             return color;
-        }
+        },
 
+        getInactiveTime: () => {
+            var t;
+            window.onload = resetTimer;
+            document.onload = resetTimer;
+            document.onmousemove = resetTimer;
+            document.onmousedown = resetTimer; // touchscreen presses
+            document.ontouchstart = resetTimer;
+            document.onclick = resetTimer;     // touchpad clicks
+            document.onscroll = resetTimer;    // scrolling with arrow keys
+            document.onkeypress = resetTimer;
+
+            var logout = () => {
+                alert("You are now logged out.")
+            }
+
+            var resetTimer = () => {
+                clearTimeout(t);
+                t = setTimeout(logout, 3000)
+            }
+        }
     }
 };
 
