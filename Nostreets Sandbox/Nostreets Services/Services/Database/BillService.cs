@@ -321,14 +321,29 @@ namespace Nostreets_Services.Services.Database
             ,
                 generateDaily = () =>
                 {
-                    List<string> daily = daily = DateTimeFormatInfo.CurrentInfo.DayNames.Where((a, b) => b >= (int)startDate.DayOfWeek).Concat(
-                                                 DateTimeFormatInfo.CurrentInfo.DayNames.Where((a, b) => b < (int)startDate.DayOfWeek)).ToList();
 
-                    for (int i = daily.Count, n = 0; i <= Math.Round(diff.TotalDays); i++, n++)
+                    int day = 0;
+                    DateTime end = default(DateTime);
+                    List<string> daily = new List<string>();
+
+                    string formattedDate = endDate.ToString("M/d");
+                    daily.Prepend(formattedDate);
+                    do
                     {
-                        if (n > 6) { n = 0; }
-                        daily.Add(daily[n]);
+                        end = endDate.AddDays(--day);
+                        formattedDate = end.ToString("M/d");
+                        daily.Prepend(formattedDate);
                     }
+                    while (end > startDate);
+
+                    //List<string> daily = daily = DateTimeFormatInfo.CurrentInfo.DayNames.Where((a, b) => b >= (int)startDate.DayOfWeek).Concat(
+                    //                             DateTimeFormatInfo.CurrentInfo.DayNames.Where((a, b) => b < (int)startDate.DayOfWeek)).ToList();
+
+                    //for (int i = daily.Count, n = 0; i <= Math.Round(diff.TotalDays); i++, n++)
+                    //{
+                    //    if (n > 6) { n = 0; }
+                    //    daily.Add(daily[n]);
+                    //}
 
                     return daily;
                 }

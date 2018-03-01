@@ -10,7 +10,11 @@ namespace Nostreets_Services.Interfaces.Services
 {
     public interface IUserService : IDBService<User, string>
     {
-        bool CheckIfUserExist(string username);
+        bool CheckIfUserExist(string username, string password);
         User GetByUsername(string username);
+        void LogOut();
+        void LogIn(string username, string password, bool rememberDevice = false);
+        bool Register(User user);
+
     }
 }

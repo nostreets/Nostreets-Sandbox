@@ -34,7 +34,7 @@ namespace Nostreets_Sandbox
                     "~/assets/js/jquery-3.2.1.js",
                     "~/assets/js/jquery.validate.js",
                     "~/assets/js/bootstrap.js",
-                    "~/assets/onsenui/js/onsenui.js",
+                    //"~/assets/onsenui/js/onsenui.js",
                     "~/assets/js/material.min.js",
                     "~/assets/js/sweetalert2.js",
                     "~/assets/js/chartist.min.js",

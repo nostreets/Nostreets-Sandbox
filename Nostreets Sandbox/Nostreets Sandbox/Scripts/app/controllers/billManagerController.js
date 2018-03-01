@@ -75,15 +75,15 @@
             vm.wheelDownTick = false;
             vm.dateRangeTick = false;
             vm.totals = [];
+            vm.overallCost = 0;
         }
 
-        function _eventHandlers()
-        {
+        function _eventHandlers() {
             angular.element('.assetSwitcher').on('shown.bs.tab',
-                    () => _getChartLengend().then(
-                        () => _targetGraph(vm.currentTab, ((vm.currentTab === "income") ? "#incomeChart" : (vm.currentTab === "expense") ? "#expenseChart" : "#combinedChart"))
-                    )
-                );
+                () => _getChartLengend().then(
+                    () => _targetGraph(vm.currentTab, ((vm.currentTab === "income") ? "#incomeChart" : (vm.currentTab === "expense") ? "#expenseChart" : "#combinedChart"))
+                )
+            );
         }
 
         function _getUserCharts() {
@@ -222,70 +222,67 @@
                     rateMultilplier: (vm.rateMultilplier) ? vm.rateMultilplier : 1
                 }
 
-                switch (vm.currentTab) {
-                    case "income":
-                        obj.incomeType = parseInt(chart.incomeType);
+                if (typeof (chart.incomeType) !== 'undefined') {
+                    obj.incomeType = parseInt(chart.incomeType);
 
-                        if (chart.id) {
-                            obj.id = chart.id;
-                            $sandboxService.updateIncome(obj).then(
-                                _getUserCharts,
-                                err => $baseController.errorCheck(err,
-                                    {
-                                        maxLoops: 3,
-                                        miliseconds: 2000,
-                                        method: () => {
-                                            $sandboxService.updateIncome(obj);
-                                        }
-                                    })
-                            );
-                        }
-                        else {
-                            $sandboxService.insertIncome(obj).then(
-                                _getUserCharts,
-                                err => $baseController.errorCheck(err,
-                                    {
-                                        maxLoops: 3,
-                                        miliseconds: 2000,
-                                        method: () => {
-                                            $sandboxService.insertIncome(obj);
-                                        }
-                                    })
-                            );
-                        }
-                        break;
+                    if (chart.id) {
+                        obj.id = chart.id;
+                        $sandboxService.updateIncome(obj).then(
+                            _getUserCharts,
+                            err => $baseController.errorCheck(err,
+                                {
+                                    maxLoops: 3,
+                                    miliseconds: 2000,
+                                    method: () => {
+                                        $sandboxService.updateIncome(obj);
+                                    }
+                                })
+                        );
+                    }
+                    else {
+                        $sandboxService.insertIncome(obj).then(
+                            _getUserCharts,
+                            err => $baseController.errorCheck(err,
+                                {
+                                    maxLoops: 3,
+                                    miliseconds: 2000,
+                                    method: () => {
+                                        $sandboxService.insertIncome(obj);
+                                    }
+                                })
+                        );
+                    }
+                }
+                else {
+                    obj.expenseType = parseInt(chart.expenseType);
 
-                    case "expense":
-                        obj.expenseType = parseInt(chart.expenseType);
-
-                        if (vm.id) {
-                            obj.id = chart.id
-                            $sandboxService.updateExpense(obj).then(
-                                _getUserCharts,
-                                err => $baseController.errorCheck(err,
-                                    {
-                                        maxLoops: 3,
-                                        miliseconds: 2000,
-                                        method: () => {
-                                            $sandboxService.updateExpense(obj);
-                                        }
-                                    })
-                            );
-                        }
-                        else {
-                            $sandboxService.insertExpense(obj).then(
-                                _getUserCharts,
-                                err => $baseController.errorCheck(err,
-                                    {
-                                        maxLoops: 3,
-                                        miliseconds: 2000,
-                                        method: () => {
-                                            $sandboxService.insertExpense(obj);
-                                        }
-                                    })
-                            );
-                        }
-                        break;
+                    if (vm.id) {
+                        obj.id = chart.id
+                        $sandboxService.updateExpense(obj).then(
+                            _getUserCharts,
+                            err => $baseController.errorCheck(err,
+                                {
+                                    maxLoops: 3,
+                                    miliseconds: 2000,
+                                    method: () => {
+                                        $sandboxService.updateExpense(obj);
+                                    }
+                                })
+                        );
+                    }
+                    else {
+                        $sandboxService.insertExpense(obj).then(
+                            _getUserCharts,
+                            err => $baseController.errorCheck(err,
+                                {
+                                    maxLoops: 3,
+                                    miliseconds: 2000,
+                                    method: () => {
+                                        $sandboxService.insertExpense(obj);
+                                    }
+                                })
+                        );
+                    }
                 }
             }
         }
@@ -547,26 +544,26 @@
             var hasError = false;
             if (obj.incomeType) {
                 $sandboxService.deleteIncome(obj.id).then(
-                    (data) => console.log(data),
+                    _getUserCharts,
                     err => $baseController.errorCheck(err,
                         {
                             maxLoops: 3,
                             miliseconds: 2000,
                             method: () => {
-                                $sandboxService.deleteIncome(obj.id).then((data) => console.log(data));
+                                $sandboxService.deleteIncome(obj.id).then(_getUserCharts);
                             }
                         })
                 );
             }
             else {
                 $sandboxService.deleteExpense(obj.id).then(
-                    (data) => console.log(data),
+                    _getUserCharts,
                     err => $baseController.errorCheck(err,
                         {
                             maxLoops: 3,
                             miliseconds: 2000,
                             method: () => {
-                                $sandboxService.deleteExpense(obj.id).then((data) => console.log(data));
+                                $sandboxService.deleteExpense(obj.id).then(_getUserCharts);
                             }
                         })
                 );
@@ -582,8 +579,6 @@
             if (chart.series.length === 0)
                 chart.series.push(_arrayOfZeros(chart.labels.length));
 
-
-            _adjustTimeLabels(chart);
             _addTooltipDetials(chart);
 
             var renderedChart = new Chartist.Line(elementId, chart, options);
@@ -628,9 +623,6 @@
 
             var lineSmooth = false;
 
-            var onZoom = (chart, reset) => {
-                vm.resetFunc = reset;
-            }
             switch (vm.chartType) {
                 case 'line':
                     switch (vm.chartLineStyle) {
@@ -652,11 +644,15 @@
             var options = {
                 lineSmooth: lineSmooth,
                 width: Math.round(chart.labels.length / 1.5) + "00px",
+
                 axisY: {
-                    //type: Chartist.AutoScaleAxis
+                    offset: 40 + (5 * _getYLabelLength(chart)),
+                    labelOffset: {
+                        x: 0,
+                        y: 5
+                    }
                 },
                 axisX: {
-                    //type: Chartist.AutoScaleAxis,
                     labelOffset: {
                         x: 0,
                         y: 0
@@ -689,52 +685,6 @@
                     }
                 }
             }
-        }
-
-        function _adjustTimeLabels(chart) {
-
-            if (angular.element("#assetChartTabContainer")[0].clientWidth < 1150) {
-
-                switch (_findScheduleType(chart.labels)) {
-
-                    case "Daily":
-                        var minimizedLabels = _getDailyDateRange(vm.beginDate, vm.endDate);
-
-                        if (chart.labels.length === minimizedLabels.length) {
-                            chart.labels = _getDailyDateRange(vm.beginDate, vm.endDate);
-                        }
-                        break;
-                }
-            }
-        }
-
-        function _getDailyDateRange(start, end) {
-
-            if ((!start instanceof Date && !start instanceof Date) || (!typeof (start) === "string" && !typeof (end) === "string")) {
-                throw Error("_getDateRange params needs to be a Date object or a valid date string...");
-            }
-
-            if (typeof (start) === "string" && typeof (end) === "string") {
-                start = new Date(start);
-                end = new Date(end);
-            }
-
-            var day,
-                utcEnd = end.toUTCString(),
-                result = [$filter("date")(end, "M/d")];
-
-            while (end > start) {
-                day = end.getDate();
-                end = new Date(end.setDate(--day));
-
-                formattedDate = $filter("date")(end, "M/d");
-
-                result.unshift(formattedDate);
-            }
-
-            vm.beginDate = new Date(start);
-            vm.endDate = new Date(utcEnd);
-            return result;
         }
 
         function _findScheduleType(arr) {
@@ -780,9 +730,40 @@
 
         }
 
+        function _getYLabelLength(chart) {
+            var result = 0,
+                hasPositive = false,
+                hasNegative = false;
+            for (var line of chart.series) {
+                for (var point of line) {
+                    if (typeof (point.value) !== 'undefined') {
+                        if ((point.value + '').length > result)
+                            result = (point.value + '').length;
+                        if (point.value > 0)
+                            hasPositive = true;
+                        if (point.value < 0)
+                            hasNegative = true;
+
+                    }
+                    else {
+                        if ((point + '').length > result)
+                            result = (point + '').length;
+                        if (point > 0)
+                            hasPositive = true;
+                        if (point < 0)
+                            hasNegative = true;
+
+                    }
+                }
+            }
+
+            return (hasPositive && !hasNegative) ? ((result > 3) ? result - 3 : 0) : (hasNegative && !hasPositive) ? ((result > 1) ? result - 1 : 0) : ((result > 2) ? result - 2 : 0);
+        }
+
         function _getTotals(chart) {
             var a = 0,
-                result = [];
+                result = [],
+                overallCost = 0;
 
             while (chart.labels.length > a) {
 
@@ -796,11 +777,13 @@
                         ? chart.series[b][a].value - ((a === 0) ? 0 : chart.series[b][a - 1].value)
                         : chart.series[b][a] - ((a === 0) ? 0 : chart.series[b][a - 1]);
 
-                    if (cost !== 0)
+                    if (cost !== 0) {
+                        overallCost += cost;
                         costArr.push({
                             cost: ((cost > 0) ? '+' : '') + cost,
                             name: chart.legend[b]
                         });
+                    }
 
                     b++;
                 }
@@ -815,6 +798,7 @@
             }
 
             vm.totals = result;
+            vm.overallCost = overallCost;
         }
 
         function _animateGraph(chart, time) {

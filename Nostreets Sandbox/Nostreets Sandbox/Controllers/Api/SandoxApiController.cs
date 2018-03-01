@@ -63,7 +63,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             return result;
         }
 
-        private User CurrentUser { get { return CacheManager.GetItem<User>("user"); } }
+        private User CurrentUser { get { return SessionManager.Get<User>(SessionState.User); } }//CacheManager.GetItem<User>("user"); } }
 
 
         #endregion
@@ -71,33 +71,17 @@ namespace Nostreets_Sandbox.Controllers.Api
         #region User Service Endpoints
         [Route("user")]
         [HttpGet]
-        public HttpResponseMessage LogInUser(string username)
+        public HttpResponseMessage LogInUser(string username, string password)
         {
             try
             {
-                User user = null;
-                var offset = new DateTimeOffset(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.AddDays(1).Day, DateTime.Now.Hour, 0, 0, default(TimeSpan));
-
-                if (!_userSrv.CheckIfUserExist(username))
-                {
-                    user = new User
-                    {
-                        UserName = username,
-                        Id = _userSrv.Insert(new User { UserName = username })
-                    };
-
-                    CacheManager.InsertItem("user", user, offset);
-                }
-                else
-                {
-                    user = _userSrv.GetByUsername(username);
-                    CacheManager.InsertItem("user", user, offset);
-                }
+                
+                _userSrv.LogIn(username, password);
 
                 ItemResponse<string> response = new ItemResponse<string>(username);
                 HttpContext.Current.SetCookie("loggedIn", "true", DateTime.Now.AddDays(1));
 
-                return Request.CreateResponse(HttpStatusCode.OK, response); //responseMessage;
+                return Request.CreateResponse(HttpStatusCode.OK, response);
 
             }
             catch (Exception ex)

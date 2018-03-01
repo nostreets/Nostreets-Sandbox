@@ -25,13 +25,11 @@ namespace Nostreets_Sandbox.Services.Database
         [Validator("UserLogIn")]
         void GetCurrentUser(HttpApplication app)
         {
-            if (app.Request.GetCookie("loggedIn") == null || app.Request.GetCookie("loggedIn") == "false") { NotLoggedIn(app); }
+            if (SessionManager.Get<bool>(SessionState.IsLoggedOn)/*app.Request.GetCookie("loggedIn") == null || app.Request.GetCookie("loggedIn") == "false"*/) { NotLoggedIn(app); }
             else
             {
-                // string uid = CacheManager.GetItem<string>("user");
-                // if (uid == null) { NotLoggedIn(app); }
-
-                User user = CacheManager.GetItem<User>("user");
+                //User user = CacheManager.GetItem<User>("user");
+                bool user = SessionManager.Get<bool>(SessionState.IsLoggedOn);
                 if (user == null) { NotLoggedIn(app); }
             }
         }

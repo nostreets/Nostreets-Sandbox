@@ -160,7 +160,8 @@
     <Compile Include="Domain\Bills\Expense.cs" />
     <Compile Include="Domain\Bills\Income.cs" />
     <Compile Include="Domain\Cards\StyledCard.cs" />
-    <Compile Include="Domain\Identities\IdentityModels.cs" />
+    <Compile Include="Domain\Plaid\Transactions.cs" />
+    <Compile Include="Domain\Users\User.cs" />
     <Compile Include="Domain\Newsletter\Link.cs" />
     <Compile Include="Domain\Newsletter\Lists\CampaignDefaults.cs" />
     <Compile Include="Domain\Newsletter\Lists\Contact.cs" />

@@ -32,13 +32,13 @@ namespace Nostreets_Services.Domain.Bills
 
         public ScheduleTypes Rate { get; set; }
 
-        public float RateMultilplier { get => _costMultilplier; set => _costMultilplier = value; }
+        public float RateMultilplier { get => _rateMultilplier; set => _rateMultilplier = value; }
 
-        public override string UserId { get => CacheManager.Contains("user") ? CacheManager.GetItem<User>("user").Id : null; }
-
+        public override string UserId { get => SessionManager.Get<bool>(SessionState.IsLoggedOn) ? SessionManager.Get<string>(SessionState.UserId) : null; }
+        
         public string Style { get; set; }
 
-        private float _costMultilplier = 1;
+        private float _rateMultilplier = 1;
 
     }
 }

@@ -5,7 +5,7 @@
     <div class="row">
         <h2 class="text-center text-primary text-blueish">Bill Manager</h2>
         <ul class="nav nav-tabs nav-justified">
-            <li class="active assetSwitcher" role="presentation"><a role="tab" data-target="#incomeTab" data-toggle="tab" ng-click="pg.changeCurrentTab('income')">Incomes</a></li>
+            <li role="presentation" class="active"><a class="assetSwitcher" role="tab" data-target="#incomeTab" data-toggle="tab" ng-click="pg.changeCurrentTab('income')">Incomes</a></li>
             <li role="presentation"><a class="assetSwitcher" role="tab" data-target="#combinedTab" data-toggle="tab" ng-click="pg.changeCurrentTab('combined')">Incomes & Expenses</a></li>
             <li role="presentation"><a class="assetSwitcher" role="tab" data-target="#expenseTab" data-toggle="tab" ng-click="pg.changeCurrentTab('expense')">Expenses</a></li>
         </ul>
@@ -45,65 +45,26 @@
     </div>
 
     <div class="row">
-        <div id="assetChartTabContainer" class="tab-content">
-            <div id="incomeTab" class="tab-pane active fade in" role="tabpanel">
-                <div class="col-xs-12">
-                    <div class="card">
-                        <div class="card-header text-center">
-                            <h6>{{ pg.charts[0].data.name }}</h6>
-                        </div>
-                        <div class="card-content text-center">
-                            <div id="incomeChart" class="card-content text-center ct-golden-section">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="expenseTab" class="tab-pane fade" role="tabpanel">
-                <div class="col-xs-12">
-                    <div class="card">
-                        <div class="card-header text-center">
-                            <h6>{{ pg.charts[1].data.name }}</h6>
-                        </div>
-                        <div class="card-content text-center">
-                            <div id="expenseChart" class="card-content text-center ct-golden-section">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="combinedTab" class="tab-pane fade" role="tabpanel">
-                <div class="col-xs-12">
-                    <div class="card">
-                        <div class="card-header text-center">
-                            <h6>{{ pg.charts[2].data.name }}</h6>
-                        </div>
-                        <div class="card-content text-center">
-                            <div id="combinedChart" class="card-content text-center ct-golden-section">
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-
         <div align="center">
             <button class="btn btn-xs btn-round" ng-if="pg.currentTab !== 'combined'" ng-click="pg.openInsertModal()">Add {{ pg.currentTab == "income" ? "Income" : "Expense" }}</button>
         </div>
     </div>
+
     <div class="row">
         <div class="col-xs-12">
             <div class="card" style="padding-bottom: 2%;">
                 <div class="card-header">
-                    <ul class="nav nav-tabs tabs-basic">
-                        <li class="active" role="presentation"><a role="tab" data-target="#assetsTab" data-toggle="tab"> {{ (pg.currentTab == 'income') ? 'Incomes' : (pg.currentTab == 'expense') ? 'Expenses' : 'Incomes & Expenses' }}</a></li>
-                        <li role="presentation"><a role="tab" data-target="#totalsTab" data-toggle="tab">Totals</a></li>
+                    <button data-toggle="tab" role="tab" class="btn btn-simple pull-right" ng-click="pg.openInsertModal()">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    </button>
+                    <ul class="nav nav-tabs nav-justified tabs-basic">
+                        <li role="presentation" class="active">
+                            <a role="tab" data-target="#assetsTab" data-toggle="tab">{{ (pg.currentTab == 'income') ? 'Incomes' : (pg.currentTab == 'expense') ? 'Expenses' : 'Incomes & Expenses' }}</a>
+                        </li>
+                        <li role="presentation">
+                            <a role="tab" data-target="#totalsTab" data-toggle="tab">Totals</a>
+                        </li>
                     </ul>
-                    <!--<h3> {{ (pg.currentTab == 'income') ? 'Incomes' : (pg.currentTab == 'expense') ? 'Expenses' : 'Incomes & Expenses' }}</h3>-->
                 </div>
                 <div class="card-content text-center">
                     <!--<img src="/assets/css/default-skin/preloader.gif"/>-->
@@ -112,7 +73,6 @@
                             <div ng-repeat="item in pg.legend">
                                 <div class="col-xs-12 text-center">
                                     <div class="col-sm-1">
-                                        <!--<i class="material-icons" ng-style="item.style" >brightness_1</i>-->
                                         <color-picker ng-model="item.style.color"
                                                       event-api="pg.cpEventApi"
                                                       options="pg.cpOptions">
@@ -145,7 +105,7 @@
                                 <div class="col-xs-12 text-center">
                                     <h4>{{ item.name }}</h4>
                                     <div>
-                                        {{ (item.incomeType) ? '+' :  '' }}
+                                        {{ (item.incomeType) ? '+' :  '-' }}
                                         {{ item.cost | currency }}
                                         {{ item.rate === 3 ? 'Per Year' : item.rate === 5 ? 'Per Month' : item.rate === 7 ? 'Per Week' : item.rate === 9 ? 'Per Hour' : item.rate === 8 ? 'Per Day' : '' }}
                                     </div>
@@ -171,14 +131,15 @@
                                 <div class="row" ng-repeat="item in pg.totals">
                                     <div class="col-xs-offset-1 col-xs-2"><h4>{{ item.date }}</h4></div>
                                     <div class="col-xs-10" ng-repeat="cost in item.costs">
-                                        {{ cost.name + ' ' + cost.cost }}
+                                        {{ cost.name + ': ' + ((cost.cost > 0) ? '+' : '') + (cost.cost | currency) }}
                                     </div>
                                 </div>
-
+                                <br />
+                                <div class="col-xs-12 col-xs-offset-2">
+                                    Overall Amount: {{ ((pg.overallCost > 0) ? '+' : '') + (pg.overallCost | currency) }}
+                                </div>
                             </div>
-
                         </div>
-
                     </div>
                 </div>
             </div>
