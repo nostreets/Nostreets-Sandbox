@@ -26,8 +26,8 @@ namespace Nostreets_Services.Services.Database
         public BillService(IDBService<Income> incomeInject, IDBService<Expense> expenseInject, string connectionKey)
         {
             _connectionKey = connectionKey;
-            _incomeSrv = incomeInject;//new DBService<Income>(_connectionKey);
-            _expenseSrv = expenseInject;//new DBService<Expense>(_connectionKey);
+            _incomeSrv = incomeInject;
+            _expenseSrv = expenseInject;
         }
 
 

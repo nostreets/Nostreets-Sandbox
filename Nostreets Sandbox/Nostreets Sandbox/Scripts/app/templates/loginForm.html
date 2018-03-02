@@ -1,0 +1,70 @@
+﻿<form name="logVm.logForm"
+      ng-submit="logVm.logForm.$valid && logVm.submitLogin()">
+    <div class="card card-login card-hidden">
+        <div class="card-header text-center" data-background-color="rose">
+            <h4 class="card-title">Login</h4>
+        </div>
+        <div class="card-content">
+            <div class="input-group">
+                <span class="input-group-addon">
+                    <i class="material-icons">email</i>
+                </span>
+                <div class="form-group label-floating"
+                     ng-class="{ 'has-success': logVm.logForm.email.$valid, 'has-error': logVm.logForm.email.$invalid && logVm.logForm.email.$dirty}">
+                    <label class="control-label">Email address</label>
+                    <input name="email"
+                           id="email"
+                           type="email"
+                           ng-model="logVm.request.email"
+                           required
+                           class="form-control">
+                    <span class="form-control-feedback"
+                          ng-show="logVm.logForm.email.$valid">
+                        <i class="material-icons">done</i>
+                    </span>
+                    <span class="text-danger"
+                          ng-show="logVm.logForm.email.$error.required && logVm.logForm.email.$dirty">
+                        <em>
+                            This field is required!
+                        </em>
+                    </span>
+                    <span class="text-danger"
+                          ng-show="logVm.logForm.email.$error.email">
+                        <em>
+                            Please input a valid email...
+                        </em>
+                    </span>
+                </div>
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon">
+                    <i class="material-icons">lock_outline</i>
+                </span>
+                <div class="form-group label-floating"
+                     ng-class="{ 'has-success': logVm.logForm.password.$valid, 'has-error': logVm.logForm.password.$invalid && logVm.logForm.password.$dirty}">
+                    <label class="control-label">Password</label>
+                    <input name="password"
+                           id="password"
+                           type="password"
+                           ng-model="logVm.request.password"
+                           required
+                           enter-press="logVm.submitLogin()"
+                           class="form-control">
+                    <span class="form-control-feedback"
+                          ng-show="logVm.logForm.password.$valid">
+                        <i class="material-icons">done</i>
+                    </span>
+                    <span class="text-danger"
+                          ng-show="logVm.logForm.password.$error.required && logVm.logForm.password.$dirty">
+                        <em>
+                            This field is required!
+                        </em>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="footer text-center">
+            <button type="submit" class="btn btn-rose btn-simple btn-wd btn-lg">Let's go</button>
+        </div>
+    </div>
+</form>

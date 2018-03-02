@@ -112,7 +112,7 @@ namespace Nostreets_Services.Services.Database
                 user = GetByUsername(username);
 
                 if (rememberDevice && (user.Settings.IPAddresses == null || !user.Settings.IPAddresses.Contains(HttpContext.Current.GetRequestIPAddress())))
-                    user.Settings.IPAddresses.Add(new Tuple<string, string, string>(HttpContext.Current.GetRequestIPAddress(), username, password));
+                    user.Settings.IPAddresses.AddValues(new Tuple<string, string, string>(HttpContext.Current.GetRequestIPAddress(), username, password));
 
                 SessionManager.Add(new Dictionary<SessionState, object>{
                         { SessionState.IsLoggedOn, true},
@@ -142,7 +142,7 @@ namespace Nostreets_Services.Services.Database
             };
 
             _tokenDBService.Insert(token);
-            _emailService.Send("no-reply@nostreetssolutions.org", user.Contact.PrimaryEmail, "Nostreets Sandbox Validation", "", HttpContext.Current.Server.MapPath("\\assets\\ValidateEmail.html").ReadFile());
+            _emailService.Send("no-reply@nostreetssolutions.org", user.Contact.PrimaryEmail, "Nostreets Sandbox Validation", "", HttpContext.Current.Server.MapPath("\\assets\\ValidateEmail.html").ReadFile().FormatString("~/assets/ValidateEmail.html"));
 
             return result;
         }

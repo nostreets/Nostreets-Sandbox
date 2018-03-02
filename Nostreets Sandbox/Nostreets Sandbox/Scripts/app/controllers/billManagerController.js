@@ -4,11 +4,11 @@
         .controller("billManagerController", billManagerController)
         .controller("modalInsertController", modalInsertController);
 
-    billManagerController.$inject = ["$scope", "$baseController", '$uibModal', '$sandboxService', '$filter'];
+    billManagerController.$inject = ["$scope", "$baseController", '$sandboxService', '$filter'];
     modalInsertController.$inject = ["$scope", "$baseController", '$uibModalInstance', '$sandboxService', 'model'];
 
 
-    function billManagerController($scope, $baseController, $uibModal, $sandboxService, $filter) {
+    function billManagerController($scope, $baseController, $sandboxService, $filter) {
 
         var vm = this;
         vm.changeCurrentTab = _changeTab;
@@ -993,7 +993,7 @@
 
             if (vm.type === "combined") { obj.type = (data.incomeType) ? "income" : "expense"; }
 
-            var modalInstance = $uibModal.open({
+            var modalInstance = $baseController.modal.open({
                 animation: true
                 , templateUrl: "modalExpenseBuilder.html"
                 , controller: "modalInsertController as mc"
@@ -1006,31 +1006,6 @@
             });
 
             modalInstance.closed.then(_getUserCharts);
-        }
-
-        function _openCodeModal(code) {
-            var modalInstance = $uibModal.open({
-                animation: true
-                , templateUrl: "codeModal.html"
-                , controller: "modalCodeController as mc"
-                , size: "lg"
-                , resolve: {
-                    code: function () {
-                        return code;
-                    }
-                }
-            });
-        }
-
-        //Change When Controller is Complete
-        function _getCode() {
-            $baseController.http({
-                url: "api/view/code/dymanicGraphsDirective",
-                method: "GET",
-                responseType: "JSON"
-            }).then(function (data) {
-                _openCodeModal(data.data.item);
-            });
         }
 
     }
