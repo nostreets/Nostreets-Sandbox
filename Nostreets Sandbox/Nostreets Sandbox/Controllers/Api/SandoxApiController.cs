@@ -25,24 +25,21 @@ namespace Nostreets_Sandbox.Controllers.Api
     [RoutePrefix("api")]
     public class SandoxApiController : ApiController
     {
-        #region Injected Services (Only posible on classes that implement IHttpController)
 
-        [Microsoft.Practices.Unity.Dependency]
-        IChartSrv ChartsService { get; set; }
+        public SandoxApiController(IChartSrv chartSrv, IEmailService emailSrv, IDBService<StyledCard> cardSrv, IUserService userSrv, IBillService billSrv)
+        {
+            _chartsService = chartSrv;
+            _emailService = emailSrv;
+            _cardService = cardSrv;
+            _userService = userSrv;
+            _billService = billSrv;
+        }
 
-        [Microsoft.Practices.Unity.Dependency]
-        IEmailService SendGridService { get; set; }
-
-        [Microsoft.Practices.Unity.Dependency]
-        IDBService<StyledCard> CardService { get; set; }
-
-        [Microsoft.Practices.Unity.Dependency]
-        IUserService UserService { get; set; }
-
-        [Microsoft.Practices.Unity.Dependency]
-        IBillService BillService { get; set; }
-
-        #endregion
+        IChartSrv _chartsService = null;
+        IEmailService _emailService = null;
+        IDBService<StyledCard> _cardService = null;
+        IUserService _userService = null;
+        IBillService _billService = null;
 
         #region Private Members
 
@@ -69,8 +66,8 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-                
-                UserService.LogIn(username, password);
+
+                _userService.LogIn(username, password);
 
                 ItemResponse<string> response = new ItemResponse<string>(username);
                 HttpContext.Current.SetCookie("loggedIn", "true", DateTime.Now.AddDays(1));
@@ -96,7 +93,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             try
             {
                 List<Income> result = null;
-                result = BillService.GetAllIncome(CurrentUser.Id);
+                result = _billService.GetAllIncome(CurrentUser.Id);
                 ItemsResponse<Income> response = new ItemsResponse<Income>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -117,7 +114,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
 
                 List<Expense> result = null;
-                result = BillService.GetAllExpenses(CurrentUser.Id);
+                result = _billService.GetAllExpenses(CurrentUser.Id);
                 ItemsResponse<Expense> response = new ItemsResponse<Expense>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -138,7 +135,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
 
                 Income result = null;
-                result = BillService.GetIncome(CurrentUser.Id, name);
+                result = _billService.GetIncome(CurrentUser.Id, name);
                 ItemResponse<Income> response = new ItemResponse<Income>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -159,7 +156,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
 
                 Expense result = null;
-                result = BillService.GetExpense(CurrentUser.Id, name);
+                result = _billService.GetExpense(CurrentUser.Id, name);
                 ItemResponse<Expense> response = new ItemResponse<Expense>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -180,7 +177,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
 
                 Chart<List<float>> chart = null;
-                chart = BillService.GetIncomeChart(CurrentUser.Id, out chartSchedule, startDate, endDate);
+                chart = _billService.GetIncomeChart(CurrentUser.Id, out chartSchedule, startDate, endDate);
                 ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(chart);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -201,7 +198,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
 
                 Chart<List<float>> result = null;
-                result = BillService.GetExpensesChart(CurrentUser.Id, out chartSchedule, startDate, endDate);
+                result = _billService.GetExpensesChart(CurrentUser.Id, out chartSchedule, startDate, endDate);
                 ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -222,7 +219,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
 
                 Chart<List<float>> result = null;
-                result = BillService.GetCombinedChart(CurrentUser.Id, out chartSchedule, startDate, endDate);
+                result = _billService.GetCombinedChart(CurrentUser.Id, out chartSchedule, startDate, endDate);
                 ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -249,7 +246,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                 {
-                    BillService.InsertIncome(income);
+                    _billService.InsertIncome(income);
                     response = new SuccessResponse();
                 }
 
@@ -278,7 +275,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                 {
-                    BillService.InsertExpense(expense);
+                    _billService.InsertExpense(expense);
                     response = new SuccessResponse();
                 }
 
@@ -306,7 +303,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                 {
-                    BillService.UpdateIncome(income);
+                    _billService.UpdateIncome(income);
                     response = new SuccessResponse();
                 }
 
@@ -334,7 +331,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                 {
-                    BillService.UpdateExpense(expense);
+                    _billService.UpdateExpense(expense);
                     response = new SuccessResponse();
                 }
 
@@ -356,7 +353,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             {
 
 
-                BillService.DeleteIncome(id);
+                _billService.DeleteIncome(id);
                 SuccessResponse response = new SuccessResponse();
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -376,7 +373,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             {
 
 
-                BillService.DeleteExpense(id);
+                _billService.DeleteExpense(id);
                 SuccessResponse response = new SuccessResponse();
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -397,7 +394,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-                List<StyledCard> filteredList = CardService.Where(a => a.UserId == CurrentUser.Id)?.ToList();
+                List<StyledCard> filteredList = _cardService.Where(a => a.UserId == CurrentUser.Id)?.ToList();
                 ItemsResponse<StyledCard> response = new ItemsResponse<StyledCard>(filteredList);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -417,7 +414,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             {
 
 
-                StyledCard card = CardService.Get(id);
+                StyledCard card = _cardService.Get(id);
                 ItemResponse<StyledCard> response = new ItemResponse<StyledCard>(card);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -445,7 +442,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                     BaseResponse response = null;
 
                     model.UserId = CurrentUser.Id;
-                    int id = (int)CardService.Insert(model);
+                    int id = (int)_cardService.Insert(model);
                     if (id == 0) { throw new Exception("Insert Failed"); }
                     response = new ItemResponse<int>(id);
                     return Request.CreateResponse(HttpStatusCode.OK, response);
@@ -474,7 +471,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 else
                 {
                     model.UserId = CurrentUser.Id;
-                    CardService.Update(model);
+                    _cardService.Update(model);
                     response = new SuccessResponse();
                 }
 
@@ -496,7 +493,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             {
 
 
-                CardService.Delete(id);
+                _cardService.Delete(id);
                 SuccessResponse response = new SuccessResponse();
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -519,7 +516,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             {
 
 
-                List<Chart<object>> list = ChartsService.GetAll();
+                List<Chart<object>> list = _chartsService.GetAll();
                 ItemsResponse<Chart<object>> response = new ItemsResponse<Chart<object>>(list);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -539,7 +536,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             {
 
 
-                List<Chart<object>> list = ChartsService.GetAll();
+                List<Chart<object>> list = _chartsService.GetAll();
                 List<Chart<object>> filteredList = list?.Where(a => a.UserId == CurrentUser.Id).ToList();
                 ItemsResponse<Chart<object>> response = new ItemsResponse<Chart<object>>(filteredList);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
@@ -560,7 +557,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             {
 
 
-                Chart<object> chart = ChartsService.Get(id);
+                Chart<object> chart = _chartsService.Get(id);
                 ItemResponse<Chart<object>> response = new ItemResponse<Chart<object>>(chart);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -587,7 +584,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 else
                 {
                     model.UserId = CurrentUser.Id;
-                    int id = ChartsService.Insert(model, (a) =>
+                    int id = _chartsService.Insert(model, (a) =>
                         {
                             return new Chart<int>
                             {
@@ -630,7 +627,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 {
                     model.UserId = CurrentUser.Id;
 
-                    int id = ChartsService.Insert(model,
+                    int id = _chartsService.Insert(model,
                         (a) =>
                         {
                             return new Chart<List<int>>
@@ -674,19 +671,19 @@ namespace Nostreets_Sandbox.Controllers.Api
                 else
                 {
                     model.UserId = CurrentUser.Id;
-                    ChartsService.Update(model, (a) =>
+                    _chartsService.Update(model, (a) =>
                         {
-                        return new Chart<int>
-                        {
-                            Labels = a.Labels,
-                            Legend = a.Legend,
-                            Name = a.Name,
-                            Series = a.Series,
-                            TypeId = a.TypeId,
-                            UserId = a.UserId,
-                            DateModified = DateTime.Now
-                        };
-                    });
+                            return new Chart<int>
+                            {
+                                Labels = a.Labels,
+                                Legend = a.Legend,
+                                Name = a.Name,
+                                Series = a.Series,
+                                TypeId = a.TypeId,
+                                UserId = a.UserId,
+                                DateModified = DateTime.Now
+                            };
+                        });
                     response = new SuccessResponse();
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, response);
@@ -714,7 +711,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 else
                 {
                     model.UserId = CurrentUser.Id;
-                    ChartsService.Update(model, (a) =>
+                    _chartsService.Update(model, (a) =>
                         {
                             return new Chart<List<int>>
                             {
@@ -749,7 +746,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 BaseResponse response = null;
 
 
-                ChartsService.Delete(id);
+                _chartsService.Delete(id);
                 response = new SuccessResponse();
                 return Request.CreateResponse(HttpStatusCode.OK, response);
 
@@ -782,7 +779,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                                                 + "<div>" + phoneNumber + "</div>"
                                                 + "<div>" + "Message: " + emailRequest["messageText"] + "</div>";
                 }
-                if (!await SendGridService.Send(emailRequest["fromEmail"], emailRequest["toEmail"], emailRequest["subject"], emailRequest["messageText"], emailRequest["messageHtml"]))
+                if (!await _emailService.Send(emailRequest["fromEmail"], emailRequest["toEmail"], emailRequest["subject"], emailRequest["messageText"], emailRequest["messageHtml"]))
                 { throw new Exception("Email Was Not Sent"); }
                 SuccessResponse response = new SuccessResponse();
                 return Request.CreateResponse(HttpStatusCode.OK, response);
@@ -853,7 +850,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 if (enumTypes.FirstOrDefault(a => a == "expense") != null)
                 {
                     var types = typeof(ExpenseType).ToDictionary<ExpenseType>();
-                    for(int i = 0; i < types.Count; i++)
+                    for (int i = 0; i < types.Count; i++)
                     {
                         types[i] = types[i].SafeName();
                     }

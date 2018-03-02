@@ -28,4 +28,6 @@ namespace Nostreets_Services.Domain.Base
         public virtual bool IsDeleted { get; set; }
 
     }
+
+    
 }

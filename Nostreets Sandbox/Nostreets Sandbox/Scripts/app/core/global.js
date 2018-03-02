@@ -115,7 +115,7 @@
             systemEventService: $systemEventService,
             route: $route,
             routeParams: $routeParams,
-            alertService: $alertService,
+            alert: $alertService,
             window: $window,
             modal: $uibModal,
             timeout: $timeout,

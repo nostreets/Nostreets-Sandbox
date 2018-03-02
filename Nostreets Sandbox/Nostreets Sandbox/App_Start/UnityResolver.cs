@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Web.Http.Dependencies;
+using Unity;
+using Unity.Exceptions;
 
 namespace Nostreets_Sandbox.App_Start
 {
@@ -26,8 +28,6 @@ namespace Nostreets_Sandbox.App_Start
             }
             catch (ResolutionFailedException)
             {
-                //  I tried doing something else here but it turns out that you need the return null because this catch block gets executed many times,
-                //  even in cases where the endpoint is executing properly. we need to return the default values to make it work. 
                 return null;
             }
         }

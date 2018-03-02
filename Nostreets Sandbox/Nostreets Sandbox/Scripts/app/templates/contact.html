@@ -16,9 +16,9 @@
                     </div>
                     <div class="col-xs-6">
                         <div class="form-group"
-                             ng-class="{'has-error': (!contactUsForm.email.$pristine && contactUsForm.email.$invalid) || (contactUsForm.email.$error.minlength)|| (contactUsForm.email.$error.maxlength)}">
+                             ng-class="{'has-error': (!contactUsForm.mail.$pristine && contactUsForm.email.$invalid) || (contactUsForm.email.$error.minlength)|| (contactUsForm.email.$error.maxlength)}">
                             <label class="control-label">Email address</label>
-                            <input type="email" name="email" class="form-control" ng-model="contactUs.item.email" required />
+                            <input type="email" name="email" class="form-control" ng-model="contactUs.item.fromEmail" required />
                             <p ng-if="(contactUsForm.email.$error.required && !contactUsForm.email.$pristine) || (!contactUsForm.email.$pristine && contactUsForm.email.$invalid)">Enter a valid email.</p>
                         </div>
                     </div>

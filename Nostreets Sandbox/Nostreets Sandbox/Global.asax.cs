@@ -20,7 +20,6 @@ namespace Nostreets_Sandbox
         {
 
             AreaRegistration.RegisterAllAreas();
-
             UnityConfig.RegisterInterfaces(GlobalConfiguration.Configuration);
 
             GlobalConfiguration.Configure(WebApiConfig.Register);
@@ -28,10 +27,7 @@ namespace Nostreets_Sandbox
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-
-            //Database.SetInitializer(new DropCreateDatabaseIfModelChanges<UserDbContext>());
-            //Database.SetInitializer(new DropCreateDatabaseIfModelChanges<EFDBContext<Income>>());
-            //Database.SetInitializer(new DropCreateDatabaseIfModelChanges<EFDBContext<Expense>>());
+            //Database.SetInitializer(new DropCreateDatabaseIfModelChanges<EFDBContext<User>>());
 
         }
     }

@@ -9,8 +9,12 @@ namespace Nostreets_Sandbox.Controllers
     [RoutePrefix("home")]
     public class HomeController : Controller
     {
-        [Microsoft.Practices.Unity.Dependency]
-        public IUserService UserService { get; set; }
+        public HomeController(IUserService userSrv)
+        {
+            _userService = userSrv;
+        }
+
+        public IUserService _userService = null;
 
         [Route]
         public ActionResult Index()
@@ -24,7 +28,7 @@ namespace Nostreets_Sandbox.Controllers
             if (token != null)
             {
                 Token userToken = JsonConvert.DeserializeObject<Token>(token);
-                UserService.ValidateEmail(userToken);
+                _userService.ValidateEmail(userToken);
             }
             return Redirect("/home");
         }

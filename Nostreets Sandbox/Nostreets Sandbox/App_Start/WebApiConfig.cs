@@ -1,7 +1,4 @@
 ﻿using Newtonsoft.Json.Serialization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web.Http;
 
 namespace Nostreets_Sandbox
@@ -21,7 +18,11 @@ namespace Nostreets_Sandbox
                 defaults: new { id = RouteParameter.Optional }
             );
 
-            GlobalConfiguration.Configuration.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            /*GlobalConfiguration.Configuration*/
+            config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+
+            //var container = App_Start.UnityConfig.GetContainer();
+            //config.DependencyResolver = new App_Start.UnityResolver(container);
         }
     }
 }
