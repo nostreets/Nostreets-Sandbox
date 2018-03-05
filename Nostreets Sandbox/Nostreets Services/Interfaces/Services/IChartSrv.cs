@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Nostreets_Services.Interfaces.Services
 {
-    public interface IChartSrv 
+    public interface IChartService 
     {
         List<Chart<object>> GetAll();
         Chart<object> Get(int id);

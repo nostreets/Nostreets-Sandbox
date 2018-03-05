@@ -3,15 +3,16 @@ using System.Web.Mvc;
 using Newtonsoft.Json;
 using Nostreets_Services.Domain.Base;
 using Nostreets_Services.Interfaces.Services;
+using NostreetsExtensions;
 
 namespace Nostreets_Sandbox.Controllers
 {
     [RoutePrefix("home")]
     public class HomeController : Controller
     {
-        public HomeController(IUserService userSrv)
+        public HomeController()
         {
-            _userService = userSrv;
+            _userService = _userService.WindsorResolve(App_Start.WindsorConfig.GetContainer());
         }
 
         public IUserService _userService = null;

@@ -8,14 +8,13 @@ using System.Net;
 using System.Net.Http;
 using System.Web;
 
-namespace Nostreets_Sandbox.Services.Database
+namespace Nostreets_Sandbox.App_Start
 {
-    public class EventInterceptorConfig
+    public class InterceptorConfig
     {
-        public EventInterceptorConfig(IUserService userInject)
+        public InterceptorConfig()
         {
-            _userSrv = userInject;
-
+            _userSrv = _userSrv.WindsorResolve(WindsorConfig.GetContainer());
         }
 
         IUserService _userSrv = null;

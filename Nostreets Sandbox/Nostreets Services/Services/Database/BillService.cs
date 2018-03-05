@@ -16,22 +16,18 @@ namespace Nostreets_Services.Services.Database
 {
     public class BillService : IBillService
     {
-        public BillService(IDBService<Income> incomeInject, IDBService<Expense> expenseInject)
+        public BillService(IDBService<Income> incomeSrv, IDBService<Expense> expenseSrv)
         {
-            _connectionKey = "DefaultConnection";
-            _incomeSrv = incomeInject;//new DBService<Income>(_connectionKey);
-            _expenseSrv = expenseInject;//new DBService<Expense>(_connectionKey);
+            _incomeSrv = incomeSrv;// new DBService<Income>();
+            _expenseSrv = expenseSrv;// new DBService<Expense>();
         }
 
-        public BillService(IDBService<Income> incomeInject, IDBService<Expense> expenseInject, string connectionKey)
+        public BillService(string connectionKey, IDBService<Income> incomeSrv, IDBService<Expense> expenseSrv)
         {
-            _connectionKey = connectionKey;
-            _incomeSrv = incomeInject;
-            _expenseSrv = expenseInject;
+            _incomeSrv = incomeSrv;// new DBService<Income>(connectionKey);
+            _expenseSrv = expenseSrv;// new DBService<Expense>(connectionKey);
         }
 
-
-        private string _connectionKey = null;
         private IDBService<Expense> _expenseSrv = null;
         private IDBService<Income> _incomeSrv = null;
 

@@ -1,11 +1,11 @@
 ﻿(function () {
-    "use strict";
 
     angular.module(APPNAME).controller("loginController", loginController);
 
     loginController.$inject = ["$scope", "$baseController", '$uibModalInstance', '$sandboxService'];
 
     function loginController($scope, $baseController, $uibModalInstance, $sandboxService) {
+
         var vm = this;
 
         vm.registerService = registerService;

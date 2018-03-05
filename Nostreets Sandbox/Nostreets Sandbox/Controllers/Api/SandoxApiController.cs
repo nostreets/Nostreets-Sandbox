@@ -26,16 +26,16 @@ namespace Nostreets_Sandbox.Controllers.Api
     public class SandoxApiController : ApiController
     {
 
-        public SandoxApiController(IChartSrv chartSrv, IEmailService emailSrv, IDBService<StyledCard> cardSrv, IUserService userSrv, IBillService billSrv)
+        public SandoxApiController()
         {
-            _chartsService = chartSrv;
-            _emailService = emailSrv;
-            _cardService = cardSrv;
-            _userService = userSrv;
-            _billService = billSrv;
+            _chartsService = _chartsService.WindsorResolve(App_Start.WindsorConfig.GetContainer());
+            _emailService = _emailService.WindsorResolve(App_Start.WindsorConfig.GetContainer());
+            _cardService = _cardService.WindsorResolve(App_Start.WindsorConfig.GetContainer());
+            _userService = _userService.WindsorResolve(App_Start.WindsorConfig.GetContainer()); 
+            _billService = _billService.WindsorResolve(App_Start.WindsorConfig.GetContainer()); 
         }
 
-        IChartSrv _chartsService = null;
+        IChartService _chartsService = null;
         IEmailService _emailService = null;
         IDBService<StyledCard> _cardService = null;
         IUserService _userService = null;

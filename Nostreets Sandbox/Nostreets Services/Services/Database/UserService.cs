@@ -2,6 +2,7 @@
 using Nostreets_Services.Domain.Base;
 using Nostreets_Services.Enums;
 using Nostreets_Services.Interfaces.Services;
+using Nostreets_Services.Services.Email;
 using NostreetsExtensions;
 using NostreetsExtensions.Interfaces;
 using NostreetsExtensions.Utilities;
@@ -11,22 +12,30 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Web;
+using System.Web.Configuration;
 
 namespace Nostreets_Services.Services.Database
 {
     public class UserService : IUserService
     {
-        public UserService(IEmailService emailInject, IDBService<Token> tokenInject, IDBService<User, string> userInject)
+        public UserService(IEmailService emailSrv, IDBService<User, string> userDBSrv, IDBService<Token> tokenDBSrv)
         {
-            _emailService = emailInject;
-            _userDBService = userInject;
-            _tokenDBService = tokenInject;
+            _emailService = emailSrv;// new SendGridService(WebConfigurationManager.AppSettings["SendGrid.ApiKey"]);
+            _userDBService = userDBSrv;// new DBService<User, string>();
+            _tokenDBService = tokenDBSrv;// new DBService<Token>();
         }
 
+        public UserService(string connectionKey, IEmailService emailSrv, IDBService<User, string> userDBSrv, IDBService<Token> tokenDBSrv)
+        {
+            _emailService = emailSrv;// new SendGridService(WebConfigurationManager.AppSettings["SendGrid.ApiKey"]);
+            _userDBService = userDBSrv;// new DBService<User, string>();
+            _tokenDBService = tokenDBSrv;// new DBService<Token>();
+        }
         
-        private IEmailService _emailService = null;// { get; set; }
-        private IDBService<User, string> _userDBService = null;//{ get; set; }
-        private IDBService<Token> _tokenDBService = null;// { get; set; }
+
+        private IEmailService _emailService = null;
+        private IDBService<User, string> _userDBService = null;
+        private IDBService<Token> _tokenDBService = null;
 
 
         public bool CheckIfUserCanLogIn(string username, string password, out string failureReason)

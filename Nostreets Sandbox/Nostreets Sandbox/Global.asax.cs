@@ -20,7 +20,8 @@ namespace Nostreets_Sandbox
         {
 
             AreaRegistration.RegisterAllAreas();
-            UnityConfig.RegisterInterfaces(GlobalConfiguration.Configuration);
+            WindsorConfig.RegisterInterfaces(GlobalConfiguration.Configuration);
+            //UnityConfig.RegisterInterfaces(GlobalConfiguration.Configuration);
 
             GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
@@ -29,6 +30,11 @@ namespace Nostreets_Sandbox
 
             //Database.SetInitializer(new DropCreateDatabaseIfModelChanges<EFDBContext<User>>());
 
+        }
+
+        protected void Application_End()
+        {
+            WindsorConfig.GetContainer().Dispose();
         }
     }
 }

@@ -1,30 +1,27 @@
-﻿using Newtonsoft.Json;
-using NostreetsORM;
-using Nostreets_Services.Domain.Charts;
+﻿using Nostreets_Services.Domain.Charts;
 using Nostreets_Services.Interfaces.Services;
 using Nostreets_Services.Models.Request;
 using System.Collections.Generic;
-using System.Data.SqlClient;
-using NostreetsExtensions.Helpers;
 using System;
 using System.Linq;
 using NostreetsExtensions.Interfaces;
 using NostreetsExtensions;
+using NostreetsORM;
 
 namespace Nostreets_Services.Services.Database
 {
-    public class ChartsService : IChartSrv
+    public class ChartsService : IChartService
     {
-        public ChartsService(IDBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest> chartInject, IDBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>> pieChartInject)
+        public ChartsService(IDBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest> chartSrv, IDBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>> pieChartSrv)
         {
-            _chartSrv = chartInject; //new DBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest>();
-            _pieChartSrv = pieChartInject; //new DBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>>();
+            _chartSrv = chartSrv;// new DBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest>();
+            _pieChartSrv = pieChartSrv;// new DBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>>();
         }
 
-        public ChartsService(IDBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest> chartInject, IDBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>> pieChartInject, string connectionKey)
+        public ChartsService(string connectionKey, IDBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest> chartSrv, IDBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>> pieChartSrv)
         {
-            _chartSrv = chartInject; //new DBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest>();
-            _pieChartSrv = pieChartInject; //new DBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>>();
+            _chartSrv = chartSrv;// new DBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest>();
+            _pieChartSrv = pieChartSrv;// new DBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>>();
         }
 
         IDBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest> _chartSrv = null;
