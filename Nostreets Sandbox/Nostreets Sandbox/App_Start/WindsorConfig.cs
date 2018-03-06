@@ -45,33 +45,32 @@ namespace Nostreets_Sandbox.App_Start
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             container.Register(
-                 Reg.Component.For<IDBService>().ImplementedBy<DBService>(),
-                 Reg.Component.For(typeof(IDBService<>)).ImplementedBy(typeof(DBService<>)),
-                 Reg.Component.For(typeof(IDBService<,>)).ImplementedBy(typeof(DBService<,>)),
-                 Reg.Component.For(typeof(IDBService<,,,>)).ImplementedBy(typeof(DBService<,,,>)),
-                 Reg.Component.For<IBillService>().ImplementedBy<BillService>()
+                 Reg.Component.For<IDBService>().ImplementedBy<DBService>().LifestyleSingleton(),
+                 Reg.Component.For(typeof(IDBService<>)).ImplementedBy(typeof(DBService<>)).LifestyleSingleton(),
+                 Reg.Component.For(typeof(IDBService<,>)).ImplementedBy(typeof(DBService<,>)).LifestyleSingleton(),
+                 Reg.Component.For(typeof(IDBService<,,,>)).ImplementedBy(typeof(DBService<,,,>)).LifestyleSingleton(),
+                 Reg.Component.For<IBillService>().ImplementedBy<BillService>().LifestyleSingleton()
                      .DependsOn((k, param) =>
                      {
                          param["incomeSrv"] = k.Resolve<IDBService<Income>>();
                          param["expenseSrv"] = k.Resolve<IDBService<Expense>>();
                          param["connectionString"] = "DefaultConnection";
                      }),
-                 Reg.Component.For<IUserService>().ImplementedBy<UserService>()
+                 Reg.Component.For<IUserService>().ImplementedBy<UserService>().LifestyleSingleton()
                      .DependsOn((k, param) =>
                      {
                          param["emailSrv"] = k.Resolve<IDBService<Income>>();
                          param["userDBSrv"] = k.Resolve<IDBService<Expense>>();
                          param["tokenDBSrv"] = k.Resolve<IDBService<Expense>>();
-                         param["connectionString"] = "DefaultConnection";
                      }),
-                 Reg.Component.For<IChartService>().ImplementedBy<ChartsService>()
+                 Reg.Component.For<IChartService>().ImplementedBy<ChartsService>().LifestyleSingleton()
                      .DependsOn((k, param) =>
                      {
                          param["chartSrv"] = k.Resolve<IDBService<Income>>();
                          param["pieChartSrv"] = k.Resolve<IDBService<Expense>>();
                          param["connectionString"] = "DefaultConnection";
                      }),
-                 Reg.Component.For<IEmailService>().ImplementedBy<SendGridService>()
+                 Reg.Component.For<IEmailService>().ImplementedBy<SendGridService>().LifestyleSingleton()
                      .DependsOn((k, param) =>
                      {
                          param["apiKey"] = WebConfigurationManager.AppSettings["SendGrid.ApiKey"];
