@@ -25,14 +25,6 @@ namespace Nostreets_Services.Services.Database
             _tokenDBService = tokenDBSrv;// new DBService<Token>();
         }
 
-        public UserService(string connectionKey, IEmailService emailSrv, IDBService<User, string> userDBSrv, IDBService<Token> tokenDBSrv)
-        {
-            _emailService = emailSrv;// new SendGridService(WebConfigurationManager.AppSettings["SendGrid.ApiKey"]);
-            _userDBService = userDBSrv;// new DBService<User, string>();
-            _tokenDBService = tokenDBSrv;// new DBService<Token>();
-        }
-        
-
         private IEmailService _emailService = null;
         private IDBService<User, string> _userDBService = null;
         private IDBService<Token> _tokenDBService = null;
