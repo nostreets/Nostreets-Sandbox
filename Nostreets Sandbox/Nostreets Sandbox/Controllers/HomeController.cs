@@ -12,7 +12,7 @@ namespace Nostreets_Sandbox.Controllers
     {
         public HomeController()
         {
-            _userService = _userService.WindsorResolve(App_Start.WindsorConfig.GetContainer());
+            _userService = _userService.WindsorResolve(App_Start.WindsorConfig.GetContainer()); ;
         }
 
         public IUserService _userService = null;

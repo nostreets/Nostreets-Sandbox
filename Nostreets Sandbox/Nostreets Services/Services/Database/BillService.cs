@@ -18,15 +18,10 @@ namespace Nostreets_Services.Services.Database
     {
         public BillService(IDBService<Income> incomeSrv, IDBService<Expense> expenseSrv)
         {
-            _incomeSrv = incomeSrv;// new DBService<Income>();
-            _expenseSrv = expenseSrv;// new DBService<Expense>();
+            _incomeSrv = incomeSrv;
+            _expenseSrv = expenseSrv;
         }
 
-        public BillService(string connectionKey, IDBService<Income> incomeSrv, IDBService<Expense> expenseSrv)
-        {
-            _incomeSrv = incomeSrv;// new DBService<Income>(connectionKey);
-            _expenseSrv = expenseSrv;// new DBService<Expense>(connectionKey);
-        }
 
         private IDBService<Expense> _expenseSrv = null;
         private IDBService<Income> _incomeSrv = null;

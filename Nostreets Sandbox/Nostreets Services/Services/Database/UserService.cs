@@ -20,9 +20,9 @@ namespace Nostreets_Services.Services.Database
     {
         public UserService(IEmailService emailSrv, IDBService<User, string> userDBSrv, IDBService<Token> tokenDBSrv)
         {
-            _emailService = emailSrv;// new SendGridService(WebConfigurationManager.AppSettings["SendGrid.ApiKey"]);
-            _userDBService = userDBSrv;// new DBService<User, string>();
-            _tokenDBService = tokenDBSrv;// new DBService<Token>();
+            _emailService = emailSrv;
+            _userDBService = userDBSrv;
+            _tokenDBService = tokenDBSrv;
         }
 
         private IEmailService _emailService = null;

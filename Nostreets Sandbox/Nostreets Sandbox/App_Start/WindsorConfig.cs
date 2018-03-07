@@ -12,6 +12,7 @@ using Nostreets_Services.Services.Email;
 using System.Web.Configuration;
 using System.Web.Mvc;
 using System.Web.Http;
+using Nostreets_Services.Domain.Cards;
 
 namespace Nostreets_Sandbox.App_Start
 {
@@ -76,6 +77,19 @@ namespace Nostreets_Sandbox.App_Start
                          param["apiKey"] = WebConfigurationManager.AppSettings["SendGrid.ApiKey"];
                      })
              );
+
+
+            container.Register(
+                Reg.Component.For<Controllers.Api.SandoxApiController>().LifestyleSingleton()
+                     .DependsOn((k, param) =>
+                     {
+                         param["emailSrv"] = k.Resolve<IEmailService>();
+                         param["billSrv"] = k.Resolve<IBillService>();
+                         param["userSrv"] = k.Resolve<IUserService>();
+                         param["cardSrv"] = k.Resolve<IChartService>();
+                         param["cardSrv"] = k.Resolve<IDBService<StyledCard>>();
+                     })
+            );
 
 
 
