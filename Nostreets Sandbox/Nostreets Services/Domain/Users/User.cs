@@ -15,10 +15,10 @@ namespace Nostreets_Services.Domain
         [Key, Required]
         public string Id { get; set; }
 
-        [Required]
+        [Required, MinLength(6)]
         public string UserName { get; set; }
 
-        [Required]
+        [Required, MinLength(12)]
         public string Password { get; set; }
 
         public DateTime DateCreated { get; set; }
@@ -56,8 +56,10 @@ namespace Nostreets_Services.Domain
 
     public class Contact
     {
+        [Required]
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        [Required]
         public string PrimaryEmail { get; set; }
         public string BackupEmail { get; set; }
         public string PrimaryPhone { get; set; }

@@ -10,7 +10,7 @@
         'color.picker'
     ],
     user: {
-        loggedIn: false,
+        loggedIn: false
     },
 
     utilities: {
@@ -86,7 +86,7 @@
             document.onkeypress = resetTimer;
 
             var logout = () => {
-                alert("You are now logged out.")
+                console.log("Inactive action...")
             }
 
             var resetTimer = () => {
@@ -173,11 +173,12 @@
 
         }
 
-        base.login = function (username) {
+        base.login = function (username, password) {
             if (!username) { username = "GUEST" }
+            if (!password) { password = "NOSTREETSSANDBOX" }
 
             return $http({
-                url: "/api/user?username=" + username,
+                url: "/api/user" + "?username=" + username + "&password=" + password,
                 method: "GET",
                 headers: { 'Content-Type': 'application/json' }
             });

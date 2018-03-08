@@ -10,28 +10,22 @@
                     <i class="material-icons">email</i>
                 </span>
                 <div class="form-group label-floating"
-                     ng-class="{ 'has-success': logVm.logForm.email.$valid, 'has-error': logVm.logForm.email.$invalid && logVm.logForm.email.$dirty}">
-                    <label class="control-label">Email address</label>
-                    <input name="email"
-                           id="email"
-                           type="email"
-                           ng-model="logVm.request.email"
+                     ng-class="{ 'has-success': logVm.logForm.username.$valid, 'has-error': logVm.logForm.username.$invalid && logVm.logForm.username.$dirty}">
+                    <label class="control-label">Username / Email address</label>
+                    <input name="username"
+                           id="username"
+                           type="text"
+                           ng-model="logVm.username"
                            required
                            class="form-control">
                     <span class="form-control-feedback"
-                          ng-show="logVm.logForm.email.$valid">
+                          ng-show="logVm.logForm.username.$valid">
                         <i class="material-icons">done</i>
                     </span>
                     <span class="text-danger"
-                          ng-show="logVm.logForm.email.$error.required && logVm.logForm.email.$dirty">
+                          ng-show="logVm.logForm.username.$error.required && logVm.logForm.username.$dirty">
                         <em>
                             This field is required!
-                        </em>
-                    </span>
-                    <span class="text-danger"
-                          ng-show="logVm.logForm.email.$error.email">
-                        <em>
-                            Please input a valid email...
                         </em>
                     </span>
                 </div>
@@ -46,7 +40,7 @@
                     <input name="password"
                            id="password"
                            type="password"
-                           ng-model="logVm.request.password"
+                           ng-model="logVm.password"
                            required
                            enter-press="logVm.submitLogin()"
                            class="form-control">
@@ -64,7 +58,7 @@
             </div>
         </div>
         <div class="footer text-center">
-            <button type="submit" class="btn btn-rose btn-simple btn-wd btn-lg">Let's go</button>
+            <button type="submit" class="btn btn-rose btn-simple btn-wd btn-lg"  ng-click="logVm.sumbit()">Let's go</button>
         </div>
     </div>
 </form>

@@ -4604,7 +4604,7 @@
     <Content Include="Scripts\app\directives\signInDirective.js" />
     <Content Include="Scripts\app\directives\tooltipDirective.js" />
     <Content Include="Scripts\app\templates\cardBuilderModal.html" />
-    <Content Include="Scripts\app\services\alert.service.js" />
+    <Content Include="Scripts\app\services\alertService.js" />
     <Content Include="Scripts\app\services\nostreetsChartistScrollPlugin.js" />
     <Content Include="Scripts\app\services\sandboxService.js" />
     <Content Include="Scripts\app\services\systemEvent.service.js" />

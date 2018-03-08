@@ -22,7 +22,7 @@ namespace Nostreets_Sandbox.App_Start
         [Validator("UserLogIn")]
         void GetCurrentUser(HttpApplication app)
         {
-            if (SessionManager.Get<bool>(SessionState.IsLoggedOn)/*app.Request.GetCookie("loggedIn") == null || app.Request.GetCookie("loggedIn") == "false"*/) { NotLoggedIn(app); }
+            if (!SessionManager.HasAnySessions() || !SessionManager.Get<bool>(SessionState.IsLoggedOn)) { NotLoggedIn(app); }
             else
             {
                 //User user = CacheManager.GetItem<User>("user");
@@ -44,6 +44,6 @@ namespace Nostreets_Sandbox.App_Start
 
 
 
-        
+
     }
 }

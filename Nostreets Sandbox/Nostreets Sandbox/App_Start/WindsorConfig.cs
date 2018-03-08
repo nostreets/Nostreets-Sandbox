@@ -13,6 +13,11 @@ using System.Web.Configuration;
 using System.Web.Mvc;
 using System.Web.Http;
 using Nostreets_Services.Domain.Cards;
+using Nostreets_Services.Domain;
+using Nostreets_Services.Domain.Base;
+using Nostreets_Services.Domain.Charts;
+using System.Collections.Generic;
+using Nostreets_Services.Models.Request;
 
 namespace Nostreets_Sandbox.App_Start
 {
@@ -55,21 +60,19 @@ namespace Nostreets_Sandbox.App_Start
                      {
                          param["incomeSrv"] = k.Resolve<IDBService<Income>>();
                          param["expenseSrv"] = k.Resolve<IDBService<Expense>>();
-                         param["connectionString"] = "DefaultConnection";
                      }),
                  Reg.Component.For<IUserService>().ImplementedBy<UserService>().LifestyleSingleton()
                      .DependsOn((k, param) =>
                      {
-                         param["emailSrv"] = k.Resolve<IDBService<Income>>();
-                         param["userDBSrv"] = k.Resolve<IDBService<Expense>>();
-                         param["tokenDBSrv"] = k.Resolve<IDBService<Expense>>();
+                         param["emailSrv"] = k.Resolve<IEmailService>();
+                         param["userDBSrv"] = k.Resolve<IDBService<User, string>>();
+                         param["tokenDBSrv"] = k.Resolve<IDBService<Token>>();
                      }),
                  Reg.Component.For<IChartService>().ImplementedBy<ChartsService>().LifestyleSingleton()
                      .DependsOn((k, param) =>
                      {
-                         param["chartSrv"] = k.Resolve<IDBService<Income>>();
-                         param["pieChartSrv"] = k.Resolve<IDBService<Expense>>();
-                         param["connectionString"] = "DefaultConnection";
+                         param["charDBtSrv"] = k.Resolve<IDBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest>>();
+                         param["pieDBChartSrv"] = k.Resolve<IDBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>>>();
                      }),
                  Reg.Component.For<IEmailService>().ImplementedBy<SendGridService>().LifestyleSingleton()
                      .DependsOn((k, param) =>
@@ -77,21 +80,6 @@ namespace Nostreets_Sandbox.App_Start
                          param["apiKey"] = WebConfigurationManager.AppSettings["SendGrid.ApiKey"];
                      })
              );
-
-
-            container.Register(
-                Reg.Component.For<Controllers.Api.SandoxApiController>().LifestyleSingleton()
-                     .DependsOn((k, param) =>
-                     {
-                         param["emailSrv"] = k.Resolve<IEmailService>();
-                         param["billSrv"] = k.Resolve<IBillService>();
-                         param["userSrv"] = k.Resolve<IUserService>();
-                         param["cardSrv"] = k.Resolve<IChartService>();
-                         param["cardSrv"] = k.Resolve<IDBService<StyledCard>>();
-                     })
-            );
-
-
 
         }
     }

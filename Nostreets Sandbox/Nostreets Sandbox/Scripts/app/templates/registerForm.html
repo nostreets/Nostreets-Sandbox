@@ -10,8 +10,8 @@
                        name="userName"
                        id="userName"
                        class="form-control"
-                       ng-model="regVm.request.userName"
-                       ng-pattern="regVm.userNameRegex"
+                       ng-model="regVm.userName"
+                       ng-pattern="'[A-Za-z0-9\ \_\']*'"
                        ng-blur="regVm.checkUserName(regVm.request.userName);  regVm.userNameBlurred();"
                        required
                        placeholder="Username...">
@@ -52,8 +52,7 @@
                        name="email"
                        id="email"
                        class="form-control"
-                       ng-model="regVm.request.email"
-                       ng-blur="regVm.checkEmail(regVm.request.email);  regVm.emailBlurred();"
+                       ng-model="regVm.email"
                        required
                        placeholder="Email...">
                 <span class="form-control-feedback"
@@ -91,11 +90,10 @@
                        id="password"
                        type="password"
                        placeholder="Password..."
-                       ng-model="regVm.request.password"
-                       password-verify="{{regVm.request.passwordConfirmation}}"
+                       ng-model="regVm.password"
                        required
                        class="form-control flare" />
-                <ul id="strength" check-strength="regVm.request.password"></ul>
+                <ul id="strength" check-strength="regVm.password"></ul>
                 <span class="text-danger"
                       ng-if="regVm.regForm.password.$error.required  && regVm.regForm.password.$touched">
                     <em>
@@ -104,7 +102,7 @@
                 </span>
                 <span class="text-danger"
                       style="display:block;"
-                      ng-if="regVm.regForm.passwordConfirmation.$dirty && regVm.regForm.password.$error.passwordVerify">
+                      ng-if="regVm.regForm.rePassword.$dirty && regVm.regForm.password.$error.passwordVerify">
                     <em>
                         Passwords must match!
                     </em>
@@ -112,34 +110,33 @@
             </div>
         </div>
         <div class="form-group"
-             ng-class="{ true: 'has-success', false: 'has-error'}[regVm.regForm.passwordConfirmation.$valid || regVm.regForm.passwordConfirmation.required.$valid]">
+             ng-class="{ true: 'has-success', false: 'has-error'}[regVm.regForm.rePassword.$valid || regVm.regForm.rePassword.required.$valid]">
             <div class="input-group">
                 <span class="input-group-addon">
                     <i class="material-icons">lock_outline</i>
                 </span>
-                <input name="passwordConfirmation"
-                       id="passwordConfirmation"
+                <input name="rePassword"
+                       id="rePassword"
                        type="password"
                        placeholder="Confirm Password..."
-                       ng-model="regVm.request.passwordConfirmation"
-                       password-verify="{{regVm.request.password}}"
+                       ng-model="regVm.rePassword"
                        required
                        class="form-control flare" />
                 <span class="text-danger"
-                      ng-if="regVm.regForm.passwordConfirmation.$error.required  && regVm.regForm.passwordConfirmation.$touched">
+                      ng-if="regVm.regForm.rePassword.$error.required  && regVm.regForm.rePassword.$touched">
                     <em>
                         This field is required!
                     </em>
                 </span>
                 <span class="text-danger"
-                      ng-if="regVm.regForm.passwordConfirmation.$dirty && regVm.regForm.password.$error.passwordVerify">
+                      ng-if="regVm.regForm.rePassword.$dirty && regVm.regForm.password.$error.passwordVerify">
                     <em>
                         Passwords must match!
                     </em>
                 </span>
             </div>
         </div>
-        <div class="form-group">
+        <!--<div class="form-group">
             <div class="input-group">
                 <span class="input-group-addon">
                     <i class="material-icons">perm_identity</i>
@@ -151,7 +148,7 @@
                        ng-model="regVm.request.referralCode"
                        class="form-control flare" />
             </div>
-        </div>
+        </div>-->
         <!-- If you want to add a checkbox to this form, uncomment this code -->
         <div class="marginTop">
             <label>
@@ -161,6 +158,6 @@
         </div>
     </div>
     <div class="footer text-center">
-        <button type="submit" class="btn btn-primary btn-round" id="submitBtn" ng-disabled="(regVm.formInvalid) || (!checkBox)">Get Started</button>
+        <button type="submit" class="btn btn-primary btn-round" id="submitBtn" ng-disabled="(!checkBox || !regVm.validateForm())">Get Started</button>
     </div>
 </form>

@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Web.Mvc;
 using Newtonsoft.Json;
+using Nostreets_Services.Domain;
 using Nostreets_Services.Domain.Base;
 using Nostreets_Services.Interfaces.Services;
 using NostreetsExtensions;
+using NostreetsExtensions.Utilities;
 
 namespace Nostreets_Sandbox.Controllers
 {
@@ -12,7 +15,7 @@ namespace Nostreets_Sandbox.Controllers
     {
         public HomeController()
         {
-            _userService = _userService.WindsorResolve(App_Start.WindsorConfig.GetContainer()); ;
+            _userService = _userService.WindsorResolve(App_Start.WindsorConfig.GetContainer());
         }
 
         public IUserService _userService = null;
@@ -20,7 +23,16 @@ namespace Nostreets_Sandbox.Controllers
         [Route]
         public ActionResult Index()
         {
-            return View();
+            User user = null;
+            if (!SessionManager.HasAnySessions() || !SessionManager.Get<bool>(SessionState.IsLoggedOn))
+            {
+                string userIp = HttpContext.Request.UserHostAddress;
+                user = _userService.Where(a => a.Settings.IPAddresses.Any(b => b == userIp)).FirstOrDefault();
+            }
+            else
+                user = _userService.SessionUser; //SessionManager.Get<User>(SessionState.User);
+
+            return View(user);
         }
 
         [Route("~/emailComfirmation")]

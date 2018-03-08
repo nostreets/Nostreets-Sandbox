@@ -12,16 +12,10 @@ namespace Nostreets_Services.Services.Database
 {
     public class ChartsService : IChartService
     {
-        public ChartsService(IDBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest> chartSrv, IDBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>> pieChartSrv)
+        public ChartsService(IDBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest> chartDBSrv, IDBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>> pieChartDBSrv)
         {
-            _chartSrv = chartSrv;// new DBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest>();
-            _pieChartSrv = pieChartSrv;// new DBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>>();
-        }
-
-        public ChartsService(string connectionKey, IDBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest> chartSrv, IDBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>> pieChartSrv)
-        {
-            _chartSrv = chartSrv;// new DBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest>();
-            _pieChartSrv = pieChartSrv;// new DBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>>();
+            _chartSrv = chartDBSrv;// new DBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest>();
+            _pieChartSrv = pieChartDBSrv;// new DBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>>();
         }
 
         IDBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest> _chartSrv = null;

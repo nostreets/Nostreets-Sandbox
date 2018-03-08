@@ -29,17 +29,22 @@ namespace Nostreets_Services.Services.Database
         private IDBService<User, string> _userDBService = null;
         private IDBService<Token> _tokenDBService = null;
 
+        public User SessionUser => SessionManager.HasAnySessions() ? SessionManager.Get<User>(SessionState.User) : null;
 
         public bool CheckIfUserCanLogIn(string username, string password, out string failureReason)
         {
             failureReason = null;
             bool result = false;
             string encryptedPassword = Encryption.SimpleEncryptWithPassword(password, password);
-            User user = _userDBService.Where(a => a.UserName == username).FirstOrDefault();
+            User user = _userDBService.Where(
+                                       a => a.UserName == username ||
+                                       a.Contact.PrimaryEmail == username ||
+                                       a.Contact.BackupEmail == username
+                                       ).FirstOrDefault();
             if (user == null)
                 failureReason = "User doesn't exist...";
 
-            else if (user.Password != encryptedPassword)
+            else if (!ValidatePassword(password))
                 failureReason = "Invalid password for " + username + "...";
 
             else if (!user.Settings.HasVaildatedEmail)
@@ -49,11 +54,11 @@ namespace Nostreets_Services.Services.Database
             {
                 if (user.Settings.TFAuthByPhone)
                 {
-                    //todo SMSService txt code dto users phone
+                    //todo SMSService txt code to users phone
                 }
                 else
                 {
-                    //todo SMSService txt code dto users email
+                    //todo SMSService txt code to users email
                 }
 
                 failureReason = "2nd Code was sent to " + ((user.Settings.TFAuthByPhone) ? "Phone" : "Email");
@@ -84,16 +89,6 @@ namespace Nostreets_Services.Services.Database
             return _userDBService.Where(a => a.UserName == username).FirstOrDefault();
         }
 
-        public string Insert(User model)
-        {
-            return _userDBService.Insert(model);
-        }
-
-        public void Update(User model)
-        {
-            throw new NotImplementedException();
-        }
-
         public IEnumerable<User> Where(Func<User, bool> predicate)
         {
             return _userDBService.Where(predicate);
@@ -101,7 +96,7 @@ namespace Nostreets_Services.Services.Database
 
         public void LogOut()
         {
-            if (SessionManager.Get<bool>(SessionState.IsLoggedOn))
+            if (SessionManager.HasAnySessions() && SessionManager.Get<bool>(SessionState.IsLoggedOn))
                 SessionManager.AbandonSessions();
         }
 
@@ -118,7 +113,7 @@ namespace Nostreets_Services.Services.Database
                 SessionManager.Add(new Dictionary<SessionState, object>{
                         { SessionState.IsLoggedOn, true},
                         { SessionState.IsUser, true},
-                        { SessionState.LogInTime, DateTime.Now},
+                        { SessionState.LogInTime, DateTime.Now },
                         { SessionState.User, user }
                 });
             }
@@ -175,6 +170,41 @@ namespace Nostreets_Services.Services.Database
             }
 
             return result;
+        }
+
+        public bool CheckIfUsernameExist(string username)
+        {
+            return _userDBService.Where(a => a.UserName == username).FirstOrDefault() != null ? true : false;
+        }
+
+        public bool CheckIfEmailExist(string email)
+        {
+            return _userDBService.Where(a => a.Contact.PrimaryEmail == email || a.Contact.BackupEmail == email).FirstOrDefault() != null ? true : false;
+        }
+
+        public bool ValidatePassword(string password)
+        {
+            return Encryption.SimpleDecryptWithPassword(password, password) == password ? true : false;
+        }
+
+        public bool ChangeUserEmail(string email, string password)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ChangeUserPassword(string newPassword, string oldPassword)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool UpdateUserSettings(UserSettings settings)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool UpdateUserContactInfo(Contact settings)
+        {
+            throw new NotImplementedException();
         }
     }
 

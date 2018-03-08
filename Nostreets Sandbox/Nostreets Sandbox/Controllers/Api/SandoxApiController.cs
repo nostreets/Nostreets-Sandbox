@@ -1,4 +1,5 @@
-﻿using NostreetsRouter.Models.Responses;
+﻿using Nostreets_Sandbox.App_Start;
+using NostreetsRouter.Models.Responses;
 using Nostreets_Services.Domain;
 using Nostreets_Services.Domain.Bills;
 using Nostreets_Services.Domain.Cards;
@@ -25,14 +26,13 @@ namespace Nostreets_Sandbox.Controllers.Api
     [RoutePrefix("api")]
     public class SandoxApiController : ApiController
     {
-
-        public SandoxApiController(IChartService _chartsSrv, IEmailService _emailSrv, IDBService<StyledCard> _cardSrv, IUserService _userSrv, IBillService _billSrv)
+        public SandoxApiController()
         {
-            _chartsService = _chartsSrv;
-            _emailService = _emailSrv;
-            _cardService = _cardSrv;
-            _userService = _userSrv;
-            _billService = _billSrv;
+            _chartsService = _chartsService.WindsorResolve(WindsorConfig.GetContainer());
+            _emailService = _emailService.WindsorResolve(WindsorConfig.GetContainer());
+            _cardService = _cardService.WindsorResolve(WindsorConfig.GetContainer());
+            _userService = _userService.WindsorResolve(WindsorConfig.GetContainer());
+            _billService = _billService.WindsorResolve(WindsorConfig.GetContainer());
         }
 
         IChartService _chartsService = null;
@@ -54,14 +54,13 @@ namespace Nostreets_Sandbox.Controllers.Api
             return result;
         }
 
-        private User CurrentUser { get { return SessionManager.Get<User>(SessionState.User); } }
+        private User CurrentUser { get { return _userService.SessionUser; } }
 
 
         #endregion
 
         #region User Service Endpoints
-        [Route("user")]
-        [HttpGet]
+        [HttpGet, Route("user")]
         public HttpResponseMessage LogInUser(string username, string password)
         {
             try
@@ -70,8 +69,83 @@ namespace Nostreets_Sandbox.Controllers.Api
                 _userService.LogIn(username, password);
 
                 ItemResponse<string> response = new ItemResponse<string>(username);
-                HttpContext.Current.SetCookie("loggedIn", "true", DateTime.Now.AddDays(1));
+                HttpContext.Current.SetCookie("loggedIn", "true");
 
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
+
+        [HttpPost, Route("register")]
+        public HttpResponseMessage Register(User user)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    string id = _userService.Register(user);
+                    ItemResponse<string> response = new ItemResponse<string>(id);
+                    return Request.CreateResponse(HttpStatusCode.OK, response);
+                }
+                else
+                    throw new Exception("user is invalid...");
+
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
+
+        [HttpGet, Route("logout")]
+        public HttpResponseMessage LogOutUser()
+        {
+            try
+            {
+
+                _userService.LogOut();
+                SuccessResponse response = new SuccessResponse();
+                HttpContext.Current.SetCookie("loggedIn", "false");
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
+
+        [HttpGet, Route("checkUsername")]
+        public HttpResponseMessage CheckUsername(string username)
+        {
+            try
+            {
+                bool result = _userService.CheckIfUsernameExist(username);
+                ItemResponse<bool> response = new ItemResponse<bool>(result);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
+
+        [HttpGet, Route("checkEmail")]
+        public HttpResponseMessage CheckEmail(string email)
+        {
+            try
+            {
+                bool result = _userService.CheckIfEmailExist(email);
+                ItemResponse<bool> response = new ItemResponse<bool>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
 
             }

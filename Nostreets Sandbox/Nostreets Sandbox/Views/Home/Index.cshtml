@@ -1,18 +1,55 @@
-﻿@{
+﻿@model Nostreets_Services.Domain.User
+@{
     ViewBag.Title = "Home";
     Layout = "~/Views/Shared/_LayoutDeft.cshtml";
 }
 
-
-<div ng-view style="margin-bottom: 15%;">
-
-
+<div id="particles-js" class="gradient"></div>
+<div class="count-particles">
+    <span class="js-count-particles"></span>
 </div>
+<div id="leftSide">
+    <div id="home" class="gradient">
+        <!-- Your logo -->
+        <img src="~/assets/img/logo3.png" alt="" class="main-logo" />
+
+        <div class="social_icons">
+            <ul class="btn-group btn-group-sm">
+                <li class="btn btn-simple"><a href="#"><i class="material-icons">home</i></a></li>
+                <li class="btn btn-simple"><a href="mailto:nileoverstreet@gmail.com"><i class="material-icons">mail_outline</i></a></li>
+                <li class="btn btn-simple"><a href="https://www.linkedin.com/in/nile-overstreet-6a4153140/"><i class="icon ion-social-linkedin"></i></a></li>
+                <li class="btn btn-simple"><a href="https://github.com/nostreets/"><i class="icon ion-social-github"></i></a></li>
+                <li class="btn btn-simple" sign-in><i class="material-icons">person</i></li>
+            </ul>
+        </div>
+
+        <div class="h-content">
+            <h1 style="font-family: 'Trebuchet MS';">Welcome to <br> Nile's Sandbox!</h1>
+            <p>Always trying expand and improve my knowledge and understanding of different technologies in this vast world of computer science.</p>
+        </div>
+
+    </div>
+</div>
+<div id="rightSide" class="scrollable-content">
+
+    @Html.Partial("_MobileNavBar")
+
+    <div class="project container-fluid gradient">
+
+        <div ng-view style="margin-bottom: 15%;">
+
+
+        </div>
+
+    </div>
+</div>
+
+
+
 
 @section scripts{
     <script src="~/Scripts/app/directives/signInDirective.js"></script>
     <script src="~/Scripts/app/directives/renderGraphDirective.js"></script>
-
     <script src="~/Scripts/app/controllers/generalControllers.js"></script>
     <script src="~/Scripts/app/controllers/cardController.js"></script>
     <script src="~/Scripts/app/controllers/billManagerController.js"></script>
@@ -24,4 +61,7 @@
         </pre>
     </script>
 
+    <script type="text/javascript">
+        page.user.data = @Model;
+    </script>
 }
