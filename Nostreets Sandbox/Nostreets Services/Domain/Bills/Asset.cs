@@ -13,6 +13,8 @@ namespace Nostreets_Services.Domain.Bills
 {
     public abstract class FinicialAsset : DBObject
     {
+        [Required]
+        public string Name { get; set; }
 
         [Required]
         public ScheduleTypes PaySchedule { get; set; }

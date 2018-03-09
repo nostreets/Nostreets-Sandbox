@@ -87,7 +87,7 @@
             vm.reEmail = null;
             vm.firstName = null;
             vm.lastName = null;
-            vm.validatorRegEx = /<[a-z][\s\S]*>/;
+            vm.validatorRegEx = /<[a-zA-Z][\s\S]*>/;
             vm.emailExists = false;
             vm.usernameExists = false;
             vm.usernameExists = false;
@@ -116,14 +116,13 @@
         }
 
         function _validateForm() {
-            var result = _checkPassword;
-            var values = [vm.firstName, vm.lastName, vm.email, vm.password]
+            var values = [vm.firstName, vm.lastName, vm.email, vm.password, vm.username]
 
-            for (var val in values)
+            for (var val of values)
                 if (vm.validatorRegEx.test(val))
                     return false;
 
-            return (vm.emailExists || vm.usernameExists) ? false : result;
+            return (vm.emailExists || vm.usernameExists) ? false : _checkPassword();
         }
 
         function _checkEmail() {
@@ -150,11 +149,7 @@
         }
 
         function _checkPassword() {
-
-            var result = true;
-            if (vm.password !== vm.rePassword)
-                result = false;
-            return result;
+            return (!vm.password || !vm.rePassword) ? false : (vm.password === vm.rePassword) ? true : false;
         }
 
         function _cancel() {

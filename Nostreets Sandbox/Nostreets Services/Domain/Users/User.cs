@@ -12,7 +12,10 @@ namespace Nostreets_Services.Domain
 {
     public class User
     {
-        [Key, Required]
+        DateTime _dateCreated = DateTime.Now;
+        DateTime _dateModified = DateTime.Now;
+
+        [Key]
         public string Id { get; set; }
 
         [Required, MinLength(6)]
@@ -21,9 +24,11 @@ namespace Nostreets_Services.Domain
         [Required, MinLength(12)]
         public string Password { get; set; }
 
-        public DateTime DateCreated { get; set; }
+        public DateTime? DateCreated { get => _dateCreated; set=> _dateCreated = value.Value; }
 
-        public DateTime LastLogIn { get; set; }
+        public DateTime? DateModified { get => _dateModified; set => _dateModified = value.Value; }
+
+        public DateTime? LastLogIn { get; set; }
 
         public UserSettings Settings { get; set; }
 
@@ -31,9 +36,8 @@ namespace Nostreets_Services.Domain
 
     }
 
-    public class UserSettings
+    public class UserSettings : DBObject
     {
-
         private bool _isLockedOut = true;
         private bool _twoFactorAuthEnabled = false;
         private bool _hasVaildatedEmail = false;
@@ -54,11 +58,12 @@ namespace Nostreets_Services.Domain
 
     }
 
-    public class Contact
+    public class Contact : DBObject
     {
         [Required]
         public string FirstName { get; set; }
         public string LastName { get; set; }
+
         [Required]
         public string PrimaryEmail { get; set; }
         public string BackupEmail { get; set; }

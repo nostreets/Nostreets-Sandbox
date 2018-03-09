@@ -159,9 +159,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         #endregion
 
         #region Bill Service Endpoints
-        [Intercept("UserLogIn")]
-        [Route("bill/income/all")]
-        [HttpGet]
+        [HttpGet, Route("bill/income/all"), Intercept("UserLogIn")]
         public HttpResponseMessage GetAllIncome()
         {
             try

@@ -1,4 +1,4 @@
-﻿<form class="form theRegisterForm card" name="regVm.regForm" ng-submit="regVm.regForm.$valid && regVm.submit()" novalidate>
+﻿<form class="form theRegisterForm card" name="regVm.regForm" novalidate>
     <div class="card-header" style="margin-bottom:auto">
         Register
     </div>
@@ -22,18 +22,18 @@
                       ng-show="regVm.regForm.username.$valid">
                     <i class="material-icons" style="color:rgb(95, 214, 95)">done</i>
                 </span>
-                <span class="text-danger"
+                <div class="text-danger"
                       ng-show="regVm.regForm.username.$error.required && regVm.regForm.username.$dirty">
                     <em>
                         This field is required!
                     </em>
-                </span>
-                <span class="text-danger"
-                      ng-show="regVm.username">
+                </div>
+                <div class="text-danger"
+                      ng-show="(regVm.usernameExists)">
                     <em>
                         Username already exists...
                     </em>
-                </span>
+                </div>
             </div>
         </div>
 
@@ -56,24 +56,24 @@
                       ng-show="regVm.regForm.email.$valid">
                     <i class="material-icons" style="color:rgb(95, 214, 95)">done</i>
                 </span>
-                <span class="text-danger"
+                <div class="text-danger"
                       ng-show="regVm.regForm.email.$error.required && regVm.regForm.email.$dirty">
                     <em>
                         This field is required!
                     </em>
-                </span>
-                <span class="text-danger"
+                </div>
+                <div class="text-danger"
                       ng-show="regVm.regForm.email.$error.email">
                     <em>
                         Please input a valid email...
                     </em>
-                </span>
-                <span class="text-danger"
-                      ng-show="(regVm.emailExists)">
+                </div>
+                <div class="text-danger"
+                      ng-if="(regVm.emailExists)">
                     <em>
                         Email already exists...
                     </em>
-                </span>
+                </div>
             </div>
         </div>
 
@@ -90,12 +90,12 @@
                        ng-model="regVm.firstName"
                        required
                        class="form-control flare" />
-                <span class="text-danger"
-                      ng-if="regVm.regForm.firstName.$error.required  && regVm.regForm.firstName.$touched">
+                <div class="text-danger"
+                      ng-show="regVm.regForm.firstName.$error.required  && regVm.regForm.firstName.$touched">
                     <em>
                         This field is required!
                     </em>
-                </span>
+                </div>
             </div>
         </div>
 
@@ -112,12 +112,12 @@
                        ng-model="regVm.lastName"
                        required
                        class="form-control flare" />
-                <span class="text-danger"
-                      ng-if="regVm.regForm.lastName.$error.required  && regVm.regForm.lastName.$touched">
+                <!--<div class="text-danger"
+                      ng-show="regVm.regForm.lastName.$error.required  && regVm.regForm.lastName.$touched">
                     <em>
                         This field is required!
                     </em>
-                </span>
+                </div>-->
             </div>
         </div>
 
@@ -135,19 +135,25 @@
                        required
                        class="form-control flare" />
                 <!--<ul id="strength" check-strength="regVm.password"></ul>-->
-                <span class="text-danger"
-                      ng-if="regVm.regForm.password.$error.required  && regVm.regForm.password.$touched">
+                <div class="text-danger"
+                      ng-show="regVm.regForm.password.$error.required  && regVm.regForm.password.$touched">
                     <em>
                         This field is required!
                     </em>
-                </span>
-                <span class="text-danger"
+                </div>
+                 <div class="text-danger"
+                      ng-show="regVm.regForm.password.$error.minlength">
+                    <em>
+                        Password is to short!
+                    </em>
+                </div>
+                <div class="text-danger"
                       style="display:block;"
-                      ng-if="regVm.regForm.rePassword.$dirty && regVm.regForm.password.$error.passwordVerify">
+                      ng-show="regVm.password !== regVm.rePassword">
                     <em>
                         Passwords must match!
                     </em>
-                </span>
+                </div>
             </div>
         </div>
 
@@ -163,19 +169,20 @@
                        placeholder="Confirm Password..."
                        ng-model="regVm.rePassword"
                        required
+                       ng-minlength="12"
                        class="form-control flare" />
-                <span class="text-danger"
-                      ng-if="regVm.regForm.rePassword.$error.required  && regVm.regForm.rePassword.$touched">
+                <div class="text-danger"
+                      ng-show="regVm.regForm.rePassword.$error.required  && regVm.regForm.rePassword.$touched">
                     <em>
                         This field is required!
                     </em>
-                </span>
-                <span class="text-danger"
-                      ng-if="regVm.regForm.rePassword.$dirty && regVm.regForm.password.$error.passwordVerify">
+                </div>
+                <div class="text-danger"
+                      ng-show="regVm.password !== regVm.rePassword">
                     <em>
                         Passwords must match!
                     </em>
-                </span>
+                </div>
             </div>
         </div>
 
@@ -187,6 +194,6 @@
         </div>
     </div>
     <div class="card-footer text-center">
-        <button type="submit" class="btn btn-primary btn-round" id="submitBtn" ng-disabled="!checkBox || !regVm.validateForm()">Get Started</button>
+        <button type="submit" class="btn btn-primary btn-round" id="submitBtn" ng-click="regVm.submit()" ng-disabled="!checkBox || !regVm.regForm.$valid || !regVm.validateForm()">Get Started</button>
     </div>
 </form>

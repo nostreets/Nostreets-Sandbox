@@ -27,7 +27,7 @@ namespace Nostreets_Sandbox.Controllers
             if (!SessionManager.HasAnySessions() || !SessionManager.Get<bool>(SessionState.IsLoggedOn))
             {
                 string userIp = HttpContext.Request.UserHostAddress;
-                user = _userService.Where(a => a.Settings.IPAddresses.Any(b => b == userIp)).FirstOrDefault();
+                user = _userService.Where(a => a.Settings.IPAddresses != null && a.Settings.IPAddresses.Any(b => b == userIp)).FirstOrDefault();
             }
             else
                 user = _userService.SessionUser;

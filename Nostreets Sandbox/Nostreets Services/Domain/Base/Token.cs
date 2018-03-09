@@ -9,6 +9,8 @@ namespace Nostreets_Services.Domain.Base
 {
     public class Token : DBObject
     {
+        public string Name { get; set; }
+
         public Guid Value { get; set; }
 
         public DateTime ExpirationDate { get; set; }

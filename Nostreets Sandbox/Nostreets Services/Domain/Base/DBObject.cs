@@ -9,19 +9,17 @@ namespace Nostreets_Services.Domain.Base
 {
     public abstract partial class DBObject
     {
+        DateTime _dateCreated = DateTime.Now;
+        DateTime _dateModified = DateTime.Now;
+
         [Key]
-        [Required]
         public int Id { get; set; }
 
-        [Required]
         public virtual string UserId { get; set; }
 
-        [Required]
-        public virtual string Name { get; set; }
+        public virtual DateTime? DateCreated { get => _dateCreated; set => _dateCreated = value.Value; }
 
-        public virtual DateTime? DateCreated { get; set; }
-
-        public virtual DateTime? DateModified { get; set; }
+        public virtual DateTime? DateModified { get => _dateModified; set => _dateModified = value.Value; }
 
         public virtual string ModifiedUserId { get; set; }
 

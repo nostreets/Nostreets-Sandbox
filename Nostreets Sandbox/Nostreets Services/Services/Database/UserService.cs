@@ -132,7 +132,7 @@ namespace Nostreets_Services.Services.Database
                 IsDisabled = false,
                 UserId = user.Id,
                 Value = Guid.NewGuid(),
-                Name = user.UserName + "'s Email Validtion Token",
+                Name = user.UserName + "'s Registion Email Token",
                 DateCreated = DateTime.Now,
                 DateModified = DateTime.Now
             };
