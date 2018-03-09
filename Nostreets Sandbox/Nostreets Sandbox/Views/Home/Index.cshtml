@@ -62,6 +62,8 @@
     </script>
 
     <script type="text/javascript">
-        page.user.data = @Model;
+        @if(Model != null) {
+               @: page.user.data = @Model
+            }
     </script>
 }

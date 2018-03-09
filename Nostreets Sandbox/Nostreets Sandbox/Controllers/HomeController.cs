@@ -30,7 +30,7 @@ namespace Nostreets_Sandbox.Controllers
                 user = _userService.Where(a => a.Settings.IPAddresses.Any(b => b == userIp)).FirstOrDefault();
             }
             else
-                user = _userService.SessionUser; //SessionManager.Get<User>(SessionState.User);
+                user = _userService.SessionUser;
 
             return View(user);
         }

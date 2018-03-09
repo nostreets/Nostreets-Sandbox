@@ -74,10 +74,10 @@ namespace Nostreets_Sandbox.App_Start
                          param["charDBtSrv"] = k.Resolve<IDBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest>>();
                          param["pieDBChartSrv"] = k.Resolve<IDBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>>>();
                      }),
-                 Reg.Component.For<IEmailService>().ImplementedBy<SendGridService>().LifestyleSingleton()
+                 Reg.Component.For<IEmailService>().ImplementedBy<SparkPostService>().LifestyleSingleton()
                      .DependsOn((k, param) =>
                      {
-                         param["apiKey"] = WebConfigurationManager.AppSettings["SendGrid.ApiKey"];
+                         param["apiKey"] = WebConfigurationManager.AppSettings["SparkPost.ApiKey"];
                      })
              );
 

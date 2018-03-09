@@ -1,10 +1,7 @@
 ﻿using Nostreets_Services.Interfaces.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using SparkPost;
 using System.Net;
 using System.Net.Mail;
-using System.Text;
 using System.Threading.Tasks;
 using System.Web.Configuration;
 
@@ -14,12 +11,33 @@ namespace Nostreets_Services.Services.Email
     {
         public SparkPostService(string apiKey)
         {
-            apiKey = _apiKey;
+            _apiKey = apiKey;
         }
 
         private string _apiKey = null;
 
-        public async Task<bool> Send(string fromEmail, string toEmail, string subject, string messageText, string messageHtml)
+        public async Task<bool> Send(string fromEmail, string toEmail, string subject, string messageText, string messageHtml) {
+
+            Options options = new Options { Sandbox = true };
+            Transmission transmission = new Transmission();
+            transmission.Content.From.Email = "no-reply@sparkpostbox.com";
+            transmission.Content.Subject = subject;
+            transmission.Content.Text = messageText;
+            transmission.Content.Html = messageHtml;
+            Recipient recipient = new Recipient
+            {
+                Address = new Address { Email = toEmail }
+            };
+            transmission.Recipients.Add(recipient);
+            transmission.Options = options;
+
+            Client client = new Client(_apiKey);
+            return (await client.Transmissions.Send(transmission) != null) ? true : false;
+        }
+
+
+        #region Legacy
+        public async Task<bool> LegacySend(string fromEmail, string toEmail, string subject, string messageText, string messageHtml)
         {
             using (SmtpClient smtpClient = new SmtpClient("smtp.sparkpostmail.com", 587))
             {
@@ -42,6 +60,7 @@ namespace Nostreets_Services.Services.Email
 
             return true;
 
-        }
+        } 
+        #endregion
     }
 }
