@@ -8,6 +8,8 @@ namespace Nostreets_Services.Enums
 {
     public enum TokenType
     {
-        EmailValidtion
+        TwoFactorAut = 1,
+        EmailValidtion,
+        PhoneValidtion,
     }
 }
