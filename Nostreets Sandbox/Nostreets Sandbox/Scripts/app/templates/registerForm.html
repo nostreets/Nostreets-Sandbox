@@ -19,7 +19,7 @@
                        placeholder="Username...">
 
                 <span class="form-control-feedback"
-                      ng-show="regVm.regForm.username.$valid">
+                      ng-show="regVm.regForm.username.$valid && !regVm.usernameExists">
                     <i class="material-icons" style="color:rgb(95, 214, 95)">done</i>
                 </span>
                 <div class="text-danger"
@@ -53,7 +53,7 @@
                        required
                        placeholder="Email...">
                 <span class="form-control-feedback"
-                      ng-show="regVm.regForm.email.$valid">
+                      ng-show="regVm.regForm.email.$valid && !regVm.emailExists">
                     <i class="material-icons" style="color:rgb(95, 214, 95)">done</i>
                 </span>
                 <div class="text-danger"
@@ -91,7 +91,7 @@
                        required
                        class="form-control flare" />
                 <div class="text-danger"
-                      ng-show="regVm.regForm.firstName.$error.required  && regVm.regForm.firstName.$touched">
+                      ng-show="regVm.regForm.firstName.$error.required  && regVm.regForm.firstName.$dirty">
                     <em>
                         This field is required!
                     </em>
@@ -136,22 +136,22 @@
                        class="form-control flare" />
                 <!--<ul id="strength" check-strength="regVm.password"></ul>-->
                 <div class="text-danger"
-                      ng-show="regVm.regForm.password.$error.required  && regVm.regForm.password.$touched">
+                      ng-show="regVm.regForm.password.$error.required  && regVm.regForm.password.$dirty">
                     <em>
                         This field is required!
+                    </em>
+                </div>
+                <div class="text-danger"
+                      style="display:block;"
+                      ng-show="regVm.password !== regVm.rePassword && regVm.regForm.rePassword.$dirty">
+                    <em>
+                        Passwords must match!
                     </em>
                 </div>
                  <div class="text-danger"
                       ng-show="regVm.regForm.password.$error.minlength">
                     <em>
                         Password is to short!
-                    </em>
-                </div>
-                <div class="text-danger"
-                      style="display:block;"
-                      ng-show="regVm.password !== regVm.rePassword">
-                    <em>
-                        Passwords must match!
                     </em>
                 </div>
             </div>
@@ -172,13 +172,13 @@
                        ng-minlength="12"
                        class="form-control flare" />
                 <div class="text-danger"
-                      ng-show="regVm.regForm.rePassword.$error.required  && regVm.regForm.rePassword.$touched">
+                      ng-show="regVm.regForm.rePassword.$error.required && regVm.regForm.rePassword.$dirty">
                     <em>
                         This field is required!
                     </em>
                 </div>
                 <div class="text-danger"
-                      ng-show="regVm.password !== regVm.rePassword">
+                      ng-show="regVm.password !== regVm.rePassword && regVm.regForm.password.$dirty">
                     <em>
                         Passwords must match!
                     </em>

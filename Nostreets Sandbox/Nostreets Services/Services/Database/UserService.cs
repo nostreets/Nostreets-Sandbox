@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Configuration;
 
@@ -35,16 +36,17 @@ namespace Nostreets_Services.Services.Database
         {
             failureReason = null;
             bool result = false;
-            string encryptedPassword = Encryption.SimpleEncryptWithPassword(password, password);
             User user = _userDBService.Where(
                                        a => a.UserName == username ||
                                        a.Contact.PrimaryEmail == username ||
                                        a.Contact.BackupEmail == username
                                        ).FirstOrDefault();
+
+
             if (user == null)
                 failureReason = "User doesn't exist...";
 
-            else if (!ValidatePassword(password))
+            else if (!ValidatePassword(user.Password, password))
                 failureReason = "Invalid password for " + username + "...";
 
             else if (!user.Settings.HasVaildatedEmail)
@@ -122,50 +124,68 @@ namespace Nostreets_Services.Services.Database
 
         }
 
-        public string Register(User user)
+        public async Task<string> RegisterAsync(User user)
         {
-
+            user.Password = Encryption.SimpleEncryptWithPassword(user.Password, WebConfigurationManager.AppSettings["CryptoKey"]);
             string result = _userDBService.Insert(user);
+            SessionManager.Add(new Dictionary<SessionState, object>{
+                        { SessionState.IsLoggedOn, false},
+                        { SessionState.IsUser, true},
+                        { SessionState.LogInTime, DateTime.Now },
+                        { SessionState.User, user }
+                });
+
+
             Token token = new Token
             {
                 ExpirationDate = DateTime.Now.AddDays(7),
                 IsDisabled = false,
-                UserId = user.Id,
+                UserId = result,
+                ModifiedUserId = result,
                 Value = Guid.NewGuid(),
                 Name = user.UserName + "'s Registion Email Token",
                 DateCreated = DateTime.Now,
-                DateModified = DateTime.Now
+                DateModified = DateTime.Now,
+                Type = TokenType.EmailValidtion
             };
+            string html = HttpContext.Current.Server.MapPath("\\assets\\ValidateEmail.html").ReadFile()
+                                     .Replace("{url}", HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)
+                                     + "/emailConfirm?token=" + token.Value.ToString());
 
             _tokenDBService.Insert(token);
-            _emailService.Send("no-reply@nostreetssolutions.org", user.Contact.PrimaryEmail, "Nostreets Sandbox Validation", "", HttpContext.Current.Server.MapPath("\\assets\\ValidateEmail.html").ReadFile().FormatString("~/assets/ValidateEmail.html"));
+            if (!await _emailService.SendAsync("no-reply@nostreetssolutions.com"
+                              , user.Contact.PrimaryEmail
+                              , "Nostreets Sandbox Validation"
+                              , "Nostreets Sandbox Validation"
+                              , html))
+            {
+                throw new Exception("Email for registation not sent...");
+            };
 
             return result;
         }
 
-        public bool ValidateEmail(Token token)
+        public bool ValidateEmail(string value)
         {
             bool result = false;
             Token userToken = _tokenDBService.Where(
-                a => !a.IsDisabled && a.ExpirationDate > DateTime.Now && a.Type == TokenType.EmailValidtion && a.UserId == token.UserId && a.Value == token.Value
+                a => !a.IsDisabled && a.ExpirationDate > DateTime.Now && a.Type == TokenType.EmailValidtion && a.UserId == SessionUser.Id && a.Value.ToString() == value
             ).FirstOrDefault();
 
             if (userToken != null)
             {
-                User user = Get(token.UserId);
-
                 result = true;
                 userToken.IsDisabled = true;
                 userToken.DateModified = DateTime.Now;
-                user.Settings.IsLockedOut = false;
-                user.Settings.HasVaildatedEmail = true;
+                SessionUser.Settings.IsLockedOut = false;
+                SessionUser.Settings.HasVaildatedEmail = true;
 
-                if (user.Settings.IPAddresses == null)
-                    user.Settings.IPAddresses = new List<string> { HttpContext.Current.GetRequestIPAddress() };
+                if (SessionUser.Settings.IPAddresses == null)
+                    SessionUser.Settings.IPAddresses = new List<string> { HttpContext.Current.GetRequestIPAddress() };
                 else
-                    user.Settings.IPAddresses.Add(HttpContext.Current.GetRequestIPAddress());
+                    SessionUser.Settings.IPAddresses.Add(HttpContext.Current.GetRequestIPAddress());
 
-                _userDBService.Update(user);
+                _userDBService.Update(SessionUser);
                 _tokenDBService.Update(userToken);
             }
 
@@ -182,9 +202,9 @@ namespace Nostreets_Services.Services.Database
             return _userDBService.Where(a => a.Contact.PrimaryEmail == email || a.Contact.BackupEmail == email).FirstOrDefault() != null ? true : false;
         }
 
-        public bool ValidatePassword(string password)
+        public bool ValidatePassword(string encyptedPassword, string password)
         {
-            return Encryption.SimpleDecryptWithPassword(password, password) == password ? true : false;
+            return Encryption.SimpleDecryptWithPassword(encyptedPassword, WebConfigurationManager.AppSettings["CryptoKey"]) == password ? true : false;
         }
 
         public bool ChangeUserEmail(string email, string password)

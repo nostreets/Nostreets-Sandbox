@@ -1,5 +1,7 @@
 ﻿using Nostreets_Services.Interfaces.Services;
+using NostreetsExtensions;
 using SparkPost;
+using System;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
@@ -16,7 +18,7 @@ namespace Nostreets_Services.Services.Email
 
         private string _apiKey = null;
 
-        public async Task<bool> Send(string fromEmail, string toEmail, string subject, string messageText, string messageHtml) {
+        public async Task<bool> SendAsync(string fromEmail, string toEmail, string subject, string messageText, string messageHtml) {
 
             Options options = new Options { Sandbox = true };
             Transmission transmission = new Transmission();
@@ -32,24 +34,33 @@ namespace Nostreets_Services.Services.Email
             transmission.Options = options;
 
             Client client = new Client(_apiKey);
-            return (await client.Transmissions.Send(transmission) != null) ? true : false;
+            SendTransmissionResponse response = await client.Transmissions.Send(transmission);
+
+            return response.StatusCode == HttpStatusCode.OK ? true : false;
+
+        }
+
+        public bool Send(string fromEmail, string toEmail, string subject, string messageText, string messageHtml)
+        {
+            return SendAsync(fromEmail, toEmail, subject, messageText, messageHtml).SyncTask();
         }
 
 
         #region Legacy
-        public async Task<bool> LegacySend(string fromEmail, string toEmail, string subject, string messageText, string messageHtml)
+        public async Task<bool> SendAsyncSMTP(string fromEmail, string toEmail, string subject, string messageText, string messageHtml)
         {
             using (SmtpClient smtpClient = new SmtpClient("smtp.sparkpostmail.com", 587))
             {
-                smtpClient.EnableSsl = true;
-                smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
                 smtpClient.UseDefaultCredentials = false;
-                smtpClient.Credentials = new NetworkCredential(WebConfigurationManager.AppSettings["SparkPost.Username"], _apiKey);
+                smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                smtpClient.Credentials = new NetworkCredential("SMTP_Injection", _apiKey);
+                //smtpClient.Credentials = smtpClient.Credentials.GetCredential("smtp.sparkpostmail.com", 587, "AUTH LOGIN");
+                smtpClient.EnableSsl = true;
 
                 using (MailMessage email = new MailMessage())
                 {
                     email.IsBodyHtml = true;
-                    email.From = new MailAddress(fromEmail);
+                    email.From = new MailAddress("no-reply@smtp.sparkpostmail.com");
                     email.To.Add(new MailAddress(toEmail));
                     email.Subject = subject;
                     email.Body = messageHtml;
@@ -60,7 +71,9 @@ namespace Nostreets_Services.Services.Email
 
             return true;
 
-        } 
+        }
+
+       
         #endregion
     }
 }

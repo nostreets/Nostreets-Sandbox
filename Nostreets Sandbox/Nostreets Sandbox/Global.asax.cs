@@ -19,7 +19,7 @@ namespace Nostreets_Sandbox
         protected void Application_Start()
         {
 
-            AreaRegistration.RegisterAllAreas();
+           // AreaRegistration.RegisterAllAreas();
             WindsorConfig.RegisterInterfaces(GlobalConfiguration.Configuration);
             //UnityConfig.RegisterInterfaces(GlobalConfiguration.Configuration);
 

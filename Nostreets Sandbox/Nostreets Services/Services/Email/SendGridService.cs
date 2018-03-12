@@ -1,6 +1,8 @@
 ﻿using Nostreets_Services.Interfaces.Services;
+using NostreetsExtensions;
 using SendGrid;
 using SendGrid.Helpers.Mail;
+using System;
 using System.Threading.Tasks;
 
 namespace Nostreets_Services.Services.Email
@@ -14,21 +16,37 @@ namespace Nostreets_Services.Services.Email
 
         private string ApiKey { get; }
 
-        public async Task<bool> Send(string email, string toAddress, string subject, string messageText, string messageHtml)
+        public bool Send(string fromEmail, string toEmail, string subject, string messageText, string messageHtml)
         {
-            SendGridClient client = new SendGridClient(ApiKey);
-            SendGridMessage msg = new SendGridMessage()
-            {
-                From = new EmailAddress(email),
-                Subject = subject,
-                PlainTextContent = messageText,
-                HtmlContent = messageHtml
-            };
+            return SendAsync(fromEmail, toEmail, subject, messageText, messageHtml).SyncTask();
+        }
 
-            msg.AddTo(new EmailAddress(toAddress));
-            Response response = await client.SendEmailAsync(msg);
-            bool success = response.StatusCode == System.Net.HttpStatusCode.Accepted;
-            return success;
+        public async Task<bool> SendAsync(string email, string toAddress, string subject, string messageText, string messageHtml)
+        {
+            try
+            {
+
+                if (messageText == null)
+                    messageText = subject;
+
+                SendGridClient client = new SendGridClient(ApiKey);
+                SendGridMessage msg = new SendGridMessage()
+                {
+                    From = new EmailAddress(email),
+                    Subject = subject,
+                    PlainTextContent = messageText,
+                    HtmlContent = messageHtml
+                };
+
+                msg.AddTo(new EmailAddress(toAddress));
+                Response response = await client.SendEmailAsync(msg);
+                bool success = response.StatusCode == System.Net.HttpStatusCode.Accepted;
+                return success;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }

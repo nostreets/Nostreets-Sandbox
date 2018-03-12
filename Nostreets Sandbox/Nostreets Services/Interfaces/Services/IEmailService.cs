@@ -9,6 +9,7 @@ namespace Nostreets_Services.Interfaces.Services
 {
     public interface IEmailService
     {
-        Task<bool> Send(string fromEmail, string toEmail, string subject, string messageText, string messageHtml);
+        Task<bool> SendAsync(string fromEmail, string toEmail, string subject, string messageText, string messageHtml);
+        bool Send(string fromEmail, string toEmail, string subject, string messageText, string messageHtml);
     }
 }

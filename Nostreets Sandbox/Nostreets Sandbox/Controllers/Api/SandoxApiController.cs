@@ -82,13 +82,13 @@ namespace Nostreets_Sandbox.Controllers.Api
         }
 
         [HttpPost, Route("register")]
-        public HttpResponseMessage Register(User user)
+        public async Task<HttpResponseMessage> RegisterAsync(User user)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    string id = _userService.Register(user);
+                    string id = await _userService.RegisterAsync(user);
                     ItemResponse<string> response = new ItemResponse<string>(id);
                     return Request.CreateResponse(HttpStatusCode.OK, response);
                 }
@@ -851,7 +851,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                                                 + "<div>" + phoneNumber + "</div>"
                                                 + "<div>" + "Message: " + emailRequest["messageText"] + "</div>";
                 }
-                if (!await _emailService.Send(emailRequest["fromEmail"], emailRequest["toEmail"], emailRequest["subject"], emailRequest["messageText"], emailRequest["messageHtml"]))
+                if (!await _emailService.SendAsync(emailRequest["fromEmail"], emailRequest["toEmail"], emailRequest["subject"], emailRequest["messageText"], emailRequest["messageHtml"]))
                 { throw new Exception("Email Was Not Sent"); }
                 SuccessResponse response = new SuccessResponse();
                 return Request.CreateResponse(HttpStatusCode.OK, response);

@@ -10,7 +10,7 @@ using NostreetsExtensions.Utilities;
 
 namespace Nostreets_Sandbox.Controllers
 {
-    [RoutePrefix("home")]
+    //[RoutePrefix("home")]
     public class HomeController : Controller
     {
         public HomeController()
@@ -20,7 +20,7 @@ namespace Nostreets_Sandbox.Controllers
 
         public IUserService _userService = null;
 
-        [Route]
+        //[Route("~/")]
         public ActionResult Index()
         {
             User user = null;
@@ -35,14 +35,12 @@ namespace Nostreets_Sandbox.Controllers
             return View(user);
         }
 
-        [Route("~/emailComfirmation")]
+        [Route("~/emailConfirm")]
         public ActionResult EmailComfirmation(string token)
         {
-            if (token != null)
-            {
-                Token userToken = JsonConvert.DeserializeObject<Token>(token);
-                _userService.ValidateEmail(userToken);
-            }
+            if (token != null || token != "")
+                _userService.ValidateEmail(token);
+
             return Redirect("/home");
         }
     }

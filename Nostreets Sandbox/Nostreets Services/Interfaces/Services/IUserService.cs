@@ -20,10 +20,10 @@ namespace Nostreets_Services.Interfaces.Services
         User GetByUsername(string username);
         void LogOut();
         void LogIn(string username, string password, bool rememberDevice = false);
-        string Register(User user);
-        bool ValidateEmail(Token token);
+        Task<string> RegisterAsync(User user);
+        bool ValidateEmail(string token);
         IEnumerable<User> Where(Func<User, bool> predicate);
-        bool ValidatePassword(string password);
+        bool ValidatePassword(string encrptedPassword, string password);
         bool ChangeUserEmail(string email, string password);
         bool ChangeUserPassword(string newPassword, string oldPassword);
         bool UpdateUserSettings(UserSettings settings);
