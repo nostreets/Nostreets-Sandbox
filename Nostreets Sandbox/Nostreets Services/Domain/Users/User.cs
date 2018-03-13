@@ -45,6 +45,7 @@ namespace Nostreets_Services.Domain
         private bool _hasPlaidSecret = false;
         private bool _TFAuthByEmail = false;
         private bool _TFAuthByPhone = false;
+        private bool _validateIPBeforeLogin = false;
 
 
         public List<string> IPAddresses { get; set; }
@@ -55,6 +56,7 @@ namespace Nostreets_Services.Domain
         public bool HasVaildatedEmail { get => _hasVaildatedEmail; set => _hasVaildatedEmail = value; }
         public bool HasVaildatedPhone { get => _hasVaildatedPhone; set => _hasVaildatedPhone = value; }
         public bool HasPlaidSecret { get => _hasPlaidSecret; set => _hasPlaidSecret = value; }
+        public bool ValidateIPBeforeLogin { get => _validateIPBeforeLogin; set => _validateIPBeforeLogin = value; }
 
     }
 
@@ -66,9 +68,7 @@ namespace Nostreets_Services.Domain
 
         [Required]
         public string PrimaryEmail { get; set; }
-        public string BackupEmail { get; set; }
         public string PrimaryPhone { get; set; }
-        public string BackupPhone { get; set; }
 
     }
     

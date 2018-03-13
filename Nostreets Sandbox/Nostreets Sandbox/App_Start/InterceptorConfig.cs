@@ -1,4 +1,5 @@
-﻿using Nostreets_Services.Interfaces.Services;
+﻿using Nostreets_Services.Domain;
+using Nostreets_Services.Interfaces.Services;
 using NostreetsExtensions;
 using NostreetsExtensions.Utilities;
 using NostreetsInterceptor;
@@ -20,10 +21,10 @@ namespace Nostreets_Sandbox.App_Start
 
         IUserService _userSrv = null;
 
-        [Validator("Session", "PostMapRequestHandler")]
-        void SessionRequired(HttpApplication app)
+        [Validator("Session")]
+        void AddSessionCookie(HttpApplication app)
         {
-            app.Context.SetSessionStateBehavior(SessionStateBehavior.Required);
+            //app.Context.SetSessionStateBehavior(SessionStateBehavior.Required);
         }
 
         [Validator("UserLogIn")]
@@ -32,9 +33,8 @@ namespace Nostreets_Sandbox.App_Start
             if (!SessionManager.HasAnySessions() || !SessionManager.Get<bool>(SessionState.IsLoggedOn)) { NotLoggedIn(app); }
             else
             {
-                //User user = CacheManager.GetItem<User>("user");
-                bool isLoggedOn = SessionManager.Get<bool>(SessionState.IsLoggedOn);
-                if (!isLoggedOn) { NotLoggedIn(app); }
+                string userId = CacheManager.GetItem<string>(HttpContext.Current.GetIPAddress());
+                if (userId == null) { NotLoggedIn(app); }
             }
         }
 

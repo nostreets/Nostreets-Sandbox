@@ -21,26 +21,42 @@ namespace Nostreets_Services.Services.Database
     {
         public UserService(IEmailService emailSrv, IDBService<User, string> userDBSrv, IDBService<Token> tokenDBSrv)
         {
-            _emailService = emailSrv;
+            _emailSrv = emailSrv;
             _userDBService = userDBSrv;
             _tokenDBService = tokenDBSrv;
         }
 
-        private IEmailService _emailService = null;
+        private IEmailService _emailSrv = null;
         private IDBService<User, string> _userDBService = null;
         private IDBService<Token> _tokenDBService = null;
 
-        public User SessionUser => SessionManager.HasAnySessions() ? SessionManager.Get<User>(SessionState.User) : null;
+        public User SessionUser
+        {
+            get
+            {
+                if (CacheManager.Contains(HttpContext.Current.GetIPAddress()))
+                    _sessionUser = _userDBService.Get(CacheManager.GetItem<string>(HttpContext.Current.GetIPAddress()));
+                return _sessionUser;
+            }
+            set { _sessionUser = value; }
+        }
+
+        private User _sessionUser = null;
 
         public bool CheckIfUserCanLogIn(string username, string password, out string failureReason)
         {
             failureReason = null;
             bool result = false;
-            User user = _userDBService.Where(
+            User user = (CacheManager.Contains(HttpContext.Current.GetIPAddress()))
+                            ? _userDBService.Get(CacheManager.GetItem<string>(HttpContext.Current.GetIPAddress()))
+                            : _userDBService.Where(
                                        a => a.UserName == username ||
-                                       a.Contact.PrimaryEmail == username ||
-                                       a.Contact.BackupEmail == username
+                                       a.Contact.PrimaryEmail == username 
                                        ).FirstOrDefault();
+
+
+            if (user != null && user.Settings.IPAddresses.Contains()) { }
+            //todo notify user of login
 
 
             if (user == null)
@@ -60,13 +76,15 @@ namespace Nostreets_Services.Services.Database
                 }
                 else
                 {
-                    //todo SMSService txt code to users email
+                    //todo EmailService txt code to users email
                 }
 
                 failureReason = "2nd Code was sent to " + ((user.Settings.TFAuthByPhone) ? "Phone" : "Email");
             }
             else
                 result = true;
+
+
 
             return result;
         }
@@ -96,12 +114,6 @@ namespace Nostreets_Services.Services.Database
             return _userDBService.Where(predicate);
         }
 
-        public void LogOut()
-        {
-            if (SessionManager.HasAnySessions() && SessionManager.Get<bool>(SessionState.IsLoggedOn))
-                SessionManager.AbandonSessions();
-        }
-
         public void LogIn(string username, string password, bool rememberDevice = false)
         {
             User user = null;
@@ -109,15 +121,8 @@ namespace Nostreets_Services.Services.Database
             {
                 user = GetByUsername(username);
 
-                if (rememberDevice && (user.Settings.IPAddresses == null || !user.Settings.IPAddresses.Contains(HttpContext.Current.GetRequestIPAddress())))
-                    user.Settings.IPAddresses.AddValues(new Tuple<string, string, string>(HttpContext.Current.GetRequestIPAddress(), username, password));
-
-                SessionManager.Add(new Dictionary<SessionState, object>{
-                        { SessionState.IsLoggedOn, true},
-                        { SessionState.IsUser, true},
-                        { SessionState.LogInTime, DateTime.Now },
-                        { SessionState.User, user }
-                });
+                if (rememberDevice && !user.Settings.IPAddresses.Contains(HttpContext.Current.GetIPAddress()))
+                    user.Settings.IPAddresses.Add(HttpContext.Current.GetIPAddress());
             }
             else
                 throw new Exception(reason);
@@ -127,13 +132,13 @@ namespace Nostreets_Services.Services.Database
         public async Task<string> RegisterAsync(User user)
         {
             user.Password = Encryption.SimpleEncryptWithPassword(user.Password, WebConfigurationManager.AppSettings["CryptoKey"]);
+            user.Settings = new UserSettings
+            {
+                IPAddresses = new List<string> { HttpContext.Current.GetIPAddress() }
+            };
+
             string result = _userDBService.Insert(user);
-            SessionManager.Add(new Dictionary<SessionState, object>{
-                        { SessionState.IsLoggedOn, false},
-                        { SessionState.IsUser, true},
-                        { SessionState.LogInTime, DateTime.Now },
-                        { SessionState.User, user }
-                });
+
 
 
             Token token = new Token
@@ -153,7 +158,7 @@ namespace Nostreets_Services.Services.Database
                                      + "/emailConfirm?token={0}?user={1}".FormatString(token.Value.ToString(), result));
 
             _tokenDBService.Insert(token);
-            if (!await _emailService.SendAsync("no-reply@nostreetssolutions.com"
+            if (!await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
                               , user.Contact.PrimaryEmail
                               , "Nostreets Sandbox Validation"
                               , "Nostreets Sandbox Validation"
@@ -165,15 +170,18 @@ namespace Nostreets_Services.Services.Database
             return result;
         }
 
-        public bool ValidateEmail(string value)
+        public bool ValidateEmail(string value, string userId)
         {
             bool result = false;
             Token userToken = _tokenDBService.Where(
-                a => !a.IsDisabled && a.ExpirationDate > DateTime.Now && a.Type == TokenType.EmailValidtion && a.UserId == SessionUser.Id && a.Value.ToString() == value
+                a => !a.IsDisabled && a.ExpirationDate > DateTime.Now && a.Type == TokenType.EmailValidtion && a.UserId == userId && a.Value.ToString() == value
             ).FirstOrDefault();
 
             if (userToken != null)
             {
+                if (!CacheManager.Contains(HttpContext.Current.GetIPAddress()))
+                    CacheManager.InsertItem(HttpContext.Current.GetIPAddress(), userId);
+
                 result = true;
                 userToken.IsDisabled = true;
                 userToken.DateModified = DateTime.Now;
@@ -181,9 +189,9 @@ namespace Nostreets_Services.Services.Database
                 SessionUser.Settings.HasVaildatedEmail = true;
 
                 if (SessionUser.Settings.IPAddresses == null)
-                    SessionUser.Settings.IPAddresses = new List<string> { HttpContext.Current.GetRequestIPAddress() };
+                    SessionUser.Settings.IPAddresses = new List<string> { HttpContext.Current.GetIPAddress() };
                 else
-                    SessionUser.Settings.IPAddresses.Add(HttpContext.Current.GetRequestIPAddress());
+                    SessionUser.Settings.IPAddresses.Add(HttpContext.Current.GetIPAddress());
 
                 _userDBService.Update(SessionUser);
                 _tokenDBService.Update(userToken);
@@ -199,7 +207,7 @@ namespace Nostreets_Services.Services.Database
 
         public bool CheckIfEmailExist(string email)
         {
-            return _userDBService.Where(a => a.Contact.PrimaryEmail == email || a.Contact.BackupEmail == email).FirstOrDefault() != null ? true : false;
+            return _userDBService.Where(a => a.Contact.PrimaryEmail == email).FirstOrDefault() != null ? true : false;
         }
 
         public bool ValidatePassword(string encyptedPassword, string password)
@@ -209,20 +217,65 @@ namespace Nostreets_Services.Services.Database
 
         public bool ChangeUserEmail(string email, string password)
         {
-            throw new NotImplementedException();
+            bool result = false;
+            if (ValidatePassword(SessionUser.Password, password))
+            {
+                SessionUser.Contact.PrimaryEmail = email;
+                _userDBService.Update(SessionUser);
+            }
+
+            return result;
         }
 
         public bool ChangeUserPassword(string newPassword, string oldPassword)
         {
-            throw new NotImplementedException();
+            bool result = false;
+            if (ValidatePassword(SessionUser.Password, oldPassword))
+            {
+                SessionUser.Password = Encryption.SimpleEncryptWithPassword(newPassword, WebConfigurationManager.AppSettings["CryptoKey"]);
+                _userDBService.Update(SessionUser); 
+            }
+
+            return result;
         }
 
         public bool UpdateUserSettings(UserSettings settings)
         {
-            throw new NotImplementedException();
+            SessionUser.Settings = settings;
+            _userDBService.Update(SessionUser);
+            return true;
         }
 
-        public bool UpdateUserContactInfo(Contact settings)
+        public bool UpdateUserContactInfo(Contact contact)
+        {
+            SessionUser.Contact = contact;
+            _userDBService.Update(SessionUser);
+            return true;
+        }
+
+        public void LogOut()
+        {
+            HttpContext.Current.SetCookie("loggedIn", "false");
+            CacheManager.DeleteItem(HttpContext.Current.GetIPAddress());
+        }
+
+        public async Task<bool> ForgotPasswordEmailAsync(string username)
+        {
+            bool result = false;
+            if (_userDBService.Where(a => a.UserName == username || a.Contact.PrimaryEmail == username) != null)
+            {
+                User user = _userDBService.Where(a => a.UserName == username || a.Contact.PrimaryEmail == username).FirstOrDefault();
+                 await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
+                              , user.Contact.PrimaryEmail
+                              , "Forgot Password to Nostreets Sandbox"
+                              , "Forgot Password to Nostreets Sandbox"
+                              , "");
+            }
+
+            return result;
+        }
+
+        public bool ForgotPasswordValidation(string token, string userId)
         {
             throw new NotImplementedException();
         }

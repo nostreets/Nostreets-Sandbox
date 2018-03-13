@@ -81,7 +81,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpPost, Route("register"), Intercept("Session", "PostMapRequestHandler")]
+        [HttpPost, Route("register")]
         public async Task<HttpResponseMessage> RegisterAsync(User user)
         {
             try
@@ -89,6 +89,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 if (ModelState.IsValid)
                 {
                     string id = await _userService.RegisterAsync(user);
+                    CacheManager.InsertItem(HttpContext.Current.GetIPAddress(), id);
                     ItemResponse<string> response = new ItemResponse<string>(id);
                     return Request.CreateResponse(HttpStatusCode.OK, response);
                 }
@@ -111,7 +112,6 @@ namespace Nostreets_Sandbox.Controllers.Api
 
                 _userService.LogOut();
                 SuccessResponse response = new SuccessResponse();
-                HttpContext.Current.SetCookie("loggedIn", "false");
                 return Request.CreateResponse(HttpStatusCode.OK, response);
 
             }
@@ -176,9 +176,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("UserLogIn")]
-        [Route("bill/expenses/all")]
-        [HttpGet]
+        [HttpGet, Route("bill/expenses/all"), Intercept("UserLogIn")]
         public HttpResponseMessage GetAllExpenses()
         {
             try
