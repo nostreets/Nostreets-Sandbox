@@ -65,12 +65,8 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-
                 _userService.LogIn(username, password);
-
-                ItemResponse<string> response = new ItemResponse<string>(username);
-                HttpContext.Current.SetCookie("loggedIn", "true");
-
+                SuccessResponse response = new SuccessResponse();
                 return Request.CreateResponse(HttpStatusCode.OK, response);
 
             }
@@ -89,7 +85,6 @@ namespace Nostreets_Sandbox.Controllers.Api
                 if (ModelState.IsValid)
                 {
                     string id = await _userService.RegisterAsync(user);
-                    CacheManager.InsertItem(HttpContext.Current.GetIPAddress(), id);
                     ItemResponse<string> response = new ItemResponse<string>(id);
                     return Request.CreateResponse(HttpStatusCode.OK, response);
                 }

@@ -61,7 +61,8 @@ namespace Nostreets_Sandbox
                   "~/Scripts/app/services/alertService.js",
                   "~/Scripts/app/services/systemEvent.service.js",
                   "~/Scripts/app/configs/routeConfig.js",
-                  "~/Scripts/app/services/sandboxService.js"
+                  "~/Scripts/app/services/sandboxService.js",
+                  "~/Scripts/app/directives/signInDirective.js"
                        ));
 
 

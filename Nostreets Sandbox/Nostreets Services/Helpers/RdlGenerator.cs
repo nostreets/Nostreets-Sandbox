@@ -52,7 +52,7 @@ namespace Nostreets_Services.Helpers
                "ORDER BY Person.CountryRegion.Name";
 
 
-            DataProvider.ExecuteCmd(() => Connection, "", null,
+            Instance.ExecuteCmd(() => Connection, "", null,
                 (reader, set) =>
                 {
                     for (int i = 0; i <= reader.FieldCount - 1; i++)

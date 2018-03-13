@@ -23,12 +23,13 @@ namespace Nostreets_Services.Interfaces.Services
         Task<string> RegisterAsync(User user);
         bool ValidateEmail(string token,string userId);
         IEnumerable<User> Where(Func<User, bool> predicate);
+        IEnumerable<Token> Where(Func<Token, bool> predicate);
         bool ValidatePassword(string encrptedPassword, string password);
         bool ChangeUserEmail(string email, string password);
         bool ChangeUserPassword(string newPassword, string oldPassword);
         bool UpdateUserSettings(UserSettings settings);
         bool UpdateUserContactInfo(Contact settings);
-        public Task<bool> ForgotPasswordEmailAsync(string username);
+        Task<bool> ForgotPasswordEmailAsync(string username);
         bool ForgotPasswordValidation(string token, string userId);
     }
 }

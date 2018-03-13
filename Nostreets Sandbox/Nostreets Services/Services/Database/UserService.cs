@@ -30,12 +30,14 @@ namespace Nostreets_Services.Services.Database
         private IDBService<User, string> _userDBService = null;
         private IDBService<Token> _tokenDBService = null;
 
+        public string RequestIp => HttpContext.Current.GetIPAddress();
+
         public User SessionUser
         {
             get
             {
-                if (CacheManager.Contains(HttpContext.Current.GetIPAddress()))
-                    _sessionUser = _userDBService.Get(CacheManager.GetItem<string>(HttpContext.Current.GetIPAddress()));
+                if (CacheManager.Contains(RequestIp))
+                    _sessionUser = _userDBService.Get(CacheManager.GetItem<string>(RequestIp));
                 return _sessionUser;
             }
             set { _sessionUser = value; }
@@ -47,8 +49,8 @@ namespace Nostreets_Services.Services.Database
         {
             failureReason = null;
             bool result = false;
-            User user = (CacheManager.Contains(HttpContext.Current.GetIPAddress()))
-                            ? _userDBService.Get(CacheManager.GetItem<string>(HttpContext.Current.GetIPAddress()))
+            User user = (CacheManager.Contains(RequestIp))
+                            ? _userDBService.Get(CacheManager.GetItem<string>(RequestIp))
                             : _userDBService.Where(
                                        a => a.UserName == username ||
                                        a.Contact.PrimaryEmail == username 
@@ -94,7 +96,7 @@ namespace Nostreets_Services.Services.Database
             _userDBService.Delete(id);
         }
 
-        public User Get(string id)
+        public User GetUser(string id)
         {
             return _userDBService.Get(id);
         }
@@ -109,11 +111,6 @@ namespace Nostreets_Services.Services.Database
             return _userDBService.Where(a => a.UserName == username).FirstOrDefault();
         }
 
-        public IEnumerable<User> Where(Func<User, bool> predicate)
-        {
-            return _userDBService.Where(predicate);
-        }
-
         public void LogIn(string username, string password, bool rememberDevice = false)
         {
             User user = null;
@@ -121,8 +118,11 @@ namespace Nostreets_Services.Services.Database
             {
                 user = GetByUsername(username);
 
-                if (rememberDevice && !user.Settings.IPAddresses.Contains(HttpContext.Current.GetIPAddress()))
-                    user.Settings.IPAddresses.Add(HttpContext.Current.GetIPAddress());
+                if (rememberDevice && !user.Settings.IPAddresses.Contains(RequestIp))
+                    user.Settings.IPAddresses.Add(RequestIp);
+
+                CacheManager.InsertItem(RequestIp, user.Id);
+                HttpContext.Current.SetCookie("loggedIn", "true");
             }
             else
                 throw new Exception(reason);
@@ -134,11 +134,11 @@ namespace Nostreets_Services.Services.Database
             user.Password = Encryption.SimpleEncryptWithPassword(user.Password, WebConfigurationManager.AppSettings["CryptoKey"]);
             user.Settings = new UserSettings
             {
-                IPAddresses = new List<string> { HttpContext.Current.GetIPAddress() }
+                IPAddresses = new List<string> { RequestIp }
             };
 
             string result = _userDBService.Insert(user);
-
+            CacheManager.InsertItem(RequestIp, result);
 
 
             Token token = new Token
@@ -155,7 +155,8 @@ namespace Nostreets_Services.Services.Database
             };
             string html = HttpContext.Current.Server.MapPath("\\assets\\ValidateEmail.html").ReadFile()
                                      .Replace("{url}", HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)
-                                     + "/emailConfirm?token={0}?user={1}".FormatString(token.Value.ToString(), result));
+                                     + "?token={0}?userId={1}".FormatString(token.Value.ToString(), result));
+                                     //+"/emailConfirm?token={0}?user={1}".FormatString(token.Value.ToString(), result));
 
             _tokenDBService.Insert(token);
             if (!await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
@@ -179,8 +180,8 @@ namespace Nostreets_Services.Services.Database
 
             if (userToken != null)
             {
-                if (!CacheManager.Contains(HttpContext.Current.GetIPAddress()))
-                    CacheManager.InsertItem(HttpContext.Current.GetIPAddress(), userId);
+                if (!CacheManager.Contains(RequestIp))
+                    CacheManager.InsertItem(RequestIp, userId);
 
                 result = true;
                 userToken.IsDisabled = true;
@@ -189,9 +190,9 @@ namespace Nostreets_Services.Services.Database
                 SessionUser.Settings.HasVaildatedEmail = true;
 
                 if (SessionUser.Settings.IPAddresses == null)
-                    SessionUser.Settings.IPAddresses = new List<string> { HttpContext.Current.GetIPAddress() };
+                    SessionUser.Settings.IPAddresses = new List<string> { RequestIp };
                 else
-                    SessionUser.Settings.IPAddresses.Add(HttpContext.Current.GetIPAddress());
+                    SessionUser.Settings.IPAddresses.Add(RequestIp);
 
                 _userDBService.Update(SessionUser);
                 _tokenDBService.Update(userToken);
@@ -256,7 +257,7 @@ namespace Nostreets_Services.Services.Database
         public void LogOut()
         {
             HttpContext.Current.SetCookie("loggedIn", "false");
-            CacheManager.DeleteItem(HttpContext.Current.GetIPAddress());
+            CacheManager.DeleteItem(RequestIp);
         }
 
         public async Task<bool> ForgotPasswordEmailAsync(string username)
@@ -265,11 +266,25 @@ namespace Nostreets_Services.Services.Database
             if (_userDBService.Where(a => a.UserName == username || a.Contact.PrimaryEmail == username) != null)
             {
                 User user = _userDBService.Where(a => a.UserName == username || a.Contact.PrimaryEmail == username).FirstOrDefault();
-                 await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
+                Token token = new Token
+                {
+                    ExpirationDate = DateTime.Now.AddDays(1),
+                    IsDisabled = false,
+                    UserId = user.Id,
+                    ModifiedUserId = user.Id,
+                    Value = Guid.NewGuid(),
+                    Name = user.UserName + "'s Password Reset Token",
+                    DateCreated = DateTime.Now,
+                    DateModified = DateTime.Now,
+                    Type = TokenType.PasswordReset
+                };
+
+                if (await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
                               , user.Contact.PrimaryEmail
                               , "Forgot Password to Nostreets Sandbox"
                               , "Forgot Password to Nostreets Sandbox"
-                              , "");
+                              , ""))
+                    result = true;
             }
 
             return result;
@@ -277,7 +292,42 @@ namespace Nostreets_Services.Services.Database
 
         public bool ForgotPasswordValidation(string token, string userId)
         {
-            throw new NotImplementedException();
+            bool result = false;
+            Token userToken = _tokenDBService.Where(
+                a => !a.IsDisabled && a.ExpirationDate > DateTime.Now && a.Type == TokenType.EmailValidtion && a.UserId == userId && a.Value.ToString() == token
+            ).FirstOrDefault();
+
+            if (userToken != null)
+            {
+                if (!CacheManager.Contains(RequestIp))
+                    CacheManager.InsertItem(RequestIp, userId);
+
+                result = true;
+                userToken.IsDisabled = true;
+                userToken.DateModified = DateTime.Now;
+                SessionUser.Settings.IsLockedOut = false;
+                SessionUser.Settings.HasVaildatedEmail = true;
+
+                if (SessionUser.Settings.IPAddresses == null)
+                    SessionUser.Settings.IPAddresses = new List<string> { RequestIp };
+                else
+                    SessionUser.Settings.IPAddresses.Add(RequestIp);
+
+                _userDBService.Update(SessionUser);
+                _tokenDBService.Update(userToken);
+            }
+
+            return result;
+        }
+
+        public IEnumerable<User> Where(Func<User, bool> predicate)
+        {
+            return _userDBService.Where(predicate);
+        }
+
+        public IEnumerable<Token> Where(Func<Token, bool> predicate)
+        {
+            return _tokenDBService.Where(predicate);
         }
     }
 

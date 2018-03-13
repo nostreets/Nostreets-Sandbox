@@ -26,7 +26,7 @@ namespace Nostreets_Services.Services.Email
             try
             {
 
-                if (messageText == null)
+                if (messageText == null || messageHtml == "")
                     messageText = subject;
 
                 SendGridClient client = new SendGridClient(ApiKey);

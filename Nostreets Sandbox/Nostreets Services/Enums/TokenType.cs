@@ -11,5 +11,6 @@ namespace Nostreets_Services.Enums
         TwoFactorAut = 1,
         EmailValidtion,
         PhoneValidtion,
+        PasswordReset
     }
 }

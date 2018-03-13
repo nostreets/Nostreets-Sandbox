@@ -21,17 +21,30 @@ namespace Nostreets_Sandbox.Controllers
         public IUserService _userService = null;
 
         [Route("~/")]
-        public ActionResult Index()
+        public ActionResult Index(string token = null, string userId = null)
         {
             User user = null;
-            if (!SessionManager.HasAnySessions() || !SessionManager.Get<bool>(SessionState.IsLoggedOn))
+            Token userToken = null;
+
+            if (_userService.SessionUser != null)
+                user = _userService.SessionUser;
+
+            else
             {
                 string userIp = HttpContext.Request.UserHostAddress;
                 user = _userService.Where(a => a.Settings.IPAddresses != null && a.Settings.IPAddresses.Any(b => b == userIp)).FirstOrDefault();
             }
-            else
-                user = _userService.SessionUser;
 
+
+            if (token != null && token != "" && userId != null || userId != "")
+            {
+                userToken = _userService.Where(a => a.UserId == userId && a.Value.ToString() == token).FirstOrDefault();
+                userToken.DateModified = DateTime.Now;
+                userToken.IsDisabled = true;
+            }
+
+
+            ViewBag.UserState = userToken.Type.ToString();
             return View(user);
         }
 
@@ -41,7 +54,17 @@ namespace Nostreets_Sandbox.Controllers
             if (token != null || token != "")
                 _userService.ValidateEmail(token, user);
 
-            return Redirect("/home");
+            return Index("EmailComfirmation");//Redirect("/home");
+        }
+
+
+        [Route("~/resetPassword")]
+        public ActionResult ResetPassword(string token, string user)
+        {
+            if (token != null || token != "")
+                _userService.ForgotPasswordValidation(token, user);
+
+            return Index("ResetPassword");//Redirect("/home");
         }
     }
 }

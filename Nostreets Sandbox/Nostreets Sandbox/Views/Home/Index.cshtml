@@ -48,7 +48,7 @@
 
 
 @section scripts{
-    <script src="~/Scripts/app/directives/signInDirective.js"></script>
+    @*<script src="~/Scripts/app/directives/signInDirective.js"></script>*@
     <script src="~/Scripts/app/directives/renderGraphDirective.js"></script>
     <script src="~/Scripts/app/controllers/generalControllers.js"></script>
     <script src="~/Scripts/app/controllers/cardController.js"></script>
@@ -64,6 +64,7 @@
     <script type="text/javascript">
         @if(Model != null) {
                @: page.user.data = @Model
+               @: page.user.state = @ViewBag.UserState
             }
     </script>
 }
