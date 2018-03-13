@@ -150,7 +150,7 @@ namespace Nostreets_Services.Services.Database
             };
             string html = HttpContext.Current.Server.MapPath("\\assets\\ValidateEmail.html").ReadFile()
                                      .Replace("{url}", HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)
-                                     + "/emailConfirm?token=" + token.Value.ToString());
+                                     + "/emailConfirm?token={0}?user={1}".FormatString(token.Value.ToString(), result));
 
             _tokenDBService.Insert(token);
             if (!await _emailService.SendAsync("no-reply@nostreetssolutions.com"

@@ -1,25 +1,21 @@
 ﻿using Nostreets_Sandbox.App_Start;
-using Nostreets_Services.Domain;
-using Nostreets_Services.Domain.Bills;
-using NostreetsEntities;
 using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using System.Web.SessionState;
 
 namespace Nostreets_Sandbox
 {
-    public class MvcApplication : System.Web.HttpApplication
+    public class MvcApplication : HttpApplication
     {
         protected void Application_Start()
         {
 
            // AreaRegistration.RegisterAllAreas();
+
             WindsorConfig.RegisterInterfaces(GlobalConfiguration.Configuration);
             //UnityConfig.RegisterInterfaces(GlobalConfiguration.Configuration);
 
@@ -36,5 +32,10 @@ namespace Nostreets_Sandbox
         {
             WindsorConfig.GetContainer().Dispose();
         }
+
+        //protected void Application_PostResolveRequestCache(object sender, EventArgs e)
+        //{
+        //    HttpApplication _sender = (HttpApplication)sender;
+        //}
     }
 }

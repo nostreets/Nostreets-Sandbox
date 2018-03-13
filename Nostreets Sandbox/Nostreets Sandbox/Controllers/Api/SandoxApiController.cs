@@ -81,7 +81,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpPost, Route("register")]
+        [HttpPost, Route("register"), Intercept("Session", "PostMapRequestHandler")]
         public async Task<HttpResponseMessage> RegisterAsync(User user)
         {
             try

@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Net.Http;
 using System.Web;
+using System.Web.SessionState;
 
 namespace Nostreets_Sandbox.App_Start
 {
@@ -18,6 +19,12 @@ namespace Nostreets_Sandbox.App_Start
         }
 
         IUserService _userSrv = null;
+
+        [Validator("Session", "PostMapRequestHandler")]
+        void SessionRequired(HttpApplication app)
+        {
+            app.Context.SetSessionStateBehavior(SessionStateBehavior.Required);
+        }
 
         [Validator("UserLogIn")]
         void GetCurrentUser(HttpApplication app)
@@ -41,8 +48,6 @@ namespace Nostreets_Sandbox.App_Start
 
             app.CreateResponse(HttpStatusCode.Unauthorized, new ErrorResponse("User is not logged in..."));
         }
-
-
 
 
     }

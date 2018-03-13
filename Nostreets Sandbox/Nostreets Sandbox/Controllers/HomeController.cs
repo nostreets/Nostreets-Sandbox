@@ -36,7 +36,7 @@ namespace Nostreets_Sandbox.Controllers
         }
 
         [Route("~/emailConfirm")]
-        public ActionResult EmailComfirmation(string token)
+        public ActionResult EmailComfirmation(string token, string user)
         {
             if (token != null || token != "")
                 _userService.ValidateEmail(token);
