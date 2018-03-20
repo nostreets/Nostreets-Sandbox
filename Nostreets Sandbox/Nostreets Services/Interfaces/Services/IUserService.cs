@@ -21,7 +21,7 @@ namespace Nostreets_Services.Interfaces.Services
         void LogOut();
         void LogIn(string username, string password, bool rememberDevice = false);
         Task<string> RegisterAsync(User user);
-        bool ValidateEmail(string token,string userId);
+        bool ValidateToken(string value, string userId, out string failureReason);
         IEnumerable<User> Where(Func<User, bool> predicate);
         IEnumerable<Token> Where(Func<Token, bool> predicate);
         bool ValidatePassword(string encrptedPassword, string password);
@@ -31,5 +31,7 @@ namespace Nostreets_Services.Interfaces.Services
         bool UpdateUserContactInfo(Contact settings);
         Task<bool> ForgotPasswordEmailAsync(string username);
         bool ForgotPasswordValidation(string token, string userId);
+        User FirstOrDefault(Func<User, bool> predicate);
+        Token FirstOrDefault(Func<Token, bool> predicate);
     }
 }

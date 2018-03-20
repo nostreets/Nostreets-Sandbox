@@ -25,38 +25,51 @@ namespace Nostreets_Sandbox.Controllers
         {
             User user = null;
             Token userToken = null;
+            string failure = "";
 
             if (_userService.SessionUser != null)
                 user = _userService.SessionUser;
 
             else
             {
-                _userService.Where(a => a.UserName != null);
-
-               string userIp = HttpContext.Request.UserHostAddress;
+                string userIp = HttpContext.Request.UserHostAddress;
                 user = _userService.Where(a => a.Settings.IPAddresses != null && a.Settings.IPAddresses.Any(b => b == userIp)).FirstOrDefault();
+
+                if (userId != null)
+                    user = _userService.FirstOrDefault(a => a.Id == userId);
+                else
+                    user = _userService.FirstOrDefault(a => a.Id == userId);
+
+
             }
 
 
             if (token != null && token != "" && userId != null || userId != "")
             {
-                userToken = _userService.Where(a => a.UserId == userId && a.Value.ToString() == token).FirstOrDefault();
-                userToken.DateModified = DateTime.Now;
-                userToken.IsDisabled = true;
+                //userToken = _userService.Where(a => a.UserId == userId && a.Value.ToString() == token).FirstOrDefault();
+                if (userToken != null)
+                {
+                    if (_userService.ValidateToken(token, userId, out failure))
+                    {
+                        userToken.DateModified = DateTime.Now;
+                        userToken.IsDisabled = true;
+                    }
+                }
             }
 
 
-            ViewBag.UserState = userToken.Type.ToString();
+            ViewBag.UserState = new
+            {
+                type = userToken.Type.ToString(),
+                failureReason = failure
+            };
             return View(user);
         }
 
         [Route("~/emailConfirm")]
         public ActionResult EmailComfirmation(string token, string user)
         {
-            if (token != null || token != "")
-                _userService.ValidateEmail(token, user);
-
-            return Index("EmailComfirmation");//Redirect("/home");
+            return Index(token, user);//Redirect("/home");
         }
 
 

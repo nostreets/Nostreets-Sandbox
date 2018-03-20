@@ -53,7 +53,7 @@ namespace Nostreets_Services.Services.Database
                             ? _userDBService.Get(CacheManager.GetItem<string>(RequestIp))
                             : _userDBService.Where(
                                        a => a.UserName == username ||
-                                       a.Contact.PrimaryEmail == username 
+                                       a.Contact.PrimaryEmail == username
                                        ).FirstOrDefault();
 
 
@@ -156,7 +156,7 @@ namespace Nostreets_Services.Services.Database
             string html = HttpContext.Current.Server.MapPath("\\assets\\ValidateEmail.html").ReadFile()
                                      .Replace("{url}", HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)
                                      + "?token={0}?userId={1}".FormatString(token.Value.ToString(), result));
-                                     //+"/emailConfirm?token={0}?user={1}".FormatString(token.Value.ToString(), result));
+            //+"/emailConfirm?token={0}?user={1}".FormatString(token.Value.ToString(), result));
 
             _tokenDBService.Insert(token);
             if (!await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
@@ -171,32 +171,41 @@ namespace Nostreets_Services.Services.Database
             return result;
         }
 
-        public bool ValidateEmail(string value, string userId)
+        public bool ValidateToken(string value, string userId, out string failureReason)
         {
             bool result = false;
+            failureReason = "";
+
             Token userToken = _tokenDBService.Where(
-                a => !a.IsDisabled && a.ExpirationDate > DateTime.Now && a.Type == TokenType.EmailValidtion && a.UserId == userId && a.Value.ToString() == value
+                a => !a.IsDisabled && a.ExpirationDate > DateTime.Now && a.UserId == userId && a.Value.ToString() == value
             ).FirstOrDefault();
 
             if (userToken != null)
             {
-                if (!CacheManager.Contains(RequestIp))
-                    CacheManager.InsertItem(RequestIp, userId);
+                if (userToken.ExpirationDate > DateTime.Now)
+                {
+                    if (!CacheManager.Contains(RequestIp))
+                        CacheManager.InsertItem(RequestIp, userId);
 
-                result = true;
-                userToken.IsDisabled = true;
-                userToken.DateModified = DateTime.Now;
-                SessionUser.Settings.IsLockedOut = false;
-                SessionUser.Settings.HasVaildatedEmail = true;
+                    result = true;
+                    userToken.IsDisabled = true;
+                    userToken.DateModified = DateTime.Now;
+                    SessionUser.Settings.IsLockedOut = false;
+                    SessionUser.Settings.HasVaildatedEmail = true;
 
-                if (SessionUser.Settings.IPAddresses == null)
-                    SessionUser.Settings.IPAddresses = new List<string> { RequestIp };
+                    if (SessionUser.Settings.IPAddresses == null)
+                        SessionUser.Settings.IPAddresses = new List<string> { RequestIp };
+                    else
+                        SessionUser.Settings.IPAddresses.Add(RequestIp);
+
+                    _userDBService.Update(SessionUser);
+                    _tokenDBService.Update(userToken);
+                }
                 else
-                    SessionUser.Settings.IPAddresses.Add(RequestIp);
-
-                _userDBService.Update(SessionUser);
-                _tokenDBService.Update(userToken);
+                    failureReason = "Token is expired...";
             }
+            else
+                failureReason = "Token does not exist...";
 
             return result;
         }
@@ -234,7 +243,7 @@ namespace Nostreets_Services.Services.Database
             if (ValidatePassword(SessionUser.Password, oldPassword))
             {
                 SessionUser.Password = Encryption.SimpleEncryptWithPassword(newPassword, WebConfigurationManager.AppSettings["CryptoKey"]);
-                _userDBService.Update(SessionUser); 
+                _userDBService.Update(SessionUser);
             }
 
             return result;
@@ -328,6 +337,16 @@ namespace Nostreets_Services.Services.Database
         public IEnumerable<Token> Where(Func<Token, bool> predicate)
         {
             return _tokenDBService.Where(predicate);
+        }
+
+        public User FirstOrDefault(Func<User, bool> predicate)
+        {
+            return _userDBService.FirstOrDefault(predicate);
+        }
+
+        public Token FirstOrDefault(Func<Token, bool> predicate)
+        {
+            return _tokenDBService.FirstOrDefault(predicate);
         }
     }
 
