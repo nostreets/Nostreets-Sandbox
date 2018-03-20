@@ -35,32 +35,20 @@ namespace Nostreets_Sandbox.Controllers
                 string userIp = HttpContext.Request.UserHostAddress;
                 user = _userService.Where(a => a.Settings.IPAddresses != null && a.Settings.IPAddresses.Any(b => b == userIp)).FirstOrDefault();
 
-                if (userId != null)
-                    user = _userService.FirstOrDefault(a => a.Id == userId);
-                else
-                    user = _userService.FirstOrDefault(a => a.Id == userId);
-
-
             }
 
 
-            if (token != null && token != "" && userId != null || userId != "")
-            {
-                //userToken = _userService.Where(a => a.UserId == userId && a.Value.ToString() == token).FirstOrDefault();
-                if (userToken != null)
+            if (token != null && userId != null)
+                if (_userService.ValidateToken(token, userId, out failure))
                 {
-                    if (_userService.ValidateToken(token, userId, out failure))
-                    {
-                        userToken.DateModified = DateTime.Now;
-                        userToken.IsDisabled = true;
-                    }
+                    userToken.DateModified = DateTime.Now;
+                    userToken.IsDisabled = true;
                 }
-            }
 
 
             ViewBag.UserState = new
             {
-                type = userToken.Type.ToString(),
+                type = userToken?.Type.ToString(),
                 failureReason = failure
             };
             return View(user);

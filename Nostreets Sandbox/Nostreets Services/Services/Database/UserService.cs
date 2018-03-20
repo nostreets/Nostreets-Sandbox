@@ -155,7 +155,7 @@ namespace Nostreets_Services.Services.Database
             };
             string html = HttpContext.Current.Server.MapPath("\\assets\\ValidateEmail.html").ReadFile()
                                      .Replace("{url}", HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)
-                                     + "?token={0}?userId={1}".FormatString(token.Value.ToString(), result));
+                                     + "?token={0}&userId={1}".FormatString(token.Value.ToString(), result));
             //+"/emailConfirm?token={0}?user={1}".FormatString(token.Value.ToString(), result));
 
             _tokenDBService.Insert(token);
