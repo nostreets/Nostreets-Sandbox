@@ -28,7 +28,7 @@ namespace Nostreets_Services.Services.Database
 
         private IEmailService _emailSrv = null;
         private IDBService<User, string> _userDBService = null;
-        private IDBService<Token> _tokenDBService = null;
+        private IDBService<Token, int> _tokenDBService = null;
 
         public string RequestIp => HttpContext.Current.GetIPAddress();
 
@@ -36,11 +36,18 @@ namespace Nostreets_Services.Services.Database
         {
             get
             {
-                if (CacheManager.Contains(RequestIp))
-                    _sessionUser = _userDBService.Get(CacheManager.GetItem<string>(RequestIp));
+                string userId = CacheManager.GetItem<string>(RequestIp);
+                if (userId != null)
+                    if (CacheManager.Contains(userId))
+                        _sessionUser = CacheManager.GetItem<User>(userId);
+                    else
+                        _sessionUser = _userDBService.Get(CacheManager.GetItem<string>(RequestIp));
+
+                if (_sessionUser != null && !CacheManager.Contains(_sessionUser.Id))
+                    CacheManager.InsertItem(_sessionUser.Id, _sessionUser, DateTimeOffset.Now.AddHours(2));
+
                 return _sessionUser;
             }
-            set { _sessionUser = value; }
         }
 
         private User _sessionUser = null;
@@ -49,12 +56,9 @@ namespace Nostreets_Services.Services.Database
         {
             failureReason = null;
             bool result = false;
-            User user = (CacheManager.Contains(RequestIp))
-                            ? _userDBService.Get(CacheManager.GetItem<string>(RequestIp))
-                            : _userDBService.Where(
-                                       a => a.UserName == username ||
-                                       a.Contact.PrimaryEmail == username
-                                       ).FirstOrDefault();
+            User user = SessionUser != null
+                            ? SessionUser
+                            : GetByUsername(username);
 
 
             if (user != null && user.Settings.IPAddresses.Contains()) { }
@@ -108,7 +112,7 @@ namespace Nostreets_Services.Services.Database
 
         public User GetByUsername(string username)
         {
-            return _userDBService.Where(a => a.UserName == username).FirstOrDefault();
+            return FirstOrDefault(a => a.UserName == username || a.Contact.PrimaryEmail == username);
         }
 
         public void LogIn(string username, string password, bool rememberDevice = false)
@@ -131,15 +135,7 @@ namespace Nostreets_Services.Services.Database
 
         public async Task<string> RegisterAsync(User user)
         {
-            user.Password = Encryption.SimpleEncryptWithPassword(user.Password, WebConfigurationManager.AppSettings["CryptoKey"]);
-            user.Settings = new UserSettings
-            {
-                IPAddresses = new List<string> { RequestIp }
-            };
-
-            string result = _userDBService.Insert(user);
-            CacheManager.InsertItem(RequestIp, result);
-
+            string result = Insert(user);
 
             Token token = new Token
             {
@@ -158,7 +154,7 @@ namespace Nostreets_Services.Services.Database
                                      + "?token={0}&userId={1}".FormatString(token.Value.ToString(), result));
             //+"/emailConfirm?token={0}?user={1}".FormatString(token.Value.ToString(), result));
 
-            _tokenDBService.Insert(token);
+            Insert(token);
             if (!await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
                               , user.Contact.PrimaryEmail
                               , "Nostreets Sandbox Validation"
@@ -184,9 +180,6 @@ namespace Nostreets_Services.Services.Database
             {
                 if (userToken.ExpirationDate > DateTime.Now)
                 {
-                    if (!CacheManager.Contains(RequestIp))
-                        CacheManager.InsertItem(RequestIp, userId);
-
                     result = true;
                     userToken.IsDisabled = true;
                     userToken.DateModified = DateTime.Now;
@@ -195,11 +188,12 @@ namespace Nostreets_Services.Services.Database
 
                     if (SessionUser.Settings.IPAddresses == null)
                         SessionUser.Settings.IPAddresses = new List<string> { RequestIp };
-                    else
+
+                    else if (!SessionUser.Settings.IPAddresses.Contains(RequestIp))
                         SessionUser.Settings.IPAddresses.Add(RequestIp);
 
-                    _userDBService.Update(SessionUser);
-                    _tokenDBService.Update(userToken);
+                    Update(SessionUser);
+                    Update(userToken);
                 }
                 else
                     failureReason = "Token is expired...";
@@ -347,6 +341,44 @@ namespace Nostreets_Services.Services.Database
         public Token FirstOrDefault(Func<Token, bool> predicate)
         {
             return _tokenDBService.FirstOrDefault(predicate);
+        }
+
+        public void Update(User user)
+        {
+            if (!CacheManager.Contains(RequestIp))
+                CacheManager.InsertItem(RequestIp, user.Id);
+
+            CacheManager.InsertItem(user.Id, user);
+            _userDBService.Update(SessionUser);
+        }
+
+        public void Update(Token token)
+        {
+            _tokenDBService.Update(token);
+        }
+
+        public string Insert(User user)
+        {
+
+            user.Password = Encryption.SimpleEncryptWithPassword(user.Password, WebConfigurationManager.AppSettings["CryptoKey"]);
+            user.Settings = new UserSettings
+            {
+                IPAddresses = new List<string> { RequestIp }
+            };
+            string userId = _userDBService.Insert(user);
+
+
+            if (!CacheManager.Contains(RequestIp))
+                CacheManager.InsertItem(RequestIp, userId);
+
+            CacheManager.InsertItem(userId, user);
+
+            return userId;
+        }
+
+        public int Insert(Token token)
+        {
+            return _tokenDBService.Insert(token);
         }
     }
 

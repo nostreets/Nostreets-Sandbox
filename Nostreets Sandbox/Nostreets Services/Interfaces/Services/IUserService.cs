@@ -33,5 +33,9 @@ namespace Nostreets_Services.Interfaces.Services
         bool ForgotPasswordValidation(string token, string userId);
         User FirstOrDefault(Func<User, bool> predicate);
         Token FirstOrDefault(Func<Token, bool> predicate);
+        void Update(User user);
+        void Update(Token token);
+        string Insert(User user);
+        int Insert(Token token);
     }
 }
