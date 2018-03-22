@@ -15,11 +15,7 @@ namespace Nostreets_Sandbox
                       "~/assets/css/theme-Dark.css",
                       "~/assets/css/material-dashboard.css",
                       "~/assets/css/chartist-plugin-tooltip.css",
-
-                      //"~/node_modules/onsenui/css/onsenui.css",
-                      //"~/node_modules/onsenui/css/onsen-css-components.min.css",
                       "~/assets/css/Site.css",
-
                       
 
                       "~/assets/css/font-awesome.css",
@@ -33,7 +29,6 @@ namespace Nostreets_Sandbox
                     "~/assets/js/jquery-3.2.1.js",
                     "~/assets/js/jquery.validate.js",
                     "~/assets/js/bootstrap.js",
-                    //"~/assets/onsenui/js/onsenui.js",
                     "~/assets/js/material.min.js",
                     "~/assets/js/sweetalert2.js",
                     "~/assets/js/chartist.min.js",

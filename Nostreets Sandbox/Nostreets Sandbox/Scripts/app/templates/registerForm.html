@@ -1,199 +1,208 @@
-﻿<form class="form theRegisterForm card" name="regVm.regForm" novalidate>
-    <div class="card-header" style="margin-bottom:auto">
-        Register
+﻿<div>
+    <div ng-if="regVm.requestSuccessful">
+        Registation Email has been sent...
+        Validate Email to be able to login!
     </div>
-    <div class="card-content">
-        <div class="form-group"
-             ng-class="{true: 'has-success', false: 'has-error'}[(regVm.regForm.username.$valid || regVm.regForm.username.pattern.$valid) && (!regVm.userNameExists)]">
-            <div class="input-group">
-                <span class="input-group-addon">
-                    <i class="material-icons" style="color:black">face</i>
-                </span>
-                <input type="text"
-                       name="username"
-                       id="username"
-                       class="form-control"
-                       ng-model="regVm.username"
-                       ng-blur="regVm.checkUsername()"
-                       required
-                       placeholder="Username...">
+    <form class="form theRegisterForm card" 
+          name="regVm.regForm"
+          ng-if="!regVm.requestSuccessful"
+          novalidate>
+        <div class="card-header" style="margin-bottom:auto">
+            Register
+        </div>
+        <div class="card-content">
+            <div class="form-group"
+                 ng-class="{true: 'has-success', false: 'has-error'}[(regVm.regForm.username.$valid || regVm.regForm.username.pattern.$valid) && (!regVm.userNameExists)]">
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <i class="material-icons" style="color:black">face</i>
+                    </span>
+                    <input type="text"
+                           name="username"
+                           id="username"
+                           class="form-control"
+                           ng-model="regVm.username"
+                           ng-blur="regVm.checkUsername()"
+                           required
+                           placeholder="Username...">
 
-                <span class="form-control-feedback"
-                      ng-show="regVm.regForm.username.$valid && !regVm.usernameExists">
-                    <i class="material-icons" style="color:rgb(95, 214, 95)">done</i>
-                </span>
-                <div class="text-danger"
-                      ng-show="regVm.regForm.username.$error.required && regVm.regForm.username.$dirty">
-                    <em>
-                        This field is required!
-                    </em>
-                </div>
-                <div class="text-danger"
-                      ng-show="(regVm.usernameExists)">
-                    <em>
-                        Username already exists...
-                    </em>
+                    <span class="form-control-feedback"
+                          ng-show="regVm.regForm.username.$valid && !regVm.usernameExists">
+                        <i class="material-icons" style="color:rgb(95, 214, 95)">done</i>
+                    </span>
+                    <div class="text-danger"
+                         ng-show="regVm.regForm.username.$error.required && regVm.regForm.username.$dirty">
+                        <em>
+                            This field is required!
+                        </em>
+                    </div>
+                    <div class="text-danger"
+                         ng-show="(regVm.usernameExists)">
+                        <em>
+                            Username already exists...
+                        </em>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="form-group"
-             ng-class="{ true: 'has-success', false: 'has-error'}[(regVm.regForm.email.$valid ||  regVm.regForm.email.email.$valid) && (!regVm.emailExists)]">
+            <div class="form-group"
+                 ng-class="{ true: 'has-success', false: 'has-error'}[(regVm.regForm.email.$valid ||  regVm.regForm.email.email.$valid) && (!regVm.emailExists)]">
 
-            <div class="input-group">
-                <span class="input-group-addon">
-                    <i class="material-icons" style="color:black">email</i>
-                </span>
-                <input type="email"
-                       name="email"
-                       id="email"
-                       class="form-control"
-                       ng-model="regVm.email"
-                       ng-blur="regVm.checkEmail()"
-                       required
-                       placeholder="Email...">
-                <span class="form-control-feedback"
-                      ng-show="regVm.regForm.email.$valid && !regVm.emailExists">
-                    <i class="material-icons" style="color:rgb(95, 214, 95)">done</i>
-                </span>
-                <div class="text-danger"
-                      ng-show="regVm.regForm.email.$error.required && regVm.regForm.email.$dirty">
-                    <em>
-                        This field is required!
-                    </em>
-                </div>
-                <div class="text-danger"
-                      ng-show="regVm.regForm.email.$error.email">
-                    <em>
-                        Please input a valid email...
-                    </em>
-                </div>
-                <div class="text-danger"
-                      ng-if="(regVm.emailExists)">
-                    <em>
-                        Email already exists...
-                    </em>
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <i class="material-icons" style="color:black">email</i>
+                    </span>
+                    <input type="email"
+                           name="email"
+                           id="email"
+                           class="form-control"
+                           ng-model="regVm.email"
+                           ng-blur="regVm.checkEmail()"
+                           required
+                           placeholder="Email...">
+                    <span class="form-control-feedback"
+                          ng-show="regVm.regForm.email.$valid && !regVm.emailExists">
+                        <i class="material-icons" style="color:rgb(95, 214, 95)">done</i>
+                    </span>
+                    <div class="text-danger"
+                         ng-show="regVm.regForm.email.$error.required && regVm.regForm.email.$dirty">
+                        <em>
+                            This field is required!
+                        </em>
+                    </div>
+                    <div class="text-danger"
+                         ng-show="regVm.regForm.email.$error.email">
+                        <em>
+                            Please input a valid email...
+                        </em>
+                    </div>
+                    <div class="text-danger"
+                         ng-if="(regVm.emailExists)">
+                        <em>
+                            Email already exists...
+                        </em>
+                    </div>
                 </div>
             </div>
-        </div>
 
-          <div class="form-group col-sm-6"
-             ng-class="{ true: 'has-success', false: 'has-error'}[regVm.regForm.firstName.$valid || regVm.regForm.firstName.required]">
-            <div class="input-group">
-                <span class="input-group-addon">
-                    <i class="material-icons" style="color:black">person</i>
-                </span>
-                <input name="firstName"
-                       id="firstName"
-                       type="text"
-                       placeholder="First Name..."
-                       ng-model="regVm.firstName"
-                       required
-                       class="form-control flare" />
-                <div class="text-danger"
-                      ng-show="regVm.regForm.firstName.$error.required  && regVm.regForm.firstName.$dirty">
-                    <em>
-                        This field is required!
-                    </em>
+            <div class="form-group col-sm-6"
+                 ng-class="{ true: 'has-success', false: 'has-error'}[regVm.regForm.firstName.$valid || regVm.regForm.firstName.required]">
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <i class="material-icons" style="color:black">person</i>
+                    </span>
+                    <input name="firstName"
+                           id="firstName"
+                           type="text"
+                           placeholder="First Name..."
+                           ng-model="regVm.firstName"
+                           required
+                           class="form-control flare" />
+                    <div class="text-danger"
+                         ng-show="regVm.regForm.firstName.$error.required  && regVm.regForm.firstName.$dirty">
+                        <em>
+                            This field is required!
+                        </em>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="form-group col-sm-6"
-             ng-class="{ true: 'has-success', false: 'has-error'}[regVm.regForm.rePassword.$valid || regVm.regForm.rePassword.required.$valid]">
-            <div class="input-group">
-                <span class="input-group-addon">
-                    <i class="material-icons" style="color:black">person</i>
-                </span>
-                <input name="lastName"
-                       id="lastName"
-                       type="text"
-                       placeholder="Last Name..."
-                       ng-model="regVm.lastName"
-                       required
-                       class="form-control flare" />
-                <!--<div class="text-danger"
-                      ng-show="regVm.regForm.lastName.$error.required  && regVm.regForm.lastName.$touched">
-                    <em>
-                        This field is required!
-                    </em>
-                </div>-->
-            </div>
-        </div>
-
-        <div class="form-group col-sm-6"
-             ng-class="{ true: 'has-success', false: 'has-error'}[regVm.regForm.password.$valid || regVm.regForm.password.required]">
-            <div class="input-group">
-                <span class="input-group-addon">
-                    <i class="material-icons" style="color:black">lock_outline</i>
-                </span>
-                <input name="password"
-                       id="password"
-                       type="password"
-                       placeholder="Password..."
-                       ng-model="regVm.password"
-                       required
-                       class="form-control flare" />
-                <!--<ul id="strength" check-strength="regVm.password"></ul>-->
-                <div class="text-danger"
-                      ng-show="regVm.regForm.password.$error.required  && regVm.regForm.password.$dirty">
-                    <em>
-                        This field is required!
-                    </em>
-                </div>
-                <div class="text-danger"
-                      style="display:block;"
-                      ng-show="regVm.password !== regVm.rePassword && regVm.regForm.rePassword.$dirty">
-                    <em>
-                        Passwords must match!
-                    </em>
-                </div>
-                 <div class="text-danger"
-                      ng-show="regVm.regForm.password.$error.minlength">
-                    <em>
-                        Password is to short!
-                    </em>
+            <div class="form-group col-sm-6"
+                 ng-class="{ true: 'has-success', false: 'has-error'}[regVm.regForm.rePassword.$valid || regVm.regForm.rePassword.required.$valid]">
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <i class="material-icons" style="color:black">person</i>
+                    </span>
+                    <input name="lastName"
+                           id="lastName"
+                           type="text"
+                           placeholder="Last Name..."
+                           ng-model="regVm.lastName"
+                           required
+                           class="form-control flare" />
+                    <!--<div class="text-danger"
+                          ng-show="regVm.regForm.lastName.$error.required  && regVm.regForm.lastName.$touched">
+                        <em>
+                            This field is required!
+                        </em>
+                    </div>-->
                 </div>
             </div>
-        </div>
 
-        <div class="form-group col-sm-6"
-             ng-class="{ true: 'has-success', false: 'has-error'}[regVm.regForm.rePassword.$valid || regVm.regForm.rePassword.required.$valid]">
-            <div class="input-group">
-                <span class="input-group-addon">
-                    <i class="material-icons" style="color:black">lock_outline</i>
-                </span>
-                <input name="rePassword"
-                       id="rePassword"
-                       type="password"
-                       placeholder="Confirm Password..."
-                       ng-model="regVm.rePassword"
-                       required
-                       ng-minlength="12"
-                       class="form-control flare" />
-                <div class="text-danger"
-                      ng-show="regVm.regForm.rePassword.$error.required && regVm.regForm.rePassword.$dirty">
-                    <em>
-                        This field is required!
-                    </em>
-                </div>
-                <div class="text-danger"
-                      ng-show="regVm.password !== regVm.rePassword && regVm.regForm.password.$dirty">
-                    <em>
-                        Passwords must match!
-                    </em>
+            <div class="form-group col-sm-6"
+                 ng-class="{ true: 'has-success', false: 'has-error'}[regVm.regForm.password.$valid || regVm.regForm.password.required]">
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <i class="material-icons" style="color:black">lock_outline</i>
+                    </span>
+                    <input name="password"
+                           id="password"
+                           type="password"
+                           placeholder="Password..."
+                           ng-model="regVm.password"
+                           required
+                           class="form-control flare" />
+                    <!--<ul id="strength" check-strength="regVm.password"></ul>-->
+                    <div class="text-danger"
+                         ng-show="regVm.regForm.password.$error.required  && regVm.regForm.password.$dirty">
+                        <em>
+                            This field is required!
+                        </em>
+                    </div>
+                    <div class="text-danger"
+                         style="display:block;"
+                         ng-show="regVm.password !== regVm.rePassword && regVm.regForm.rePassword.$dirty">
+                        <em>
+                            Passwords must match!
+                        </em>
+                    </div>
+                    <div class="text-danger"
+                         ng-show="regVm.regForm.password.$error.minlength">
+                        <em>
+                            Password is to short!
+                        </em>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-xs-11 col-xs-offset-1">
-            <label>
-                <input type="checkbox" name="checkBox" ng-model="checkBox" /> I agree to the
-                <a href="#something">terms and conditions</a>.
-            </label>
+            <div class="form-group col-sm-6"
+                 ng-class="{ true: 'has-success', false: 'has-error'}[regVm.regForm.rePassword.$valid || regVm.regForm.rePassword.required.$valid]">
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <i class="material-icons" style="color:black">lock_outline</i>
+                    </span>
+                    <input name="rePassword"
+                           id="rePassword"
+                           type="password"
+                           placeholder="Confirm Password..."
+                           ng-model="regVm.rePassword"
+                           required
+                           ng-minlength="12"
+                           class="form-control flare" />
+                    <div class="text-danger"
+                         ng-show="regVm.regForm.rePassword.$error.required && regVm.regForm.rePassword.$dirty">
+                        <em>
+                            This field is required!
+                        </em>
+                    </div>
+                    <div class="text-danger"
+                         ng-show="regVm.password !== regVm.rePassword && regVm.regForm.password.$dirty">
+                        <em>
+                            Passwords must match!
+                        </em>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-11 col-xs-offset-1">
+                <label>
+                    <input type="checkbox" name="checkBox" ng-model="checkBox" /> I agree to the
+                    <a href="#something">terms and conditions</a>.
+                </label>
+            </div>
         </div>
-    </div>
-    <div class="card-footer text-center">
-        <button type="submit" class="btn btn-primary btn-round" id="submitBtn" ng-click="regVm.submit()" ng-disabled="!checkBox || !regVm.regForm.$valid || !regVm.validateForm()">Get Started</button>
-    </div>
-</form>
+        <div class="card-footer text-center">
+            <button type="submit" class="btn btn-primary btn-round" id="submitBtn" ng-click="regVm.submit()" ng-disabled="!checkBox || !regVm.regForm.$valid || !regVm.validateForm()">Get Started</button>
+        </div>
+    </form>
+</div>

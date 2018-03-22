@@ -11,7 +11,7 @@ namespace Nostreets_Services.Interfaces.Services
 {
     public interface IUserService 
     {
-
+        string RequestIp { get; }
         User SessionUser { get; }
 
         bool CheckIfUserCanLogIn(string username, string password, out string failureReason);
@@ -21,7 +21,7 @@ namespace Nostreets_Services.Interfaces.Services
         void LogOut();
         void LogIn(string username, string password, bool rememberDevice = false);
         Task<string> RegisterAsync(User user);
-        bool ValidateToken(string value, string userId, out string failureReason);
+        string ValidateToken(string tokenId, string userId);
         IEnumerable<User> Where(Func<User, bool> predicate);
         IEnumerable<Token> Where(Func<Token, bool> predicate);
         bool ValidatePassword(string encrptedPassword, string password);
@@ -36,6 +36,6 @@ namespace Nostreets_Services.Interfaces.Services
         void Update(User user);
         void Update(Token token);
         string Insert(User user);
-        int Insert(Token token);
+        string Insert(Token token);
     }
 }

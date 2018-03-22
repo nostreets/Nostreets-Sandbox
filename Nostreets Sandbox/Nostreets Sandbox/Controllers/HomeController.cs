@@ -25,7 +25,7 @@ namespace Nostreets_Sandbox.Controllers
         {
             User user = null;
             Token userToken = null;
-            string failure = "";
+            string outcome = "";
 
             if (_userService.SessionUser != null)
                 user = _userService.SessionUser;
@@ -39,35 +39,17 @@ namespace Nostreets_Sandbox.Controllers
 
 
             if (token != null && userId != null)
-                if (_userService.ValidateToken(token, userId, out failure))
-                {
-                    userToken.DateModified = DateTime.Now;
-                    userToken.IsDisabled = true;
-                }
+                outcome = _userService.ValidateToken(token, userId);
 
 
-            ViewBag.UserState = new
+            ViewBag.TokenState = new
             {
                 type = userToken?.Type.ToString(),
-                failureReason = failure
+                outcome = outcome
             };
+
             return View(user);
         }
 
-        [Route("~/emailConfirm")]
-        public ActionResult EmailComfirmation(string token, string user)
-        {
-            return Index(token, user);//Redirect("/home");
-        }
-
-
-        [Route("~/resetPassword")]
-        public ActionResult ResetPassword(string token, string user)
-        {
-            if (token != null || token != "")
-                _userService.ForgotPasswordValidation(token, user);
-
-            return Index("ResetPassword");//Redirect("/home");
-        }
     }
 }

@@ -28,7 +28,7 @@ namespace Nostreets_Sandbox.App_Start
         }
 
         [Validator("UserLogIn")]
-        void GetCurrentUser(HttpApplication app)
+        void NeedsToBeLoggedIn(HttpApplication app)
         {
             if (!SessionManager.HasAnySessions() || !SessionManager.Get<bool>(SessionState.IsLoggedOn)) { NotLoggedIn(app); }
             else

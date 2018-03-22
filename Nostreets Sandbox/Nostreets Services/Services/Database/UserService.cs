@@ -19,7 +19,7 @@ namespace Nostreets_Services.Services.Database
 {
     public class UserService : IUserService
     {
-        public UserService(IEmailService emailSrv, IDBService<User, string> userDBSrv, IDBService<Token> tokenDBSrv)
+        public UserService(IEmailService emailSrv, IDBService<User, string> userDBSrv, IDBService<Token, string> tokenDBSrv)
         {
             _emailSrv = emailSrv;
             _userDBService = userDBSrv;
@@ -28,15 +28,15 @@ namespace Nostreets_Services.Services.Database
 
         private IEmailService _emailSrv = null;
         private IDBService<User, string> _userDBService = null;
-        private IDBService<Token, int> _tokenDBService = null;
+        private IDBService<Token, string> _tokenDBService = null;
 
         public string RequestIp => HttpContext.Current.GetIPAddress();
-
         public User SessionUser
         {
             get
             {
                 string userId = CacheManager.GetItem<string>(RequestIp);
+
                 if (userId != null)
                     if (CacheManager.Contains(userId))
                         _sessionUser = CacheManager.GetItem<User>(userId);
@@ -45,24 +45,33 @@ namespace Nostreets_Services.Services.Database
 
                 if (_sessionUser != null && !CacheManager.Contains(_sessionUser.Id))
                     CacheManager.InsertItem(_sessionUser.Id, _sessionUser, DateTimeOffset.Now.AddHours(2));
-
                 return _sessionUser;
+
             }
         }
 
-        private User _sessionUser = null;
+        User _sessionUser = null;
 
         public bool CheckIfUserCanLogIn(string username, string password, out string failureReason)
         {
             failureReason = null;
-            bool result = false;
-            User user = SessionUser != null
-                            ? SessionUser
-                            : GetByUsername(username);
+            User user = SessionUser ?? GetByUsername(username);
+            bool result = false,
+                 hasIP = (user == null) ? false : user.Settings.IPAddresses.Contains(RequestIp);
 
 
-            if (user != null && user.Settings.IPAddresses.Contains()) { }
-            //todo notify user of login
+
+            if (!hasIP)
+            {
+                string html = HttpContext.Current.Server.MapPath("\\assets\\UnindentifiedLogin.html").ReadFile()
+                                         .FormatString(user.UserName, DateTime.Now.Timestamp());
+
+                _emailSrv.Send("no-reply@nostreetssolutions.com"
+                              , user.Contact.PrimaryEmail
+                              , "Nostreets Sandbox Unindentified Login"
+                              , "Nostreets Sandbox Unindentified Login"
+                              , html);
+            }
 
 
             if (user == null)
@@ -73,6 +82,9 @@ namespace Nostreets_Services.Services.Database
 
             else if (!user.Settings.HasVaildatedEmail)
                 failureReason = username + "'s email is not validated...";
+
+            else if (user.Settings.ValidateIPBeforeLogin && !hasIP)
+                failureReason = username + " does not authorize this computer for login...";
 
             else if (user.Settings.TwoFactorAuthEnabled)
             {
@@ -135,71 +147,90 @@ namespace Nostreets_Services.Services.Database
 
         public async Task<string> RegisterAsync(User user)
         {
-            string result = Insert(user);
+            user.Id = Insert(user);
 
             Token token = new Token
             {
                 ExpirationDate = DateTime.Now.AddDays(7),
-                IsDisabled = false,
-                UserId = result,
-                ModifiedUserId = result,
-                Value = Guid.NewGuid(),
+                IsDeleted = false,
+                UserId = user.Id,
+                ModifiedUserId = user.Id,
                 Name = user.UserName + "'s Registion Email Token",
                 DateCreated = DateTime.Now,
                 DateModified = DateTime.Now,
                 Type = TokenType.EmailValidtion
             };
+
+            token.Id = Insert(token);
+
             string html = HttpContext.Current.Server.MapPath("\\assets\\ValidateEmail.html").ReadFile()
                                      .Replace("{url}", HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)
-                                     + "?token={0}&userId={1}".FormatString(token.Value.ToString(), result));
-            //+"/emailConfirm?token={0}?user={1}".FormatString(token.Value.ToString(), result));
+                                     + "?token={0}&userId={1}".FormatString(token.Id, user.Id));
 
-            Insert(token);
+
             if (!await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
                               , user.Contact.PrimaryEmail
-                              , "Nostreets Sandbox Validation"
-                              , "Nostreets Sandbox Validation"
+                              , "Nostreets Sandbox Email Validation"
+                              , "Nostreets Sandbox Email Validation"
                               , html))
-            {
                 throw new Exception("Email for registation not sent...");
-            };
 
-            return result;
+            return user.Id;
         }
 
-        public bool ValidateToken(string value, string userId, out string failureReason)
+        public string ValidateToken(string tokenId, string userId)
         {
-            bool result = false;
-            failureReason = "";
+            string result = "";
+            Token userToken = _tokenDBService.Get(tokenId);// FirstOrDefault(a => !a.IsDisabled && a.ExpirationDate > DateTime.Now && a.UserId == userId);
 
-            Token userToken = _tokenDBService.Where(
-                a => !a.IsDisabled && a.ExpirationDate > DateTime.Now && a.UserId == userId && a.Value.ToString() == value
-            ).FirstOrDefault();
+            if (!CacheManager.Contains(RequestIp))
+                CacheManager.InsertItem(RequestIp, userId);
 
-            if (userToken != null)
-            {
-                if (userToken.ExpirationDate > DateTime.Now)
-                {
-                    result = true;
-                    userToken.IsDisabled = true;
-                    userToken.DateModified = DateTime.Now;
-                    SessionUser.Settings.IsLockedOut = false;
-                    SessionUser.Settings.HasVaildatedEmail = true;
+            if (userToken == null)
+                result = "Token does not exist...";
 
-                    if (SessionUser.Settings.IPAddresses == null)
-                        SessionUser.Settings.IPAddresses = new List<string> { RequestIp };
+            else if (userToken.ExpirationDate < DateTime.Now)
+                result = "Token is expired...";
 
-                    else if (!SessionUser.Settings.IPAddresses.Contains(RequestIp))
-                        SessionUser.Settings.IPAddresses.Add(RequestIp);
+            else if (userToken.IsDeleted)
+                result = "Token no longer exists...";
 
-                    Update(SessionUser);
-                    Update(userToken);
-                }
-                else
-                    failureReason = "Token is expired...";
-            }
+            else if (userToken.UserId != userId)
+                result = "Token does not belong to specified user...";
+
             else
-                failureReason = "Token does not exist...";
+            {
+                User user = SessionUser;
+                userToken.IsDeleted = true;
+                userToken.DateModified = DateTime.Now;
+                userToken.ExpirationDate = DateTime.Now;
+
+                switch (userToken.Type)
+                {
+                    case TokenType.EmailValidtion:
+                        user.Settings.HasVaildatedEmail = true;
+                        user.Settings.IsLockedOut = false;
+                        result = "Email Token Validated";
+                        break;
+
+                    case TokenType.PasswordReset:
+                        result = "Password Reset Token Validated";
+                        break;
+
+                    case TokenType.PhoneValidtion:
+                        user.Settings.HasVaildatedPhone = true;
+                        result = "Phone Token Validated";
+                        break;
+
+                    case TokenType.TwoFactorAuth:
+                        result = "Two Factor Auth Validated";
+                        break;
+
+                }
+
+                Update(user);
+                Update(userToken);
+            }
 
             return result;
         }
@@ -222,10 +253,12 @@ namespace Nostreets_Services.Services.Database
         public bool ChangeUserEmail(string email, string password)
         {
             bool result = false;
-            if (ValidatePassword(SessionUser.Password, password))
+            User user = SessionUser;
+
+            if (user != null && ValidatePassword(user.Password, password))
             {
-                SessionUser.Contact.PrimaryEmail = email;
-                _userDBService.Update(SessionUser);
+                user.Contact.PrimaryEmail = email;
+                _userDBService.Update(user);
             }
 
             return result;
@@ -234,10 +267,12 @@ namespace Nostreets_Services.Services.Database
         public bool ChangeUserPassword(string newPassword, string oldPassword)
         {
             bool result = false;
-            if (ValidatePassword(SessionUser.Password, oldPassword))
+            User user = SessionUser;
+
+            if (user != null && ValidatePassword(user.Password, oldPassword))
             {
-                SessionUser.Password = Encryption.SimpleEncryptWithPassword(newPassword, WebConfigurationManager.AppSettings["CryptoKey"]);
-                _userDBService.Update(SessionUser);
+                user.Password = Encryption.SimpleEncryptWithPassword(newPassword, WebConfigurationManager.AppSettings["CryptoKey"]);
+                _userDBService.Update(user);
             }
 
             return result;
@@ -245,15 +280,17 @@ namespace Nostreets_Services.Services.Database
 
         public bool UpdateUserSettings(UserSettings settings)
         {
-            SessionUser.Settings = settings;
-            _userDBService.Update(SessionUser);
+            User user = SessionUser;
+            user.Settings = settings;
+            _userDBService.Update(user);
             return true;
         }
 
         public bool UpdateUserContactInfo(Contact contact)
         {
-            SessionUser.Contact = contact;
-            _userDBService.Update(SessionUser);
+            User user = SessionUser;
+            user.Contact = contact;
+            _userDBService.Update(user);
             return true;
         }
 
@@ -272,10 +309,9 @@ namespace Nostreets_Services.Services.Database
                 Token token = new Token
                 {
                     ExpirationDate = DateTime.Now.AddDays(1),
-                    IsDisabled = false,
                     UserId = user.Id,
                     ModifiedUserId = user.Id,
-                    Value = Guid.NewGuid(),
+                    Value = Guid.NewGuid().ToString(),
                     Name = user.UserName + "'s Password Reset Token",
                     DateCreated = DateTime.Now,
                     DateModified = DateTime.Now,
@@ -297,26 +333,27 @@ namespace Nostreets_Services.Services.Database
         {
             bool result = false;
             Token userToken = _tokenDBService.Where(
-                a => !a.IsDisabled && a.ExpirationDate > DateTime.Now && a.Type == TokenType.EmailValidtion && a.UserId == userId && a.Value.ToString() == token
+                a => !a.IsDeleted && a.ExpirationDate > DateTime.Now && a.Type == TokenType.EmailValidtion && a.UserId == userId && a.Value.ToString() == token
             ).FirstOrDefault();
 
             if (userToken != null)
             {
+                User user = SessionUser;
                 if (!CacheManager.Contains(RequestIp))
                     CacheManager.InsertItem(RequestIp, userId);
 
                 result = true;
-                userToken.IsDisabled = true;
+                userToken.IsDeleted = true;
                 userToken.DateModified = DateTime.Now;
-                SessionUser.Settings.IsLockedOut = false;
-                SessionUser.Settings.HasVaildatedEmail = true;
+                user.Settings.IsLockedOut = false;
+                user.Settings.HasVaildatedEmail = true;
 
-                if (SessionUser.Settings.IPAddresses == null)
-                    SessionUser.Settings.IPAddresses = new List<string> { RequestIp };
+                if (user.Settings.IPAddresses == null)
+                    user.Settings.IPAddresses = new List<string> { RequestIp };
                 else
-                    SessionUser.Settings.IPAddresses.Add(RequestIp);
+                    user.Settings.IPAddresses.Add(RequestIp);
 
-                _userDBService.Update(SessionUser);
+                _userDBService.Update(user);
                 _tokenDBService.Update(userToken);
             }
 
@@ -349,7 +386,8 @@ namespace Nostreets_Services.Services.Database
                 CacheManager.InsertItem(RequestIp, user.Id);
 
             CacheManager.InsertItem(user.Id, user);
-            _userDBService.Update(SessionUser);
+
+            _userDBService.Update(user);
         }
 
         public void Update(Token token)
@@ -359,26 +397,28 @@ namespace Nostreets_Services.Services.Database
 
         public string Insert(User user)
         {
-
-            user.Password = Encryption.SimpleEncryptWithPassword(user.Password, WebConfigurationManager.AppSettings["CryptoKey"]);
             user.Settings = new UserSettings
             {
                 IPAddresses = new List<string> { RequestIp }
             };
-            string userId = _userDBService.Insert(user);
+            user.Password = Encryption.SimpleEncryptWithPassword(user.Password, WebConfigurationManager.AppSettings["CryptoKey"]);
+            user.Id = _userDBService.Insert(user);
 
 
             if (!CacheManager.Contains(RequestIp))
-                CacheManager.InsertItem(RequestIp, userId);
+                CacheManager.InsertItem(RequestIp, user.Id);
+            CacheManager.InsertItem(user.Id, user);
 
-            CacheManager.InsertItem(userId, user);
-
-            return userId;
+            return user.Id;
         }
 
-        public int Insert(Token token)
+        public string Insert(Token token)
         {
-            return _tokenDBService.Insert(token);
+            token.UserId = token.UserId ?? SessionUser?.Id;
+            token.ModifiedUserId = token.UserId ?? SessionUser?.Id;
+            token.Id = _tokenDBService.Insert(token);
+
+            return token.Id;
         }
     }
 

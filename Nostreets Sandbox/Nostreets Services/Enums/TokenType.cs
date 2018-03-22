@@ -8,7 +8,7 @@ namespace Nostreets_Services.Enums
 {
     public enum TokenType
     {
-        TwoFactorAut = 1,
+        TwoFactorAuth = 1,
         EmailValidtion,
         PhoneValidtion,
         PasswordReset

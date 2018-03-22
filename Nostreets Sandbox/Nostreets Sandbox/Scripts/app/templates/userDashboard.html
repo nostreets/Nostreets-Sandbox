@@ -1,0 +1,65 @@
+﻿<div class="col-xs-12">
+    <div class="card" style="padding-bottom: 2%;">
+        <div class="card-header">
+            <ul class="nav nav-tabs nav-justified tabs-basic">
+                <li role="presentation" class="active">
+                    <a role="tab" data-target="#userGeneralTab" data-toggle="tab">Contact</a>
+                </li>
+                <li role="presentation" class="active">
+                    <a role="tab" data-target="#userContactTab" data-toggle="tab">Contact</a>
+                </li>
+                <li role="presentation">
+                    <a role="tab" data-target="#userSettingsTab" data-toggle="tab">Settings</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="card-content text-center">
+            <h3>
+                {{ pg.username }}
+            </h3>
+            <div class="tab-content">
+                <div id="userGeneralTab" class="active tab-pane fade in" role="tabpanel">
+                    <div class="col-6-sm">
+                        {{ pg.firstName }}
+                    </div>
+                    <div class="col-6-sm">
+                        {{ pg.lastName }}
+                    </div>
+                    <div class="col-12-sm">
+                        Member Since {{ pg.dateCreated }}...
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content">
+                <div id="userContactTab" class="active tab-pane fade in" role="tabpanel">
+                    <div class="col-6-sm">
+                        {{ pg.contact.primaryEmail }}
+                    </div>
+                    <div class="col-6-sm">
+                        {{ pg.contact.primaryPhone }}
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content">
+                <div id="userSettingsTab" class="active tab-pane fade in" role="tabpanel">
+                    <div class="col-6-sm">
+                        Two Factor Authitcation: <input type="checkbox" ng-checked="pg.settings.twoFactorAuthEnabled" ng-model="pg.settings.twoFactorAuthEnabled" />
+                        <div class="col-6-sm">
+                            By Email: <input type="checkbox" ng-checked="pg.settings.twoFactorAuthEnabled" ng-model="pg.settings.tFAuthByPhone" />
+                        </div>
+                        <div class="col-6-sm">
+                            By Phone: <input type="checkbox" ng-checked="pg.settings.twoFactorAuthEnabled" ng-model="pg.settings.tFAuthByEmail" />
+                        </div>
+                    </div>
+                    <div class="col-6-sm">
+                        Device Authentication Before Login: <input type="checkbox" ng-checked="pg.settings.validateIPBeforeLogin" ng-model="pg.settings.validateIPBeforeLogin" />
+                    </div>
+                    <div class="col-6-sm">
+                        Hook up card! <button><i class="material-icons">open_in_browser</i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -7,15 +7,13 @@ using System.Threading.Tasks;
 
 namespace Nostreets_Services.Domain.Base
 {
-    public class Token : DBObject
+    public class Token : DBObject<string>
     {
         public string Name { get; set; }
 
-        public Guid Value { get; set; }
+        public string Value { get; set; }
 
         public DateTime ExpirationDate { get; set; }
-
-        public bool IsDisabled { get; set; }
 
         public TokenType Type { get; set; }
     }

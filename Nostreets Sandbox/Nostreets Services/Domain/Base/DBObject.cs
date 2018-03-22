@@ -7,13 +7,15 @@ using System.Threading.Tasks;
 
 namespace Nostreets_Services.Domain.Base
 {
-    public abstract partial class DBObject
+    public abstract class DBObject<T>
     {
+
         DateTime _dateCreated = DateTime.Now;
         DateTime _dateModified = DateTime.Now;
+        bool _isDeleted = false;
 
         [Key]
-        public int Id { get; set; }
+        public T Id { get; set; }
 
         public virtual string UserId { get; set; }
 
@@ -23,9 +25,16 @@ namespace Nostreets_Services.Domain.Base
 
         public virtual string ModifiedUserId { get; set; }
 
-        public virtual bool IsDeleted { get; set; }
+        public virtual bool IsDeleted { get => _isDeleted; set => _isDeleted = value; }
 
     }
 
-    
+    public abstract class DBObject : DBObject<int>
+    {
+
+    }
+
+   
+
+
 }

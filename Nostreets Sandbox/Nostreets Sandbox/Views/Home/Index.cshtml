@@ -1,4 +1,5 @@
-﻿@model Nostreets_Services.Domain.User
+﻿@using NostreetsExtensions
+@model Nostreets_Services.Domain.User
 @{
     ViewBag.Title = "Home";
     Layout = "~/Views/Shared/_LayoutDeft.cshtml";
@@ -46,9 +47,7 @@
 
 
 
-
 @section scripts{
-    @*<script src="~/Scripts/app/directives/signInDirective.js"></script>*@
     <script src="~/Scripts/app/directives/renderGraphDirective.js"></script>
     <script src="~/Scripts/app/controllers/generalControllers.js"></script>
     <script src="~/Scripts/app/controllers/cardController.js"></script>
@@ -61,10 +60,17 @@
         </pre>
     </script>
 
-    <script type="text/javascript">
-        @if(Model != null) {
-               @: page.user.data = @Model
-               @: page.user.state = @ViewBag.UserState
-            }
-    </script>
-}
+    @*@if (@Model != null)
+    {
+        <script type="text/javascript">
+            page.user.data = @Html.Raw(@Model.JsonSerialize())
+        </script>
+    }*@
+
+    @if (@ViewBag.TokenState != null) {
+        <script type="text/javascript">
+            page.user.state = @Html.Raw(((object)@ViewBag.TokenState).JsonSerialize());
+        </script>
+        }
+
+    }

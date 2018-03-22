@@ -105,16 +105,14 @@
     page.baseController = angular.module(page.APPNAME)
         .factory("$baseController", baseController);
 
-    baseController.$inject = ['$document', '$route', '$routeParams', '$systemEventService', '$alertService', "$window", '$uibModal', '$timeout', '$http', '$sce', '$cookies', '$q'];
+    baseController.$inject = ['$document', '$systemEventService', '$alertService', "$window", '$uibModal', '$timeout', '$http', '$sce', '$cookies', '$q'];
 
-    function baseController($document, $route, $routeParams, $systemEventService, $alertService, $window, $uibModal, $timeout, $http, $sce, $cookies, $q) {
+    function baseController($document, $systemEventService, $alertService, $window, $uibModal, $timeout, $http, $sce, $cookies, $q) {
 
         //PUBLIC
         var base = {
             document: $document,
             systemEventService: $systemEventService,
-            route: $route,
-            routeParams: $routeParams,
             alert: $alertService,
             window: $window,
             modal: $uibModal,

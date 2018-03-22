@@ -12,7 +12,6 @@ using Nostreets_Services.Services.Email;
 using System.Web.Configuration;
 using System.Web.Mvc;
 using System.Web.Http;
-using Nostreets_Services.Domain.Cards;
 using Nostreets_Services.Domain;
 using Nostreets_Services.Domain.Base;
 using Nostreets_Services.Domain.Charts;
@@ -66,7 +65,7 @@ namespace Nostreets_Sandbox.App_Start
                      {
                          param["emailSrv"] = k.Resolve<IEmailService>();
                          param["userDBSrv"] = k.Resolve<IDBService<User, string>>();
-                         param["tokenDBSrv"] = k.Resolve<IDBService<Token>>();
+                         param["tokenDBSrv"] = k.Resolve<IDBService<Token, string>>();
                      }),
                  Reg.Component.For<IChartService>().ImplementedBy<ChartsService>().LifestyleSingleton()
                      .DependsOn((k, param) =>

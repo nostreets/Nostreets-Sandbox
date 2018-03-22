@@ -21,11 +21,13 @@
 
                 function _render() {
                     element.on("click", () => {
-                        if (typeof (page.user.data) == "undefined")
+                        if (typeof (page.user.data) === "undefined")
                             _openRegisterModal();
                         else
-                            _openLoginModal();
-                        //$baseController.loginPopup();
+                            if (page.user.loggedIn)
+                                _openUserModal(page.user.data);
+                            else
+                                _openLoginModal();
                     });
 
 
@@ -43,7 +45,6 @@
 
                 }
 
-
                 function _openLoginModal() {
                     var modalInstance = $baseController.modal.open({
                         animation: true
@@ -54,6 +55,16 @@
 
                 }
 
+                function _openUserModal() {
+                    var modalInstance = $baseController.modal.open({
+                        animation: true
+                        , templateUrl: "Scripts/app/templates/userDashboard.html"
+                        , controller: "modalUserController as pg"
+                        , size: "lg"
+
+                    });
+
+                }
 
 
             }
@@ -91,6 +102,7 @@
             vm.emailExists = false;
             vm.usernameExists = false;
             vm.usernameExists = false;
+            vm.requestSuccessful = false;
         }
 
         function _submit() {
@@ -105,12 +117,14 @@
                 }
             };
 
-            return $baseController.http({
+            $baseController.http({
                 url: "/api/register",
                 data: obj,
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' }
-            });
+            }).then(
+                (a) => { vm.requestSuccessful = true; vm.$uibModalInstance.close(); }
+                );
 
 
         }
@@ -181,7 +195,7 @@
         function _login() {
 
             return $baseController.http({
-                url: "/api/user" + "?username=" + vm.username + "&password=" + vm.password,
+                url: "/api/login" + "?username=" + vm.username + "&password=" + vm.password,
                 method: "GET",
                 headers: { 'Content-Type': 'application/json' }
             }).then(vm.$uibModalInstance.close, err => $baseController.alert.error(err));
@@ -194,5 +208,53 @@
 
 
     }
+
+    function modalUserController($scope, $baseController, $uibModalInstance, user) {
+
+        var vm = this;
+        vm.$scope = $scope;
+        vm.$uibModalInstance = $uibModalInstance;
+        vm.submit = _login;
+        vm.reset = _setUp;
+        vm.cancel = _cancel;
+
+        _render();
+
+        function _render() {
+            _getUserData().then(a => _setUp(a.data.item));
+        }
+
+        function _setUp(data) {
+
+            vm.username = null;
+            vm.password = null;
+        }
+
+        function _login() {
+
+            return $baseController.http({
+                url: "/api/user" + "?username=" + vm.username + "&password=" + vm.password,
+                method: "GET",
+                headers: { 'Content-Type': 'application/json' }
+            }).then(vm.$uibModalInstance.close, err => $baseController.alert.error(err));
+
+        }
+
+        function _cancel() {
+            vm.$uibModalInstance.dismiss("cancel");
+        }
+
+        function _getUserData() {
+            return $baseController.http({
+                url: "/api/user/session",
+                data: obj,
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' }
+            }).then(a => a.data.item);
+        }
+
+
+    }
+
 
 })();

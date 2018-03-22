@@ -254,6 +254,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\agency-dark.html" />
+    <Content Include="assets\img\source.gif" />
+    <Content Include="assets\UnindentifiedLogin.html" />
     <Content Include="assets\css\angular-moment-picker.css" />
     <Content Include="assets\css\angular-moment-picker.min.css" />
     <Content Include="assets\css\angular-toastr.min.css" />
@@ -4640,6 +4642,7 @@
     <Content Include="assets\css\bootstrap.css.map" />
     <Content Include="assets\css\bootstrap.min.css.map" />
     <Content Include="Scripts\app\templates\registerForm.html" />
+    <Content Include="Scripts\app\templates\userDashboard.html" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Web.config">

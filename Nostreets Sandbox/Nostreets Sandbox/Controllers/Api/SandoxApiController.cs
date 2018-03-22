@@ -60,7 +60,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         #endregion
 
         #region User Service Endpoints
-        [HttpGet, Route("user")]
+        [HttpGet, Route("login")]
         public HttpResponseMessage LogInUser(string username, string password)
         {
             try
@@ -150,6 +150,26 @@ namespace Nostreets_Sandbox.Controllers.Api
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
             }
         }
+
+        [HttpGet, Route("user/session")]
+        public HttpResponseMessage GetSessionUser()
+        {
+            try
+            {
+                if (_userService.SessionUser == null)
+                    throw new Exception("Session is has not started...");
+
+                ItemResponse<User> response = new ItemResponse<User>(_userService.SessionUser);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
+
 
         #endregion
 
