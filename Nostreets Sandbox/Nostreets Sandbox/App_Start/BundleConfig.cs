@@ -25,7 +25,7 @@ namespace Nostreets_Sandbox
                       ));
 
 
-            bundles.Add(new ScriptBundle("~/requirements").Include(
+            bundles.Add(new ScriptBundle("~/jsRequirements").Include(
                     "~/assets/js/jquery-3.2.1.js",
                     "~/assets/js/jquery.validate.js",
                     "~/assets/js/bootstrap.js",
@@ -34,8 +34,10 @@ namespace Nostreets_Sandbox
                     "~/assets/js/chartist.min.js",
                     "~/assets/js/chartist-plugin-tooltip.min.js",
                     "~/assets/js/chartist-plugin-zoom.min.js",
-                    "~/Scripts/app/services/nostreetsChartistScrollPlugin.js",
+                    "~/Scripts/app/services/nostreetsChartistScrollPlugin.js"
+                        ));
 
+            bundles.Add(new ScriptBundle("~/angularRequirements").Include(
 
                     "~/node_modules/angular/angular.js",
                     "~/node_modules/angular-animate/angular-animate.js",
@@ -50,7 +52,7 @@ namespace Nostreets_Sandbox
                         ));
 
 
-            bundles.Add(new ScriptBundle("~/angular").Include(
+            bundles.Add(new ScriptBundle("~/customAngular").Include(
                   "~/Scripts/app/core/global.js",
                   "~/Scripts/app/core/extend.js",
                   "~/Scripts/app/services/alertService.js",

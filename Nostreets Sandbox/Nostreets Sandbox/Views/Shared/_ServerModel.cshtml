@@ -1,0 +1,25 @@
+﻿@using NostreetsExtensions;
+
+
+<script type="text/javascript">
+
+    var serverModel = (Model != null) ? @Model.JsonSerialize() : {}
+
+    (function () {
+        "use strict";
+
+        angular.module(APPNAME)
+        .factory('$serverModel', BaseServerModel);
+        function BaseServerModel() {
+
+            var thisModel = this;
+
+            thisModel = $.extend(true, {}, serverModel, thisModel);
+            return thisModel;
+        }
+
+    })();
+
+
+</script>
+

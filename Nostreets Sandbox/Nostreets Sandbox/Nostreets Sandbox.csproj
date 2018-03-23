@@ -4908,6 +4908,7 @@
     <None Include="Properties\PublishProfiles\nostreets - Web Deploy.pubxml" />
     <Content Include="Views\Shared\_MobileNavBar.cshtml" />
     <None Include="Properties\PublishProfiles\NostreetsSandbox - Web Deploy.pubxml" />
+    <Content Include="Views\Shared\_ServerModel.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

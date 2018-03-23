@@ -31,14 +31,17 @@
 </head>
 <body ng-app="sandbox" class="scrollable-content">
     <section class="animsition">
-       @RenderBody()
+        @RenderBody()
     </section>
 
-    @Scripts.Render("~/requirements")
+    @Scripts.Render("~/jsRequirements")
+    @Scripts.Render("~/angularRequirements")
+
+    @Html.Partial("_ServerModel")
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.4.2/js/swiper.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
-
-    @Scripts.Render("~/angular")
+    @Scripts.Render("~/customAngular")
     @Scripts.Render("~/other")
 
 

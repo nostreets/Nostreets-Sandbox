@@ -21,14 +21,12 @@ namespace Nostreets_Services.Interfaces.Services
         void LogOut();
         void LogIn(string username, string password, bool rememberDevice = false);
         Task<string> RegisterAsync(User user);
-        string ValidateToken(string tokenId, string userId);
+        Token ValidateToken(string tokenId, string userId, out string output);
         IEnumerable<User> Where(Func<User, bool> predicate);
         IEnumerable<Token> Where(Func<Token, bool> predicate);
         bool ValidatePassword(string encrptedPassword, string password);
         bool ChangeUserEmail(string email, string password);
         bool ChangeUserPassword(string newPassword, string oldPassword);
-        bool UpdateUserSettings(UserSettings settings);
-        bool UpdateUserContactInfo(Contact settings);
         Task<bool> ForgotPasswordEmailAsync(string username);
         bool ForgotPasswordValidation(string token, string userId);
         User FirstOrDefault(Func<User, bool> predicate);

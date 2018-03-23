@@ -4,11 +4,11 @@
         .controller("modalLogInController", modalLogInController)
         .directive("signIn", signInDirective);
 
-    signInDirective.$inject = ["$baseController"];
+    signInDirective.$inject = ["$baseController, $serverModel"];
     modalLogInController.$inject = ["$scope", "$baseController", "$uibModalInstance"];
     modalRegisterController.$inject = ["$scope", "$baseController", "$uibModalInstance"];
 
-    function signInDirective($baseController) {
+    function signInDirective($baseController, $serverModel) {
 
         return {
             restrict: "A",
@@ -123,7 +123,7 @@
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' }
             }).then(
-                (a) => { vm.requestSuccessful = true; vm.$uibModalInstance.close(); }
+                (a) => { vm.requestSuccessful = true; }
                 );
 
 
@@ -214,8 +214,7 @@
         var vm = this;
         vm.$scope = $scope;
         vm.$uibModalInstance = $uibModalInstance;
-        vm.submit = _login;
-        vm.reset = _setUp;
+        vm.logout = _logout;
         vm.cancel = _cancel;
 
         _render();
@@ -230,10 +229,10 @@
             vm.password = null;
         }
 
-        function _login() {
+        function _logout() {
 
             return $baseController.http({
-                url: "/api/user" + "?username=" + vm.username + "&password=" + vm.password,
+                url: "/api/logout",
                 method: "GET",
                 headers: { 'Content-Type': 'application/json' }
             }).then(vm.$uibModalInstance.close, err => $baseController.alert.error(err));

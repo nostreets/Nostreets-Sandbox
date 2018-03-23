@@ -25,7 +25,7 @@ namespace Nostreets_Sandbox.Controllers
         {
             User user = null;
             Token userToken = null;
-            string outcome = "";
+            string outcome = null;
 
             if (_userService.SessionUser != null)
                 user = _userService.SessionUser;
@@ -39,14 +39,10 @@ namespace Nostreets_Sandbox.Controllers
 
 
             if (token != null && userId != null)
-                outcome = _userService.ValidateToken(token, userId);
+                userToken = _userService.ValidateToken(token, userId, out outcome);
 
 
-            ViewBag.TokenState = new
-            {
-                type = userToken?.Type.ToString(),
-                outcome = outcome
-            };
+            ViewBag.TokenOutcome = outcome;
 
             return View(user);
         }

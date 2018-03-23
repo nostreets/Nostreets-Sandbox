@@ -1,5 +1,4 @@
-﻿@using NostreetsExtensions
-@model Nostreets_Services.Domain.User
+﻿@model Nostreets_Services.Domain.User
 @{
     ViewBag.Title = "Home";
     Layout = "~/Views/Shared/_LayoutDeft.cshtml";
@@ -20,7 +19,7 @@
                 <li class="btn btn-simple"><a href="mailto:nileoverstreet@gmail.com"><i class="material-icons">mail_outline</i></a></li>
                 <li class="btn btn-simple"><a href="https://www.linkedin.com/in/nile-overstreet-6a4153140/"><i class="icon ion-social-linkedin"></i></a></li>
                 <li class="btn btn-simple"><a href="https://github.com/nostreets/"><i class="icon ion-social-github"></i></a></li>
-                <li class="btn btn-simple" sign-in><i class="material-icons">person</i></li>
+                <li class="btn btn-simple" sign-in>@*<i class="material-icons">person</i>*@</li>
             </ul>
         </div>
 
@@ -60,17 +59,6 @@
         </pre>
     </script>
 
-    @*@if (@Model != null)
-    {
-        <script type="text/javascript">
-            page.user.data = @Html.Raw(@Model.JsonSerialize())
-        </script>
-    }*@
-
-    @if (@ViewBag.TokenState != null) {
-        <script type="text/javascript">
-            page.user.state = @Html.Raw(((object)@ViewBag.TokenState).JsonSerialize());
-        </script>
-        }
+   
 
     }

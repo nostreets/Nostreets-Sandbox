@@ -31,26 +31,25 @@ namespace Nostreets_Services.Services.Database
         private IDBService<Token, string> _tokenDBService = null;
 
         public string RequestIp => HttpContext.Current.GetIPAddress();
-        public User SessionUser
+        public User SessionUser => GetSessionUser();
+
+        private User GetSessionUser(string ip = null)
         {
-            get
-            {
-                string userId = CacheManager.GetItem<string>(RequestIp);
+            ip = ip ?? RequestIp;
+            User _sessionUser = null;
+            string userId = CacheManager.GetItem<string>(ip);
 
-                if (userId != null)
-                    if (CacheManager.Contains(userId))
-                        _sessionUser = CacheManager.GetItem<User>(userId);
-                    else
-                        _sessionUser = _userDBService.Get(CacheManager.GetItem<string>(RequestIp));
+            if (userId != null)
+                if (CacheManager.Contains(userId))
+                    _sessionUser = CacheManager.GetItem<User>(userId);
+                else
+                    _sessionUser = _userDBService.Get(CacheManager.GetItem<string>(ip));
 
-                if (_sessionUser != null && !CacheManager.Contains(_sessionUser.Id))
-                    CacheManager.InsertItem(_sessionUser.Id, _sessionUser, DateTimeOffset.Now.AddHours(2));
-                return _sessionUser;
+            if (_sessionUser != null && !CacheManager.Contains(_sessionUser.Id))
+                CacheManager.InsertItem(_sessionUser.Id, _sessionUser, DateTimeOffset.Now.AddHours(2));
+            return _sessionUser;
 
-            }
         }
-
-        User _sessionUser = null;
 
         public bool CheckIfUserCanLogIn(string username, string password, out string failureReason)
         {
@@ -178,58 +177,57 @@ namespace Nostreets_Services.Services.Database
             return user.Id;
         }
 
-        public string ValidateToken(string tokenId, string userId)
+        public Token ValidateToken(string tokenId, string userId, out string output)
         {
-            string result = "";
-            Token userToken = _tokenDBService.Get(tokenId);// FirstOrDefault(a => !a.IsDisabled && a.ExpirationDate > DateTime.Now && a.UserId == userId);
+            output = "";
+            Token result = _tokenDBService.Get(tokenId);
+            CacheManager.InsertItem(RequestIp, userId);
 
-            if (!CacheManager.Contains(RequestIp))
-                CacheManager.InsertItem(RequestIp, userId);
 
-            if (userToken == null)
-                result = "Token does not exist...";
+            if (result == null)
+                output = "Token does not exist...";
 
-            else if (userToken.ExpirationDate < DateTime.Now)
-                result = "Token is expired...";
+            else if (result.ExpirationDate < DateTime.Now)
+                output = "Token is expired...";
 
-            else if (userToken.IsDeleted)
-                result = "Token no longer exists...";
+            else if (result.IsDeleted)
+                output = "Token no longer exists...";
 
-            else if (userToken.UserId != userId)
-                result = "Token does not belong to specified user...";
+            else if (result.UserId != userId)
+                output = "Token does not belong to specified user...";
 
             else
             {
                 User user = SessionUser;
-                userToken.IsDeleted = true;
-                userToken.DateModified = DateTime.Now;
-                userToken.ExpirationDate = DateTime.Now;
+                result.IsDeleted = true;
+                result.DateModified = DateTime.Now;
+                result.ExpirationDate = DateTime.Now;
 
-                switch (userToken.Type)
+                switch (result.Type)
                 {
                     case TokenType.EmailValidtion:
                         user.Settings.HasVaildatedEmail = true;
                         user.Settings.IsLockedOut = false;
-                        result = "Email Token Validated";
+                        output = "Email Token Validated";
                         break;
 
                     case TokenType.PasswordReset:
-                        result = "Password Reset Token Validated";
+                        output = "Password Reset Token Validated";
                         break;
 
                     case TokenType.PhoneValidtion:
                         user.Settings.HasVaildatedPhone = true;
-                        result = "Phone Token Validated";
+                        output = "Phone Token Validated";
                         break;
 
                     case TokenType.TwoFactorAuth:
-                        result = "Two Factor Auth Validated";
+                        output = "Two Factor Auth Validated";
                         break;
 
                 }
 
                 Update(user);
-                Update(userToken);
+                Update(result);
             }
 
             return result;
@@ -276,22 +274,6 @@ namespace Nostreets_Services.Services.Database
             }
 
             return result;
-        }
-
-        public bool UpdateUserSettings(UserSettings settings)
-        {
-            User user = SessionUser;
-            user.Settings = settings;
-            _userDBService.Update(user);
-            return true;
-        }
-
-        public bool UpdateUserContactInfo(Contact contact)
-        {
-            User user = SessionUser;
-            user.Contact = contact;
-            _userDBService.Update(user);
-            return true;
         }
 
         public void LogOut()

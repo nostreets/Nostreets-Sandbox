@@ -151,7 +151,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpGet, Route("user/session")]
+        [HttpGet, Route("user/session"), Intercept("LoggedIn")]
         public HttpResponseMessage GetSessionUser()
         {
             try
@@ -174,7 +174,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         #endregion
 
         #region Bill Service Endpoints
-        [HttpGet, Route("bill/income/all"), Intercept("UserLogIn")]
+        [HttpGet, Route("bill/income/all"), Intercept("LoggedIn")]
         public HttpResponseMessage GetAllIncome()
         {
             try
@@ -191,7 +191,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpGet, Route("bill/expenses/all"), Intercept("UserLogIn")]
+        [HttpGet, Route("bill/expenses/all"), Intercept("LoggedIn")]
         public HttpResponseMessage GetAllExpenses()
         {
             try
@@ -210,9 +210,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("UserLogIn")]
-        [Route("bill/income")]
-        [HttpGet]
+        [HttpGet, Route("bill/income"), Intercept("LoggedIn")]
         public HttpResponseMessage GetIncome(int id = 0, string name = null, ScheduleTypes scheduleType = ScheduleTypes.Any, IncomeType incomeType = IncomeType.Any)
         {
             try
@@ -231,9 +229,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("UserLogIn")]
-        [Route("bill/expenses")]
-        [HttpGet]
+        [HttpGet, Route("bill/expenses"), Intercept("LoggedIn")]
         public HttpResponseMessage GetExpense(int id = 0, string name = null, ScheduleTypes scheduleType = ScheduleTypes.Any, ExpenseType billType = ExpenseType.Any)
         {
             try
@@ -252,9 +248,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("UserLogIn")]
-        [Route("bill/income/chart")]
-        [HttpGet]
+        [HttpGet, Route("bill/income/chart"), Intercept("LoggedIn")]
         public HttpResponseMessage GetIncomeChart(DateTime? startDate = null, DateTime? endDate = null, ScheduleTypes chartSchedule = ScheduleTypes.Any)
         {
             try
@@ -273,7 +267,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("UserLogIn")]
+        [Intercept("LoggedIn")]
         [Route("bill/expenses/chart")]
         [HttpGet]
         public HttpResponseMessage GetExpensesChart(DateTime? startDate = null, DateTime? endDate = null, ScheduleTypes chartSchedule = ScheduleTypes.Any)
@@ -294,7 +288,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("UserLogIn")]
+        [Intercept("LoggedIn")]
         [Route("bill/combined/chart")]
         [HttpGet]
         public HttpResponseMessage GetCombinedChart(DateTime? startDate = null, DateTime? endDate = null, ScheduleTypes chartSchedule = ScheduleTypes.Any)
@@ -315,7 +309,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("UserLogIn")]
+        [Intercept("LoggedIn")]
         [Route("bill/income")]
         [HttpPost]
         public HttpResponseMessage InsertIncome(Income income)
@@ -344,7 +338,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("UserLogIn")]
+        [Intercept("LoggedIn")]
         [Route("bill/expenses")]
         [HttpPost]
         public HttpResponseMessage InsertExpense(Expense expense)
@@ -373,7 +367,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("UserLogIn")]
+        [Intercept("LoggedIn")]
         [Route("bill/income")]
         [HttpPut]
         public HttpResponseMessage UpdateIncome(Income income)
@@ -401,7 +395,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("UserLogIn")]
+        [Intercept("LoggedIn")]
         [Route("bill/expenses")]
         [HttpPut]
         public HttpResponseMessage UpdateExpense(Expense expense)
@@ -429,7 +423,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("UserLogIn")]
+        [Intercept("LoggedIn")]
         [Route("bill/income/{id:int}")]
         [HttpDelete]
         public HttpResponseMessage DeleteIncome(int id)
@@ -449,7 +443,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("UserLogIn")]
+        [Intercept("LoggedIn")]
         [Route("bill/expenses/{id:int}")]
         [HttpDelete]
         public HttpResponseMessage DeleteExpense(int id)
@@ -472,7 +466,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         #endregion
 
         #region Card Service Endpoints
-        [Intercept("UserLogIn")]
+        [Intercept("LoggedIn")]
         [Route("cards/user")]
         [HttpGet]
         public HttpResponseMessage GetAllCardsByUser()
@@ -490,7 +484,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("UserLogIn")]
+        [Intercept("LoggedIn")]
         [Route("cards/{id:int}")]
         [HttpGet]
         public HttpResponseMessage GetCard(int id)
@@ -510,7 +504,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("UserLogIn")]
+        [Intercept("LoggedIn")]
         [Route("cards")]
         [HttpPost]
         public HttpResponseMessage InsertCard(StyledCard model)
@@ -540,7 +534,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("UserLogIn")]
+        [Intercept("LoggedIn")]
         [Route("cards")]
         [HttpPut]
         public HttpResponseMessage UpdateCard(StyledCard model)
@@ -569,7 +563,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("UserLogIn")]
+        [Intercept("LoggedIn")]
         [Route("cards/delete/{id:int}")]
         [HttpDelete]
         public HttpResponseMessage DeleteCard(int id)
@@ -592,7 +586,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         #endregion
 
         #region Chart Service Endpoints
-        [Intercept("UserLogIn")]
+        [Intercept("LoggedIn")]
         [Route("charts/all")]
         [HttpGet]
         public HttpResponseMessage GetAllCharts()
@@ -612,7 +606,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("UserLogIn")]
+        [Intercept("LoggedIn")]
         [Route("charts/user")]
         [HttpGet]
         public HttpResponseMessage GetAllChartsByUser()
@@ -633,7 +627,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("UserLogIn")]
+        [Intercept("LoggedIn")]
         [Route("charts/{id:int}")]
         [HttpGet]
         public HttpResponseMessage GetChart(int id)
@@ -653,7 +647,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("UserLogIn")]
+        [Intercept("LoggedIn")]
         [Route("charts/int")]
         [HttpPost]
         public HttpResponseMessage InsertChart(ChartAddRequest<int> model)
@@ -695,7 +689,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("UserLogIn")]
+        [Intercept("LoggedIn")]
         [Route("charts/list/int")]
         [HttpPost]
         public HttpResponseMessage InsertChart(ChartAddRequest model)
@@ -740,7 +734,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("UserLogIn")]
+        [Intercept("LoggedIn")]
         [Route("charts/int")]
         [HttpPut]
         public HttpResponseMessage UpdateChart(ChartUpdateRequest<int> model)
@@ -780,7 +774,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("UserLogIn")]
+        [Intercept("LoggedIn")]
         [Route("charts/list/int")]
         [HttpPut]
         public HttpResponseMessage UpdateChart(ChartUpdateRequest model)
@@ -820,7 +814,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("UserLogIn")]
+        [Intercept("LoggedIn")]
         [Route("charts/delete/{id:int}")]
         [HttpDelete]
         public HttpResponseMessage DeleteChart(int id)
@@ -973,7 +967,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("UserLogIn")]
+        [Intercept("LoggedIn")]
         [Route("config/site")]
         [HttpGet]
         public HttpResponseMessage GetSite(string url)

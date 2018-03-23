@@ -21,21 +21,11 @@ namespace Nostreets_Sandbox.App_Start
 
         IUserService _userSrv = null;
 
-        [Validator("Session")]
-        void AddSessionCookie(HttpApplication app)
-        {
-            //app.Context.SetSessionStateBehavior(SessionStateBehavior.Required);
-        }
-
-        [Validator("UserLogIn")]
+        [Validator("LoggedIn")]
         void NeedsToBeLoggedIn(HttpApplication app)
         {
-            if (!SessionManager.HasAnySessions() || !SessionManager.Get<bool>(SessionState.IsLoggedOn)) { NotLoggedIn(app); }
-            else
-            {
-                string userId = CacheManager.GetItem<string>(HttpContext.Current.GetIPAddress());
-                if (userId == null) { NotLoggedIn(app); }
-            }
+            if (_userSrv.SessionUser == null)
+                NotLoggedIn(app); 
         }
 
         void NotLoggedIn(HttpApplication app)
