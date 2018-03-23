@@ -1,14 +1,18 @@
 ﻿<div>
-    <div ng-if="regVm.requestSuccessful">
-        Registation Email has been sent...
-        Validate Email to be able to login!
+    <div class="card" ng-if="regVm.requestSuccessful">
+        <div class="card-content text-center">
+            <div>Registation Email has been sent...</div>
+            <div>Validate Email to be able to login!</div>
+        </div>
     </div>
-    <form class="form theRegisterForm card" 
+    <form class="form theRegisterForm card"
           name="regVm.regForm"
           ng-if="!regVm.requestSuccessful"
           novalidate>
         <div class="card-header" style="margin-bottom:auto">
-            Register
+            <div class="card-title">
+                Register
+            </div>
         </div>
         <div class="card-content">
             <div class="form-group"
@@ -203,6 +207,8 @@
         </div>
         <div class="card-footer text-center">
             <button type="submit" class="btn btn-primary btn-round" id="submitBtn" ng-click="regVm.submit()" ng-disabled="!checkBox || !regVm.regForm.$valid || !regVm.validateForm()">Get Started</button>
+            <br />
+            <a href="" ng-click="regVm.login()">Already signed up?</a>
         </div>
     </form>
 </div>

@@ -2,36 +2,45 @@
     angular.module(page.APPNAME)
         .controller("modalRegisterController", modalRegisterController)
         .controller("modalLogInController", modalLogInController)
+        .controller("modalUserController", modalUserController)
         .directive("signIn", signInDirective);
 
-    signInDirective.$inject = ["$baseController, $serverModel"];
+    signInDirective.$inject = ["$baseController", "$serverModel"];
     modalLogInController.$inject = ["$scope", "$baseController", "$uibModalInstance"];
-    modalRegisterController.$inject = ["$scope", "$baseController", "$uibModalInstance"];
+    modalRegisterController.$inject = ["$scope", "$baseController", "$uibModalInstance", "links"];
+    modalUserController.$inject = ["$scope", "$baseController", "$uibModalInstance", "user"];
 
     function signInDirective($baseController, $serverModel) {
 
         return {
             restrict: "A",
             scope: true,
-            template: (typeof (page.user.data) === "undefined") ? "<i class=\"material-icons\">folder_shared</i>" : "<i class=\"material-icons\">person</i>",
+            template: ($serverModel.user === null) ? "<i class=\"material-icons\">folder_shared</i>" : "<i class=\"material-icons\">person</i>",
             link: function ($scope, element, attr) {
 
                 $(document).ready(_render);
 
-
                 function _render() {
+                    if ($serverModel.token !== null)
+                        swal({
+                            title: $serverModel.tokenOutcome,
+                            type: "success",
+                            showCancelButton: false,
+                            showConfirmButton: false,
+                            allowOutsideClick: true
+                        }).then(_openUserModal, _openUserModal)
+
+
                     element.on("click", () => {
-                        if (typeof (page.user.data) === "undefined")
+                        if ($serverModel.hasVisited)
+                            _openLoginModal();
+
+                        else if ($serverModel.user === null)
                             _openRegisterModal();
+
                         else
-                            if (page.user.loggedIn)
-                                _openUserModal(page.user.data);
-                            else
-                                _openLoginModal();
+                            _openUserModal($serverModel.user);
                     });
-
-
-
                 }
 
                 function _openRegisterModal() {
@@ -41,6 +50,9 @@
                         , templateUrl: "Scripts/app/templates/registerForm.html"
                         , controller: "modalRegisterController as regVm"
                         , size: "lg"
+                        , resolve: {
+                            links: () => { return { loginModal: _openLoginModal } }
+                        }
                     });
 
                 }
@@ -61,17 +73,17 @@
                         , templateUrl: "Scripts/app/templates/userDashboard.html"
                         , controller: "modalUserController as pg"
                         , size: "lg"
-
+                        , resolve: {
+                            user: () => $serverModel.user
+                        }
                     });
 
                 }
-
-
             }
         }
     }
 
-    function modalRegisterController($scope, $baseController, $uibModalInstance) {
+    function modalRegisterController($scope, $baseController, $uibModalInstance, links) {
 
         var vm = this;
         vm.$scope = $scope;
@@ -82,6 +94,7 @@
         vm.validateForm = _validateForm;
         vm.checkUsername = _checkUsername;
         vm.checkEmail = _checkEmail;
+        vm.login = _openLoginModal;
 
 
         _render();
@@ -169,6 +182,11 @@
         function _cancel() {
             vm.$uibModalInstance.dismiss("cancel");
         }
+
+        function _openLoginModal() {
+            links.loginModal();
+            $uibModalInstance.close();
+        }
     }
 
     function modalLogInController($scope, $baseController, $uibModalInstance) {
@@ -183,10 +201,10 @@
         _render();
 
         function _render() {
-            _setUp(model);
+            _setUp();
         }
 
-        function _setUp(data) {
+        function _setUp() {
 
             vm.username = null;
             vm.password = null;
@@ -220,13 +238,16 @@
         _render();
 
         function _render() {
-            _getUserData().then(a => _setUp(a.data.item));
+
+            if (user === null)
+                _getUserData().then(a => _setUp(a.data.item));
+            else
+                _setUp(user);
         }
 
         function _setUp(data) {
-
-            vm.username = null;
-            vm.password = null;
+            vm.username = data.username;
+            vm.password = data.password;
         }
 
         function _logout() {
@@ -243,13 +264,13 @@
             vm.$uibModalInstance.dismiss("cancel");
         }
 
-        function _getUserData() {
+        function _getUserSession() {
             return $baseController.http({
                 url: "/api/user/session",
                 data: obj,
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' }
-            }).then(a => a.data.item);
+            })
         }
 
 

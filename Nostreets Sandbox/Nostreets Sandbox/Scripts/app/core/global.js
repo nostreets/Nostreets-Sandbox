@@ -9,9 +9,6 @@
         "ngCookies",
         'color.picker'
     ],
-    user: {
-        loggedIn: false
-    },
 
     utilities: {
 
@@ -93,6 +90,12 @@
                 clearTimeout(t);
                 t = setTimeout(logout, 3000)
             }
+        },
+
+        getProviders: () => {
+            angular.module(page.APPNAME)['_invokeQueue'].forEach(function (value) {
+                console.log(value[1] + ": " + value[2][0]);
+            });
         }
     }
 };
@@ -171,18 +174,7 @@
 
         }
 
-        base.login = function (username, password) {
-            if (!username) { username = "GUEST" }
-            if (!password) { password = "NOSTREETSSANDBOX" }
-
-            return $http({
-                url: "/api/user" + "?username=" + username + "&password=" + password,
-                method: "GET",
-                headers: { 'Content-Type': 'application/json' }
-            });
-        }
-
-        base.loginPopup = function () {
+        base.legacyLoginPopup = function () {
 
             var alert = (onSuccess, onError) => {
                 return swal({
@@ -207,13 +199,24 @@
             };
 
             var brodcastUpdate = (input, onSuccess, onError) => {
-                return base.login(input).then(
+                return login(input).then(
                     (data) => {
                         if (base.cookies.get("loggedIn")) {
                             page.user.loggedIn = true;
                             base.systemEventService.broadcast("refreshedUsername");
                         }
                     }).then(onSuccess, onError);
+            };
+
+            var login = (username, password) => {
+                if (!username) { username = "GUEST" }
+                if (!password) { password = "NOSTREETSSANDBOX" }
+
+                return $http({
+                    url: "/api/user" + "?username=" + username + "&password=" + password,
+                    method: "GET",
+                    headers: { 'Content-Type': 'application/json' }
+                });
             };
 
             alert(
@@ -233,52 +236,61 @@
 
         base.errorCheck = function (err, tryAgainObj) {
 
-            if (!tryAgainObj) {
-
+            if (!tryAgainObj)
                 tryAgainObj = {};
-            }
-            if (!tryAgainObj.maxLoops) {
-                tryAgainObj.maxLoops = 3;
-            }
-            if (!tryAgainObj.miliseconds) {
-                tryAgainObj.miliseconds = 1000;
-            }
-            if (!tryAgainObj.promiseMethod) {
 
+
+            if (!tryAgainObj.maxLoops)
+                tryAgainObj.maxLoops = 3;
+
+
+            if (!tryAgainObj.miliseconds)
+                tryAgainObj.miliseconds = 1000;
+
+
+            if (!tryAgainObj.promiseMethod)
                 tryAgainObj.promiseMethod = () => {
                     return new Promise((resolve, reject) => {
                         resolve();
                     });
                 }
 
-            }
-            if (!tryAgainObj.onSuccess) {
+
+            if (!tryAgainObj.onSuccess) 
                 tryAgainObj.onSuccess = (data) => console.log(data);
-            }
+            
 
             if (err.data.errors && err.data.errors.length) {
                 for (var error of err.data.errors) {
                     switch (error) {
-                        case "User is not logged in...":
-                            base.loginPopup();
-                            break;
+                        //case "User is not logged in...":
+                        //    base.loginPopup();
+                        //    break;
 
                         default:
-                            if (!tryAgainObj || !tryAgainObj.maxLoops || !tryAgainObj.miliseconds || !tryAgainObj.promiseMethod) { return; }
-                            base.tryAgain(tryAgainObj.maxLoops, tryAgainObj.miliseconds, tryAgainObj.promiseMethod, tryAgainObj.onSuccess);
+                            if (!tryAgainObj || !tryAgainObj.maxLoops || !tryAgainObj.miliseconds || !tryAgainObj.promiseMethod)
+                                return;
+                            else
+                                base.tryAgain(tryAgainObj.maxLoops
+                                    , tryAgainObj.miliseconds
+                                    , tryAgainObj.promiseMethod
+                                    , tryAgainObj.onSuccess);
                             break;
                     }
                 }
             }
             else {
                 switch (err.status) {
-                    case 401:
-                        base.loginPopup();
-                        break;
+                    //case 401:
+                    //    base.loginPopup();
+                    //    break;
 
                     default:
                         if (!tryAgainObj || !tryAgainObj.maxLoops || !tryAgainObj.miliseconds || !tryAgainObj.promiseMethod) { return; }
-                        base.tryAgain(tryAgainObj.maxLoops, tryAgainObj.miliseconds, tryAgainObj.promiseMethod, tryAgainObj.onSuccess);
+                        base.tryAgain(tryAgainObj.maxLoops
+                            , tryAgainObj.miliseconds
+                            , tryAgainObj.promiseMethod
+                            , tryAgainObj.onSuccess);
                         break;
                 }
             }

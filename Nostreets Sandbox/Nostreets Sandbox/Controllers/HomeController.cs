@@ -26,25 +26,28 @@ namespace Nostreets_Sandbox.Controllers
             User user = null;
             Token userToken = null;
             string outcome = null;
+            bool hasVisited = false;
 
             if (_userService.SessionUser != null)
                 user = _userService.SessionUser;
 
             else
-            {
-                string userIp = HttpContext.Request.UserHostAddress;
-                user = _userService.Where(a => a.Settings.IPAddresses != null && a.Settings.IPAddresses.Any(b => b == userIp)).FirstOrDefault();
-
-            }
+                hasVisited = (_userService.FirstOrDefault(a => a.Settings.IPAddresses != null && a.Settings.IPAddresses.Any(b => b == _userService.RequestIp)) != null) 
+                    ? true : false;
 
 
             if (token != null && userId != null)
                 userToken = _userService.ValidateToken(token, userId, out outcome);
 
 
-            ViewBag.TokenOutcome = outcome;
+            ViewBag.ServerModel = new {
+                user = user,
+                token = userToken,
+                tokenOutcome = outcome,
+                hasVisited 
+            };
 
-            return View(user);
+            return View();
         }
 
     }

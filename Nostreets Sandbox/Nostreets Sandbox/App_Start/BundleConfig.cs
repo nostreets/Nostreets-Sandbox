@@ -52,11 +52,16 @@ namespace Nostreets_Sandbox
                         ));
 
 
+            bundles.Add(new ScriptBundle("~/baseJS").Include(
+                 "~/Scripts/app/core/global.js",
+                 "~/Scripts/app/core/extend.js",
+                 "~/Scripts/app/services/alertService.js",
+                 "~/Scripts/app/services/systemEvent.service.js"
+                      ));
+
+
+
             bundles.Add(new ScriptBundle("~/customAngular").Include(
-                  "~/Scripts/app/core/global.js",
-                  "~/Scripts/app/core/extend.js",
-                  "~/Scripts/app/services/alertService.js",
-                  "~/Scripts/app/services/systemEvent.service.js",
                   "~/Scripts/app/configs/routeConfig.js",
                   "~/Scripts/app/services/sandboxService.js",
                   "~/Scripts/app/directives/signInDirective.js"

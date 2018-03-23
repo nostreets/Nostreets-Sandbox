@@ -1,25 +1,20 @@
 ﻿@using NostreetsExtensions;
 
-
 <script type="text/javascript">
-
-    var serverModel = (Model != null) ? @Model.JsonSerialize() : {}
-
     (function () {
         "use strict";
 
-        angular.module(APPNAME)
-        .factory('$serverModel', BaseServerModel);
-        function BaseServerModel() {
+        angular.module(page.APPNAME)
+            .factory('$serverModel', baseServerModel);
+
+        function baseServerModel() {
 
             var thisModel = this;
 
-            thisModel = $.extend(true, {}, serverModel, thisModel);
+            thisModel = $.extend(true, {}, @(ViewBag.ServerModel != null ? @Html.Raw(((object)ViewBag.ServerModel).JsonSerialize()) : Html.Raw("{}")), thisModel);
             return thisModel;
         }
 
     })();
-
-
 </script>
 
