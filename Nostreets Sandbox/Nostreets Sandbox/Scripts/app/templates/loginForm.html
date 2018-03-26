@@ -1,5 +1,4 @@
-﻿<form name="logVm.logForm"
-      ng-submit="logVm.logForm.$valid && logVm.submitLogin()">
+﻿<form name="logVm.logForm">
     <div class="card card-login">
         <div class="card-header text-center">
             <h4 class="card-title">
@@ -9,7 +8,7 @@
         <div class="card-content">
             <div class="input-group">
                 <span class="input-group-addon">
-                    <i class="material-icons">email</i>
+                    <i class="material-icons" style="color:black">email</i>
                 </span>
                 <div class="form-group label-floating"
                      ng-class="{ 'has-success': logVm.logForm.username.$valid, 'has-error': logVm.logForm.username.$invalid && logVm.logForm.username.$dirty}">
@@ -18,23 +17,30 @@
                            id="username"
                            type="text"
                            ng-model="logVm.username"
+                           ng-minlength="6"
                            required
                            class="form-control">
                     <span class="form-control-feedback"
                           ng-show="logVm.logForm.username.$valid">
                         <i class="material-icons">done</i>
                     </span>
-                    <span class="text-danger"
-                          ng-show="logVm.logForm.username.$error.required && logVm.logForm.username.$dirty">
+                    <div class="text-danger"
+                         ng-show="logVm.logForm.username.$error.required && logVm.logForm.username.$dirty">
                         <em>
                             This field is required!
                         </em>
-                    </span>
+                    </div>
+                    <div class="text-danger"
+                         ng-show="logVm.logForm.username.$touched && logVm.logForm.username.$error.minlength">
+                        <em>
+                            This field is too short!
+                        </em>
+                    </div>
                 </div>
             </div>
             <div class="input-group">
                 <span class="input-group-addon">
-                    <i class="material-icons">lock_outline</i>
+                    <i class="material-icons" style="color:black">lock_outline</i>
                 </span>
                 <div class="form-group label-floating"
                      ng-class="{ 'has-success': logVm.logForm.password.$valid, 'has-error': logVm.logForm.password.$invalid && logVm.logForm.password.$dirty}">
@@ -42,6 +48,7 @@
                     <input name="password"
                            id="password"
                            type="password"
+                           ng-minlength="12"
                            ng-model="logVm.password"
                            required
                            enter-press="logVm.submitLogin()"
@@ -50,17 +57,29 @@
                           ng-show="logVm.logForm.password.$valid">
                         <i class="material-icons">done</i>
                     </span>
-                    <span class="text-danger"
-                          ng-show="logVm.logForm.password.$error.required && logVm.logForm.password.$dirty">
+                    <div class="text-danger"
+                         ng-show="logVm.logForm.password.$error.required && logVm.logForm.password.$dirty">
                         <em>
                             This field is required!
                         </em>
-                    </span>
+                    </div>
+                    <div class="text-danger"
+                         ng-show="logVm.logForm.password.$dirty && logVm.logForm.password.$error.minlength">
+                        <em>
+                            This field is too short!
+                        </em>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="footer text-center">
-            <button type="submit" class="btn btn-rose btn-simple btn-wd btn-lg" ng-click="logVm.sumbit()">Let's go</button>
+            <div class="text-danger"
+                 ng-show="logVm.reason !== null">
+                <em>
+                    {{ logVm.reason }}
+                </em>
+            </div>
+            <button class="btn btn-sm btn-round btn-primary" ng-click="logVm.submit()">Let's go</button>
         </div>
     </div>
 </form>

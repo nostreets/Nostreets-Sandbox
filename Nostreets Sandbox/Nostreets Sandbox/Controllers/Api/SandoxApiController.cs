@@ -170,6 +170,29 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [HttpPut, Route("user"), Intercept("LoggedIn")]
+        public HttpResponseMessage UpdateUser(User user)
+        {
+            try
+            {
+                BaseResponse response = null;
+                if (user.Id != CurrentUser.Id)
+                    throw new Exception("Targeted user is not the current user...");
+                else
+                {
+                    _userService.Update(user);
+                    response = new SuccessResponse();
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
+
 
         #endregion
 
@@ -267,9 +290,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("LoggedIn")]
-        [Route("bill/expenses/chart")]
-        [HttpGet]
+        [HttpGet, Route("bill/expenses/chart"), Intercept("LoggedIn")]
         public HttpResponseMessage GetExpensesChart(DateTime? startDate = null, DateTime? endDate = null, ScheduleTypes chartSchedule = ScheduleTypes.Any)
         {
             try
@@ -288,9 +309,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("LoggedIn")]
-        [Route("bill/combined/chart")]
-        [HttpGet]
+        [HttpGet, Route("bill/combined/chart"), Intercept("LoggedIn")]
         public HttpResponseMessage GetCombinedChart(DateTime? startDate = null, DateTime? endDate = null, ScheduleTypes chartSchedule = ScheduleTypes.Any)
         {
             try
@@ -309,9 +328,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("LoggedIn")]
-        [Route("bill/income")]
-        [HttpPost]
+        [HttpPost, Route("bill/income"), Intercept("LoggedIn")]
         public HttpResponseMessage InsertIncome(Income income)
         {
             try
@@ -338,9 +355,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("LoggedIn")]
-        [Route("bill/expenses")]
-        [HttpPost]
+        [HttpPost, Route("bill/expenses"), Intercept("LoggedIn")]
         public HttpResponseMessage InsertExpense(Expense expense)
         {
             try
@@ -367,9 +382,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("LoggedIn")]
-        [Route("bill/income")]
-        [HttpPut]
+        [HttpPut, Route("bill/income"), Intercept("LoggedIn")]
         public HttpResponseMessage UpdateIncome(Income income)
         {
             try

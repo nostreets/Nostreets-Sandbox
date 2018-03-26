@@ -32,14 +32,14 @@
 
 
                     element.on("click", () => {
-                        if ($serverModel.hasVisited)
+                        if ($serverModel.user !== null)
+                            _openUserModal($serverModel.user);
+
+                        else if ($serverModel.hasVisited === true)
                             _openLoginModal();
 
-                        else if ($serverModel.user === null)
-                            _openRegisterModal();
-
                         else
-                            _openUserModal($serverModel.user);
+                            _openRegisterModal();
                     });
                 }
 
@@ -208,6 +208,7 @@
 
             vm.username = null;
             vm.password = null;
+            vm.reason = null;
         }
 
         function _login() {
@@ -216,7 +217,7 @@
                 url: "/api/login" + "?username=" + vm.username + "&password=" + vm.password,
                 method: "GET",
                 headers: { 'Content-Type': 'application/json' }
-            }).then(vm.$uibModalInstance.close, err => $baseController.alert.error(err));
+            }).then(vm.$uibModalInstance.close, err => { $baseController.alert.error(err); vm.reason = err; });
 
         }
 
@@ -234,20 +235,21 @@
         vm.$uibModalInstance = $uibModalInstance;
         vm.logout = _logout;
         vm.cancel = _cancel;
+        vm.hasUserChanged = _hasUserChanged;
 
         _render();
 
         function _render() {
 
             if (user === null)
-                _getUserData().then(a => _setUp(a.data.item));
+                _getUserSession().then(a => _setUp(a.data.item));
             else
                 _setUp(user);
         }
 
         function _setUp(data) {
-            vm.username = data.username;
-            vm.password = data.password;
+            vm.user = data;
+            vm.userSnap = data;
         }
 
         function _logout() {
@@ -267,8 +269,22 @@
         function _getUserSession() {
             return $baseController.http({
                 url: "/api/user/session",
-                data: obj,
-                method: "POST",
+                method: "GET",
+                headers: { 'Content-Type': 'application/json' }
+            })
+        }
+
+        function _hasUserChanged()
+        {
+            return (user !== userSnap) ? true : false;
+        }
+
+        function _updateUser()
+        {
+             return $baseController.http({
+                url: "/api/user",
+                data: vm.user,
+                method: "PUT",
                 headers: { 'Content-Type': 'application/json' }
             })
         }

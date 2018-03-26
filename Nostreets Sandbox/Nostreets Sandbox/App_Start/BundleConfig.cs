@@ -10,8 +10,9 @@ namespace Nostreets_Sandbox
 
             bundles.Add(new StyleBundle("~/css").Include(
 
-                      "~/assets/css/bootstrap.css",
-                      "~/assets/css/bootstrap-theme.css",
+                      "~/node_modules/bootstrap/dist/css/bootstrap.css",
+
+                      //"~/assets/css/bootstrap-theme.css",
                       "~/assets/css/theme-Dark.css",
                       "~/assets/css/material-dashboard.css",
                       "~/assets/css/chartist-plugin-tooltip.css",
@@ -26,14 +27,17 @@ namespace Nostreets_Sandbox
 
 
             bundles.Add(new ScriptBundle("~/jsRequirements").Include(
-                    "~/assets/js/jquery-3.2.1.js",
-                    "~/assets/js/jquery.validate.js",
-                    "~/assets/js/bootstrap.js",
+
+                    "~/node_modules/jquery/dist/jquery.js",
+                    "~/node_modules/jquery-validation/dist/jquery.validate.js",
+                    "~/node_modules/bootstrap/dist/bootstrap.js",
+
                     "~/assets/js/material.min.js",
                     "~/assets/js/sweetalert2.js",
                     "~/assets/js/chartist.min.js",
                     "~/assets/js/chartist-plugin-tooltip.min.js",
                     "~/assets/js/chartist-plugin-zoom.min.js",
+                   
                     "~/Scripts/app/services/nostreetsChartistScrollPlugin.js"
                         ));
 

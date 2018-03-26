@@ -4,6 +4,10 @@
     font-size: medium;
 }*/
 
+input.password {
+    -webkit-text-security: disc;
+}
+
 body {
     background-color: #1e2329 !important;
 }

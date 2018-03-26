@@ -3,9 +3,9 @@
         <div class="card-header">
             <ul class="nav nav-tabs nav-justified tabs-basic">
                 <li role="presentation" class="active">
-                    <a role="tab" data-target="#userGeneralTab" data-toggle="tab">Contact</a>
+                    <a role="tab" data-target="#userGeneralTab" data-toggle="tab">Account</a>
                 </li>
-                <li role="presentation" class="active">
+                <li role="presentation">
                     <a role="tab" data-target="#userContactTab" data-toggle="tab">Contact</a>
                 </li>
                 <li role="presentation">
@@ -16,50 +16,50 @@
 
         <div class="card-content text-center">
             <h3>
-                {{ pg.username }}
+                {{ pg.user.userName }}
             </h3>
             <div class="tab-content">
                 <div id="userGeneralTab" class="active tab-pane fade in" role="tabpanel">
                     <div class="col-6-sm">
-                        {{ pg.firstName }}
+                        {{ pg.user.contact.firstName }}
                     </div>
                     <div class="col-6-sm">
-                        {{ pg.lastName }}
+                        {{ pg.user.contact.lastName }}
                     </div>
                     <div class="col-12-sm">
-                        Member Since {{ pg.dateCreated }}...
+                        Password: {{ pg.user.password }}
+                    </div>
+                        <div class="col-12-sm">
+                        Member Since {{ pg.user.dateCreated | date:'longDate' }}...
                     </div>
                 </div>
-            </div>
-            <div class="tab-content">
-                <div id="userContactTab" class="active tab-pane fade in" role="tabpanel">
+                <div id="userContactTab" class="tab-pane fade" role="tabpanel">
                     <div class="col-6-sm">
-                        {{ pg.contact.primaryEmail }}
+                        {{ pg.user.contact.primaryEmail }}
                     </div>
                     <div class="col-6-sm">
-                        {{ pg.contact.primaryPhone }}
+                        {{ pg.user.contact.primaryPhone || 'NA' }}
                     </div>
                 </div>
-            </div>
-            <div class="tab-content">
-                <div id="userSettingsTab" class="active tab-pane fade in" role="tabpanel">
+                <div id="userSettingsTab" class="tab-pane fade" role="tabpanel">
                     <div class="col-6-sm">
-                        Two Factor Authitcation: <input type="checkbox" ng-checked="pg.settings.twoFactorAuthEnabled" ng-model="pg.settings.twoFactorAuthEnabled" />
+                        Two Factor Authitcation: <input type="checkbox" ng-checked="pg.user.settings.twoFactorAuthEnabled" ng-model="pg.user.settings.twoFactorAuthEnabled" />
                         <div class="col-6-sm">
-                            By Email: <input type="checkbox" ng-checked="pg.settings.twoFactorAuthEnabled" ng-model="pg.settings.tFAuthByPhone" />
+                            By Email: <input type="checkbox" ng-checked="pg.user.settings.twoFactorAuthEnabled" ng-model="pg.user.settings.tFAuthByPhone" />
                         </div>
                         <div class="col-6-sm">
-                            By Phone: <input type="checkbox" ng-checked="pg.settings.twoFactorAuthEnabled" ng-model="pg.settings.tFAuthByEmail" />
+                            By Phone: <input type="checkbox" ng-checked="pg.user.settings.twoFactorAuthEnabled" ng-model="pg.user.settings.tFAuthByEmail" />
                         </div>
                     </div>
                     <div class="col-6-sm">
-                        Device Authentication Before Login: <input type="checkbox" ng-checked="pg.settings.validateIPBeforeLogin" ng-model="pg.settings.validateIPBeforeLogin" />
+                        Device Authentication Before Login: <input type="checkbox" ng-checked="pg.user.settings.validateIPBeforeLogin" ng-model="pg.user.settings.validateIPBeforeLogin" />
                     </div>
                     <div class="col-6-sm">
-                        Hook up card! <button><i class="material-icons">open_in_browser</i></button>
+                        Hook up card! <i class="material-icons">open_in_browser</i>
                     </div>
                 </div>
             </div>
+            <button ng-if="pg.hasUserChanged()" ng-click="pg.updateUser()" class="btn btn-sm btn-round" style="color:#AA3131">Apply!</button>
         </div>
     </div>
 </div>

@@ -21,27 +21,32 @@ namespace Nostreets_Sandbox.Controllers
         public IUserService _userService = null;
 
         [Route("~/")]
-        public ActionResult Index(string token = null, string userId = null)
+        public ActionResult Index(string token = null, string user = null)
         {
-            User user = null;
+            User sessionUser = null;
             Token userToken = null;
             string outcome = null;
             bool hasVisited = false;
 
+            if (token != null && user != null)
+                userToken = _userService.ValidateToken(token, user, out outcome);
+
             if (_userService.SessionUser != null)
-                user = _userService.SessionUser;
+            {
+                sessionUser = _userService.SessionUser;
+                hasVisited = true;
+            }
 
-            else
-                hasVisited = (_userService.FirstOrDefault(a => a.Settings.IPAddresses != null && a.Settings.IPAddresses.Any(b => b == _userService.RequestIp)) != null) 
-                    ? true : false;
+            //else
+            //    hasVisited  = (_userService.FirstOrDefault(a => a.Settings.IPAddresses != null && a.Settings.IPAddresses.Any(b => b == _userService.RequestIp)) != null) 
+            //        ? true : false;
 
 
-            if (token != null && userId != null)
-                userToken = _userService.ValidateToken(token, userId, out outcome);
+            
 
 
             ViewBag.ServerModel = new {
-                user = user,
+                user = sessionUser,
                 token = userToken,
                 tokenOutcome = outcome,
                 hasVisited 

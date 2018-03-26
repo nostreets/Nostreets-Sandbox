@@ -164,7 +164,7 @@ namespace Nostreets_Services.Services.Database
 
             string html = HttpContext.Current.Server.MapPath("\\assets\\ValidateEmail.html").ReadFile()
                                      .Replace("{url}", HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)
-                                     + "?token={0}&userId={1}".FormatString(token.Id, user.Id));
+                                     + "?token={0}&user={1}".FormatString(token.Id, user.Id));
 
 
             if (!await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"

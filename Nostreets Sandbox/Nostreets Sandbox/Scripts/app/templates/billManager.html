@@ -219,7 +219,7 @@
                                 <strong>
                                     Number of  Paid
                                     {{ (mc.rate === '9') ? 'Hours' : (mc.rate === '8') ? 'Days' : (mc.rate === '7') ? 'Weeks' : (mc.rate === '5') ? 'Months' : 'Years' }}
-                                    {{ (mc.paySchedule === '1') ? 'Per Occasion' : (mc.paySchedule === '3') ? 'Per Year' : (mc.rate === '4') ? 'Every 6 Months' : (mc.paySchedule === '5') ? 'Per Month' : (mc.paySchedule === '6') ? 'Every Other Week' : (mc.paySchedule === '7') ? 'Per Week' : (mc.paySchedule === '8') ? 'Per Day' : ''}}:
+                                    {{ (mc.paySchedule === '1') ? 'Per Occasion' : (mc.paySchedule === '3') ? 'Per Year' : (mc.rate === '4') ? 'Every 6 Months' : (mc.paySchedule === '5') ? 'Per Month' : (mc.paySchedule === '6') ? 'Every Other Week' : (mc.paySchedule === '7') ? 'Per Week' : (mc.paySchedule === '8') ? 'Per Day' : '' }}:
                                 </strong>
                             </div>
                             <input class="input-sm" ng-model="mc.rateMultilplier" type="number" />

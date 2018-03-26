@@ -27,6 +27,7 @@
                            class="form-control"
                            ng-model="regVm.username"
                            ng-blur="regVm.checkUsername()"
+                           ng-minlength="6"
                            required
                            placeholder="Username...">
 
@@ -46,6 +47,12 @@
                             Username already exists...
                         </em>
                     </div>
+                    <div class="text-danger"
+                         ng-show="regVm.regForm.username.$dirty && regVm.regForm.username.$error.minlength">
+                        <em>
+                            Password is to short!
+                        </em>
+                    </div>
                 </div>
             </div>
 
@@ -56,35 +63,37 @@
                     <span class="input-group-addon">
                         <i class="material-icons" style="color:black">email</i>
                     </span>
-                    <input type="email"
-                           name="email"
-                           id="email"
-                           class="form-control"
-                           ng-model="regVm.email"
-                           ng-blur="regVm.checkEmail()"
-                           required
-                           placeholder="Email...">
-                    <span class="form-control-feedback"
-                          ng-show="regVm.regForm.email.$valid && !regVm.emailExists">
-                        <i class="material-icons" style="color:rgb(95, 214, 95)">done</i>
-                    </span>
-                    <div class="text-danger"
-                         ng-show="regVm.regForm.email.$error.required && regVm.regForm.email.$dirty">
-                        <em>
-                            This field is required!
-                        </em>
-                    </div>
-                    <div class="text-danger"
-                         ng-show="regVm.regForm.email.$error.email">
-                        <em>
-                            Please input a valid email...
-                        </em>
-                    </div>
-                    <div class="text-danger"
-                         ng-if="(regVm.emailExists)">
-                        <em>
-                            Email already exists...
-                        </em>
+                    <div class="form-group">
+                        <input type="email"
+                               name="email"
+                               id="email"
+                               class="form-control"
+                               ng-model="regVm.email"
+                               ng-blur="regVm.checkEmail()"
+                               required
+                               placeholder="Email...">
+                        <span class="form-control-feedback"
+                              ng-show="regVm.regForm.email.$valid && !regVm.emailExists">
+                            <i class="material-icons" style="color:rgb(95, 214, 95)">done</i>
+                        </span>
+                        <span class="text-danger"
+                              ng-show="regVm.regForm.email.$error.required && regVm.regForm.email.$dirty">
+                            <em>
+                                This field is required!
+                            </em>
+                        </span>
+                        <span class="text-danger"
+                              ng-show="regVm.regForm.email.$dirty && regVm.regForm.email.$error.email">
+                            <em>
+                                Please input a valid email...
+                            </em>
+                        </span>
+                        <span class="text-danger"
+                              ng-if="(regVm.emailExists)">
+                            <em>
+                                Email already exists...
+                            </em>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -144,6 +153,7 @@
                            type="password"
                            placeholder="Password..."
                            ng-model="regVm.password"
+                           ng-minlength="12"
                            required
                            class="form-control flare" />
                     <!--<ul id="strength" check-strength="regVm.password"></ul>-->
@@ -155,13 +165,13 @@
                     </div>
                     <div class="text-danger"
                          style="display:block;"
-                         ng-show="regVm.password !== regVm.rePassword && regVm.regForm.rePassword.$dirty">
+                         ng-show="regVm.regForm.rePassword.$dirty && regVm.regForm.password.$dirty && regVm.password !== regVm.rePassword">
                         <em>
                             Passwords must match!
                         </em>
                     </div>
                     <div class="text-danger"
-                         ng-show="regVm.regForm.password.$error.minlength">
+                         ng-show="regVm.regForm.rePassword.$dirty && regVm.regForm.password.$error.minlength">
                         <em>
                             Password is to short!
                         </em>
@@ -190,9 +200,15 @@
                         </em>
                     </div>
                     <div class="text-danger"
-                         ng-show="regVm.password !== regVm.rePassword && regVm.regForm.password.$dirty">
+                         ng-show="regVm.regForm.rePassword.$dirty && regVm.regForm.password.$dirty && regVm.password !== regVm.rePassword">
                         <em>
                             Passwords must match!
+                        </em>
+                    </div>
+                    <div class="text-danger"
+                         ng-show="regVm.regForm.rePassword.$dirty && regVm.regForm.rePassword.$error.minlength">
+                        <em>
+                            Password is to short!
                         </em>
                     </div>
                 </div>
