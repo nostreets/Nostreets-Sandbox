@@ -6,7 +6,7 @@
         .directive("signIn", signInDirective);
 
     signInDirective.$inject = ["$baseController", "$serverModel"];
-    modalLogInController.$inject = ["$scope", "$baseController", "$uibModalInstance"];
+    modalLogInController.$inject = ["$scope", "$baseController", "$uibModalInstance", "links"];
     modalRegisterController.$inject = ["$scope", "$baseController", "$uibModalInstance", "links"];
     modalUserController.$inject = ["$scope", "$baseController", "$uibModalInstance", "user"];
 
@@ -63,6 +63,9 @@
                         , templateUrl: "Scripts/app/templates/loginForm.html"
                         , controller: "modalLogInController as logVm"
                         , size: "lg"
+                        , resolve: {
+                            links: () => { return { registerModal: _openRegisterModal } }
+                        }
                     });
 
                 }
@@ -189,7 +192,7 @@
         }
     }
 
-    function modalLogInController($scope, $baseController, $uibModalInstance) {
+    function modalLogInController($scope, $baseController, $uibModalInstance, links) {
 
         var vm = this;
         vm.$scope = $scope;
@@ -197,6 +200,7 @@
         vm.submit = _login;
         vm.reset = _setUp;
         vm.cancel = _cancel;
+        vm.signUp = _openRegisterModal;
 
         _render();
 
@@ -225,6 +229,12 @@
             vm.$uibModalInstance.dismiss("cancel");
         }
 
+        function _openRegisterModal()
+        {
+            links.registerModal();
+            $uibModalInstance.close();
+
+        }
 
     }
 
@@ -276,7 +286,7 @@
 
         function _hasUserChanged()
         {
-            return (user !== userSnap) ? true : false;
+            return (vm.user !== vm.userSnap) ? true : false;
         }
 
         function _updateUser()

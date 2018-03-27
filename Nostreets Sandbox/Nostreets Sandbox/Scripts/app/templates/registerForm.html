@@ -63,38 +63,36 @@
                     <span class="input-group-addon">
                         <i class="material-icons" style="color:black">email</i>
                     </span>
-                    <div class="form-group">
-                        <input type="email"
-                               name="email"
-                               id="email"
-                               class="form-control"
-                               ng-model="regVm.email"
-                               ng-blur="regVm.checkEmail()"
-                               required
-                               placeholder="Email...">
-                        <span class="form-control-feedback"
-                              ng-show="regVm.regForm.email.$valid && !regVm.emailExists">
-                            <i class="material-icons" style="color:rgb(95, 214, 95)">done</i>
-                        </span>
-                        <span class="text-danger"
-                              ng-show="regVm.regForm.email.$error.required && regVm.regForm.email.$dirty">
-                            <em>
-                                This field is required!
-                            </em>
-                        </span>
-                        <span class="text-danger"
-                              ng-show="regVm.regForm.email.$dirty && regVm.regForm.email.$error.email">
-                            <em>
-                                Please input a valid email...
-                            </em>
-                        </span>
-                        <span class="text-danger"
-                              ng-if="(regVm.emailExists)">
-                            <em>
-                                Email already exists...
-                            </em>
-                        </span>
-                    </div>
+                    <input type="email"
+                           name="email"
+                           id="email"
+                           class="form-control"
+                           ng-model="regVm.email"
+                           ng-blur="regVm.checkEmail()"
+                           required
+                           placeholder="Email...">
+                    <span class="form-control-feedback"
+                          ng-show="regVm.regForm.email.$valid && !regVm.emailExists">
+                        <i class="material-icons" style="color:rgb(95, 214, 95)">done</i>
+                    </span>
+                    <span class="text-danger"
+                          ng-show="regVm.regForm.email.$error.required && regVm.regForm.email.$dirty">
+                        <em>
+                            This field is required!
+                        </em>
+                    </span>
+                    <span class="text-danger"
+                          ng-show="regVm.regForm.email.$dirty && regVm.regForm.email.$error.email">
+                        <em>
+                            Please input a valid email...
+                        </em>
+                    </span>
+                    <span class="text-danger"
+                          ng-if="(regVm.emailExists)">
+                        <em>
+                            Email already exists...
+                        </em>
+                    </span>
                 </div>
             </div>
 
