@@ -51,10 +51,10 @@ namespace Nostreets_Services.Services.Database
 
         }
 
-        public bool CheckIfUserCanLogIn(string username, string password, out string failureReason)
+        public bool CheckIfUserCanLogIn(string username, string password, out User user, out string failureReason)
         {
             failureReason = null;
-            User user = SessionUser ?? GetByUsername(username);
+            user = SessionUser ?? GetByUsername(username);
             bool result = false,
                  hasIP = (user == null) ? false : user.Settings.IPAddresses.Contains(RequestIp);
 
@@ -126,13 +126,11 @@ namespace Nostreets_Services.Services.Database
             return FirstOrDefault(a => a.UserName == username || a.Contact.PrimaryEmail == username);
         }
 
-        public void LogIn(string username, string password, bool rememberDevice = false)
+        public User LogIn(string username, string password, bool rememberDevice = false)
         {
             User user = null;
-            if (CheckIfUserCanLogIn(username, password, out string reason))
+            if (CheckIfUserCanLogIn(username, password, out user, out string reason))
             {
-                user = GetByUsername(username);
-
                 if (rememberDevice && !user.Settings.IPAddresses.Contains(RequestIp))
                     user.Settings.IPAddresses.Add(RequestIp);
 
@@ -141,6 +139,8 @@ namespace Nostreets_Services.Services.Database
             }
             else
                 throw new Exception(reason);
+
+            return user;
 
         }
 
@@ -245,7 +245,8 @@ namespace Nostreets_Services.Services.Database
 
         public bool ValidatePassword(string encyptedPassword, string password)
         {
-            return Encryption.SimpleDecryptWithPassword(encyptedPassword, WebConfigurationManager.AppSettings["CryptoKey"]) == password ? true : false;
+            string decryptedPassword = Encryption.SimpleDecryptWithPassword(encyptedPassword, WebConfigurationManager.AppSettings["CryptoKey"]);
+            return decryptedPassword == password ? true : false;
         }
 
         public bool ChangeUserEmail(string email, string password)

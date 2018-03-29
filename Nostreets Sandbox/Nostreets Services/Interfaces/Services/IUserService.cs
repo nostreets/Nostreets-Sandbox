@@ -14,12 +14,12 @@ namespace Nostreets_Services.Interfaces.Services
         string RequestIp { get; }
         User SessionUser { get; }
 
-        bool CheckIfUserCanLogIn(string username, string password, out string failureReason);
+        bool CheckIfUserCanLogIn(string username, string password, out User user, out string failureReason);
         bool CheckIfUsernameExist(string username);
         bool CheckIfEmailExist(string email);
         User GetByUsername(string username);
         void LogOut();
-        void LogIn(string username, string password, bool rememberDevice = false);
+        User LogIn(string username, string password, bool rememberDevice = false);
         Task<string> RegisterAsync(User user);
         Token ValidateToken(string tokenId, string userId, out string output);
         IEnumerable<User> Where(Func<User, bool> predicate);

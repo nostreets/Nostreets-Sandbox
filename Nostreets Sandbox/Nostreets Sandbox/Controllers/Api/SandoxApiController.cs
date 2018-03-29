@@ -65,8 +65,8 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-                _userService.LogIn(username, password);
-                SuccessResponse response = new SuccessResponse();
+                User user = _userService.LogIn(username, password);
+                ItemResponse<User> response = new ItemResponse<User>(user);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
 
             }

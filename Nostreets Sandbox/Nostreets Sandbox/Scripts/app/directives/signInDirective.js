@@ -15,7 +15,7 @@
         return {
             restrict: "A",
             scope: true,
-            template: ($serverModel.user === null) ? "<i class=\"material-icons\">folder_shared</i>" : "<i class=\"material-icons\">person</i>",
+            template: () => ($serverModel.user === null) ? "<i class=\"material-icons\">folder_shared</i>" : "<i class=\"material-icons\">person</i>",
             link: function ($scope, element, attr) {
 
                 $(document).ready(_render);
@@ -64,20 +64,25 @@
                         , controller: "modalLogInController as logVm"
                         , size: "lg"
                         , resolve: {
-                            links: () => { return { registerModal: _openRegisterModal } }
+                            links: () => {
+                                return {
+                                    registerModal: _openRegisterModal,
+                                    userModal: _openUserModal
+                                }
+                            }
                         }
                     });
 
                 }
 
-                function _openUserModal() {
+                function _openUserModal(user) {
                     var modalInstance = $baseController.modal.open({
                         animation: true
                         , templateUrl: "Scripts/app/templates/userDashboard.html"
                         , controller: "modalUserController as pg"
                         , size: "lg"
                         , resolve: {
-                            user: () => $serverModel.user
+                            user: () => user || $serverModel.user
                         }
                     });
 
@@ -197,7 +202,7 @@
         var vm = this;
         vm.$scope = $scope;
         vm.$uibModalInstance = $uibModalInstance;
-        vm.submit = _login;
+        vm.login = _login;
         vm.reset = _setUp;
         vm.cancel = _cancel;
         vm.signUp = _openRegisterModal;
@@ -221,7 +226,8 @@
                 url: "/api/login" + "?username=" + vm.username + "&password=" + vm.password,
                 method: "GET",
                 headers: { 'Content-Type': 'application/json' }
-            }).then(vm.$uibModalInstance.close, err => { $baseController.alert.error(err); vm.reason = err; });
+            }).then(a => _openUserModal(a.data.item),
+                err => { $baseController.alert.error(err.data.errors.message[0]); vm.reason = err.data.errors.message[0]; });
 
         }
 
@@ -229,12 +235,18 @@
             vm.$uibModalInstance.dismiss("cancel");
         }
 
-        function _openRegisterModal()
-        {
+        function _openRegisterModal() {
             links.registerModal();
             $uibModalInstance.close();
 
         }
+
+        function _openUserModal(user) {
+            links.userModal(user);
+            $uibModalInstance.close();
+
+        }
+
 
     }
 
@@ -284,14 +296,12 @@
             })
         }
 
-        function _hasUserChanged()
-        {
+        function _hasUserChanged() {
             return (vm.user !== vm.userSnap) ? true : false;
         }
 
-        function _updateUser()
-        {
-             return $baseController.http({
+        function _updateUser() {
+            return $baseController.http({
                 url: "/api/user",
                 data: vm.user,
                 method: "PUT",
