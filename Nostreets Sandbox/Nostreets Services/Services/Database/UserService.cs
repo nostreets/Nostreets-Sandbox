@@ -43,12 +43,17 @@ namespace Nostreets_Services.Services.Database
                 if (CacheManager.Contains(userId))
                     _sessionUser = CacheManager.GetItem<User>(userId);
                 else
-                    _sessionUser = _userDBService.Get(CacheManager.GetItem<string>(ip));
+                    _sessionUser = GetUser(CacheManager.GetItem<string>(ip));
 
             if (_sessionUser != null && !CacheManager.Contains(_sessionUser.Id))
                 CacheManager.InsertItem(_sessionUser.Id, _sessionUser, DateTimeOffset.Now.AddHours(2));
             return _sessionUser;
 
+        }
+
+        private string DecryptPassword(string encyptedPassword)
+        {
+            return Encryption.SimpleDecryptWithPassword(encyptedPassword, WebConfigurationManager.AppSettings["CryptoKey"]);
         }
 
         public bool CheckIfUserCanLogIn(string username, string password, out User user, out string failureReason)
@@ -113,7 +118,12 @@ namespace Nostreets_Services.Services.Database
 
         public User GetUser(string id)
         {
-            return _userDBService.Get(id);
+            return _userDBService.Get(id,
+                a =>
+                {
+                    a.Password = DecryptPassword(a.Password);
+                    return a;
+                });
         }
 
         public List<User> GetAll()
@@ -245,8 +255,7 @@ namespace Nostreets_Services.Services.Database
 
         public bool ValidatePassword(string encyptedPassword, string password)
         {
-            string decryptedPassword = Encryption.SimpleDecryptWithPassword(encyptedPassword, WebConfigurationManager.AppSettings["CryptoKey"]);
-            return decryptedPassword == password ? true : false;
+            return DecryptPassword(encyptedPassword) == password ? true : false;
         }
 
         public bool ChangeUserEmail(string email, string password)

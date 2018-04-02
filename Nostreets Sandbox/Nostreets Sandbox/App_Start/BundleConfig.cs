@@ -10,8 +10,8 @@ namespace Nostreets_Sandbox
 
             bundles.Add(new StyleBundle("~/css").Include(
                       //+BOOTSTRAP
-                      "~/node_modules/bootstrap/dist/css/bootstrap.css",
                       "~/node_modules/bootstrap/dist/css/bootstrap-theme.css",
+                      "~/node_modules/bootstrap/dist/css/bootstrap.css",
                       //+CUSTOM
                       "~/assets/css/theme-Dark.css",
                       "~/assets/css/material-dashboard.css",

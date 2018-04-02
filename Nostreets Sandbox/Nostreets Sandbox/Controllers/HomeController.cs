@@ -1,12 +1,9 @@
-﻿using System;
-using System.Linq;
-using System.Web.Mvc;
-using Newtonsoft.Json;
+﻿using System.Web.Mvc;
 using Nostreets_Services.Domain;
 using Nostreets_Services.Domain.Base;
 using Nostreets_Services.Interfaces.Services;
 using NostreetsExtensions;
-using NostreetsExtensions.Utilities;
+using NostreetsInterceptor;
 
 namespace Nostreets_Sandbox.Controllers
 {
@@ -20,7 +17,7 @@ namespace Nostreets_Sandbox.Controllers
 
         public IUserService _userService = null;
 
-        [Route("~/")]
+        [Route("~/"), Intercept("LoggedIn")]
         public ActionResult Index(string token = null, string user = null)
         {
             User sessionUser = null;

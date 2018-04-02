@@ -12,6 +12,7 @@
                     <a role="tab" data-target="#userSettingsTab" data-toggle="tab">Settings</a>
                 </li>
             </ul>
+            <i class="material-icons" style="color:black">pencil</i>
         </div>
 
         <div class="card-content text-center">
@@ -21,24 +22,33 @@
             <div class="tab-content">
                 <div id="userGeneralTab" class="active tab-pane fade in" role="tabpanel">
                     <div class="col-6-sm">
-                        {{ pg.user.contact.firstName }}
+                        {{ pg.user.contact.firstName + ' ' + pg.user.contact.lastName }}
                     </div>
-                    <div class="col-6-sm">
-                        {{ pg.user.contact.lastName }}
+                    <div>
+                        Password:
+                        <div class="col-12-sm password">
+                            {{ 'isnothardcoded' }}
+                        </div>
                     </div>
-                    <div class="col-12-sm">
-                        Password: {{ pg.user.password }}
-                    </div>
+                    <div>
+                        Member Since
                         <div class="col-12-sm">
-                        Member Since {{ pg.user.dateCreated | date:'longDate' }}...
+                            {{ pg.user.dateCreated | date:'longDate' }}
+                        </div>
                     </div>
                 </div>
                 <div id="userContactTab" class="tab-pane fade" role="tabpanel">
-                    <div class="col-6-sm">
-                        {{ pg.user.contact.primaryEmail }}
+                    <div>
+                        Email:
+                        <div class="col-6-sm">
+                            {{ pg.user.contact.primaryEmail }}
+                        </div>
                     </div>
-                    <div class="col-6-sm">
-                        {{ pg.user.contact.primaryPhone || 'NA' }}
+                    <div>
+                        Phone:
+                        <div class="col-6-sm">
+                            {{ pg.user.contact.primaryPhone || 'NA' }}
+                        </div>
                     </div>
                 </div>
                 <div id="userSettingsTab" class="tab-pane fade" role="tabpanel">

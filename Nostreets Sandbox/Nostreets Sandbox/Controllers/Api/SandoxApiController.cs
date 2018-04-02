@@ -193,7 +193,6 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-
         #endregion
 
         #region Bill Service Endpoints

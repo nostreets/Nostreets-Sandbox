@@ -13,9 +13,6 @@ namespace Nostreets_Sandbox
     {
         protected void Application_Start()
         {
-
-           // AreaRegistration.RegisterAllAreas();
-
             WindsorConfig.RegisterInterfaces(GlobalConfiguration.Configuration);
             //UnityConfig.RegisterInterfaces(GlobalConfiguration.Configuration);
 
@@ -32,10 +29,5 @@ namespace Nostreets_Sandbox
         {
             WindsorConfig.GetContainer().Dispose();
         }
-
-        //protected void Application_PostResolveRequestCache(object sender, EventArgs e)
-        //{
-        //    HttpApplication _sender = (HttpApplication)sender;
-        //}
     }
 }

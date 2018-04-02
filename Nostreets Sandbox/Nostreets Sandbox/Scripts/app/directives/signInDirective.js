@@ -222,12 +222,16 @@
 
         function _login() {
 
-            return $baseController.http({
-                url: "/api/login" + "?username=" + vm.username + "&password=" + vm.password,
-                method: "GET",
-                headers: { 'Content-Type': 'application/json' }
-            }).then(a => _openUserModal(a.data.item),
-                err => { $baseController.alert.error(err.data.errors.message[0]); vm.reason = err.data.errors.message[0]; });
+            if (vm.username && vm.password) {
+                return $baseController.http({
+                    url: "/api/login" + "?username=" + vm.username + "&password=" + vm.password,
+                    method: "GET",
+                    headers: { 'Content-Type': 'application/json' }
+                }).then(a => _openUserModal(a.data.item),
+                    err => { $baseController.alert.error(err.data.errors.message[0]); vm.reason = err.data.errors.message[0]; });
+
+            }
+
 
         }
 
