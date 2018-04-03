@@ -118,12 +118,7 @@ namespace Nostreets_Services.Services.Database
 
         public User GetUser(string id)
         {
-            return _userDBService.Get(id,
-                a =>
-                {
-                    a.Password = DecryptPassword(a.Password);
-                    return a;
-                });
+            return _userDBService.Get(id);
         }
 
         public List<User> GetAll()

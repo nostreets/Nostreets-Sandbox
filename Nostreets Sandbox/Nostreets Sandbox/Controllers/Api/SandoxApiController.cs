@@ -28,18 +28,18 @@ namespace Nostreets_Sandbox.Controllers.Api
     {
         public SandoxApiController()
         {
-            _chartsService = _chartsService.WindsorResolve(WindsorConfig.GetContainer());
-            _emailService = _emailService.WindsorResolve(WindsorConfig.GetContainer());
-            _cardService = _cardService.WindsorResolve(WindsorConfig.GetContainer());
-            _userService = _userService.WindsorResolve(WindsorConfig.GetContainer());
-            _billService = _billService.WindsorResolve(WindsorConfig.GetContainer());
+            _chartsSrv = _chartsSrv.WindsorResolve(WindsorConfig.GetContainer());
+            _emailSrv = _emailSrv.WindsorResolve(WindsorConfig.GetContainer());
+            _cardSrv = _cardSrv.WindsorResolve(WindsorConfig.GetContainer());
+            _userSrv = _userSrv.WindsorResolve(WindsorConfig.GetContainer());
+            _billSrv = _billSrv.WindsorResolve(WindsorConfig.GetContainer());
         }
 
-        IChartService _chartsService = null;
-        IEmailService _emailService = null;
-        IDBService<StyledCard> _cardService = null;
-        IUserService _userService = null;
-        IBillService _billService = null;
+        IChartService _chartsSrv = null;
+        IEmailService _emailSrv = null;
+        IDBService<StyledCard> _cardSrv = null;
+        IUserService _userSrv = null;
+        IBillService _billSrv = null;
 
         #region Private Members
 
@@ -54,7 +54,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             return result;
         }
 
-        private User CurrentUser { get { return _userService.SessionUser; } }
+        private User GetCurrentUser() => _userSrv.SessionUser; 
 
 
         #endregion
@@ -65,7 +65,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-                User user = _userService.LogIn(username, password);
+                User user = _userSrv.LogIn(username, password);
                 ItemResponse<User> response = new ItemResponse<User>(user);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
 
@@ -84,7 +84,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             {
                 if (ModelState.IsValid)
                 {
-                    string id = await _userService.RegisterAsync(user);
+                    string id = await _userSrv.RegisterAsync(user);
                     ItemResponse<string> response = new ItemResponse<string>(id);
                     return Request.CreateResponse(HttpStatusCode.OK, response);
                 }
@@ -105,7 +105,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             try
             {
 
-                _userService.LogOut();
+                _userSrv.LogOut();
                 SuccessResponse response = new SuccessResponse();
                 return Request.CreateResponse(HttpStatusCode.OK, response);
 
@@ -122,7 +122,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-                bool result = _userService.CheckIfUsernameExist(username);
+                bool result = _userSrv.CheckIfUsernameExist(username);
                 ItemResponse<bool> response = new ItemResponse<bool>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
 
@@ -139,7 +139,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-                bool result = _userService.CheckIfEmailExist(email);
+                bool result = _userSrv.CheckIfEmailExist(email);
                 ItemResponse<bool> response = new ItemResponse<bool>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
 
@@ -156,10 +156,10 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-                if (_userService.SessionUser == null)
+                if (_userSrv.SessionUser == null)
                     throw new Exception("Session is has not started...");
 
-                ItemResponse<User> response = new ItemResponse<User>(_userService.SessionUser);
+                ItemResponse<User> response = new ItemResponse<User>(_userSrv.SessionUser);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
 
             }
@@ -176,11 +176,11 @@ namespace Nostreets_Sandbox.Controllers.Api
             try
             {
                 BaseResponse response = null;
-                if (user.Id != CurrentUser.Id)
+                if (user.Id != GetCurrentUser().Id)
                     throw new Exception("Targeted user is not the current user...");
                 else
                 {
-                    _userService.Update(user);
+                    _userSrv.Update(user);
                     response = new SuccessResponse();
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, response);
@@ -193,6 +193,25 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [HttpPost, Route("user/validatePassword"), Intercept("LoggedIn")]
+        public HttpResponseMessage ValidatePassword(string password)
+        {
+            try
+            {
+                if (!_userSrv.ValidatePassword(_userSrv.SessionUser.Password, password))
+                    throw new Exception("Password is invalid...");
+
+                return Request.CreateResponse(HttpStatusCode.OK, new SuccessResponse());
+
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
+
+
         #endregion
 
         #region Bill Service Endpoints
@@ -202,7 +221,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             try
             {
                 List<Income> result = null;
-                result = _billService.GetAllIncome(CurrentUser.Id);
+                result = _billSrv.GetAllIncome(GetCurrentUser().Id);
                 ItemsResponse<Income> response = new ItemsResponse<Income>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -221,7 +240,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
 
                 List<Expense> result = null;
-                result = _billService.GetAllExpenses(CurrentUser.Id);
+                result = _billSrv.GetAllExpenses(GetCurrentUser().Id);
                 ItemsResponse<Expense> response = new ItemsResponse<Expense>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -240,7 +259,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
 
                 Income result = null;
-                result = _billService.GetIncome(CurrentUser.Id, name);
+                result = _billSrv.GetIncome(GetCurrentUser().Id, name);
                 ItemResponse<Income> response = new ItemResponse<Income>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -259,7 +278,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
 
                 Expense result = null;
-                result = _billService.GetExpense(CurrentUser.Id, name);
+                result = _billSrv.GetExpense(GetCurrentUser().Id, name);
                 ItemResponse<Expense> response = new ItemResponse<Expense>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -278,7 +297,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
 
                 Chart<List<float>> chart = null;
-                chart = _billService.GetIncomeChart(CurrentUser.Id, out chartSchedule, startDate, endDate);
+                chart = _billSrv.GetIncomeChart(GetCurrentUser().Id, out chartSchedule, startDate, endDate);
                 ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(chart);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -297,7 +316,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
 
                 Chart<List<float>> result = null;
-                result = _billService.GetExpensesChart(CurrentUser.Id, out chartSchedule, startDate, endDate);
+                result = _billSrv.GetExpensesChart(GetCurrentUser().Id, out chartSchedule, startDate, endDate);
                 ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -316,7 +335,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
 
                 Chart<List<float>> result = null;
-                result = _billService.GetCombinedChart(CurrentUser.Id, out chartSchedule, startDate, endDate);
+                result = _billSrv.GetCombinedChart(GetCurrentUser().Id, out chartSchedule, startDate, endDate);
                 ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -341,7 +360,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                 {
-                    _billService.InsertIncome(income);
+                    _billSrv.InsertIncome(income);
                     response = new SuccessResponse();
                 }
 
@@ -368,7 +387,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                 {
-                    _billService.InsertExpense(expense);
+                    _billSrv.InsertExpense(expense);
                     response = new SuccessResponse();
                 }
 
@@ -394,7 +413,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                 {
-                    _billService.UpdateIncome(income);
+                    _billSrv.UpdateIncome(income);
                     response = new SuccessResponse();
                 }
 
@@ -407,9 +426,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("LoggedIn")]
-        [Route("bill/expenses")]
-        [HttpPut]
+        [HttpPut, Intercept("LoggedIn"), Route("bill/expenses")]
         public HttpResponseMessage UpdateExpense(Expense expense)
         {
             try
@@ -422,7 +439,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                 {
-                    _billService.UpdateExpense(expense);
+                    _billSrv.UpdateExpense(expense);
                     response = new SuccessResponse();
                 }
 
@@ -435,16 +452,14 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("LoggedIn")]
-        [Route("bill/income/{id:int}")]
-        [HttpDelete]
+        [HttpDelete, Intercept("LoggedIn"), Route("bill/income/{id:int}")]
         public HttpResponseMessage DeleteIncome(int id)
         {
             try
             {
 
 
-                _billService.DeleteIncome(id);
+                _billSrv.DeleteIncome(id);
                 SuccessResponse response = new SuccessResponse();
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -455,16 +470,14 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("LoggedIn")]
-        [Route("bill/expenses/{id:int}")]
-        [HttpDelete]
+        [HttpDelete, Intercept("LoggedIn"), Route("bill/expenses/{id:int}")]
         public HttpResponseMessage DeleteExpense(int id)
         {
             try
             {
 
 
-                _billService.DeleteExpense(id);
+                _billSrv.DeleteExpense(id);
                 SuccessResponse response = new SuccessResponse();
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -485,7 +498,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-                List<StyledCard> filteredList = _cardService.Where(a => a.UserId == CurrentUser.Id)?.ToList();
+                List<StyledCard> filteredList = _cardSrv.Where(a => a.UserId == GetCurrentUser().Id)?.ToList();
                 ItemsResponse<StyledCard> response = new ItemsResponse<StyledCard>(filteredList);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -505,7 +518,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             {
 
 
-                StyledCard card = _cardService.Get(id);
+                StyledCard card = _cardSrv.Get(id);
                 ItemResponse<StyledCard> response = new ItemResponse<StyledCard>(card);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -532,8 +545,8 @@ namespace Nostreets_Sandbox.Controllers.Api
                 {
                     BaseResponse response = null;
 
-                    model.UserId = CurrentUser.Id;
-                    int id = (int)_cardService.Insert(model);
+                    model.UserId = GetCurrentUser().Id;
+                    int id = (int)_cardSrv.Insert(model);
                     if (id == 0) { throw new Exception("Insert Failed"); }
                     response = new ItemResponse<int>(id);
                     return Request.CreateResponse(HttpStatusCode.OK, response);
@@ -561,8 +574,8 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                 {
-                    model.UserId = CurrentUser.Id;
-                    _cardService.Update(model);
+                    model.UserId = GetCurrentUser().Id;
+                    _cardSrv.Update(model);
                     response = new SuccessResponse();
                 }
 
@@ -584,7 +597,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             {
 
 
-                _cardService.Delete(id);
+                _cardSrv.Delete(id);
                 SuccessResponse response = new SuccessResponse();
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -607,7 +620,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             {
 
 
-                List<Chart<object>> list = _chartsService.GetAll();
+                List<Chart<object>> list = _chartsSrv.GetAll();
                 ItemsResponse<Chart<object>> response = new ItemsResponse<Chart<object>>(list);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -627,8 +640,8 @@ namespace Nostreets_Sandbox.Controllers.Api
             {
 
 
-                List<Chart<object>> list = _chartsService.GetAll();
-                List<Chart<object>> filteredList = list?.Where(a => a.UserId == CurrentUser.Id).ToList();
+                List<Chart<object>> list = _chartsSrv.GetAll();
+                List<Chart<object>> filteredList = list?.Where(a => a.UserId == GetCurrentUser().Id).ToList();
                 ItemsResponse<Chart<object>> response = new ItemsResponse<Chart<object>>(filteredList);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -648,7 +661,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             {
 
 
-                Chart<object> chart = _chartsService.Get(id);
+                Chart<object> chart = _chartsSrv.Get(id);
                 ItemResponse<Chart<object>> response = new ItemResponse<Chart<object>>(chart);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -674,8 +687,8 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                 {
-                    model.UserId = CurrentUser.Id;
-                    int id = _chartsService.Insert(model, (a) =>
+                    model.UserId = GetCurrentUser().Id;
+                    int id = _chartsSrv.Insert(model, (a) =>
                         {
                             return new Chart<int>
                             {
@@ -716,9 +729,9 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                 {
-                    model.UserId = CurrentUser.Id;
+                    model.UserId = GetCurrentUser().Id;
 
-                    int id = _chartsService.Insert(model,
+                    int id = _chartsSrv.Insert(model,
                         (a) =>
                         {
                             return new Chart<List<int>>
@@ -761,8 +774,8 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                 {
-                    model.UserId = CurrentUser.Id;
-                    _chartsService.Update(model, (a) =>
+                    model.UserId = GetCurrentUser().Id;
+                    _chartsSrv.Update(model, (a) =>
                         {
                             return new Chart<int>
                             {
@@ -801,8 +814,8 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                 {
-                    model.UserId = CurrentUser.Id;
-                    _chartsService.Update(model, (a) =>
+                    model.UserId = GetCurrentUser().Id;
+                    _chartsSrv.Update(model, (a) =>
                         {
                             return new Chart<List<int>>
                             {
@@ -837,7 +850,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 BaseResponse response = null;
 
 
-                _chartsService.Delete(id);
+                _chartsSrv.Delete(id);
                 response = new SuccessResponse();
                 return Request.CreateResponse(HttpStatusCode.OK, response);
 
@@ -870,7 +883,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                                                 + "<div>" + phoneNumber + "</div>"
                                                 + "<div>" + "Message: " + emailRequest["messageText"] + "</div>";
                 }
-                if (!await _emailService.SendAsync(emailRequest["fromEmail"], emailRequest["toEmail"], emailRequest["subject"], emailRequest["messageText"], emailRequest["messageHtml"]))
+                if (!await _emailSrv.SendAsync(emailRequest["fromEmail"], emailRequest["toEmail"], emailRequest["subject"], emailRequest["messageText"], emailRequest["messageHtml"]))
                 { throw new Exception("Email Was Not Sent"); }
                 SuccessResponse response = new SuccessResponse();
                 return Request.CreateResponse(HttpStatusCode.OK, response);

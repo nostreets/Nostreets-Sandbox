@@ -1,7 +1,7 @@
 ﻿(function () {
 
     page.baseController = angular.module(page.APPNAME)
-                          .factory("$baseController", baseController);
+                                 .factory("$baseController", baseController);
 
     baseController.$inject = ['$document', '$systemEventService', '$alertService', "$window", '$uibModal', '$timeout', '$http', '$sce', '$cookies', '$q'];
 

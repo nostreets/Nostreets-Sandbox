@@ -262,6 +262,8 @@
         vm.logout = _logout;
         vm.cancel = _cancel;
         vm.hasUserChanged = _hasUserChanged;
+        vm.toggleEditMode = _toggleEditMode;
+        vm.saveChanges = _saveChanges;
 
         _render();
 
@@ -276,6 +278,7 @@
         function _setUp(data) {
             vm.user = data;
             vm.userSnap = data;
+            vm.editMode = false;
         }
 
         function _logout() {
@@ -304,16 +307,63 @@
             return (vm.user !== vm.userSnap) ? true : false;
         }
 
+        function _toggleEditMode() {
+            if (!vm.editMode)
+                vm.editMode = true;
+            else {
+                _saveChanges();
+            }
+        }
+
+        function _passwordLock() {
+            return swal({
+                title: "Enter your password...",
+                type: "info",
+                input: "text",
+                showCancelButton: true,
+                closeOnConfirm: true,
+                allowOutsideClick: true,
+                inputPlaceholder: "Type in your username!",
+                preConfirm: (input) => {
+                    return new Promise(function (resolve, reject) {
+                        if (!input || input.length <  12) 
+                            reject("Password is invalid...");
+                        else {
+                            _validatePassword(input)
+                                .then(resolve, () => reject("Password is invalid..."));
+                        }
+                    });
+                }
+            });
+        }
+
         function _updateUser() {
             return $baseController.http({
                 url: "/api/user",
                 data: vm.user,
                 method: "PUT",
                 headers: { 'Content-Type': 'application/json' }
-            })
+            });
         }
 
+        function _validatePassword(password)
+        {
+            return $baseController.http({
+                url: "/api/user/validatePassword",
+                data: password,
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
 
+        function _saveChanges()
+        {
+            _passwordLock().then(
+                () => {
+                    _updateUser();
+                    vm.editMode = false;
+                });
+        }
     }
 
 
