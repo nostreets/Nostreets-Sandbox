@@ -224,8 +224,12 @@
 
             if (vm.username && vm.password) {
                 return $baseController.http({
-                    url: "/api/login" + "?username=" + vm.username + "&password=" + vm.password,
-                    method: "GET",
+                    url: "/api/login",
+                    method: "POST",
+                    data: {
+                        username: vm.username,
+                        password: vm.password
+                    },
                     headers: { 'Content-Type': 'application/json' }
                 }).then(a => _openUserModal(a.data.item),
                     err => { $baseController.alert.error(err.data.errors.message[0]); vm.reason = err.data.errors.message[0]; });
@@ -251,6 +255,36 @@
 
         }
 
+        function _forgotPassword()
+        {
+            return
+            swal({
+                title: "Enter your username or email...",
+                type: "info",
+                input: "text",
+                showCancelButton: true,
+                closeOnConfirm: true,
+                allowOutsideClick: true,
+                inputPlaceholder: "Type in your username!",
+                preConfirm: (input) => {
+                    return new Promise(function (resolve, reject) {
+                        if (!input || input.length < 12)
+                            reject("Password is invalid...");
+                        else {
+                            _validatePassword(input)
+                                .then(resolve, () => reject("Password is invalid..."));
+                        }
+                    });
+                }
+            }).then(
+            $baseController.http({
+                    url: "/api/forgotPassword",
+                    method: "POST",
+                    data: vm.username,
+                    headers: { 'Content-Type': 'application/json' }
+                }).then(a => _openUserModal(a.data.item),
+                    err => { $baseController.alert.error(err.data.errors.message[0]); vm.reason = err.data.errors.message[0]; }));
+        }
 
     }
 
@@ -261,7 +295,6 @@
         vm.$uibModalInstance = $uibModalInstance;
         vm.logout = _logout;
         vm.cancel = _cancel;
-        vm.hasUserChanged = _hasUserChanged;
         vm.toggleEditMode = _toggleEditMode;
         vm.saveChanges = _saveChanges;
 
@@ -273,12 +306,19 @@
                 _getUserSession().then(a => _setUp(a.data.item));
             else
                 _setUp(user);
+
+            _handlers();
         }
 
         function _setUp(data) {
-            vm.user = data;
-            vm.userSnap = data;
+            vm.user = page.utilities.clone(data);
+            vm.userSnap = page.utilities.clone(data);
+            vm.isUserChanged = false;
             vm.editMode = false;
+        }
+
+        function _handlers() {
+            $scope.$watch('pg.user', () => { vm.isUserChanged = true });
         }
 
         function _logout() {
@@ -303,10 +343,6 @@
             })
         }
 
-        function _hasUserChanged() {
-            return (vm.user !== vm.userSnap) ? true : false;
-        }
-
         function _toggleEditMode() {
             if (!vm.editMode)
                 vm.editMode = true;
@@ -326,7 +362,7 @@
                 inputPlaceholder: "Type in your username!",
                 preConfirm: (input) => {
                     return new Promise(function (resolve, reject) {
-                        if (!input || input.length <  12) 
+                        if (!input || input.length < 12)
                             reject("Password is invalid...");
                         else {
                             _validatePassword(input)
@@ -346,8 +382,7 @@
             });
         }
 
-        function _validatePassword(password)
-        {
+        function _validatePassword(password) {
             return $baseController.http({
                 url: "/api/user/validatePassword",
                 data: password,
@@ -356,10 +391,12 @@
             });
         }
 
-        function _saveChanges()
-        {
+        function _saveChanges() {
             _passwordLock().then(
                 () => {
+                    if (vm.user.newPassword && vm.user.newPassword.length > 12)
+                        vm.user.password = newPassword;
+
                     _updateUser();
                     vm.editMode = false;
                 });

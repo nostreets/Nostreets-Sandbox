@@ -10,6 +10,7 @@ using System.Collections.Generic;
 
 namespace Nostreets_Services.Domain
 {
+   
     public class User
     {
         DateTime _dateCreated = DateTime.Now;
@@ -71,5 +72,12 @@ namespace Nostreets_Services.Domain
         public string PrimaryPhone { get; set; }
 
     }
-    
+
+    public class NamePasswordPair
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }
+
+
 }

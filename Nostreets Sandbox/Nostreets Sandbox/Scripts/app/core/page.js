@@ -11,6 +11,8 @@
     ],
     utilities: {
 
+        clone: (obj) => JSON.parse(JSON.stringify(obj)),
+
         getStyle: (id) => {
             return document.getElementById(id) ? document.getElementById(id).style : document.querySelector('.ct-series-a').style;
         },

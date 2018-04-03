@@ -31,23 +31,34 @@ namespace Nostreets_Services.Services.Database
         private IDBService<Token, string> _tokenDBService = null;
 
         public string RequestIp => HttpContext.Current.GetIPAddress();
-        public User SessionUser => GetSessionUser();
+        public User SessionUser { get { return GetSessionUser(); } }
 
         private User GetSessionUser(string ip = null)
         {
-            ip = ip ?? RequestIp;
-            User _sessionUser = null;
-            string userId = CacheManager.GetItem<string>(ip);
+            try
+            {
+                ip = ip ?? RequestIp;
+                User _sessionUser = null;
+                string userId = CacheManager.GetItem<string>(ip);
 
-            if (userId != null)
-                if (CacheManager.Contains(userId))
-                    _sessionUser = CacheManager.GetItem<User>(userId);
-                else
-                    _sessionUser = GetUser(CacheManager.GetItem<string>(ip));
 
-            if (_sessionUser != null && !CacheManager.Contains(_sessionUser.Id))
-                CacheManager.InsertItem(_sessionUser.Id, _sessionUser, DateTimeOffset.Now.AddHours(2));
-            return _sessionUser;
+                if (userId != null)
+                    if (CacheManager.Contains(userId))
+                        _sessionUser = CacheManager.GetItem<User>(userId);
+                    else
+                        _sessionUser = GetUser(CacheManager.GetItem<string>(ip));
+
+
+                if (_sessionUser != null && !CacheManager.Contains(_sessionUser.Id))
+                    CacheManager.InsertItem(_sessionUser.Id, _sessionUser, DateTimeOffset.Now.AddHours(2));
+
+
+                return _sessionUser;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
 
         }
 
@@ -131,10 +142,10 @@ namespace Nostreets_Services.Services.Database
             return FirstOrDefault(a => a.UserName == username || a.Contact.PrimaryEmail == username);
         }
 
-        public User LogIn(string username, string password, bool rememberDevice = false)
+        public User LogIn(NamePasswordPair pair, bool rememberDevice = false)
         {
             User user = null;
-            if (CheckIfUserCanLogIn(username, password, out user, out string reason))
+            if (CheckIfUserCanLogIn(pair.Username, pair.Password, out user, out string reason))
             {
                 if (rememberDevice && !user.Settings.IPAddresses.Contains(RequestIp))
                     user.Settings.IPAddresses.Add(RequestIp);

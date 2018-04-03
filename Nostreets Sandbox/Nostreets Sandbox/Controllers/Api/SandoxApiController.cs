@@ -60,12 +60,12 @@ namespace Nostreets_Sandbox.Controllers.Api
         #endregion
 
         #region User Service Endpoints
-        [HttpGet, Route("login")]
-        public HttpResponseMessage LogInUser(string username, string password)
+        [HttpPost, Route("login")]
+        public HttpResponseMessage LogInUser(NamePasswordPair request, bool rememberDevice = false)
         {
             try
             {
-                User user = _userSrv.LogIn(username, password);
+                User user = _userSrv.LogIn(request, rememberDevice);
                 ItemResponse<User> response = new ItemResponse<User>(user);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
 
@@ -118,7 +118,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         }
 
         [HttpGet, Route("checkUsername")]
-        public HttpResponseMessage CheckUsername(string username)
+        public HttpResponseMessage CheckIfUsernameExist(string username)
         {
             try
             {
@@ -135,7 +135,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         }
 
         [HttpGet, Route("checkEmail")]
-        public HttpResponseMessage CheckEmail(string email)
+        public HttpResponseMessage CheckIfEmailExist(string email)
         {
             try
             {
@@ -211,6 +211,23 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [HttpPost, Route("user/forgotPassword")]
+        public async Task<HttpResponseMessage> ForgotPasswordEmail(string username)
+        {
+            try
+            {
+                if (await _userSrv.ForgotPasswordEmailAsync(username))
+                    return Request.CreateResponse(HttpStatusCode.OK, new SuccessResponse());
+                else
+                    throw new Exception("Password Recovery Email Not Sent...");
+
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
 
         #endregion
 

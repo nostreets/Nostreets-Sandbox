@@ -19,7 +19,7 @@ namespace Nostreets_Services.Interfaces.Services
         bool CheckIfEmailExist(string email);
         User GetByUsername(string username);
         void LogOut();
-        User LogIn(string username, string password, bool rememberDevice = false);
+        User LogIn(NamePasswordPair pair, bool rememberDevice = false);
         Task<string> RegisterAsync(User user);
         Token ValidateToken(string tokenId, string userId, out string output);
         IEnumerable<User> Where(Func<User, bool> predicate);

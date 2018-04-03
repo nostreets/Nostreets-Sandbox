@@ -3,111 +3,144 @@
         <div class="card-header">
             <ul class="nav nav-tabs nav-justified tabs-basic">
                 <li role="presentation" class="active">
-                    <a role="tab" data-target="#userGeneralTab" data-toggle="tab">Account</a>
+                    <a class="clickable" role="tab" data-target="#userGeneralTab" data-toggle="tab">Account</a>
                 </li>
                 <li role="presentation">
-                    <a role="tab" data-target="#userContactTab" data-toggle="tab">Contact</a>
+                    <a class="clickable" role="tab" data-target="#userContactTab" data-toggle="tab">Contact</a>
                 </li>
                 <li role="presentation">
-                    <a role="tab" data-target="#userSettingsTab" data-toggle="tab">Settings</a>
+                    <a class="clickable" role="tab" data-target="#userSettingsTab" data-toggle="tab">Settings</a>
                 </li>
             </ul>
-            <i class="material-icons" ng-click="pg.editMode()" style="color:black">create</i>
         </div>
+
 
         <div class="card-content text-center">
             <h3>
                 {{ pg.user.userName }}
             </h3>
+            <div class="text-center"> <i class="material-icons clickable" ng-click="pg.toggleEditMode()" style="color:black">create</i></div>
+
             <div class="tab-content">
                 <div id="userGeneralTab" class="active tab-pane fade in" role="tabpanel">
-                    <div class="col-6-sm">
-                        {{ pg.user.contact.firstName + ' ' + pg.user.contact.lastName }}
-                    </div>
-                    <div>
-                        Password:
-                        <div class="col-12-sm password" ng-if="!pg.editMode">
-                            {{ 'itsnothardcoded' }}
+                    <div class="row">
+                        <div ng-if="!pg.editMode">
+                            Name: <span> {{ pg.user.contact.firstName + ' '+ pg.user.contact.lastName }} </span>
                         </div>
-                        <div class="col-12-sm" ng-if="pg.editMode">
+
+                        <div class="col-sm-6 col-sm-offset-3" ng-if="pg.editMode">
+                            <input name="firstName" S
+                                   type="text"
+                                   placeholder="Fist Name..."
+                                   ng-model="pg.user.contact.firstName"
+                                   required
+                                   ng-minlength="12"
+                                   class="form-control text-center" />
+                        </div>
+                        <div class="col-sm-6 col-sm-offset-3" ng-if="pg.editMode">
+                            <input name="firstName"
+                                   type="text"
+                                   placeholder="Last Name..."
+                                   ng-model="pg.user.contact.lastName"
+                                   required
+                                   ng-minlength="12"
+                                   class="form-control text-center" />
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <div ng-if="!pg.editMode">
+                            Password: <span class="password">{{ 'itsnothardcoded' }}</span>
+                        </div>
+                        <div class="col-sm-6 col-sm-offset-3" ng-if="pg.editMode">
                             <input name="password"
                                    type="password"
-                                   placeholder="Password..."
+                                   placeholder="New Password..."
                                    ng-model="pg.user.newPassword"
                                    required
                                    ng-minlength="12"
-                                   class="form-control" />
+                                   class="form-control text-center" />
                         </div>
                     </div>
-                    <div>
-                        Member Since
-                        <div class="col-12-sm">
-                            {{ pg.user.dateCreated | date:'longDate' }}
-                        </div>
-                    </div>
+
                 </div>
                 <div id="userContactTab" class="tab-pane fade" role="tabpanel">
-                    <div>
-                        Email:
-                        <div class="col-6-sm" ng-if="!pg.editMode">
-                            {{ pg.user.contact.primaryEmail }}
+                    <div class="row">
+                        <div ng-if="!pg.editMode">
+                            Email: {{ pg.user.contact.primaryEmail }}
                         </div>
-                        <div class="col-12-sm" ng-if="pg.editMode">
+                        <div class="col-sm-6 col-sm-offset-3" ng-if="pg.editMode">
                             <input name="email"
                                    type="email"
                                    placeholder="Email..."
                                    ng-model="pg.user.contact.primaryEmail"
                                    required
-                                   class="form-control" />
+                                   class="form-control text-center" />
                         </div>
                     </div>
-                    <div>
-                        Phone:
-                        <div class="col-6-sm" ng-if="!pg.editMode">
-                            {{ pg.user.contact.primaryPhone || 'NA' }}
+                    <div class="row">
+                        <div ng-if="!pg.editMode">
+                            Phone: {{ pg.user.contact.primaryPhone || 'NA' }}
                         </div>
-                        <div class="col-12-sm" ng-if="pg.editMode">
+                        <div class="col-sm-6 col-sm-offset-3" ng-if="pg.editMode">
                             <input name="phone"
                                    type="tel"
                                    pattern="^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$"
                                    placeholder="Phone Number..."
                                    ng-model="pg.user.contact.primaryPhone"
                                    required
-                                   class="form-control" />
+                                   class="form-control text-center" />
                         </div>
                     </div>
                 </div>
                 <div id="userSettingsTab" class="tab-pane fade" role="tabpanel">
-                    <div class="col-6-sm">
-                        Two Factor Authitcation: <input ng-disabled="!pg.editMode" 
-                                                        type="checkbox" 
-                                                        ng-checked="pg.user.settings.twoFactorAuthEnabled" 
-                                                        ng-model="pg.user.settings.twoFactorAuthEnabled" />
-                        <div class="col-6-sm">
-                            By Email: <input ng-disabled="!pg.editMode" 
-                                             type="checkbox"
-                                             ng-checked="pg.user.settings.twoFactorAuthEnabled" 
+                    <div class="row">
+                        <div class="col-sm-6 col-sm-offset-3">
+                            Two Factor Authitcation: <input ng-disabled="!pg.editMode"
+                                                            type="checkbox"
+                                                            ng-checked="pg.user.settings.twoFactorAuthEnabled"
+                                                            ng-model="pg.user.settings.twoFactorAuthEnabled" />
+                        </div>
+                        <div class="col-sm-6 col-sm-offset-3">
+                            By Email: <input ng-disabled="!pg.editMode || !pg.user.settings.twoFactorAuthEnabled"
+                                             name="tfauth"
+                                             type="radio"
+                                             ng-checked="pg.user.settings.twoFactorAuthEnabled"
                                              ng-model="pg.user.settings.tFAuthByPhone" />
                         </div>
-                        <div class="col-6-sm">
-                            By Phone: <input ng-disabled="!pg.editMode" 
-                                             type="checkbox" 
-                                             ng-checked="pg.user.settings.twoFactorAuthEnabled" 
+                        <div class="col-sm-6 col-sm-offset-3">
+                            By Phone: <input ng-disabled="!pg.editMode || !pg.user.settings.twoFactorAuthEnabled"
+                                             name="tfauth"
+                                             type="radio"
+                                             ng-checked="pg.user.settings.twoFactorAuthEnabled"
                                              ng-model="pg.user.settings.tFAuthByEmail" />
                         </div>
                     </div>
-                    <div class="col-6-sm">
-                        Device Authentication Before Login: <input ng-disabled="!pg.editMode"  
-                                                                   type="checkbox" 
-                                                                   ng-checked="pg.user.settings.validateIPBeforeLogin" 
-                                                                   ng-model="pg.user.settings.validateIPBeforeLogin" />
+                    <div class="row">
+                        <div class="col-sm-6  col-sm-offset-3">
+                            Device Authentication Before Login: <input ng-disabled="!pg.editMode"
+                                                                       type="checkbox"
+                                                                       ng-checked="pg.user.settings.validateIPBeforeLogin"
+                                                                       ng-model="pg.user.settings.validateIPBeforeLogin" />
+                        </div>
                     </div>
-                    <div class="col-6-sm">
-                        Hook up card! <i class="material-icons" style="color:black">open_in_browser</i>
+                    <div class="row">
+                        <div class="col-sm-6  col-sm-offset-3">
+                            Hook up card! &#9; <i class="material-icons" style="color:black">open_in_browser</i>
+                        </div>
                     </div>
                 </div>
             </div>
-            <button ng-if="pg.hasUserChanged()" ng-click="pg.saveChanges()" class="btn btn-sm btn-round" style="color:#AA3131">Apply!</button>
+
+            <button ng-if="pg.isUserChanged" ng-click="pg.saveChanges()" class="btn btn-sm btn-round btn-warning" >Apply!</button>
+
+            <div class="spacer">
+                <div class="row">
+                    <div>
+                        Member Since: &#9;- {{ pg.user.dateCreated | date:'longDate' }}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
