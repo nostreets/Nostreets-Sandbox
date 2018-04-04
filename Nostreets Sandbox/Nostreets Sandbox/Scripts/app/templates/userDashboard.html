@@ -29,12 +29,11 @@
                         </div>
 
                         <div class="col-sm-6 col-sm-offset-3" ng-if="pg.editMode">
-                            <input name="firstName" S
+                            <input name="firstName"
                                    type="text"
                                    placeholder="Fist Name..."
                                    ng-model="pg.user.contact.firstName"
                                    required
-                                   ng-minlength="12"
                                    class="form-control text-center" />
                         </div>
                         <div class="col-sm-6 col-sm-offset-3" ng-if="pg.editMode">
@@ -43,7 +42,6 @@
                                    placeholder="Last Name..."
                                    ng-model="pg.user.contact.lastName"
                                    required
-                                   ng-minlength="12"
                                    class="form-control text-center" />
                         </div>
                     </div>
@@ -126,21 +124,30 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-6  col-sm-offset-3">
-                            Hook up card! &#9; <i class="material-icons" style="color:black">open_in_browser</i>
+                            Hook up card! <i class="material-icons" style="color:black">open_in_browser</i>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <button ng-if="pg.hasUserChanged()" ng-click="pg.saveChanges()" class="btn btn-sm btn-round btn-warning" >Apply!</button>
+            <button ng-if="pg.hasUserChanged()" 
+                    ng-click="pg.saveChanges()" 
+                    class="btn btn-sm btn-round btn-warning" 
+                    style="background-color:rgb(171, 76, 76)">Apply!
+            </button>
 
             <div class="spacer">
                 <div class="row">
                     <div>
-                        Member Since: &#9;- {{ pg.user.dateCreated | date:'longDate' }}
+                        Member Since: - {{ pg.user.dateCreated | date:'longDate' }}
                     </div>
                 </div>
+                <button class="btn btn-sm btn-round text-center" style="background-color:rgb(103, 103, 131)" ng-click="pg.logout()">Log Out</button>
             </div>
         </div>
     </div>
 </div>
+
+
+
+                 

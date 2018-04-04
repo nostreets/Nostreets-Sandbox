@@ -14,12 +14,13 @@ namespace Nostreets_Services.Interfaces.Services
         string RequestIp { get; }
         User SessionUser { get; }
 
+        bool ValidateTokenCode(string id, string code);
         bool CheckIfUserCanLogIn(string username, string password, out User user, out string failureReason);
         bool CheckIfUsernameExist(string username);
         bool CheckIfEmailExist(string email);
         User GetByUsername(string username);
         void LogOut();
-        User LogIn(NamePasswordPair pair, bool rememberDevice = false);
+        User LogIn(NamePasswordPair pair, out string tokenId, bool rememberDevice = false);
         Task<string> RegisterAsync(User user);
         Token ValidateToken(string tokenId, string userId, out string output);
         IEnumerable<User> Where(Func<User, bool> predicate);
@@ -28,7 +29,6 @@ namespace Nostreets_Services.Interfaces.Services
         bool ChangeUserEmail(string email, string password);
         bool ChangeUserPassword(string newPassword, string oldPassword);
         Task<bool> ForgotPasswordEmailAsync(string username);
-        bool ForgotPasswordValidation(string token, string userId);
         User FirstOrDefault(Func<User, bool> predicate);
         Token FirstOrDefault(Func<Token, bool> predicate);
         void Update(User user);

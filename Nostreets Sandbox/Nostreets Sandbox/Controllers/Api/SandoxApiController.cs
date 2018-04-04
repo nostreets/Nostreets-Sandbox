@@ -20,6 +20,7 @@ using NostreetsInterceptor;
 using NostreetsExtensions;
 using NostreetsExtensions.Utilities;
 using NostreetsExtensions.Interfaces;
+using Nostreets_Services.Domain.Base;
 
 namespace Nostreets_Sandbox.Controllers.Api
 {
@@ -54,7 +55,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             return result;
         }
 
-        private User GetCurrentUser() => _userSrv.SessionUser; 
+        private User GetCurrentUser() => _userSrv.SessionUser;
 
 
         #endregion
@@ -65,15 +66,19 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-                User user = _userSrv.LogIn(request, rememberDevice);
-                ItemResponse<User> response = new ItemResponse<User>(user);
-                return Request.CreateResponse(HttpStatusCode.OK, response);
+                BaseResponse response = null;
+                User user = _userSrv.LogIn(request, out string id, rememberDevice);
 
+                if (id == null)
+                    response = new ItemResponse<User>(user);
+                else
+                    response = new ItemResponse<string>(id);
+
+                return Request.CreateResponse(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new ErrorResponse(ex));
             }
         }
 
@@ -193,7 +198,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpPost, Route("user/validatePassword"), Intercept("LoggedIn")]
+        [HttpGet, Route("user/validatePassword"), Intercept("LoggedIn")]
         public HttpResponseMessage ValidatePassword(string password)
         {
             try
@@ -211,7 +216,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpPost, Route("user/forgotPassword")]
+        [HttpGet, Route("user/forgotPassword")]
         public async Task<HttpResponseMessage> ForgotPasswordEmail(string username)
         {
             try
@@ -228,6 +233,25 @@ namespace Nostreets_Sandbox.Controllers.Api
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
             }
         }
+
+        [HttpGet, Route("user/tfauth")]
+        public HttpResponseMessage ValidateTFAuthCode(string id, string code)
+        {
+            try
+            {
+                if (!_userSrv.ValidateTokenCode(id, code))
+                    throw new Exception("Password is invalid...");
+
+                return Request.CreateResponse(HttpStatusCode.OK, new ItemResponse<User>(GetCurrentUser()));
+
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
+
 
         #endregion
 

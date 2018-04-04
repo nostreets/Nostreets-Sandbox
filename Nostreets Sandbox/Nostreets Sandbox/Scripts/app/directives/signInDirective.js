@@ -6,21 +6,27 @@
         .directive("signIn", signInDirective);
 
     signInDirective.$inject = ["$baseController", "$serverModel"];
-    modalLogInController.$inject = ["$scope", "$baseController", "$uibModalInstance", "links"];
     modalRegisterController.$inject = ["$scope", "$baseController", "$uibModalInstance", "links"];
+    modalLogInController.$inject = ["$scope", "$baseController", "$uibModalInstance", "links"];
     modalUserController.$inject = ["$scope", "$baseController", "$uibModalInstance", "user"];
+
 
     function signInDirective($baseController, $serverModel) {
 
         return {
             restrict: "A",
-            scope: true,
-            template: () => ($serverModel.user === null) ? "<i class=\"material-icons\">folder_shared</i>" : "<i class=\"material-icons\">person</i>",
+            scope: {
+                isLoggedIn: '@'
+            },
+            template: "<i ng-class=\"{ 'hidden' : isLoggedIn }\" class=\"material-icons\">folder_shared</i> <i ng-class=\"{ 'hidden' : !isLoggedIn }\" class=\"material-icons\">person</i>",
             link: function ($scope, element, attr) {
 
                 $(document).ready(_render);
 
                 function _render() {
+
+                    $scope.isLoggedIn = $serverModel.hasVisited;
+
                     if ($serverModel.token !== null)
                         swal({
                             title: $serverModel.tokenOutcome,
@@ -31,16 +37,7 @@
                         }).then(() => _openUserModal($serverModel.user), () => _openUserModal($serverModel.user))
 
 
-                    element.on("click", () => {
-                        if ($serverModel.user !== null)
-                            _openUserModal($serverModel.user);
-
-                        else if ($serverModel.hasVisited === true)
-                            _openLoginModal();
-
-                        else
-                            _openRegisterModal();
-                    });
+                    _handlers();
                 }
 
                 function _openRegisterModal() {
@@ -87,8 +84,27 @@
                     });
 
                 }
+
+                function _handlers() {
+                    $baseController.event.listen("loggedOut", () => $scope.isLoggedIn = false);
+                    $baseController.event.listen("loggedIn", () => $scope.isLoggedIn = true);
+
+                    element.on("click", () => {
+                        if ($scope.isLoggedIn)
+                            _openUserModal($serverModel.user || null);
+
+                        else if ($serverModel.hasVisited === true)
+                            _openLoginModal();
+
+                        else
+                            _openRegisterModal();
+                    });
+                }
+
             }
         }
+
+
     }
 
     function modalRegisterController($scope, $baseController, $uibModalInstance, links) {
@@ -206,6 +222,7 @@
         vm.reset = _setUp;
         vm.cancel = _cancel;
         vm.signUp = _openRegisterModal;
+        vm.forgotPassword = _forgotPassword;
 
         _render();
 
@@ -231,12 +248,61 @@
                         password: vm.password
                     },
                     headers: { 'Content-Type': 'application/json' }
-                }).then(a => _openUserModal(a.data.item),
-                    err => { $baseController.alert.error(err.data.errors.message[0]); vm.reason = err.data.errors.message[0]; });
+                }).then(
+                    a => {
+
+                        if (a.data.item.userName) {
+                            $baseController.event.broadcast('loggedIn');
+                            _openUserModal(a.data.item);
+                        }
+                        else
+                            _tfAuthLock(a.data.item).then(
+                                b => {
+                                    $baseController.event.broadcast('loggedIn');
+                                    _openUserModal(b.data.item);
+                                });
+
+                    },
+                    err => {
+                        if (err.data.errors) {
+                            vm.reason = err.data.errors.message[0];
+                        }
+                        else {
+                            vm.reason = err.data.message;
+                        }
+                    });
 
             }
 
 
+        }
+
+        function _tfAuthLock(tokenId) {
+            return swal({
+                title: "Enter the Validation Code...",
+                type: "info",
+                input: "text",
+                showCancelButton: true,
+                closeOnConfirm: true,
+                allowOutsideClick: false,
+                inputPlaceholder: "Type in the validation code!",
+                preConfirm: (input) => {
+                    return new Promise(function (resolve, reject) {
+                        if (!input)
+                            reject("Code is invalid...");
+                        else
+                            _valaidateTFAuth(tokenId, input).then(resolve, () => reject("Code is invalid..."));
+                    });
+                }
+            });
+        }
+
+        function _valaidateTFAuth(id, input) {
+            return $baseController.http({
+                url: "/api/login?id=" + id + "&code=" + input,
+                method: "GET",
+                headers: { 'Content-Type': 'application/json' }
+            });
         }
 
         function _cancel() {
@@ -256,33 +322,71 @@
         }
 
         function _forgotPassword() {
-            return
-            swal({
+            return swal({
                 title: "Enter your username or email...",
                 type: "info",
                 input: "text",
                 showCancelButton: true,
                 closeOnConfirm: true,
                 allowOutsideClick: true,
-                inputPlaceholder: "Type in your username!",
+                inputPlaceholder: "Type in your username or email!",
                 preConfirm: (input) => {
                     return new Promise(function (resolve, reject) {
-                        if (!input || input.length < 12)
-                            reject("Password is invalid...");
+                        if (!input || input.length < 6)
+                            reject("Username / Email is invalid...");
                         else {
-                            _validatePassword(input)
-                                .then(resolve, () => reject("Password is invalid..."));
+                            _checkUsername(input).then(
+                                a => {
+                                    if (a.data.item === false)
+                                        _checkEmail(input).then(
+                                            b => {
+                                                if (b.data.item === false)
+                                                    reject("Username / Email does not exist...");
+                                                else
+                                                    resolve(input);
+                                            }
+                                        );
+                                    else
+                                        resolve(input);
+                                }
+                            );
                         }
                     });
                 }
             }).then(
-                $baseController.http({
-                    url: "/api/forgotPassword",
-                    method: "POST",
-                    data: vm.username,
+                a => $baseController.http({
+                    url: "/api/user/forgotPassword?username=" + a,
+                    method: "GET",
                     headers: { 'Content-Type': 'application/json' }
-                }).then(a => _openUserModal(a.data.item),
-                    err => { $baseController.alert.error(err.data.errors.message[0]); vm.reason = err.data.errors.message[0]; }));
+                }).then(
+                    b => _openUserModal(b.data.item),
+                    err => {
+                        if (err.data.errors) {
+                            vm.reason = err.data.errors.message[0];
+                        }
+                        else {
+                            vm.reason = err.data.message;
+                        }
+                    })
+                );
+        }
+
+        function _checkEmail(email) {
+
+            return $baseController.http({
+                url: "/api/checkEmail" + "?email=" + email,
+                method: "GET",
+                headers: { 'Content-Type': 'application/json' }
+            })
+        }
+
+        function _checkUsername(username) {
+
+            return $baseController.http({
+                url: "/api/checkUsername" + "?username=" + username,
+                method: "GET",
+                headers: { 'Content-Type': 'application/json' }
+            })
         }
 
     }
@@ -311,9 +415,11 @@
 
         function _setUp(data) {
             vm.user = data;
-            vm.userSnap = page.utilities.clone(data);
             vm.isUserChanged = false;
             vm.editMode = false;
+            vm.user.newPassword = '            ';
+
+            vm.userSnap = page.utilities.clone(vm.user);
         }
 
         function _hasUserChanged() {
@@ -326,7 +432,13 @@
                 url: "/api/logout",
                 method: "GET",
                 headers: { 'Content-Type': 'application/json' }
-            }).then(vm.$uibModalInstance.close, err => $baseController.alert.error(err));
+            }).then(
+                () => {
+                    $baseController.event.broadcast('loggedOut');
+                    vm.$uibModalInstance.close();
+                },
+                err => $baseController.alert.error(err)
+                );
 
         }
 
@@ -354,11 +466,11 @@
             return swal({
                 title: "Enter your password...",
                 type: "info",
-                input: "text",
+                input: "password",
                 showCancelButton: true,
                 closeOnConfirm: true,
-                allowOutsideClick: true,
-                inputPlaceholder: "Type in your username!",
+                allowOutsideClick: false,
+                inputPlaceholder: "Type in your password!",
                 preConfirm: (input) => {
                     return new Promise(function (resolve, reject) {
                         if (!input || input.length < 12)
@@ -383,9 +495,8 @@
 
         function _validatePassword(password) {
             return $baseController.http({
-                url: "/api/user/validatePassword",
-                data: password,
-                method: "POST",
+                url: "/api/user/validatePassword?password=" + password,
+                method: "GET",
                 headers: { 'Content-Type': 'application/json' }
             });
         }
@@ -393,7 +504,7 @@
         function _saveChanges() {
             _passwordLock().then(
                 () => {
-                    if (vm.user.newPassword && vm.user.newPassword.length > 12)
+                    if (vm.user.newPassword && vm.user.newPassword.length > 12 && vm.user.newPassword !== vm.userSnap.newPassword)
                         vm.user.password = newPassword;
 
                     _updateUser();
@@ -401,6 +512,5 @@
                 });
         }
     }
-
 
 })();

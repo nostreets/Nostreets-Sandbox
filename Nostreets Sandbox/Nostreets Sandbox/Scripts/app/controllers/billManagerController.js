@@ -21,9 +21,6 @@
         vm.dateEnding = _dateEnding;
 
 
-        $baseController.systemEventService.listen("refreshedUsername", () => { _setUp(); _getUserCharts(); });
-
-
         _render();
 
         function _render() {
@@ -79,6 +76,9 @@
         }
 
         function _eventHandlers() {
+
+            $baseController.event.listen("refreshedUsername", () => { _setUp(); _getUserCharts(); });
+
             angular.element('.assetSwitcher').on('shown.bs.tab',
                 () => _getChartLengend().then(
                     () => _targetGraph(vm.currentTab, ((vm.currentTab === "income") ? "#incomeChart" : (vm.currentTab === "expense") ? "#expenseChart" : "#combinedChart"))

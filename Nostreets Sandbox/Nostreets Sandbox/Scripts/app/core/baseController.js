@@ -10,7 +10,7 @@
         //PUBLIC
         var base = {
             document: $document,
-            systemEventService: $systemEventService,
+            event: $systemEventService,
             alert: $alertService,
             window: $window,
             modal: $uibModal,
@@ -98,7 +98,7 @@
                     (data) => {
                         if (base.cookies.get("loggedIn")) {
                             page.user.loggedIn = true;
-                            base.systemEventService.broadcast("refreshedUsername");
+                            base.event.broadcast("refreshedUsername");
                         }
                     }).then(onSuccess, onError);
             };

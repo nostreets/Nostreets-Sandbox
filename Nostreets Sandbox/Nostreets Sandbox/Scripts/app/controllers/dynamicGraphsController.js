@@ -22,8 +22,8 @@
 
 
         $rootScope.$on('logGraph', _logMainGraph);
-        $baseController.systemEventService.listen('refreshCharts', _refreshResponse);
-        $baseController.systemEventService.listen("refreshedUsername", _setUp);
+        $baseController.event.listen('refreshCharts', _refreshResponse);
+        $baseController.event.listen("refreshedUsername", _setUp);
 
         _startUp();
 

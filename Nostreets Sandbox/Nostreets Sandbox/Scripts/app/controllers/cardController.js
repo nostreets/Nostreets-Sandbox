@@ -17,7 +17,7 @@
         vm.activateMode = _activateMode;
         vm.closeBuilder = _closeBuilder;
 
-        $baseController.systemEventService.listen("refreshedUsername", () => { _setUp(); _getUserData(); });
+        $baseController.event.listen("refreshedUsername", () => { _setUp(); _getUserData(); });
 
 
         _render();

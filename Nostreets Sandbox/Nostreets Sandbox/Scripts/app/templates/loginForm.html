@@ -63,12 +63,12 @@
                             This field is required!
                         </em>
                     </div>
-                    <div class="text-danger"
+                    <!--<div class="text-danger"
                          ng-show="logVm.logForm.password.$dirty && logVm.logForm.password.$error.minlength">
                         <em>
                             This field is too short!
                         </em>
-                    </div>
+                    </div>-->
                 </div>
             </div>
         </div>
@@ -79,7 +79,10 @@
                     {{ logVm.reason }}
                 </em>
             </div>
-            <button class="btn btn-sm btn-round btn-primary" ng-click="logVm.login()">Let's go</button>
+            <button class="btn btn-sm btn-round btn-primary" 
+                    ng-disabled="logVm.logForm.password.$invalid" 
+                    ng-click="logVm.login()">Let's go
+            </button>
             <div><a href="" ng-click="logVm.signUp()">Don't have an account?</a></div>
             <div><a href="" ng-click="logVm.forgotPassword()">Forgot Password?</a></div>
         </div>
