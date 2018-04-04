@@ -11,6 +11,8 @@
     ],
     utilities: {
 
+        equals: (obj1, obj2) => JSON.stringify(obj1) === JSON.stringify(obj2),
+
         clone: (obj) => JSON.parse(JSON.stringify(obj)),
 
         getStyle: (id) => {

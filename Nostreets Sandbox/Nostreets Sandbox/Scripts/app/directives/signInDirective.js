@@ -28,7 +28,7 @@
                             showCancelButton: false,
                             showConfirmButton: false,
                             allowOutsideClick: true
-                        }).then(_openUserModal, _openUserModal)
+                        }).then(() => _openUserModal($serverModel.user), () => _openUserModal($serverModel.user))
 
 
                     element.on("click", () => {
@@ -255,8 +255,7 @@
 
         }
 
-        function _forgotPassword()
-        {
+        function _forgotPassword() {
             return
             swal({
                 title: "Enter your username or email...",
@@ -277,7 +276,7 @@
                     });
                 }
             }).then(
-            $baseController.http({
+                $baseController.http({
                     url: "/api/forgotPassword",
                     method: "POST",
                     data: vm.username,
@@ -297,6 +296,7 @@
         vm.cancel = _cancel;
         vm.toggleEditMode = _toggleEditMode;
         vm.saveChanges = _saveChanges;
+        vm.hasUserChanged = _hasUserChanged;
 
         _render();
 
@@ -307,18 +307,17 @@
             else
                 _setUp(user);
 
-            _handlers();
         }
 
         function _setUp(data) {
-            vm.user = page.utilities.clone(data);
+            vm.user = data;
             vm.userSnap = page.utilities.clone(data);
             vm.isUserChanged = false;
             vm.editMode = false;
         }
 
-        function _handlers() {
-            $scope.$watch('pg.user', () => { vm.isUserChanged = true });
+        function _hasUserChanged() {
+            return !page.utilities.equals(vm.user, vm.userSnap);
         }
 
         function _logout() {

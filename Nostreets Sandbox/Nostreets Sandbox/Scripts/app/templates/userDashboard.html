@@ -132,7 +132,7 @@
                 </div>
             </div>
 
-            <button ng-if="pg.isUserChanged" ng-click="pg.saveChanges()" class="btn btn-sm btn-round btn-warning" >Apply!</button>
+            <button ng-if="pg.hasUserChanged()" ng-click="pg.saveChanges()" class="btn btn-sm btn-round btn-warning" >Apply!</button>
 
             <div class="spacer">
                 <div class="row">
