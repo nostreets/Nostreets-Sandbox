@@ -28,12 +28,13 @@ namespace Nostreets_Services.Interfaces.Services
         bool ValidatePassword(string encrptedPassword, string password);
         bool ChangeUserEmail(string email, string password);
         bool ChangeUserPassword(string newPassword, string oldPassword);
-        Task<bool> ForgotPasswordEmailAsync(string username);
+        void ForgotPasswordEmailAsync(string username);
         User FirstOrDefault(Func<User, bool> predicate);
         Token FirstOrDefault(Func<Token, bool> predicate);
         void Update(User user);
-        void Update(Token token);
         string Insert(User user);
         string Insert(Token token);
+        void EmailNewPasswordAsync(User user, string newPassword);
+        void ResendValidationEmailAsync(string username);
     }
 }

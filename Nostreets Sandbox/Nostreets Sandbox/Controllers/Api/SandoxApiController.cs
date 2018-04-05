@@ -217,14 +217,13 @@ namespace Nostreets_Sandbox.Controllers.Api
         }
 
         [HttpGet, Route("user/forgotPassword")]
-        public async Task<HttpResponseMessage> ForgotPasswordEmail(string username)
+        public HttpResponseMessage ForgotPasswordEmail(string username)
         {
             try
             {
-                if (await _userSrv.ForgotPasswordEmailAsync(username))
-                    return Request.CreateResponse(HttpStatusCode.OK, new SuccessResponse());
-                else
-                    throw new Exception("Password Recovery Email Not Sent...");
+                _userSrv.ForgotPasswordEmailAsync(username);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new SuccessResponse());
 
             }
             catch (Exception ex)
@@ -252,6 +251,22 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [HttpGet, Route("user/resendValidationEmail")]
+        public HttpResponseMessage ResendValidationEmail(string username)
+        {
+            try
+            {
+                _userSrv.ResendValidationEmailAsync(username);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new SuccessResponse());
+
+            }
+            catch (Exception ex)
+            {
+                ErrorResponse response = new ErrorResponse(ex);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
+        }
 
         #endregion
 

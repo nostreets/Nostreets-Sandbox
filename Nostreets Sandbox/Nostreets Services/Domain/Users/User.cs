@@ -73,7 +73,7 @@ namespace Nostreets_Services.Domain
 
     }
 
-    public class NamePasswordPair
+    public class NamePasswordPair 
     {
         public string Username { get; set; }
         public string Password { get; set; }

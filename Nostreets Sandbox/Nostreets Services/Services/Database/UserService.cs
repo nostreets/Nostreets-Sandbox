@@ -107,7 +107,7 @@ namespace Nostreets_Services.Services.Database
 
             if (user != null && !hasIP)
             {
-                string html = HttpContext.Current.Server.MapPath("\\assets\\UnindentifiedLogin.html").ReadFile()
+                string html = HttpContext.Current.Server.MapPath("\\assets\\emails\\UnindentifiedLogin.html").ReadFile()
                                          .FormatString(user.UserName, DateTime.Now.Timestamp());
 
                 _emailSrv.Send("no-reply@nostreetssolutions.com"
@@ -118,7 +118,8 @@ namespace Nostreets_Services.Services.Database
             }
 
 
-            if (failureReason == null) {
+            if (failureReason == null)
+            {
                 user.LastLogIn = DateTime.Now;
             }
 
@@ -171,7 +172,7 @@ namespace Nostreets_Services.Services.Database
                 }
                 else
                 {
-                    string html = HttpContext.Current.Server.MapPath("\\assets\\email\\UnindentifiedLogin.html").ReadFile();
+                    string html = HttpContext.Current.Server.MapPath("\\assets\\emails\\UnindentifiedLogin.html").ReadFile();
 
                     _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
                               , user.Contact.PrimaryEmail
@@ -203,7 +204,7 @@ namespace Nostreets_Services.Services.Database
 
             token.Id = Insert(token);
 
-            string html = HttpContext.Current.Server.MapPath("\\assets\\email\\ValidateEmail.html").ReadFile()
+            string html = HttpContext.Current.Server.MapPath("\\assets\\emails\\ValidateEmail.html").ReadFile()
                                      .Replace("{url}", HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)
                                      + "?token={0}&user={1}".FormatString(token.Id, user.Id));
 
@@ -253,7 +254,7 @@ namespace Nostreets_Services.Services.Database
                         break;
 
                     case TokenType.PasswordReset:
-                        EmailNewPassword();
+                        EmailNewPasswordAsync(user, token.Value);
                         output = "New Password Was Emailed...";
                         break;
 
@@ -269,7 +270,7 @@ namespace Nostreets_Services.Services.Database
                 }
 
                 Update(user);
-                Update(token);
+                _tokenDBSrv.Update(token);
             }
 
             return token;
@@ -326,9 +327,8 @@ namespace Nostreets_Services.Services.Database
             CacheManager.DeleteItem(RequestIp);
         }
 
-        public async Task<bool> ForgotPasswordEmailAsync(string username)
+        public async void ForgotPasswordEmailAsync(string username)
         {
-            bool result = false;
             if (_userDBSrv.Where(a => a.UserName == username || a.Contact.PrimaryEmail == username) != null)
             {
                 User user = _userDBSrv.Where(a => a.UserName == username || a.Contact.PrimaryEmail == username).FirstOrDefault();
@@ -349,20 +349,19 @@ namespace Nostreets_Services.Services.Database
                 token.Id = Insert(token);
 
 
-                string html = HttpContext.Current.Server.MapPath("\\assets\\email\\ForgotPasswordEmail.html").ReadFile()
+                string html = HttpContext.Current.Server.MapPath("\\assets\\emails\\ForgotPasswordEmail.html").ReadFile()
                                                  .Replace("{url}", HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)
                                                  + "?token={0}&user={1}".FormatString(token.Id, user.Id));
 
 
-                if (await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
+                if (!await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
                               , user.Contact.PrimaryEmail
                               , "Forgot Password to Nostreets Sandbox"
                               , "Forgot Password to Nostreets Sandbox"
                               , html))
-                    result = true;
+                    throw new Exception("Forgot Password Email did not send...");
             }
 
-            return result;
         }
 
         public IEnumerable<User> Where(Func<User, bool> predicate)
@@ -387,17 +386,12 @@ namespace Nostreets_Services.Services.Database
 
         public void Update(User user)
         {
-            if (!CacheManager.Contains(RequestIp))
+            if (RequestIp != null && !CacheManager.Contains(RequestIp))
                 CacheManager.InsertItem(RequestIp, user.Id);
 
             CacheManager.InsertItem(user.Id, user);
 
             _userDBSrv.Update(user);
-        }
-
-        public void Update(Token token)
-        {
-            _tokenDBSrv.Update(token);
         }
 
         public string Insert(User user)
@@ -441,8 +435,54 @@ namespace Nostreets_Services.Services.Database
             return result;
         }
 
-        public async Task<bool> EmailNewPassword()
+        public async void EmailNewPasswordAsync(User user, string newPassword)
         {
+            user.Password = newPassword;
+
+            string html = HttpContext.Current.Server.MapPath("\\assets\\emails\\NewPasswordEmail.html").ReadFile()
+                                                    .Replace("{user}", user.UserName)
+                                                    .Replace("{password}", newPassword);
+
+            if (await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
+                              , user.Contact.PrimaryEmail
+                              , "New Password to Nostreets Sandbox"
+                              , "New Password to Nostreets Sandbox"
+                              , html))
+                _userDBSrv.Update(user);
+
+        }
+
+        public async void ResendValidationEmailAsync(string username)
+        {
+            User user = GetByUsername(username);
+
+            _tokenDBSrv.Delete(
+                _tokenDBSrv.Where(
+                    a => a.Type == TokenType.EmailValidtion && a.UserId == user.Id).Select(a => a.Id));
+
+
+            Token token = new Token
+            {
+                ExpirationDate = DateTime.Now.AddDays(7),
+                IsDeleted = false,
+                UserId = user.Id,
+                ModifiedUserId = user.Id,
+                Name = user.UserName + "'s Registion Email Token",
+                Type = TokenType.EmailValidtion
+            };
+            token.Id = Insert(token);
+
+            string html = HttpContext.Current.Server.MapPath("\\assets\\emails\\ValidateEmail.html").ReadFile()
+                                     .Replace("{url}", HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)
+                                     + "?token={0}&user={1}".FormatString(token.Id, user.Id));
+
+
+            if (!await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
+                              , user.Contact.PrimaryEmail
+                              , "Nostreets Sandbox Email Validation"
+                              , "Nostreets Sandbox Email Validation"
+                              , html))
+                throw new Exception("Email for registation not sent...");
 
         }
     }

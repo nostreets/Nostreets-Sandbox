@@ -223,6 +223,7 @@
         vm.cancel = _cancel;
         vm.signUp = _openRegisterModal;
         vm.forgotPassword = _forgotPassword;
+        vm.resendEmailValidation = _resendEmailValidation;
 
         _render();
 
@@ -235,6 +236,7 @@
             vm.username = null;
             vm.password = null;
             vm.reason = null;
+            vm.sentEmail = false;
         }
 
         function _login() {
@@ -359,7 +361,7 @@
                     method: "GET",
                     headers: { 'Content-Type': 'application/json' }
                 }).then(
-                    b => _openUserModal(b.data.item),
+                    b => { vm.sentEmail = true; vm.reason = ""; },
                     err => {
                         if (err.data.errors) {
                             vm.reason = err.data.errors.message[0];
@@ -386,7 +388,16 @@
                 url: "/api/checkUsername" + "?username=" + username,
                 method: "GET",
                 headers: { 'Content-Type': 'application/json' }
-            })
+            });
+        }
+
+        function _resendEmailValidation() {
+
+            $baseController.http({
+                url: "/api/user/resendValidationEmail" + "?username=" + vm.username,
+                method: "GET",
+                headers: { 'Content-Type': 'application/json' }
+            }).then(a => { vm.sentEmail = true; vm.reason = ""; });
         }
 
     }
@@ -401,6 +412,8 @@
         vm.toggleEditMode = _toggleEditMode;
         vm.saveChanges = _saveChanges;
         vm.hasUserChanged = _hasUserChanged;
+        vm.isLockedOut = _isLockedOut;
+        vm.toggleTFAuth = _toggleTFAuth;
 
         _render();
 
@@ -511,6 +524,36 @@
                     vm.editMode = false;
                 });
         }
+
+        function _isLockedOut()
+        {
+            var result = null;
+            if (!vm.user.settings.hasVaildatedEmail)
+                result = "User hasn't validated their email... Maybe it's in the Junk Folder.";
+            else if (vm.user.settings.isLockedOut)
+                result = "User is locked out...";
+            else
+                result = "false";
+
+            return result;
+        }
+
+        function _toggleTFAuth(type)
+        {
+            switch (type)
+            {
+                case "email":
+                    vm.user.settings.tfAuthByEmail = true;
+                    vm.user.settings.tfAuthByPhone = false;
+                    break;
+
+                case "phone":
+                    vm.user.settings.tfAuthByPhone = true;
+                    vm.user.settings.tfAuthByEmail = false;
+                    break;
+            }
+        }
+
     }
 
 })();
