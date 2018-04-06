@@ -76,7 +76,10 @@ namespace Nostreets_Services.Services.Database
 
         private string DecryptPassword(string encyptedPassword)
         {
-            return Encryption.SimpleDecryptWithPassword(encyptedPassword, WebConfigurationManager.AppSettings["CryptoKey"]);
+            string decryptedPassword = encyptedPassword.Decrypt(WebConfigurationManager.AppSettings["CryptoKey"]);
+            decryptedPassword.Log();
+
+            return decryptedPassword;
         }
 
 
@@ -156,11 +159,11 @@ namespace Nostreets_Services.Services.Database
             {
                 Token token = new Token
                 {
-                    ExpirationDate = DateTime.Now.AddDays(7),
+                    ExpirationDate = DateTime.Now.AddHours(1),
                     ModifiedUserId = user.Id,
                     UserId = user.Id,
                     Type = TokenType.TwoFactorAuth,
-                    Value = new Random().Next(100000, 999999).ToString(),
+                    Value = new Random().RandomNumber(100000, 999999).ToString(),
                     Name = user.UserName + "s' TFAuth Code"
                 };
                 tokenId = Insert(token);
@@ -312,7 +315,7 @@ namespace Nostreets_Services.Services.Database
 
             if (user != null && ValidatePassword(user.Password, oldPassword))
             {
-                user.Password = Encryption.SimpleEncryptWithPassword(newPassword, WebConfigurationManager.AppSettings["CryptoKey"]);
+                user.Password = newPassword.Encrypt(WebConfigurationManager.AppSettings["CryptoKey"]);
                 _userDBSrv.Update(user);
             }
 
@@ -400,7 +403,7 @@ namespace Nostreets_Services.Services.Database
             {
                 IPAddresses = new List<string> { RequestIp }
             };
-            user.Password = Encryption.SimpleEncryptWithPassword(user.Password, WebConfigurationManager.AppSettings["CryptoKey"]);
+            user.Password = user.Password.Encrypt(WebConfigurationManager.AppSettings["CryptoKey"]);
             user.Id = _userDBSrv.Insert(user);
 
 
@@ -437,8 +440,6 @@ namespace Nostreets_Services.Services.Database
 
         public async void EmailNewPasswordAsync(User user, string newPassword)
         {
-            user.Password = newPassword;
-
             string html = HttpContext.Current.Server.MapPath("\\assets\\emails\\NewPasswordEmail.html").ReadFile()
                                                     .Replace("{user}", user.UserName)
                                                     .Replace("{password}", newPassword);
@@ -448,8 +449,10 @@ namespace Nostreets_Services.Services.Database
                               , "New Password to Nostreets Sandbox"
                               , "New Password to Nostreets Sandbox"
                               , html))
-                _userDBSrv.Update(user);
-
+            {
+                user.Password = newPassword.Encrypt(WebConfigurationManager.AppSettings["CryptoKey"]);
+                Update(user);
+            }
         }
 
         public async void ResendValidationEmailAsync(string username)
