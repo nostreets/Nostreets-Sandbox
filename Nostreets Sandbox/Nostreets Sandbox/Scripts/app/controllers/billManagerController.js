@@ -5,7 +5,7 @@
         .controller("modalInsertController", modalInsertController);
 
     billManagerController.$inject = ["$scope", "$baseController", '$sandboxService', '$filter'];
-    modalInsertController.$inject = ["$scope", "$baseController", '$uibModalInstance', '$sandboxService', 'model'];
+    modalInsertController.$inject = ["$scope", "$baseController", '$uibModalInstance', '$sandboxService', 'model', 'enums'];
 
 
     function billManagerController($scope, $baseController, $sandboxService, $filter) {
@@ -1000,9 +1000,8 @@
                 , controller: "modalInsertController as mc"
                 , size: "lg"
                 , resolve: {
-                    model: function () {
-                        return obj;
-                    }
+                    model: () => obj,
+                    enums: () => vm.enums
                 }
             });
 
@@ -1011,7 +1010,7 @@
 
     }
 
-    function modalInsertController($scope, $baseController, $uibModalInstance, $sandboxService, model) {
+    function modalInsertController($scope, $baseController, $uibModalInstance, $sandboxService, model, enums) {
 
         var vm = this;
         vm.$scope = $scope;
@@ -1021,6 +1020,7 @@
         vm.cancel = _cancel;
         vm.openDatePicker = _openDatePicker;
         vm.toggleVisiblity = _toggleVisiblity;
+        vm.availableEnums = _availableEnums;
 
         _render();
 
@@ -1060,6 +1060,7 @@
             vm.isEndDateOpen = false;
             vm.rate = data.rate + '' || '2';
             vm.rateMultilplier = data.rateMultilplier || 1;
+            vm.enums = enums;
 
             switch (model.type) {
                 case "income":
@@ -1185,6 +1186,48 @@
             vm.$uibModalInstance.dismiss("cancel");
         }
 
+        function _availableEnums(section, type) {
+            var arr = [];
+            switch (section) {
+                case 'rate':
+                    for (var i = 0; vm.enums.schedule.length > i; i++) {
+
+                        var item = vm.enums.schedule[i];
+
+                        if (page.utilities.in(i, [1, 4, 5, 7, 8]))
+                            continue;
+                        else if (i == 3 && !page.utilities.in(mc.paySchedule, ['3', '4', '5', '6', '7', '8', '9', '10']))
+                            continue;
+                        else if (i == 6 && !page.utilities.in(mc.paySchedule, ['6', '7', '8', '9', '10']))
+                            continue;
+                        else if (i == 9 && !page.utilities.in(mc.paySchedule, ['9', '10']))
+                            continue;
+                        else if (i == 10 && !page.utilities.in(mc.paySchedule, ['10']))
+                            continue;
+                        else
+                            arr.push({ label: item, value: i });
+                    }
+                    break;
+
+                case 'frequency':
+                    for (var i = 0; vm.enums.schedule.length > i; i++)
+                        arr.push({ label: vm.enums.schedule[i], value: i });
+                    break;
+
+                case 'incomeType':
+                    for (var i = 0; vm.enums.income.length > i; i++)
+                        arr.push({ label: vm.enums.incomes[i], value: i });
+                    break;
+
+                case 'expenseType':
+                    for (var i = 0; vm.enums.expense.length > i; i++)
+                        arr.push({ label: vm.enums.expense[i], value: i });
+                    break;
+
+            }
+
+            return arr;
+        }
 
     }
 

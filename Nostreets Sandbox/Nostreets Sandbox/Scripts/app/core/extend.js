@@ -12,6 +12,8 @@ Array.prototype.findByKey = function (key) {
     else { return null; }
 }
 
+
+
 Number.prototype.toKey = function (keyAndValueArr) {
     if (!Array.isArray(arr)) { return this; }
     var key = null;
