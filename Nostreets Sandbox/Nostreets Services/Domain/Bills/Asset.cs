@@ -36,8 +36,6 @@ namespace Nostreets_Services.Domain.Bills
 
         public float RateMultilplier { get => _rateMultilplier; set => _rateMultilplier = value; }
 
-        public override string UserId { get => SessionManager.Get<bool>(SessionState.IsLoggedOn) ? SessionManager.Get<string>(SessionState.UserId) : null; }
-        
         public string Style { get; set; }
 
         private float _rateMultilplier = 1;

@@ -32,7 +32,7 @@ namespace Nostreets_Services.Services.Database
 
 
         public string RequestIp => HttpContext.Current.GetIPAddress();
-        public User SessionUser { get { return GetSessionUser(); } private set { SetSessionUser(value); } }
+        public User SessionUser { get { return GetSessionUser(); } }
 
 
         private User GetSessionUser(string ip = null)
@@ -64,16 +64,6 @@ namespace Nostreets_Services.Services.Database
 
         }
 
-        private void SetSessionUser(User user)
-        {
-            if (user == null)
-                throw new Exception("user param cannot be null to SetSessionUser()...");
-
-            CacheManager.InsertItem(RequestIp, user.Id);
-            CacheManager.InsertItem(user.Id, user);
-            HttpContext.Current.SetCookie("loggedIn", "true");
-        }
-
         private string DecryptPassword(string encyptedPassword)
         {
             string decryptedPassword = encyptedPassword.Decrypt(WebConfigurationManager.AppSettings["CryptoKey"]);
@@ -82,13 +72,20 @@ namespace Nostreets_Services.Services.Database
             return decryptedPassword;
         }
 
-
-        public bool CheckIfUserCanLogIn(string username, string password, out User user, out string failureReason)
+        private void UpdateCache(User user)
         {
-            failureReason = null;
-            user = SessionUser ?? GetByUsername(username);
-            bool result = false,
-                 hasIP = (user == null) ? false : user.Settings.IPAddresses.Contains(RequestIp);
+            if (RequestIp != null && !CacheManager.Contains(RequestIp))
+                CacheManager.InsertItem(RequestIp, user.Id);
+
+            CacheManager.InsertItem(user.Id, user);
+        }
+
+
+        public async Task<Tuple<User, string>> GetUserWithLoginInfo(string username, string password)
+        {
+            string failureReason = null;
+            User user = SessionUser ?? GetByUsername(username);
+            bool hasIP = (user == null) ? false : user.Settings.IPAddresses.Contains(RequestIp);
 
 
 
@@ -104,20 +101,55 @@ namespace Nostreets_Services.Services.Database
             else if (user.Settings.ValidateIPBeforeLogin && !hasIP)
                 failureReason = username + " does not authorize this computer for login...";
 
-            else
-                result = true;
+            else if (user.Settings.TwoFactorAuthEnabled)
+            {
+                Token token = new Token
+                {
+                    ExpirationDate = DateTime.Now.AddHours(1),
+                    ModifiedUserId = user.Id,
+                    UserId = user.Id,
+                    Type = TokenType.TwoFactorAuth,
+                    Value = new Random().RandomString(6),
+                    Name = user.UserName + "s' TFAuth Code"
+                };
+
+                failureReason = "2auth" + Insert(token);
+
+
+                if (user.Settings.TFAuthByPhone)
+                {
+                    //todo SMSService txt code to users phone
+                }
+                else
+                {
+                    string html = HttpContext.Current.Server.MapPath("\\assets\\emails\\TFAuthEmail.html").ReadFile()
+                                                            .Replace("{code}", token.Value);
+
+
+                    if (!await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
+                              , user.Contact.PrimaryEmail
+                              , "Login Code to Nostreets Sandbox"
+                              , "Login Code to Nostreets Sandbox"
+                              , html))
+                        throw new Exception("Login Code Email Did Not Send...");
+
+                }
+            }
 
 
             if (user != null && !hasIP)
             {
                 string html = HttpContext.Current.Server.MapPath("\\assets\\emails\\UnindentifiedLogin.html").ReadFile()
-                                         .FormatString(user.UserName, DateTime.Now.Timestamp());
+                                          .Replace("{user}", user.UserName)
+                                          .Replace("{ip}", RequestIp ?? "unknown")
+                                          .Replace("{time}", DateTime.Now.ToLongDateString());
 
-                _emailSrv.Send("no-reply@nostreetssolutions.com"
+                if (!await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
                               , user.Contact.PrimaryEmail
                               , "Nostreets Sandbox Unindentified Login"
                               , "Nostreets Sandbox Unindentified Login"
-                              , html);
+                              , html))
+                    throw new Exception("Unindentified Login Email Did Not Send...");
             }
 
 
@@ -126,7 +158,7 @@ namespace Nostreets_Services.Services.Database
                 user.LastLogIn = DateTime.Now;
             }
 
-            return result;
+            return new Tuple<User, string>(failureReason == null ? user : null, failureReason);
         }
 
         public void Delete(string id)
@@ -144,51 +176,26 @@ namespace Nostreets_Services.Services.Database
             return FirstOrDefault(a => a.UserName == username || a.Contact.PrimaryEmail == username);
         }
 
-        public User LogIn(NamePasswordPair pair, out string tokenId, bool rememberDevice = false)
+        public async Task<Tuple<User, string>> LogInAsync(NamePasswordPair pair, bool rememberDevice = false)
         {
-            tokenId = null;
-            User user = null;
+            string tokenId = null;
+            Tuple<User, string> validUser = await GetUserWithLoginInfo(pair.Username, pair.Password);
 
-            if (!CheckIfUserCanLogIn(pair.Username, pair.Password, out user, out string reason))
-                throw new Exception(reason);
-
-            if (rememberDevice && !user.Settings.IPAddresses.Contains(RequestIp))
-                user.Settings.IPAddresses.Add(RequestIp);
-
-            if (user.Settings.TwoFactorAuthEnabled)
-            {
-                Token token = new Token
-                {
-                    ExpirationDate = DateTime.Now.AddHours(1),
-                    ModifiedUserId = user.Id,
-                    UserId = user.Id,
-                    Type = TokenType.TwoFactorAuth,
-                    Value = new Random().RandomNumber(100000, 999999).ToString(),
-                    Name = user.UserName + "s' TFAuth Code"
-                };
-                tokenId = Insert(token);
-
-
-                if (user.Settings.TFAuthByPhone)
-                {
-                    //todo SMSService txt code to users phone
-                }
+            if (validUser.Item2 != null)
+                if (validUser.Item2.Contains("2auth"))
+                    tokenId = validUser.Item2.Substring(5);
                 else
-                {
-                    string html = HttpContext.Current.Server.MapPath("\\assets\\emails\\UnindentifiedLogin.html").ReadFile();
+                    throw new Exception(validUser.Item2);
 
-                    _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
-                              , user.Contact.PrimaryEmail
-                              , "Login Code to Nostreets Sandbox"
-                              , "Login Code to Nostreets Sandbox"
-                              , html);
+            else if (validUser.Item1 != null)
+            {
+                Update(validUser.Item1);
 
-                }
+                if (rememberDevice && !validUser.Item1.Settings.IPAddresses.Contains(RequestIp))
+                    validUser.Item1.Settings.IPAddresses.Add(RequestIp);
             }
-            else
-                SessionUser = user;
 
-            return user;
+            return new Tuple<User, string>(validUser.Item1, tokenId);
         }
 
         public async Task<string> RegisterAsync(User user)
@@ -222,11 +229,11 @@ namespace Nostreets_Services.Services.Database
             return user.Id;
         }
 
-        public Token ValidateToken(string tokenId, string userId, out string output)
+        public Token ValidateToken(TokenRequest request, out string output)
         {
             output = "";
-            Token token = _tokenDBSrv.Get(tokenId);
-            CacheManager.InsertItem(RequestIp, userId);
+            Token token = _tokenDBSrv.Get(request.TokenId);
+            bool updateUser = false;
 
 
             if (token == null)
@@ -238,42 +245,55 @@ namespace Nostreets_Services.Services.Database
             else if (token.IsDeleted)
                 output = "Token no longer exists...";
 
-            else if (token.UserId != userId)
+            else if (request.UserId != null && token.UserId != request.UserId)
                 output = "Token does not belong to specified user...";
 
             else
             {
-                User user = SessionUser;
-                token.IsDeleted = true;
+                User user = SessionUser ?? _userDBSrv.Get(request.UserId ?? token.UserId);
                 token.DateModified = DateTime.Now;
-                token.ExpirationDate = DateTime.Now;
+
 
                 switch (token.Type)
                 {
                     case TokenType.EmailValidtion:
                         user.Settings.HasVaildatedEmail = true;
                         user.Settings.IsLockedOut = false;
-                        output = "Email Validated";
+                        token.IsValidated = true;
+                        token.IsDeleted = true;
+                        output = "Email Validated...";
+                        updateUser = true;
                         break;
 
                     case TokenType.PasswordReset:
                         EmailNewPasswordAsync(user, token.Value);
+                        token.IsValidated = true;
+                        token.IsDeleted = true;
                         output = "New Password Was Emailed...";
                         break;
 
                     case TokenType.PhoneValidtion:
                         user.Settings.HasVaildatedPhone = true;
-                        output = "Phone Validated";
+                        token.IsValidated = true;
+                        token.IsDeleted = true;
+                        output = "Phone Validated...";
+                        updateUser = true;
                         break;
 
                     case TokenType.TwoFactorAuth:
-                        output = "Authorizition Code Validated";
+                        token.IsValidated = (token.Value == request.Code) ? true : false;
+                        token.IsDeleted = (token.Value == request.Code) ? true : false;
+                        output = "Code Validated...";
+                        updateUser = true;
                         break;
 
                 }
 
-                Update(user);
                 _tokenDBSrv.Update(token);
+
+                if (updateUser)
+                    Update(user);
+
             }
 
             return token;
@@ -292,20 +312,6 @@ namespace Nostreets_Services.Services.Database
         public bool ValidatePassword(string encyptedPassword, string password)
         {
             return DecryptPassword(encyptedPassword) == password ? true : false;
-        }
-
-        public bool ChangeUserEmail(string email, string password)
-        {
-            bool result = false;
-            User user = SessionUser;
-
-            if (user != null && ValidatePassword(user.Password, password))
-            {
-                user.Contact.PrimaryEmail = email;
-                _userDBSrv.Update(user);
-            }
-
-            return result;
         }
 
         public bool ChangeUserPassword(string newPassword, string oldPassword)
@@ -387,12 +393,13 @@ namespace Nostreets_Services.Services.Database
             return _tokenDBSrv.FirstOrDefault(predicate);
         }
 
-        public void Update(User user)
+        public void Update(User user, bool encryptPassword = false)
         {
-            if (RequestIp != null && !CacheManager.Contains(RequestIp))
-                CacheManager.InsertItem(RequestIp, user.Id);
 
-            CacheManager.InsertItem(user.Id, user);
+            if (encryptPassword)
+                user.Password = user.Password.Encrypt(WebConfigurationManager.AppSettings["CryptoKey"]);
+
+            UpdateCache(user);
 
             _userDBSrv.Update(user);
         }
@@ -423,21 +430,6 @@ namespace Nostreets_Services.Services.Database
             return token.Id;
         }
 
-        public bool ValidateTokenCode(string id, string code)
-        {
-            Token token = _tokenDBSrv.Get(id);
-            bool result = (token != null && token.Value == code) ? true : false;
-
-            switch (token.Type)
-            {
-                case TokenType.TwoFactorAuth:
-                    SessionUser = _userDBSrv.Get(id, (a) => { a.LastLogIn = DateTime.Now; return a; });
-                    break;
-            }
-
-            return result;
-        }
-
         public async void EmailNewPasswordAsync(User user, string newPassword)
         {
             string html = HttpContext.Current.Server.MapPath("\\assets\\emails\\NewPasswordEmail.html").ReadFile()
@@ -453,6 +445,8 @@ namespace Nostreets_Services.Services.Database
                 user.Password = newPassword.Encrypt(WebConfigurationManager.AppSettings["CryptoKey"]);
                 Update(user);
             }
+            else
+                throw new Exception("New Password Email Did Not Send...");
         }
 
         public async void ResendValidationEmailAsync(string username)

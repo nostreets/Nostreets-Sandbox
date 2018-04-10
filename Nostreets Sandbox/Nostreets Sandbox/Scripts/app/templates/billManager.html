@@ -1,7 +1,4 @@
 ﻿<div>
-    <div class="row text-center">
-        <a class="text-blueish">View Code</a>
-    </div>
     <div class="row">
         <h2 class="text-center text-primary text-blueish">Bill Manager</h2>
         <ul class="nav nav-tabs nav-justified">
@@ -17,29 +14,76 @@
     </div>
 
     <div class="row">
-        <div class="col-sm-4 col-sm-offset-1 text-center" style="margin-top: 2%">
-            <strong style="color: rgb(167, 164, 191)">Beginning Date:</strong>
-            <div class="input-group">
-                <input type="datetime" uib-datepicker-popup ng-model="pg.beginDate" ng-change="pg.updateChart()" class="form-control well well-sm text-center" is-open="pg.isStart" close-text="Close" />
-                <span class="input-group-btn">
-                    <button type="button" class="btn btn-xs btn-simple" ng-click="pg.openDatePicker('start')"><i class="glyphicon glyphicon-calendar"></i></button>
-                </span>
+        <div ng-if="pg.isLoggedIn">
+            <div class="col-sm-4 col-sm-offset-1 text-center" style="margin-top: 2%">
+                <strong style="color: rgb(167, 164, 191)">Beginning Date:</strong>
+                <div class="input-group">
+                    <input type="datetime" uib-datepicker-popup ng-model="pg.beginDate" ng-change="pg.updateChart()" class="form-control well well-sm text-center" is-open="pg.isStart" close-text="Close" />
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-xs btn-simple" ng-click="pg.openDatePicker('start')"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
+                </div>
+            </div>
+            <div class="col-sm-2 text-center" style="margin: 3% 0% 3% 0%;">
+                <select ng-if="pg.chartType == 'line'" ng-change="pg.updateChart()" ng-model="pg.chartLineStyle">
+                    <option value="none">None</option>
+                    <option value="smooth">Smooth</option>
+                    <option value="step">Step</option>
+                </select>
+            </div>
+            <div class="col-sm-4 col-sm-offset-1 text-center" style="margin-top: 2%">
+                <strong style="color: rgb(167, 164, 191)">Ending Date:</strong>
+                <div class="input-group">
+                    <input type="datetime" uib-datepicker-popup ng-model="pg.endDate" ng-change="pg.updateChart()" class="form-control well well-sm text-center" is-open="pg.isEnding" close-text="Close" />
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-xs btn-simple" ng-click="pg.openDatePicker('end')"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
+                </div>
             </div>
         </div>
-        <div class="col-sm-2 text-center" style="margin: 3% 0% 3% 0%;">
-            <select ng-if="pg.chartType == 'line'" ng-change="pg.updateChart()" ng-model="pg.chartLineStyle">
-                <option value="none">None</option>
-                <option value="smooth">Smooth</option>
-                <option value="step">Step</option>
-            </select>
-        </div>
-        <div class="col-sm-4 col-sm-offset-1 text-center" style="margin-top: 2%">
-            <strong style="color: rgb(167, 164, 191)">Ending Date:</strong>
-            <div class="input-group">
-                <input type="datetime" uib-datepicker-popup ng-model="pg.endDate" ng-change="pg.updateChart()" class="form-control well well-sm text-center" is-open="pg.isEnding" close-text="Close" />
-                <span class="input-group-btn">
-                    <button type="button" class="btn btn-xs btn-simple" ng-click="pg.openDatePicker('end')"><i class="glyphicon glyphicon-calendar"></i></button>
-                </span>
+    </div>
+
+     <div class="row">
+        <div id="assetChartTabContainer" class="tab-content">
+            <div id="incomeTab" class="tab-pane active fade in" role="tabpanel">
+                <div class="col-xs-12">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <h6>{{ pg.charts[0].data.name }}</h6>
+                        </div>
+                        <div class="card-content text-center">
+                            <div id="incomeChart" class="card-content text-center ct-golden-section">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="expenseTab" class="tab-pane fade" role="tabpanel">
+                <div class="col-xs-12">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <h6>{{ pg.charts[1].data.name }}</h6>
+                        </div>
+                        <div class="card-content text-center">
+                            <div id="expenseChart" class="card-content text-center ct-golden-section">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="combinedTab" class="tab-pane fade" role="tabpanel">
+                <div class="col-xs-12">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <h6>{{ pg.charts[2].data.name }}</h6>
+                        </div>
+                        <div class="card-content text-center">
+                            <div id="combinedChart" class="card-content text-center ct-golden-section">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -52,7 +96,9 @@
 
     <div class="row">
         <div class="col-xs-12">
-            <div class="card" style="padding-bottom: 2%;">
+            <div ng-if="pg.isLoggedIn"
+                 class="card" 
+                 style="padding-bottom: 2%;">
                 <div class="card-header">
                     <button data-toggle="tab" role="tab" class="btn btn-simple pull-right" ng-click="pg.openInsertModal()">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
@@ -141,6 +187,11 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div ng-if="!pg.isLoggedIn" class="card" >
+                <div class="card-content">
+                    User needs to be logged in to use this service...
                 </div>
             </div>
         </div>

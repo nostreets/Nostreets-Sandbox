@@ -34,10 +34,10 @@ namespace Nostreets_Services.Services.Database
         public List<Chart<object>> GetAll()
         {
             List<Chart<object>> result = null;
-            var charts = _chartSrv.GetAll().Where(a => a.Series != null).ToArray();
-            var pieCharts = _pieChartSrv.GetAll().Where(a => a.Series != null).ToArray();
+            var charts = _chartSrv.GetAll().Where(a => a.Series != null);
+            var pieCharts = _pieChartSrv.GetAll().Where(a => a.Series != null);
 
-            if (pieCharts.Length == 0 && charts.Length > 0)
+            if (pieCharts == null && charts != null)
                 foreach (Chart<List<int>> c in charts)
                 {
                     Chart<object> newChart = new Chart<object>
@@ -57,7 +57,7 @@ namespace Nostreets_Services.Services.Database
                         result = new List<Chart<object>>();
                     result.Add(newChart);
                 }
-            else if (charts.Length == 0 && pieCharts.Length > 0)
+            else if (charts == null && pieCharts != null)
                 foreach (Chart<int> p in pieCharts)
                 {
                     Chart<object> newChart = new Chart<object>
@@ -77,7 +77,7 @@ namespace Nostreets_Services.Services.Database
                         result = new List<Chart<object>>();
                     result.Add(newChart);
                 }
-            else if (charts.Length > 0 && pieCharts.Length > 0)
+            else if (charts != null && pieCharts != null)
             {
                 foreach (Chart<int> p in pieCharts)
                 {

@@ -17,7 +17,7 @@
         vm.activateMode = _activateMode;
         vm.closeBuilder = _closeBuilder;
 
-        $baseController.event.listen("refreshedUsername", () => { _setUp(); _getUserData(); });
+        $baseController.event.listen("loggedIn", () => { _setUp(); _getUserData(); });
 
 
         _render();
@@ -37,6 +37,7 @@
             vm.headerContent = null;
             vm.mainContent = null;
             vm.footerContent = null;
+            vm.isLoggedIn = page.isLoggedIn;
 
 
             if (!vm.cards) {

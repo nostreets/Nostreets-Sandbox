@@ -40,11 +40,6 @@ namespace Nostreets_Services.Services.Email
 
         }
 
-        public bool Send(string fromEmail, string toEmail, string subject, string messageText, string messageHtml)
-        {
-            return SendAsync(fromEmail, toEmail, subject, messageText, messageHtml).SyncTask();
-        }
-
 
         #region Legacy
         public async Task<bool> SendAsyncSMTP(string fromEmail, string toEmail, string subject, string messageText, string messageHtml)

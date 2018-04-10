@@ -201,35 +201,49 @@ namespace Nostreets_Services.Services.Database
 
         public void InsertExpense(Expense request)
         {
-            request.UserId = (request.UserId == null) ? GetCurrentUser().Id : request.UserId;
-            request.DateCreated = (request.DateCreated == null) ? DateTime.Now : request.DateCreated;
-            request.DateModified = (request.DateModified == null) ? DateTime.Now : request.DateModified;
-            request.ModifiedUserId = (request.ModifiedUserId == null) ? GetCurrentUser().Id : request.ModifiedUserId;
+            if (request.UserId == null)
+                throw new Exception("request.UserId cannot be null to be able to InsertExpense(request)");
+
+
+            request.UserId = request.UserId;
+            request.DateCreated = request.DateCreated ?? DateTime.Now;
+            request.DateModified = request.DateModified  ?? DateTime.Now;
+            request.ModifiedUserId = request.ModifiedUserId ?? request.UserId;
             _expenseSrv.Insert(request);
         }
 
         public void InsertIncome(Income request)
         {
-            request.UserId = (request.UserId == null) ? GetCurrentUser().Id : request.UserId;
-            request.DateCreated = (request.DateCreated == null) ? DateTime.Now : request.DateCreated;
-            request.DateModified = (request.DateModified == null) ? DateTime.Now : request.DateModified;
-            request.ModifiedUserId = (request.ModifiedUserId == null) ? GetCurrentUser().Id : request.ModifiedUserId;
+            if (request.UserId == null)
+                throw new Exception("request.UserId cannot be null to be able to InsertExpense(request)");
+
+
+            request.UserId = request.UserId;
+            request.DateCreated = request.DateCreated ?? DateTime.Now;
+            request.DateModified = request.DateModified ?? DateTime.Now;
+            request.ModifiedUserId = request.ModifiedUserId ?? request.UserId;
             _incomeSrv.Insert(request);
         }
 
         public void UpdateExpense(Expense request)
         {
-            request.UserId = (request.UserId == null) ? GetCurrentUser().Id : request.UserId;
-            request.DateModified = (request.DateModified == null) ? DateTime.Now : request.DateModified;
-            request.ModifiedUserId = (request.ModifiedUserId == null) ? GetCurrentUser().Id : request.ModifiedUserId;
+            if (request.UserId == null)
+                throw new Exception("request.UserId cannot be null to be able to InsertExpense(request)");
+
+
+            request.DateModified = request.DateModified ?? DateTime.Now;
+            request.ModifiedUserId = request.ModifiedUserId ?? request.UserId;
             _expenseSrv.Update(request);
         }
 
         public void UpdateIncome(Income request)
         {
-            request.UserId = (request.UserId == null) ? GetCurrentUser().Id : request.UserId;
-            request.DateModified = (request.DateModified == null) ? DateTime.Now : request.DateModified;
-            request.ModifiedUserId = (request.ModifiedUserId == null) ? GetCurrentUser().Id : request.ModifiedUserId;
+            if (request.UserId == null)
+                throw new Exception("request.UserId cannot be null to be able to InsertExpense(request)");
+
+
+            request.DateModified = request.DateModified ?? DateTime.Now;
+            request.ModifiedUserId = request.ModifiedUserId ?? request.UserId;
             _incomeSrv.Update(request);
         }
 
@@ -682,9 +696,9 @@ namespace Nostreets_Services.Services.Database
             return pay;
         }
 
-        private User GetCurrentUser()
-        {
-            return CacheManager.GetItem<User>("user");
-        }
+        //private User GetCurrentUser()
+        //{
+        //    return CacheManager.GetItem<User>("user");
+        //}
     }
 }

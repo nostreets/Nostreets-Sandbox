@@ -32,6 +32,7 @@
 
         function _setUp() {
             vm.scope = $scope;
+            vm.isLoggedIn = page.isLoggedIn;
             vm.charts = [];
             vm.legend = [];
             vm.currentTab = 'income';
@@ -77,7 +78,7 @@
 
         function _eventHandlers() {
 
-            $baseController.event.listen("refreshedUsername", () => { _setUp(); _getUserCharts(); });
+            $baseController.event.listen("loggedIn", () => { _setUp(); _getUserCharts(); });
 
             angular.element('.assetSwitcher').on('shown.bs.tab',
                 () => _getChartLengend().then(
@@ -677,7 +678,7 @@
                         var label = chart.labels[b],
                             value = chart.series[a][b],
                             lastValue = (b === 0) ? 0 : chart.series[a][b - 1].value;
-                        var meta = 'Date ' + label + ' ' + ((chartObj.incomeType) ? '+ ' : '- ') + (value - lastValue); //'<div> Date ' + label + ' </div>' + '<div> ' + ((chartObj.incomeType) ? '+ ' : '- ') + (value - lastValue) + ' </div>';
+                        var meta = 'Date ' + label + ' ' + ((value - lastValue > 0) ? '+ ' : (value - lastValue == 0) ? ' ' : '- ') + (value - lastValue);
                         chart.series[a][b] = {
                             meta: meta,
                             value: value

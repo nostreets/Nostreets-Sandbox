@@ -16,11 +16,6 @@ namespace Nostreets_Services.Services.Email
 
         private string ApiKey { get; }
 
-        public bool Send(string fromEmail, string toEmail, string subject, string messageText, string messageHtml)
-        {
-            return SendAsync(fromEmail, toEmail, subject, messageText, messageHtml).SyncTask();
-        }
-
         public async Task<bool> SendAsync(string email, string toAddress, string subject, string messageText, string messageHtml)
         {
             try

@@ -50,10 +50,35 @@ namespace Nostreets_Sandbox.App_Start
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             container.Register(
-                 Reg.Component.For<IDBService>().ImplementedBy<DBService>().LifestyleSingleton(),
-                 Reg.Component.For(typeof(IDBService<>)).ImplementedBy(typeof(DBService<>)).LifestyleSingleton(),
-                 Reg.Component.For(typeof(IDBService<,>)).ImplementedBy(typeof(DBService<,>)).LifestyleSingleton(),
-                 Reg.Component.For(typeof(IDBService<,,,>)).ImplementedBy(typeof(DBService<,,,>)).LifestyleSingleton(),
+                 Reg.Component.For(typeof(IDBService<>)).ImplementedBy(typeof(DBService<>)).LifestyleSingleton()
+                    .DependsOn((k, param) =>
+                     {
+#if DEBUG
+                         param["connectionKey"] = "DefaultConnection";
+#else
+                         param["connectionKey"] = "AzureDBConnection";
+#endif
+                     }),
+                 Reg.Component.For(typeof(IDBService<,>)).ImplementedBy(typeof(DBService<,>)).LifestyleSingleton()
+                     .DependsOn((k, param) =>
+                         {
+#if DEBUG
+                         param["connectionKey"] = "DefaultConnection";
+#else
+                         param["connectionKey"] = "AzureDBConnection";
+#endif
+                         }),
+                 Reg.Component.For(typeof(IDBService<,,,>)).ImplementedBy(typeof(DBService<,,,>)).LifestyleSingleton()
+                    .DependsOn((k, param) =>
+                     {
+#if DEBUG
+                         param["connectionKey"] = "DefaultConnection";
+#else
+                         param["connectionKey"] = "AzureDBConnection";
+#endif
+                     }),
+
+
                  Reg.Component.For<IBillService>().ImplementedBy<BillService>().LifestyleSingleton()
                      .DependsOn((k, param) =>
                      {

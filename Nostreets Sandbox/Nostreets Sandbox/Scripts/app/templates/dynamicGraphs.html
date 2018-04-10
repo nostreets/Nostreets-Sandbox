@@ -21,7 +21,12 @@
         <div class="text-center" ng-if="pg.graphName"><h3>{{ pg.graphName }}</h3></div>
         <div id="graphMainDiv" class="ct-golden-section hidden"></div>
         <div align="center">
-            <button ng-if="pg.rendered" ng-disabled="pg.saved" ng-click="pg.saveGraph()" style="margin-right: 10%;" class="btn btn-sm btn-round">{{ !pg.saved ? "Save Graph" : "Saved" }}</button>
+            <button ng-if="pg.rendered && pg.isLoggedIn" 
+                    ng-disabled="pg.saved" 
+                    ng-click="pg.saveGraph()" 
+                    style="margin-right: 10%;" 
+                    class="btn btn-sm btn-round">{{ !pg.saved ? "Save Graph" : "Saved" }}
+            </button>
         </div>
         <div class="row" ng-if="pg.legend[0]">
             Legend:
@@ -30,19 +35,20 @@
             </div>
         </div>
         <div class="row">
-
-            <div ng-repeat="chart in pg.charts" class="col-xs-10 col-xs-offset-1">
-                <div class="card">
-                    <div class="card-header text-center">
-                        <h6>Name: {{ chart.name }}</h6>
-                        <h6>Type: {{ chart.typeId == 1 ? 'Line' : chart.typeId == 2 ? 'Bar' : chart.typeId == 3 ? 'Pie' : 'N/A' }}</h6>
-                    </div>
-                    <div class="card-content text-center">
-                        <chart graph="chart"></chart>
-                    </div>
-                    <div class="card-footer">
-                        <span class="pull-left">Modified On: {{ chart.dateModified | date }}</span>
-                        <span class="pull-right">Created On: {{ chart.dateCreated | date }}</span>
+            <div ng-if="pg.isLoggedIn">
+                <div ng-repeat="chart in pg.charts" class="col-xs-10 col-xs-offset-1">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <h6>Name: {{ chart.name }}</h6>
+                            <h6>Type: {{ chart.typeId == 1 ? 'Line' : chart.typeId == 2 ? 'Bar' : chart.typeId == 3 ? 'Pie' : 'N/A' }}</h6>
+                        </div>
+                        <div class="card-content text-center">
+                            <chart graph="chart"></chart>
+                        </div>
+                        <div class="card-footer">
+                            <span class="pull-left">Modified On: {{ chart.dateModified | date }}</span>
+                            <span class="pull-right">Created On: {{ chart.dateCreated | date }}</span>
+                        </div>
                     </div>
                 </div>
             </div>

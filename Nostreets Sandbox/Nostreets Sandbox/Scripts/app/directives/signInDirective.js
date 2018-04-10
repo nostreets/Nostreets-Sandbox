@@ -25,7 +25,7 @@
 
                 function _render() {
 
-                    $scope.isLoggedIn = $serverModel.hasVisited;
+                    page.isLoggedIn = $serverModel.user != null;
 
                     if ($serverModel.token !== null)
                         swal({
@@ -34,7 +34,7 @@
                             showCancelButton: false,
                             showConfirmButton: false,
                             allowOutsideClick: true
-                        }).then(() => _openUserModal($serverModel.user), () => _openUserModal($serverModel.user))
+                        });
 
 
                     _handlers();
@@ -86,11 +86,11 @@
                 }
 
                 function _handlers() {
-                    $baseController.event.listen("loggedOut", () => $scope.isLoggedIn = false);
-                    $baseController.event.listen("loggedIn", () => $scope.isLoggedIn = true);
+                    $baseController.event.listen("loggedOut", () => page.isLoggedIn = false);
+                    $baseController.event.listen("loggedIn", () => page.isLoggedIn = true);
 
                     element.on("click", () => {
-                        if ($scope.isLoggedIn)
+                        if (page.isLoggedIn)
                             _openUserModal($serverModel.user || null);
 
                         else if ($serverModel.hasVisited === true)
@@ -279,7 +279,7 @@
 
         }
 
-        function _tfAuthLock(tokenId) {
+        function _tfAuthLock(id) {
             return swal({
                 title: "Enter the Validation Code...",
                 type: "info",
@@ -293,7 +293,7 @@
                         if (!input)
                             reject("Code is invalid...");
                         else
-                            _valaidateTFAuth(tokenId, input).then(resolve, () => reject("Code is invalid..."));
+                            _valaidateTFAuth(id, input).then(resolve, () => reject("Code is invalid..."));
                     });
                 }
             });
@@ -301,7 +301,7 @@
 
         function _valaidateTFAuth(id, input) {
             return $baseController.http({
-                url: "/api/login?id=" + id + "&code=" + input,
+                url: "/api/user/tfauth?id=" + id + "&code=" + input,
                 method: "GET",
                 headers: { 'Content-Type': 'application/json' }
             });
@@ -503,7 +503,7 @@
                 data: vm.user,
                 method: "PUT",
                 headers: { 'Content-Type': 'application/json' }
-            });
+            }).then(() => vm.userSnap = page.utilities.clone(vm.user));
         }
 
         function _validatePassword(password) {
@@ -517,16 +517,16 @@
         function _saveChanges() {
             _passwordLock().then(
                 () => {
-                    if (vm.user.newPassword && vm.user.newPassword.length > 12 && vm.user.newPassword !== vm.userSnap.newPassword)
-                        vm.user.password = newPassword;
+                    if (vm.user.newPassword && vm.user.newPassword.length >= 12 && vm.user.newPassword !== vm.userSnap.newPassword)
+                        vm.user.password = vm.user.newPassword;
 
                     _updateUser();
+
                     vm.editMode = false;
                 });
         }
 
-        function _isLockedOut()
-        {
+        function _isLockedOut() {
             var result = null;
             if (!vm.user.settings.hasVaildatedEmail)
                 result = "User hasn't validated their email... Maybe it's in the Junk Folder.";
@@ -538,18 +538,18 @@
             return result;
         }
 
-        function _toggleTFAuth(type)
-        {
-            switch (type)
-            {
+        function _toggleTFAuth(type) {
+            switch (type) {
                 case "email":
                     vm.user.settings.tfAuthByEmail = true;
                     vm.user.settings.tfAuthByPhone = false;
                     break;
 
                 case "phone":
-                    vm.user.settings.tfAuthByPhone = true;
-                    vm.user.settings.tfAuthByEmail = false;
+                    if (vm.user.contact.primaryPhone) {
+                        vm.user.settings.tfAuthByPhone = true;
+                        vm.user.settings.tfAuthByEmail = false;
+                    }
                     break;
             }
         }

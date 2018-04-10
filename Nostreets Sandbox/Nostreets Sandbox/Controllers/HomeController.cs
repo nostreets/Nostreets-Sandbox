@@ -26,7 +26,7 @@ namespace Nostreets_Sandbox.Controllers
             bool hasVisited = false;
 
             if (token != null && user != null)
-                userToken = _userService.ValidateToken(token, user, out outcome);
+                userToken = _userService.ValidateToken(new TokenRequest { TokenId = token, UserId = user }, out outcome);
 
             if (_userService.SessionUser != null)
             {
@@ -39,14 +39,15 @@ namespace Nostreets_Sandbox.Controllers
             //        ? true : false;
 
 
-            
 
 
-            ViewBag.ServerModel = new {
+
+            ViewBag.ServerModel = new
+            {
                 user = sessionUser,
                 token = userToken,
                 tokenOutcome = outcome,
-                hasVisited 
+                hasVisited
             };
 
             return View();

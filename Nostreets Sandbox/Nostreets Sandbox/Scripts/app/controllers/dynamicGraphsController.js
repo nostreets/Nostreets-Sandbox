@@ -23,7 +23,7 @@
 
         $rootScope.$on('logGraph', _logMainGraph);
         $baseController.event.listen('refreshCharts', _refreshResponse);
-        $baseController.event.listen("refreshedUsername", _setUp);
+        $baseController.event.listen("loggedIn", _setUp);
 
         _startUp();
 
@@ -39,35 +39,7 @@
             vm.saved = false;
             vm.rendered = false;
             vm.legend = [];
-
-            //if (!page.user.loggedIn) {
-            //    swal({
-            //        title: "Enter your session's username",
-            //        type: "info",
-            //        input: "text",
-            //        showCancelButton: false,
-            //        closeOnConfirm: false,
-            //        animation: "slide-from-top",
-            //        allowOutsideClick: false,
-            //        inputPlaceholder: "Type in your username!",
-            //        preConfirm: function (inputValue) {
-            //            return new Promise(function (resolve, reject) {
-            //                if (inputValue === false || inputValue === "") {
-            //                    reject("You need to write something!");
-            //                }
-            //                else {
-            //                    resolve();
-            //                }
-            //            });
-            //        }
-            //    }).then(function (input) {
-            //        () => $sandboxService.loginUser(input).then(function (data) {
-            //            page.user.loggedIn = true;
-            //            localStorage["nostreetsUsername"] = input;
-            //            page.user.username = input;
-            //        });
-            //    });
-            //}
+            vm.isLoggedIn = page.isLoggedIn;
 
             $sandboxService.getAllChartsByUser().then(_chartsResponse, _consoleResponse);
         };

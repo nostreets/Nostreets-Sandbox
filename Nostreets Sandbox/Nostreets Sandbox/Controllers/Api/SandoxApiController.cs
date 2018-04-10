@@ -62,17 +62,17 @@ namespace Nostreets_Sandbox.Controllers.Api
 
         #region User Service Endpoints
         [HttpPost, Route("login")]
-        public HttpResponseMessage LogInUser(NamePasswordPair request, bool rememberDevice = false)
+        public async Task<HttpResponseMessage> LogInUserAsync(NamePasswordPair request, bool rememberDevice = false)
         {
             try
             {
                 BaseResponse response = null;
-                User user = _userSrv.LogIn(request, out string id, rememberDevice);
+                Tuple<User, string> result = await _userSrv.LogInAsync(request, rememberDevice);
 
-                if (id == null)
-                    response = new ItemResponse<User>(user);
+                if (result.Item2 == null)
+                    response = new ItemResponse<User>(result.Item1);
                 else
-                    response = new ItemResponse<string>(id);
+                    response = new ItemResponse<string>(result.Item2);
 
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -185,7 +185,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                     throw new Exception("Targeted user is not the current user...");
                 else
                 {
-                    _userSrv.Update(user);
+                    _userSrv.Update(user, true);
                     response = new SuccessResponse();
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, response);
@@ -238,8 +238,9 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-                if (!_userSrv.ValidateTokenCode(id, code))
-                    throw new Exception("Password is invalid...");
+                Token token = _userSrv.ValidateToken(new TokenRequest { TokenId = id, Code = code }, out string o);
+                if (!token.IsValidated)
+                    throw new Exception("Code is invalid...");
 
                 return Request.CreateResponse(HttpStatusCode.OK, new ItemResponse<User>(GetCurrentUser()));
 
@@ -408,6 +409,8 @@ namespace Nostreets_Sandbox.Controllers.Api
             try
             {
                 BaseResponse response = null;
+                income.UserId = GetCurrentUser().Id;
+                income.ModifiedUserId = GetCurrentUser().Id;
 
 
                 if (!ModelState.IsValid)
@@ -435,7 +438,8 @@ namespace Nostreets_Sandbox.Controllers.Api
             try
             {
                 BaseResponse response = null;
-
+                expense.UserId = GetCurrentUser().Id;
+                expense.ModifiedUserId = GetCurrentUser().Id;
 
                 if (!ModelState.IsValid)
                 {
@@ -462,6 +466,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             try
             {
                 BaseResponse response = null;
+                income.ModifiedUserId = GetCurrentUser().Id;
 
                 if (!ModelState.IsValid)
                 {
@@ -488,6 +493,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             try
             {
                 BaseResponse response = null;
+                expense.ModifiedUserId = GetCurrentUser().Id;
 
                 if (!ModelState.IsValid)
                 {

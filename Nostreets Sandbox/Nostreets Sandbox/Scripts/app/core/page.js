@@ -1,5 +1,6 @@
 ﻿var page = {
     APPNAME: "sandbox",
+    isLoggedIn: false,
     ngModules: [
         "ui.bootstrap",
         "ngAnimate",
