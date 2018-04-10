@@ -13,11 +13,13 @@ namespace Nostreets_Services.Enums
         Once,
         Yearly,
         BiYearly,
+        Quarterly,
         Monthly,
+        SemiMonthly,
         BiWeekly,
         Weekly,
         Daily,
-        Hourly,
+        Hourly
         
     }
 }

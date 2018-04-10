@@ -170,12 +170,14 @@
                         <div class="col-sm-3">
                             <div><strong>Rate:</strong></div>
                             <select ng-model="mc.rate">
-                                <option value="2">Once</option>
+                               <option ng-repeat="option in mc.availableEnums('rate')" value="{{option.value}}">{{option.label}}</option>
+                                
+                                <!--<option value="2">Once</option>
                                 <option value="3" ng-if="mc.paySchedule != '3' && mc.paySchedule != '4' && mc.paySchedule != '5' && mc.paySchedule != '6' && mc.paySchedule != '7' && mc.paySchedule != '8'">Per Year</option>
-                                <option value="5" ng-if="mc.paySchedule != '5' && mc.paySchedule != '6' && mc.paySchedule != '7' && mc.paySchedule != '8'">Per Month</option>
-                                <option value="7" ng-if="mc.paySchedule != '7' && mc.paySchedule != '8'">Per Week</option>
-                                <option value="8" ng-if="mc.paySchedule != '8'">Per Day</option>
-                                <option value="9">Per Hour</option>
+                                <option value="6" ng-if="mc.paySchedule != '5' && mc.paySchedule != '6' && mc.paySchedule != '7' && mc.paySchedule != '8'">Per Month</option>
+                                <option value="9" ng-if="mc.paySchedule != '7' && mc.paySchedule != '8'">Per Week</option>
+                                <option value="10" ng-if="mc.paySchedule != '8'">Per Day</option>
+                                <option value="11">Per Hour</option>-->
                             </select>
                         </div>
                     </div>
@@ -183,13 +185,19 @@
                         <div ng-class="{'col-sm-6': mc.rate === '2', 'col-sm-3': mc.rate !== '2'}">
                             <div><strong>{{ mc.type == "income" ? "Income" : "Expense" }} Type:</strong></div>
                             <select ng-if="mc.type == 'income'" ng-model="mc.incomeType">
-                                <option value="1">Paycheck</option>
+
+                                <option ng-repeat="option in mc.availableEnums('incomeType')" value="{{option.value}}">{{option.label}}</option>
+
+                                <!--<option value="1">Paycheck</option>
                                 <option value="2">Residual</option>
                                 <option value="3">Product</option>
-                                <option value="4">Personal</option>
+                                <option value="4">Personal</option>-->
                             </select>
                             <select ng-if="mc.type != 'income'" ng-model="mc.expenseType">
-                                <option value="1">Shelter</option>
+
+                                <option ng-repeat="option in mc.availableEnums('expenseType')" value="{{option.value}}">{{option.label}}</option>
+
+                                <!--<option value="1">Shelter</option>
                                 <option value="2">Food</option>
                                 <option value="3">Travel</option>
                                 <option value="4">Educational</option>
@@ -197,20 +205,24 @@
                                 <option value="6">Entertaiment</option>
                                 <option value="7">Recreational</option>
                                 <option value="8">Investment</option>
-                                <option value="9">Other</option>
+                                <option value="9">Other</option>-->
                             </select>
                         </div>
                         <div ng-class="{'col-sm-6': mc.rate === '2', 'col-sm-3': mc.rate !== '2'}">
                             <div><strong>{{ (mc.type === 'income') ? 'Paycheck' : 'Payment' }} Frequency:</strong></div>
+                            
                             <select ng-model="mc.paySchedule">
-                                <option value="1">Occasionally</option>
+                            
+                                <option ng-repeat="option in mc.availableEnums('frequency')" value="{{option.value}}">{{option.label}}</option>
+
+                                <!--<option value="1">Occasionally</option>
                                 <option value="2">Once</option>
                                 <option value="3">Yearly</option>
                                 <option value="4">Bi-Yearly</option>
                                 <option value="5">Monthly</option>
                                 <option value="6">Bi-Weekly</option>
                                 <option value="7">Weekly</option>
-                                <option value="8">Daily</option>
+                                <option value="11">Daily</option>-->
                                 <!--<option value="9">Hourly</option>-->
                             </select>
                         </div>
@@ -274,10 +286,7 @@
 
                         </div>
 
-                        <!--<select ng-model="mc.isHiddenOnChart">
-                            <option value="0">Show</option>
-                            <option value="1">Hide</option>
-                        </select>-->
+                        
                     </div>
                 </div>
             </div>
