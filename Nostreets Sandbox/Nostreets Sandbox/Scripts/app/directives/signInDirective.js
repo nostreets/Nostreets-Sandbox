@@ -26,6 +26,7 @@
                 function _render() {
 
                     page.isLoggedIn = $serverModel.user != null;
+                    $scope.isLoggedIn = page.isLoggedIn;
 
                     if ($serverModel.token !== null)
                         swal({

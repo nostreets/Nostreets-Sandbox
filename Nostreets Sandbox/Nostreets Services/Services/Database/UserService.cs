@@ -189,10 +189,10 @@ namespace Nostreets_Services.Services.Database
 
             else if (validUser.Item1 != null)
             {
-                Update(validUser.Item1);
-
                 if (rememberDevice && !validUser.Item1.Settings.IPAddresses.Contains(RequestIp))
                     validUser.Item1.Settings.IPAddresses.Add(RequestIp);
+
+                Update(validUser.Item1);
             }
 
             return new Tuple<User, string>(validUser.Item1, tokenId);

@@ -86,8 +86,8 @@ namespace Nostreets_Sandbox
 
             bundles.Add(new ScriptBundle("~/customAngular").Include(
                     "~/Scripts/app/configs/routeConfig.js",
-                    "~/Scripts/app/services/sandboxService.js",
-                    "~/Scripts/app/directives/signInDirective.js"
+                    "~/Scripts/app/services/sandboxService.js"
+               //     "~/Scripts/app/directives/signInDirective.js"
                        ));
 
 

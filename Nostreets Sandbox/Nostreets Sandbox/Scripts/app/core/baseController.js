@@ -69,66 +69,6 @@
 
         }
 
-        base.legacyLoginPopup = function () {
-
-            var alert = (onSuccess, onError) => {
-                return swal({
-                    title: "Enter your session's username",
-                    type: "info",
-                    input: "text",
-                    showCancelButton: true,
-                    closeOnConfirm: false,
-                    allowOutsideClick: true,
-                    inputPlaceholder: "Type in your username!",
-                    preConfirm: function (inputValue) {
-                        return new Promise(function (resolve, reject) {
-                            if (inputValue === false || inputValue === "") {
-                                reject("You need to write something!");
-                            }
-                            else {
-                                resolve();
-                            }
-                        });
-                    }
-                }).then(onSuccess, onError);
-            };
-
-            var brodcastUpdate = (input, onSuccess, onError) => {
-                return login(input).then(
-                    (data) => {
-                        if (base.cookies.get("loggedIn")) {
-                            page.user.loggedIn = true;
-                            base.event.broadcast("refreshedUsername");
-                        }
-                    }).then(onSuccess, onError);
-            };
-
-            var login = (username, password) => {
-                if (!username) { username = "GUEST" }
-                if (!password) { password = "NOSTREETSSANDBOX" }
-
-                return $http({
-                    url: "/api/user" + "?username=" + username + "&password=" + password,
-                    method: "GET",
-                    headers: { 'Content-Type': 'application/json' }
-                });
-            };
-
-            alert(
-
-                input => brodcastUpdate(input, null,
-                    () => base.tryAgain(2, 3000, () => brodcastUpdate(input, null, null))
-                ),
-
-
-                () => base.tryAgain(4, 5000,
-                    () => alert(input => brodcastUpdate(input, null,
-                        () => base.tryAgain(2, 3000, () => brodcastUpdate(input, null, null))
-                    ))
-                )
-            );
-        }
-
         base.errorCheck = function (err, tryAgainObj) {
 
             if (!tryAgainObj)
@@ -158,9 +98,6 @@
             if (err.data.errors && err.data.errors.length) {
                 for (var error of err.data.errors) {
                     switch (error) {
-                        //case "User is not logged in...":
-                        //    base.loginPopup();
-                        //    break;
 
                         default:
                             if (!tryAgainObj || !tryAgainObj.maxLoops || !tryAgainObj.miliseconds || !tryAgainObj.promiseMethod)
