@@ -201,8 +201,8 @@ h6 {
 .main-logo {
     position: absolute;
     top: 8%;
-    max-width: 150px;
     left: 10%;
+    max-width: 150px;
 }
 
 #homeCenter .main-logo {
@@ -400,7 +400,7 @@ h6 {
 
 .project {
     background: #cccccc;
-    padding-top: 10%; 
+    padding-top: 10%;
     padding-bottom: 10%;
 }
 
