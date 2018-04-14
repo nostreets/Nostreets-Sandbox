@@ -43,7 +43,7 @@
         </div>
     </div>
 
-     <div class="row">
+     <div ng-if="pg.isLoggedIn" class="row">
         <div id="assetChartTabContainer" class="tab-content">
             <div id="incomeTab" class="tab-pane active fade in" role="tabpanel">
                 <div class="col-xs-12">
@@ -88,7 +88,7 @@
         </div>
     </div>
 
-    <div class="row">
+    <div ng-if="pg.isLoggedIn" class="row">
         <div align="center">
             <button class="btn btn-xs btn-round" ng-if="pg.currentTab !== 'combined'" ng-click="pg.openInsertModal()">Add {{ pg.currentTab == "income" ? "Income" : "Expense" }}</button>
         </div>
@@ -190,7 +190,7 @@
                 </div>
             </div>
             <div ng-if="!pg.isLoggedIn" class="card" >
-                <div class="card-content">
+                <div class="card-content text-center">
                     User needs to be logged in to use this service...
                 </div>
             </div>
