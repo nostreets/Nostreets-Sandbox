@@ -52,7 +52,12 @@
                             <h6>{{ pg.charts[0].data.name }}</h6>
                         </div>
                         <div class="card-content text-center">
-                            <div id="incomeChart" class="card-content text-center ct-golden-section">
+                            <div ng-show="!pg.isLoading"
+                                 id="incomeChart"
+                                 class="card-content text-center ct-golden-section">
+                            </div>
+                            <div ng-show="pg.isLoading">
+                                <div class="mdl-spinner mdl-js-spinner mdl-spinner--single-color is-active"></div>
                             </div>
                         </div>
                     </div>
@@ -65,7 +70,12 @@
                             <h6>{{ pg.charts[1].data.name }}</h6>
                         </div>
                         <div class="card-content text-center">
-                            <div id="expenseChart" class="card-content text-center ct-golden-section">
+                            <div ng-show="!pg.isLoading"
+                                 id="expenseChart"
+                                 class="card-content text-center ct-golden-section">
+                            </div>
+                            <div ng-show="pg.isLoading">
+                                <div class="mdl-spinner mdl-js-spinner mdl-spinner--single-color is-active"></div>
                             </div>
                         </div>
                     </div>
@@ -78,7 +88,12 @@
                             <h6>{{ pg.charts[2].data.name }}</h6>
                         </div>
                         <div class="card-content text-center">
-                            <div id="combinedChart" class="card-content text-center ct-golden-section">
+                            <div ng-show="!pg.isLoading"
+                                 id="combinedChart"
+                                 class="card-content text-center ct-golden-section">
+                            </div>
+                            <div ng-show="pg.isLoading">
+                                <div class="mdl-spinner mdl-js-spinner mdl-spinner--single-color is-active"></div>
                             </div>
                         </div>
 
@@ -88,16 +103,16 @@
         </div>
     </div>
 
-    <div ng-if="pg.isLoggedIn" class="row">
+    <!--<div class="row">
         <div align="center">
             <button class="btn btn-xs btn-round" ng-if="pg.currentTab !== 'combined'" ng-click="pg.openInsertModal()">Add {{ pg.currentTab == "income" ? "Income" : "Expense" }}</button>
         </div>
-    </div>
+    </div>-->
 
     <div class="row">
         <div class="col-xs-12">
             <div ng-if="pg.isLoggedIn"
-                 class="card" 
+                 class="card"
                  style="padding-bottom: 2%;">
                 <div class="card-header">
                     <button data-toggle="tab" role="tab" class="btn btn-simple pull-right" ng-click="pg.openInsertModal()">
@@ -113,8 +128,13 @@
                     </ul>
                 </div>
                 <div class="card-content text-center">
-                    <!--<img src="/assets/css/default-skin/preloader.gif"/>-->
-                    <div class="tab-content">
+
+                    <div ng-show="pg.isLoading">
+                        <div class="mdl-spinner mdl-js-spinner mdl-spinner--single-color is-active"></div>
+                    </div>
+
+                    <div ng-show="!pg.isLoading" class="tab-content">
+
                         <div id="assetsTab" class="active tab-pane fade in" role="tabpanel">
                             <div ng-repeat="item in pg.legend">
                                 <div class="col-xs-12 text-center">
@@ -186,6 +206,7 @@
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -201,146 +222,147 @@
 
 <script type="text/ng-template" id="modalExpenseBuilder.html">
     <div class="card modal-body">
+
         <form name="form" novalidate>
             <div class="card-content">
-                <div class="row" align="center">
-                    <div class="col-xs-1">
-                        <color-picker ng-model="mc.style.color" api="mc.cpApi" options="mc.cpOptions"></color-picker>
+                <div ng-show="!pg.isLoading">
+                    <div class="row" align="center">
+                        <div class="col-xs-1">
+                            <color-picker ng-model="mc.style.color" api="mc.cpApi" options="mc.cpOptions"></color-picker>
+                        </div>
+                    </div>
+                    <div class="row" align="center">
+                        <div class="row" style="margin-bottom: 2%;">
+                            <div class="col-sm-6">
+                                <div><strong>{{ mc.type == "income" ? "Income" : "Expense" }} Name:</strong></div>
+                                <input type="text" class="input-sm" required ng-model="mc.name" />
+                            </div>
+                            <div class="col-sm-3">
+                                <div><strong>{{ mc.type == "income" ? "Pay" : "Cost" }}:</strong></div>
+                                <input type="number" class="input-sm" required ng-model="mc.cost" />
+                            </div>
+                            <div class="col-sm-3">
+                                <div><strong>Rate:</strong></div>
+                                <select ng-model="mc.rate" ng-options="item.value as item.label for item in mc.rateScheduleTypes">
+
+                                    <!--<option value="2">Once</option>
+                                    <option value="3" ng-if="mc.paySchedule != '3' && mc.paySchedule != '4' && mc.paySchedule != '5' && mc.paySchedule != '6' && mc.paySchedule != '7' && mc.paySchedule != '8'">Per Year</option>
+                                    <option value="6" ng-if="mc.paySchedule != '5' && mc.paySchedule != '6' && mc.paySchedule != '7' && mc.paySchedule != '8'">Per Month</option>
+                                    <option value="9" ng-if="mc.paySchedule != '7' && mc.paySchedule != '8'">Per Week</option>
+                                    <option value="10" ng-if="mc.paySchedule != '8'">Per Day</option>
+                                    <option value="11">Per Hour</option>-->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-bottom: 2%;">
+                            <div ng-class="{'col-sm-6': mc.rate === '2', 'col-sm-3': mc.rate !== '2'}">
+                                <div><strong>{{ mc.type == "income" ? "Income" : "Expense" }} Type:</strong></div>
+                               
+                                <select ng-if="mc.type == 'income'" 
+                                        ng-model="mc.incomeType"  
+                                        ng-options="item.value as item.label for item in mc.incomeTypes">
+
+                                    <!--<option value="1">Paycheck</option>
+                                    <option value="2">Residual</option>
+                                    <option value="3">Product</option>
+                                    <option value="4">Personal</option>-->
+                                </select>
+                                <select ng-if="mc.type != 'income'" 
+                                        ng-model="mc.expenseType"
+                                        ng-options="item.value as item.label for item in mc.expenseTypes">
+                                   
+                                </select>
+                            </div>
+                            <div ng-class="{'col-sm-6': mc.rate === '2', 'col-sm-3': mc.rate !== '2'}">
+                                <div><strong>{{ (mc.type === 'income') ? 'Paycheck' : 'Payment' }} Frequency:</strong></div>
+
+                                <select ng-model="mc.paySchedule"
+                                        ng-options="item.value as item.label for item in mc.payScheduleTypes">
+
+
+
+                                    <!--<option value="1">Occasionally</option>
+                                    <option value="2">Once</option>
+                                    <option value="3">Yearly</option>
+                                    <option value="4">Bi-Yearly</option>
+                                    <option value="5">Monthly</option>
+                                    <option value="6">Bi-Weekly</option>
+                                    <option value="7">Weekly</option>
+                                    <option value="11">Daily</option>-->
+                                    <!--<option value="9">Hourly</option>-->
+                                </select>
+                            </div>
+                            <div ng-if="mc.rate != '2'" class="col-sm-6">
+                                <div>
+                                    <strong>
+                                        Number of  Paid
+                                        {{ (mc.rate === 9) ? 'Hours' : (mc.rate === 8) ? 'Days' : (mc.rate === 7) ? 'Weeks' : (mc.rate === 5) ? 'Months' : 'Years' }}
+                                        {{ (mc.paySchedule === 1) ? 'Per Occasion' : (mc.paySchedule === 3) ? 'Per Year' : (mc.rate === 4) ? 'Every 6 Months' : (mc.paySchedule === 5) ? 'Per Month' : (mc.paySchedule === 6) ? 'Every Other Week' : (mc.paySchedule === 7) ? 'Per Week' : (mc.paySchedule === 8) ? 'Per Day' : '' }}:
+                                    </strong>
+                                </div>
+                                <input class="input-sm" ng-model="mc.rateMultilplier" type="number" />
+                            </div>
+                        </div>
+                        <div class="row" style="margin-bottom: 4%;">
+                            <div class="input-group" align="center">
+                                <span><strong>Pay Date:</strong></span>
+                                <input type="datetime" uib-datepicker-popup ng-model="mc.timePaid" class="form-control well well-sm" is-open="mc.isTimePaidOpen" close-text="Close" />
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-xs btn-simple" ng-click="mc.openDatePicker('timePaid')"><i class="glyphicon glyphicon-calendar" style="color:black"></i></button>
+                                </span>
+                            </div>
+                            <!--<div class="col-sm-4">
+                                <div class="input-group">
+                                    <span><strong>Beginning Pay Date:</strong></span>
+                                    <input type="text" uib-datepicker-popup ng-model="mc.beginDate" class="form-control well well-sm" is-open="mc.isBeginDateOpen" close-text="Close" />
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-xs btn-simple" ng-click="mc.openDatePicker('beginDate')"><i class="glyphicon glyphicon-calendar" style="color:black"></i></button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="input-group">
+                                    <span><strong>Endding Pay Date:</strong></span>
+                                    <input type="text" uib-datepicker-popup ng-model="mc.endDate" class="form-control well well-sm" is-open="mc.isEndDateOpen" close-text="Close" />
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-xs btn-simple" ng-click="mc.openDatePicker('endDate')"><i class="glyphicon glyphicon-calendar" style="color:black"></i></button>
+                                    </span>
+                                </div>
+                            </div>-->
+                        </div>
+                        <div class="row">
+                            <div class="btn-group btn-group-xs">
+                                <button class="btn btn-round"
+                                        ng-disabled="!mc.name || !mc.type || !mc.paySchedule || !mc.timePaid"
+                                        ng-click="mc.submit()"
+                                        style="background-color: #58AA42">
+                                    {{ ((mc.id !== 0) ? 'Update' : 'Add') + ' ' + ((mc.type == "income") ? "Income" : "Expense") }}!
+                                </button>
+                                <button class="btn btn-round" style="background-color: #d1b100" ng-click="mc.reset()">
+                                    Reset!
+                                </button>
+                                <button class="btn btn-round"
+                                        ng-class="{'btn-toggle0': !item.isHiddenOnChart, 'btn-toggle1': item.isHiddenOnChart }"
+                                        ng-click="mc.toggleVisiblity(item)">
+                                    {{ (mc.isHiddenOnChart === false) ? 'Hide' : 'Show' }}
+                                </button>
+                                <button style="background-color: #CB2A2A" class="btn btn-round" ng-click="mc.cancel()">
+                                    Cancel
+                                </button>
+
+                            </div>
+
+
+                        </div>
                     </div>
                 </div>
-                <div class="row" align="center">
-                    <div class="row" style="margin-bottom: 2%;">
-                        <div class="col-sm-6">
-                            <div><strong>{{ mc.type == "income" ? "Income" : "Expense" }} Name:</strong></div>
-                            <input type="text" class="input-sm" required ng-model="mc.name" />
-                        </div>
-                        <div class="col-sm-3">
-                            <div><strong>{{ mc.type == "income" ? "Pay" : "Cost" }}:</strong></div>
-                            <input type="number" class="input-sm" required ng-model="mc.cost" />
-                        </div>
-                        <div class="col-sm-3">
-                            <div><strong>Rate:</strong></div>
-                            <select ng-model="mc.rate">
-                               <option ng-repeat="option in mc.availableEnums('rate')" value="{{option.value}}">{{option.label}}</option>
-                                
-                                <!--<option value="2">Once</option>
-                                <option value="3" ng-if="mc.paySchedule != '3' && mc.paySchedule != '4' && mc.paySchedule != '5' && mc.paySchedule != '6' && mc.paySchedule != '7' && mc.paySchedule != '8'">Per Year</option>
-                                <option value="6" ng-if="mc.paySchedule != '5' && mc.paySchedule != '6' && mc.paySchedule != '7' && mc.paySchedule != '8'">Per Month</option>
-                                <option value="9" ng-if="mc.paySchedule != '7' && mc.paySchedule != '8'">Per Week</option>
-                                <option value="10" ng-if="mc.paySchedule != '8'">Per Day</option>
-                                <option value="11">Per Hour</option>-->
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row" style="margin-bottom: 2%;">
-                        <div ng-class="{'col-sm-6': mc.rate === '2', 'col-sm-3': mc.rate !== '2'}">
-                            <div><strong>{{ mc.type == "income" ? "Income" : "Expense" }} Type:</strong></div>
-                            <select ng-if="mc.type == 'income'" ng-model="mc.incomeType">
 
-                                <option ng-repeat="option in mc.availableEnums('incomeType')" value="{{option.value}}">{{option.label}}</option>
-
-                                <!--<option value="1">Paycheck</option>
-                                <option value="2">Residual</option>
-                                <option value="3">Product</option>
-                                <option value="4">Personal</option>-->
-                            </select>
-                            <select ng-if="mc.type != 'income'" ng-model="mc.expenseType">
-
-                                <option ng-repeat="option in mc.availableEnums('expenseType')" value="{{option.value}}">{{option.label}}</option>
-
-                                <!--<option value="1">Shelter</option>
-                                <option value="2">Food</option>
-                                <option value="3">Travel</option>
-                                <option value="4">Educational</option>
-                                <option value="5">Utilities</option>
-                                <option value="6">Entertaiment</option>
-                                <option value="7">Recreational</option>
-                                <option value="8">Investment</option>
-                                <option value="9">Other</option>-->
-                            </select>
-                        </div>
-                        <div ng-class="{'col-sm-6': mc.rate === '2', 'col-sm-3': mc.rate !== '2'}">
-                            <div><strong>{{ (mc.type === 'income') ? 'Paycheck' : 'Payment' }} Frequency:</strong></div>
-                            
-                            <select ng-model="mc.paySchedule">
-                            
-                                <option ng-repeat="option in mc.availableEnums('frequency')" value="{{option.value}}">{{option.label}}</option>
-
-                                <!--<option value="1">Occasionally</option>
-                                <option value="2">Once</option>
-                                <option value="3">Yearly</option>
-                                <option value="4">Bi-Yearly</option>
-                                <option value="5">Monthly</option>
-                                <option value="6">Bi-Weekly</option>
-                                <option value="7">Weekly</option>
-                                <option value="11">Daily</option>-->
-                                <!--<option value="9">Hourly</option>-->
-                            </select>
-                        </div>
-                        <div ng-if="mc.rate != '2'" class="col-sm-6">
-                            <div>
-                                <strong>
-                                    Number of  Paid
-                                    {{ (mc.rate === '9') ? 'Hours' : (mc.rate === '8') ? 'Days' : (mc.rate === '7') ? 'Weeks' : (mc.rate === '5') ? 'Months' : 'Years' }}
-                                    {{ (mc.paySchedule === '1') ? 'Per Occasion' : (mc.paySchedule === '3') ? 'Per Year' : (mc.rate === '4') ? 'Every 6 Months' : (mc.paySchedule === '5') ? 'Per Month' : (mc.paySchedule === '6') ? 'Every Other Week' : (mc.paySchedule === '7') ? 'Per Week' : (mc.paySchedule === '8') ? 'Per Day' : '' }}:
-                                </strong>
-                            </div>
-                            <input class="input-sm" ng-model="mc.rateMultilplier" type="number" />
-                        </div>
-                    </div>
-                    <div class="row" style="margin-bottom: 4%;">
-                        <div class="input-group" align="center">
-                            <span><strong>Pay Date:</strong></span>
-                            <input type="datetime" uib-datepicker-popup ng-model="mc.timePaid" class="form-control well well-sm" is-open="mc.isTimePaidOpen" close-text="Close" />
-                            <span class="input-group-btn">
-                                <button type="button" class="btn btn-xs btn-simple" ng-click="mc.openDatePicker('timePaid')"><i class="glyphicon glyphicon-calendar" style="color:black"></i></button>
-                            </span>
-                        </div>
-                        <!--<div class="col-sm-4">
-                            <div class="input-group">
-                                <span><strong>Beginning Pay Date:</strong></span>
-                                <input type="text" uib-datepicker-popup ng-model="mc.beginDate" class="form-control well well-sm" is-open="mc.isBeginDateOpen" close-text="Close" />
-                                <span class="input-group-btn">
-                                    <button type="button" class="btn btn-xs btn-simple" ng-click="mc.openDatePicker('beginDate')"><i class="glyphicon glyphicon-calendar" style="color:black"></i></button>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="input-group">
-                                <span><strong>Endding Pay Date:</strong></span>
-                                <input type="text" uib-datepicker-popup ng-model="mc.endDate" class="form-control well well-sm" is-open="mc.isEndDateOpen" close-text="Close" />
-                                <span class="input-group-btn">
-                                    <button type="button" class="btn btn-xs btn-simple" ng-click="mc.openDatePicker('endDate')"><i class="glyphicon glyphicon-calendar" style="color:black"></i></button>
-                                </span>
-                            </div>
-                        </div>-->
-                    </div>
-                    <div class="row">
-                        <div class="btn-group btn-group-xs">
-                            <button class="btn btn-round"
-                                    ng-disabled="!mc.name || !mc.type || !mc.paySchedule || !mc.timePaid"
-                                    ng-click="mc.submit()"
-                                    style="background-color: #58AA42">
-                                {{ ((mc.id !== 0) ? 'Update' : 'Add') + ' ' + ((mc.type == "income") ? "Income" : "Expense") }}!
-                            </button>
-                            <button class="btn btn-round" style="background-color: #d1b100" ng-click="mc.reset()">
-                                Reset!
-                            </button>
-                            <button class="btn btn-round"
-                                    ng-class="{'btn-toggle0': !item.isHiddenOnChart, 'btn-toggle1': item.isHiddenOnChart }"
-                                    ng-click="mc.toggleVisiblity(item)">
-                                {{ (mc.isHiddenOnChart === false) ? 'Hide' : 'Show' }}
-                            </button>
-                            <button style="background-color: #CB2A2A" class="btn btn-round" ng-click="mc.cancel()">
-                                Cancel
-                            </button>
-
-                        </div>
-
-                        
-                    </div>
+                <div ng-show="pg.isLoading">
+                    <div class="mdl-spinner mdl-js-spinner mdl-spinner--single-color is-active"></div>
                 </div>
             </div>
         </form>
+
+
     </div>
 </script>

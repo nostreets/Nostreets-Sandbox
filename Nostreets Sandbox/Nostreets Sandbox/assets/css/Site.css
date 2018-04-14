@@ -91,7 +91,8 @@ a:hover {
     overflow: visible;
     background-position: center;
     background-size: 100% 100% !important;
-    height: 35em !important;
+    min-height: 25em !important;
+    max-width: 100%;
 }
 
 form > div {

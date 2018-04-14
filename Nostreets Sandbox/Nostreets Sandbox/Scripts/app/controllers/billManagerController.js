@@ -33,6 +33,7 @@
         function _setUp() {
             vm.scope = $scope;
             vm.isLoggedIn = page.isLoggedIn;
+            vm.isLoading = false;
             vm.charts = [];
             vm.legend = [];
             vm.currentTab = 'income';
@@ -289,20 +290,32 @@
         }
 
         function _getEnums() {
+
+            vm.isLoading = true;
+
             return $sandboxService.getEnums('income,expense,schedule').then(
-                (obj) => vm.enums = obj.data.items,
+                (obj) => {
+                    vm.enums = obj.data.items
+                    vm.isLoading = false;
+                },
                 err => $baseController.errorCheck(err,
                     {
                         maxLoops: 3,
                         miliseconds: 2000,
                         method: () => {
-                            $sandboxService.getEnums('income,expense,schedule').then((obj) => vm.enums = obj.data.items);
+                            $sandboxService.getEnums('income,expense,schedule').then(
+                                (obj) => {
+                                    vm.enums = obj.data.items
+                                    vm.isLoading = false;
+                                });
                         }
                     })
             );
         }
 
         function _getIncomeChart() {
+
+            vm.isLoading = true;
 
             return $sandboxService.getIncomesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
                 (data) => {
@@ -312,7 +325,7 @@
                     };
 
                     vm.charts.add(incomeChart);
-                    vm.incomeCap = data.data.item.series.length;
+                    vm.isLoading = false;
                 },
 
                 err => $baseController.errorCheck(err,
@@ -327,6 +340,7 @@
                                         value: data.data.item
                                     };
                                     vm.charts.add(chart);
+                                    vm.isLoading = false;
                                 });
                         }
                     })
@@ -334,6 +348,9 @@
         }
 
         function _getExpensesChart() {
+
+            vm.isLoading = true;
+
             return $sandboxService.getExpensesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
                 (data) => {
                     var expensesChart = {
@@ -341,6 +358,7 @@
                         value: data.data.item
                     };
                     vm.charts.add(expensesChart);
+                    vm.isLoading = false;
                 },
 
                 err => $baseController.errorCheck(err,
@@ -355,6 +373,7 @@
                                         value: data.data.item
                                     };
                                     vm.charts.add(chart);
+                                    vm.isLoading = false;
                                 });
                         }
                     })
@@ -362,6 +381,9 @@
         }
 
         function _getCombinedChart() {
+
+            vm.isLoading = true;
+
             return $sandboxService.getCombinedChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
                 (data) => {
                     var combinedChart = {
@@ -369,6 +391,7 @@
                         value: data.data.item
                     };
                     vm.charts.add(combinedChart);
+                    vm.isLoading = false;
                 },
 
                 err => $baseController.errorCheck(err,
@@ -383,6 +406,7 @@
                                         value: data.data.item
                                     };
                                     vm.charts.add(chart);
+                                    vm.isLoading = false;
                                 });
                         }
                     })
@@ -391,6 +415,8 @@
 
         function _getIncomes() {
 
+            vm.isLoading = true;
+
             return $sandboxService.getAllIncomes().then(
                 a => {
                     if (a.data.items)
@@ -398,7 +424,7 @@
                             a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
                     vm.legend = a.data.items
-                    vm.incomeCap = a.data.items.length;
+                    vm.isLoading = false;
                 },
                 err => $baseController.errorCheck(err,
                     {
@@ -412,7 +438,7 @@
                                             a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
                                     vm.legend = a.data.items
-                                    vm.incomeCap = a.data.items.length;
+                                    vm.isLoading = false;
                                 });
                         }
                     })
@@ -421,6 +447,8 @@
 
         function _getExpenses() {
 
+            vm.isLoading = true;
+
             return $sandboxService.getAllExpenses().then(
                 a => {
                     if (a.data.items)
@@ -428,6 +456,7 @@
                             a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
                     vm.legend = a.data.items
+                    vm.isLoading = false;
                 },
                 err => $baseController.errorCheck(err,
                     {
@@ -440,6 +469,7 @@
                                         a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
                                 vm.legend = a.data.items
+                                vm.isLoading = false;
                             });
                         }
                     })
@@ -457,6 +487,7 @@
                                     a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
                             vm.legend = a.data.items
+                            vm.isLoading = false;
                         },
                         err => $baseController.errorCheck(err,
                             {
@@ -470,6 +501,7 @@
                                                     a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
                                             vm.legend = a.data.items
+                                            vm.isLoading = false;
                                         });
                                 }
                             })
@@ -484,6 +516,7 @@
                                 a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
                             vm.legend = vm.legend.concat(a.data.items)
+                            vm.isLoading = false;
                         },
                         err => $baseController.errorCheck(err,
                             {
@@ -495,25 +528,30 @@
                                             a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
                                         vm.legend = vm.legend.concat(a.data.items)
+                                        vm.isLoading = false;
                                     });
                                 }
                             })
                     );
                 }
 
+            vm.isLoading = true;
 
             return incomePromise().then(() => expensePromise(),
                 err => $baseController.errorCheck(err,
                     {
                         maxLoops: 3,
                         miliseconds: 2000,
-                        method: expensePromise
+                        method: () => { incomePromise().then(() => expensePromise()) }
                     }));
 
         }
 
         function _getIncome(id, name, scheduleType, incomeType) {
+
             var isSuccessful = false;
+            vm.isLoading = true;
+
             $sandboxService.getIncome(id, name, scheduleType, incomeType).then(
                 (data) => console.log(data),
                 err => $baseController.errorCheck(err,
@@ -521,13 +559,17 @@
                         maxLoops: 3,
                         miliseconds: 2000,
                         method: () => {
-                            $sandboxService.getIncome(id, name, scheduleType, incomeType).then((data) => { console.log(data); isSuccessful = true; });
+                            $sandboxService.getIncome(id, name, scheduleType, incomeType).then((data) => { console.log(data); isSuccessful = true; vm.isLoading = false; });
                         }
                     })
             );
         }
 
         function _getExpense(id, name, scheduleType, billType) {
+
+            var isSuccessful = false;
+            vm.isLoading = true;
+
             $sandboxService.getExpense(id, name, scheduleType, billType).then(
                 (data) => console.log(data),
                 err => $baseController.errorCheck(err,
@@ -535,14 +577,16 @@
                         maxLoops: 3,
                         miliseconds: 2000,
                         method: () => {
-                            $sandboxService.getExpense(id, name, scheduleType, billType).then((data) => { console.log(data); isSuccessful = true; });
+                            $sandboxService.getExpense(id, name, scheduleType, billType).then((data) => { console.log(data); isSuccessful = true; vm.isLoading = false; });
                         }
                     })
             );
         }
 
         function _deleteAsset(obj) {
-            var hasError = false;
+
+            vm.isLoading = true;
+
             if (obj.incomeType) {
                 $sandboxService.deleteIncome(obj.id).then(
                     _getUserCharts,
@@ -1020,7 +1064,7 @@
         vm.cancel = _cancel;
         vm.openDatePicker = _openDatePicker;
         vm.toggleVisiblity = _toggleVisiblity;
-        vm.availableEnums = _availableEnums;
+        vm.updateEnums = _updateEnums;
 
         _render();
 
@@ -1032,17 +1076,6 @@
 
             if (!data) { data = {}; }
 
-            vm.type = model.type;
-            vm.id = data.id || 0;
-            vm.name = data.name || null;
-            vm.cost = data.cost || 0;
-            vm.paySchedule = (data.paySchedule) ? data.paySchedule.toString() : "1";
-            vm.timePaid = data.timePaid || null;
-            vm.beginDate = data.beginDate || null;
-            vm.endDate = data.endDate || null;
-            vm.isHiddenOnChart = data.isHiddenOnChart || false;
-            vm.costMultilplier = data.costMultilplier || 1;
-            vm.style = data.style || { color: page.utilities.getRandomColor() };
             vm.cpOptions = {
                 allowEmpty: false,
                 format: 'rgb',
@@ -1055,12 +1088,32 @@
                 swatchOnly: true,
                 round: true,
             };
+
+            vm.isLoading = false;
+            vm.type = model.type;
+            vm.id = data.id || 0;
+            vm.name = data.name;
+            vm.cost = data.cost || 0;
+            vm.paySchedule = (data.paySchedule) ? data.paySchedule.toString() : "1";
+            vm.timePaid = data.timePaid;
+            vm.beginDate = data.beginDate;
+            vm.endDate = data.endDate;
+            vm.isHiddenOnChart = data.isHiddenOnChart || false;
+            vm.costMultilplier = data.costMultilplier || 1;
+            vm.style = data.style || { color: page.utilities.getRandomColor() };
+
             vm.isTimePaidOpen = false;
             vm.isBeginDateOpen = false;
             vm.isEndDateOpen = false;
             vm.rate = data.rate + '' || '2';
             vm.rateMultilplier = data.rateMultilplier || 1;
+
             vm.enums = enums;
+            vm.rateScheduleTypes = _availableEnums('rate');
+            vm.incomeTypes = _availableEnums('incomeType');
+            vm.expenseTypes = _availableEnums('expenseType');
+            vm.payScheduleTypes = _availableEnums('frequency');
+
 
             switch (model.type) {
                 case "income":
@@ -1092,19 +1145,19 @@
 
         function _submit() {
 
-            var hasError = false,
-                obj = {
-                    name: vm.name,
-                    cost: vm.cost,
-                    paySchedule: vm.paySchedule,
-                    timePaid: vm.timePaid,
-                    beginDate: (vm.beginDate) ? new Date(vm.beginDate) : null,
-                    endDate: (vm.endDate) ? new Date(vm.endDate) : null,
-                    isHiddenOnChart: (vm.isHiddenOnChart) ? true : false,
-                    style: (vm.style) ? JSON.stringify(vm.style) : JSON.stringify({ color: page.utilities.getRandomColor() }),
-                    rate: (vm.rate) ? vm.rate : 2,
-                    rateMultilplier: (vm.rateMultilplier) ? vm.rateMultilplier : 1
-                };
+            vm.isLoading = true;
+            var obj = {
+                name: vm.name,
+                cost: vm.cost,
+                paySchedule: vm.paySchedule,
+                timePaid: vm.timePaid,
+                beginDate: (vm.beginDate) ? new Date(vm.beginDate) : null,
+                endDate: (vm.endDate) ? new Date(vm.endDate) : null,
+                isHiddenOnChart: (vm.isHiddenOnChart) ? true : false,
+                style: (vm.style) ? JSON.stringify(vm.style) : JSON.stringify({ color: page.utilities.getRandomColor() }),
+                rate: (vm.rate) ? vm.rate : 2,
+                rateMultilplier: (vm.rateMultilplier) ? vm.rateMultilplier : 1
+            };
 
 
             switch (vm.type) {
@@ -1113,28 +1166,38 @@
                     if (vm.id) {
                         obj.id = vm.id;
                         $sandboxService.updateIncome(obj).then(
-
-                            () => vm.$uibModalInstance.close(),
-
+                            () => {
+                                vm.isLoading = false;
+                                vm.$uibModalInstance.close();
+                            },
                             err => $baseController.errorCheck(err,
                                 {
                                     maxLoops: 3,
                                     miliseconds: 2000,
                                     method: () => {
-                                        $sandboxService.updateIncome(obj).then(() => vm.$uibModalInstance.close());
+                                        $sandboxService.updateIncome(obj).then(() => {
+                                            vm.isLoading = false;
+                                            vm.$uibModalInstance.close();
+                                        });
                                     }
                                 })
                         );
                     }
                     else {
                         $sandboxService.insertIncome(obj).then(
-                            () => vm.$uibModalInstance.close(),
+                            () => {
+                                vm.isLoading = false;
+                                vm.$uibModalInstance.close();
+                            },
                             err => $baseController.errorCheck(err,
                                 {
                                     maxLoops: 3,
                                     miliseconds: 2000,
                                     method: () => {
-                                        $sandboxService.insertIncome(obj).then(() => vm.$uibModalInstance.close());
+                                        $sandboxService.insertIncome(obj).then(() => {
+                                            vm.isLoading = false;
+                                            vm.$uibModalInstance.close();
+                                        });
                                     }
                                 })
                         );
@@ -1147,26 +1210,36 @@
                     if (vm.id) {
                         obj.id = vm.id
                         $sandboxService.updateExpense(obj).then(
-                            () => vm.$uibModalInstance.close(),
+                            () => {
+                                vm.isLoading = false;
+                                vm.$uibModalInstance.close();
+                            },
                             err => $baseController.errorCheck(err,
                                 {
                                     maxLoops: 3,
                                     miliseconds: 2000,
                                     method: () => {
-                                        $sandboxService.updateExpense(obj).then(() => vm.$uibModalInstance.close());
+                                        vm.isLoading = false;
+                                        $sandboxService.updateExpense(obj).then(() => { vm.$uibModalInstance.close(); });
                                     }
                                 })
                         );
                     }
                     else {
                         $sandboxService.insertExpense(obj).then(
-                            () => vm.$uibModalInstance.close(),
+                            () => {
+                                vm.isLoading = false;
+                                vm.$uibModalInstance.close();
+                            },
                             err => $baseController.errorCheck(err,
                                 {
                                     maxLoops: 3,
                                     miliseconds: 2000,
                                     method: () => {
-                                        $sandboxService.insertExpense(obj).then(() => vm.$uibModalInstance.close());
+                                        $sandboxService.insertExpense(obj).then(() => {
+                                            vm.isLoading = false;
+                                            vm.$uibModalInstance.close();
+                                        });
                                     }
                                 })
                         );
@@ -1186,23 +1259,27 @@
             vm.$uibModalInstance.dismiss("cancel");
         }
 
-        function _availableEnums(section, type) {
+        function _availableEnums(section) {
+
             var arr = [];
+            var length = null;
+
             switch (section) {
                 case 'rate':
-                    for (var i = 0; vm.enums.schedule.length > i; i++) {
+                    length = page.utilities.length(vm.enums.schedule);
+                    for (var i = 2; length > i; i++) {
 
                         var item = vm.enums.schedule[i];
 
-                        if (page.utilities.in(i, [1, 4, 5, 7, 8]))
+                        if (page.utilities.in(i, [4, 5, 7, 8]))
                             continue;
-                        else if (i == 3 && !page.utilities.in(mc.paySchedule, ['3', '4', '5', '6', '7', '8', '9', '10']))
+                        else if (i == 3 && !page.utilities.in(vm.paySchedule, ['3', '4', '5', '6', '7', '8', '9', '10']))
                             continue;
-                        else if (i == 6 && !page.utilities.in(mc.paySchedule, ['6', '7', '8', '9', '10']))
+                        else if (i == 6 && !page.utilities.in(vm.paySchedule, ['6', '7', '8', '9', '10']))
                             continue;
-                        else if (i == 9 && !page.utilities.in(mc.paySchedule, ['9', '10']))
+                        else if (i == 9 && !page.utilities.in(vm.paySchedule, ['9', '10']))
                             continue;
-                        else if (i == 10 && !page.utilities.in(mc.paySchedule, ['10']))
+                        else if (i == 10 && !page.utilities.in(vm.paySchedule, ['10']))
                             continue;
                         else
                             arr.push({ label: item, value: i });
@@ -1210,17 +1287,20 @@
                     break;
 
                 case 'frequency':
-                    for (var i = 0; vm.enums.schedule.length > i; i++)
+                    length = page.utilities.length(vm.enums.schedule);
+                    for (var i = 1; length > i; i++)
                         arr.push({ label: vm.enums.schedule[i], value: i });
                     break;
 
                 case 'incomeType':
-                    for (var i = 0; vm.enums.income.length > i; i++)
-                        arr.push({ label: vm.enums.incomes[i], value: i });
+                    length = page.utilities.length(vm.enums.income);
+                    for (var i = 0; length > i; i++)
+                        arr.push({ label: vm.enums.income[i], value: i });
                     break;
 
                 case 'expenseType':
-                    for (var i = 0; vm.enums.expense.length > i; i++)
+                    length = page.utilities.length(vm.enums.expense);
+                    for (var i = 0; length > i; i++)
                         arr.push({ label: vm.enums.expense[i], value: i });
                     break;
 
@@ -1229,6 +1309,26 @@
             return arr;
         }
 
+        function _updateEnums(section) {
+            switch (section) {
+                case 'rate':
+                    vm.rateSchedule = _availableEnums('rate');
+                    break;
+
+                case 'frequency':
+                    vm.paySchedule = _availableEnums('frequency');
+                    break;
+
+                case 'incomeType':
+                    vm.incomeTypes = _availableEnums('incomeType');
+                    break;
+
+                case 'expenseType':
+                    vm.incomeTypes = _availableEnums('expenseType');
+                    break;
+
+            }
+        }
     }
 
 })();

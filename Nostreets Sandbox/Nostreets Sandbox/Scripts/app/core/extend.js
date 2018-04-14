@@ -37,4 +37,3 @@ String.prototype.toValue = function (keyAndValueArr) {
     }
     return value;
 }
-

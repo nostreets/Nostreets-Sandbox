@@ -12,6 +12,19 @@
     ],
     utilities: {
 
+        length: (obj) => {
+            if (Array.isArray(obj))
+                return obj.length;
+            else if (typeof (obj) === 'object') {
+                var length = 0;
+                for (var prop in obj)
+                    length++;
+                return length;
+            }
+            else
+                return null;
+        },
+
         in: (obj, values) => {
             for (var i = 0; i < values.length; i++)
                 if (values[i] == obj) return true;
