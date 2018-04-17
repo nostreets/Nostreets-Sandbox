@@ -33,13 +33,10 @@ a:hover {
     font-weight: 900;
 }
 
-.homeLogo {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: auto auto 115% auto;
-    max-width: 150px;
+.text-greyBold {
+    color: rgb(167, 164, 191);
+    font-weight: 600;
+    font-variant: inherit;
 }
 
 .spacer {

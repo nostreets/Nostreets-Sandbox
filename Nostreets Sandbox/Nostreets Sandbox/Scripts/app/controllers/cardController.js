@@ -17,13 +17,13 @@
         vm.activateMode = _activateMode;
         vm.closeBuilder = _closeBuilder;
 
-        $baseController.event.listen("loggedIn", () => { _setUp(); _getUserData(); });
 
 
         _render();
 
         function _render() {
             _setUp();
+            _handlers();
             _getUserData();
         }
 
@@ -43,6 +43,13 @@
             if (!vm.cards) {
                 vm.cards = [];
             }
+        }
+
+        function _handlers() {
+            $baseController.event.listen("loggedIn", () => {
+                _setUp();
+                _getUserData();
+            });
         }
 
         function _getUserData() {
@@ -196,50 +203,107 @@
                             id: vm.id || 0,
                             name: vm.name,
                             size: vm.size,
-                            headerType: vm.headerType === "text" ? 1 : vm.headerType === "img" ? 2 : 3,
-                            headerAlignment: vm.headerAlignmentId === "right" ? 1 : vm.headerAlignmentId === "center" ? 2 : 3,
-                            mainType: vm.mainType === "text" ? 1 : vm.mainType === "img" ? 2 : 3,
-                            mainAlignment: vm.mainAlignment === "right" ? 1 : vm.mainAlignment === "center" ? 2 : 3,
-                            footerType: vm.footerType === "text" ? 1 : vm.footerType === "img" ? 2 : 3,
-                            footerAlignment: vm.footerAlignment === "right" ? 1 : vm.footerAlignment === "center" ? 2 : 3,
+
+                            headerType:
+                            vm.headerType === "text"
+                                ? 1
+                                : vm.headerType === "img"
+                                    ? 2
+                                    : 3,
+                            headerAlignment:
+                            vm.headerAlignmentId === "right"
+                                ? 1
+                                : vm.headerAlignmentId === "center"
+                                    ? 2
+                                    : 3,
+                            mainType:
+                            vm.mainType === "text"
+                                ? 1
+                                : vm.mainType === "img"
+                                    ? 2
+                                    : 3,
+                            mainAlignment:
+                            vm.mainAlignment === "right"
+                                ? 1
+                                : vm.mainAlignment === "center"
+                                    ? 2
+                                    : 3,
+                            footerType:
+                            vm.footerType === "text"
+                                ? 1
+                                : vm.footerType === "img"
+                                    ? 2
+                                    : 3,
+                            footerAlignment:
+                            vm.footerAlignment === "right"
+                                ? 1
+                                : vm.footerAlignment === "center"
+                                    ? 2
+                                    : 3,
+
                             _HTML: card[0].outerHTML,
                             html: $baseController.sce.trustAsHtml(card[0].outerHTML)
                         };
 
 
-                        var saveCard = (!vm.updateMode) ? (model) => { return $sandboxService.insertCard(model); } : (model) => { return $sandboxService.updateCard(model); };
-
-
-                        saveCard(lastestCard).then(
-                            () => $sandboxService.getAllCardsByUser().then(
-                                (response) => _cardResponse(response),
-                                (err) => {
-                                    $baseController.errorCheck(err,
-                                        {
-                                            promiseMethod: () => $sandboxService.getAllCardsByUser(),
-                                            onSuccess: (response) => _cardResponse(response)
-                                        }
-                                    )
+                        var saveCard =
+                            (!vm.isLoggedIn)
+                                ? () => {
+                                    return new Promise((resolve) => {
+                                        vm.cards.push(item);
+                                        resolve();
+                                    });
                                 }
-                            ),
-                            (err) => {
-                                $baseController.errorCheck(err,
-                                    {
-                                        promiseMethod: () => saveCard(lastestCard),
-                                        onSuccess: () => $sandboxService.getAllCardsByUser.then(
-                                            (response) => _cardResponse(response),
-                                            (err) => {
-                                                $baseController.errorCheck(err,
-                                                    {
-                                                        promiseMethod: () => $sandboxService.getAllCardsByUser(),
-                                                        onSuccess: (response) => _cardResponse(response)
-                                                    }
-                                                )
+                                : (!vm.updateMode)
+                                    ? (model) => { return $sandboxService.insertCard(model).then(getUserCards); }
+                                    : (model) => { return $sandboxService.updateCard(model).then(getUserCards); };
+
+
+                        var getUserCards =
+                            () => {
+                                return $sandboxService.getAllCardsByUser().then(
+                                    (response) => _cardResponse(response),
+                                    (err) => {
+                                        $baseController.errorCheck(err,
+                                            {
+                                                promiseMethod: () => $sandboxService.getAllCardsByUser(),
+                                                onSuccess: (response) => _cardResponse(response)
                                             }
                                         )
                                     }
-                                )
-                            });
+                                );
+                            }
+
+                        //saveCard(lastestCard).then(
+                        //    () => $sandboxService.getAllCardsByUser().then(
+                        //        (response) => _cardResponse(response),
+                        //        (err) => {
+                        //            $baseController.errorCheck(err,
+                        //                {
+                        //                    promiseMethod: () => $sandboxService.getAllCardsByUser(),
+                        //                    onSuccess: (response) => _cardResponse(response)
+                        //                }
+                        //            )
+                        //        }
+                        //    ),
+                        //    (err) => {
+                        //        $baseController.errorCheck(err,
+                        //            {
+                        //                promiseMethod: () => saveCard(lastestCard),
+                        //                onSuccess: () => $sandboxService.getAllCardsByUser.then(
+                        //                    (response) => _cardResponse(response),
+                        //                    (err) => {
+                        //                        $baseController.errorCheck(err,
+                        //                            {
+                        //                                promiseMethod: () => $sandboxService.getAllCardsByUser(),
+                        //                                onSuccess: (response) => _cardResponse(response)
+                        //                            }
+                        //                        )
+                        //                    }
+                        //                )
+                        //            }
+                        //        )
+                        //    });
 
                         _closeBuilder();
                     }

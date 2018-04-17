@@ -1,7 +1,7 @@
 ﻿(function () {
 
     page.baseController = angular.module(page.APPNAME)
-                                 .factory("$baseController", baseController);
+        .factory("$baseController", baseController);
 
     baseController.$inject = ['$document', '$systemEventService', '$alertService', "$window", '$uibModal', '$timeout', '$http', '$sce', '$cookies', '$q'];
 
@@ -39,8 +39,8 @@
             function _repeatUntilSuccessful(promise, time, maxLoops, callback = null) {
 
                 function delay(time, val) {
-                    return new Promise(function (resolve) {
-                        setTimeout(function () {
+                    return new Promise((resolve) => {
+                        setTimeout(() => {
                             resolve(val);
                         }, time);
                     });
@@ -91,9 +91,9 @@
                 }
 
 
-            if (!tryAgainObj.onSuccess) 
+            if (!tryAgainObj.onSuccess)
                 tryAgainObj.onSuccess = (data) => console.log(data);
-            
+
 
             if (err.data.errors && err.data.errors.length) {
                 for (var error of err.data.errors) {

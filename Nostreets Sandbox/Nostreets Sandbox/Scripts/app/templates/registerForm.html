@@ -5,6 +5,11 @@
             <div>Validate Email to be able to login!</div>
         </div>
     </div>
+
+    <div ng-if="regVm.isLoading">
+        <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
+    </div>
+
     <form class="form theRegisterForm card"
           name="regVm.regForm"
           ng-if="!regVm.requestSuccessful"
@@ -173,6 +178,9 @@
                         <em>
                             Password is to short!
                         </em>
+                          <em>
+                            Needs to be at least 12 charcters...
+                        </em>
                     </div>
                 </div>
             </div>
@@ -223,4 +231,5 @@
             <a href="" ng-click="regVm.login()">Already signed up?</a>
         </div>
     </form>
+
 </div>
