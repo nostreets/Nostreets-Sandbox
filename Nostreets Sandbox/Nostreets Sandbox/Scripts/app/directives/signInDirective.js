@@ -87,8 +87,8 @@
                 }
 
                 function _handlers() {
-                    $baseController.event.listen("loggedOut", () => page.isLoggedIn = false);
-                    $baseController.event.listen("loggedIn", () => page.isLoggedIn = true);
+                    $baseController.event.listen("loggedOut", () => { page.isLoggedIn = false; $scope.isLoggedIn = false; });
+                    $baseController.event.listen("loggedIn", () => { page.isLoggedIn = true; $scope.isLoggedIn = true;});
 
                     element.on("click", () => {
                         if (page.isLoggedIn)
@@ -141,10 +141,12 @@
             vm.usernameExists = false;
             vm.usernameExists = false;
             vm.requestSuccessful = false;
+            vm.isLoading = false;
         }
 
         function _submit() {
 
+            vm.isLoading = true;
             var obj = {
                 username: vm.username,
                 password: vm.password,
@@ -155,14 +157,17 @@
                 }
             };
 
+
             $baseController.http({
                 url: "/api/register",
                 data: obj,
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' }
             }).then(
-                (a) => { vm.requestSuccessful = true; }
-                );
+                (a) => {
+                    vm.requestSuccessful = true;
+                    vm.isLoading = false;
+                });
 
 
         }
@@ -238,11 +243,15 @@
             vm.password = null;
             vm.reason = null;
             vm.sentEmail = false;
+            vm.isLoading = false;
         }
 
         function _login() {
 
             if (vm.username && vm.password) {
+
+                vm.isLoading = true;
+
                 return $baseController.http({
                     url: "/api/login",
                     method: "POST",
@@ -255,12 +264,15 @@
                     a => {
 
                         if (a.data.item.userName) {
+                            vm.isLoading = false;
                             $baseController.event.broadcast('loggedIn');
                             _openUserModal(a.data.item);
+
                         }
                         else
                             _tfAuthLock(a.data.item).then(
                                 b => {
+                                    vm.isLoading = false;
                                     $baseController.event.broadcast('loggedIn');
                                     _openUserModal(b.data.item);
                                 });
@@ -268,16 +280,16 @@
                     },
                     err => {
                         if (err.data.errors) {
+                            vm.isLoading = false;
                             vm.reason = err.data.errors.message[0];
                         }
                         else {
+                            vm.isLoading = false;
                             vm.reason = err.data.message;
                         }
                     });
 
             }
-
-
         }
 
         function _tfAuthLock(id) {
@@ -431,6 +443,7 @@
             vm.user = data;
             vm.isUserChanged = false;
             vm.editMode = false;
+            vm.isLoading = false;
             vm.user.newPassword = '            ';
 
             vm.userSnap = page.utilities.clone(vm.user);
@@ -442,16 +455,22 @@
 
         function _logout() {
 
+            vm.isLoading = true;
+
             return $baseController.http({
                 url: "/api/logout",
                 method: "GET",
                 headers: { 'Content-Type': 'application/json' }
             }).then(
                 () => {
+                    vm.isLoading = false;
                     $baseController.event.broadcast('loggedOut');
                     vm.$uibModalInstance.close();
                 },
-                err => $baseController.alert.error(err)
+                err => {
+                    vm.isLoading = false;
+                    $baseController.alert.error(err);
+                }
                 );
 
         }
@@ -461,11 +480,14 @@
         }
 
         function _getUserSession() {
+
+            vm.isLoading = true;
+
             return $baseController.http({
                 url: "/api/user/session",
                 method: "GET",
                 headers: { 'Content-Type': 'application/json' }
-            })
+            }).then(a => { vm.isLoading = false; });
         }
 
         function _toggleEditMode() {
@@ -499,12 +521,18 @@
         }
 
         function _updateUser() {
+
+            vm.isLoading = true;
+
             return $baseController.http({
                 url: "/api/user",
                 data: vm.user,
                 method: "PUT",
                 headers: { 'Content-Type': 'application/json' }
-            }).then(() => vm.userSnap = page.utilities.clone(vm.user));
+            }).then(() => {
+                vm.isLoading = false;
+                vm.userSnap = page.utilities.clone(vm.user);
+            });
         }
 
         function _validatePassword(password) {

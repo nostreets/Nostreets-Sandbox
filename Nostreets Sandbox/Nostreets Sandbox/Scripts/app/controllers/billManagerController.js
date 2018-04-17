@@ -75,6 +75,7 @@
             vm.dateRangeTick = false;
             vm.totals = [];
             vm.overallCost = 0;
+            vm.isChartEmpty = false;
         }
 
         function _eventHandlers() {
@@ -621,19 +622,23 @@
             var chart = vm.charts.filter((a) => a.key === type)[0].value;
             var options = _getChartOptions(chart);
 
-            if (chart.series.length === 0)
-                chart.series.push(_arrayOfZeros(chart.labels.length));
 
-            _addTooltipDetials(chart);
+            if (chart.series.length === 0) {
+                vm.isChartEmpty = true;
+                //chart.series.push(_arrayOfZeros(chart.labels.length)); // FILLS CHART SERIES WITH ZEROS
+            }
+            else {
+                vm.isChartEmpty = false;
+                _addTooltipDetials(chart);
 
-            var renderedChart = new Chartist.Line(elementId, chart, options);
+                var renderedChart = new Chartist.Line(elementId, chart, options);
 
-            _getTotals(chart);
-            _animateGraph(renderedChart, 200);
+                _getTotals(chart);
+                _animateGraph(renderedChart, 200);
 
-            vm.renderedChart = chart;
-            vm.chartOptions = options;
-
+                vm.renderedChart = chart;
+                vm.chartOptions = options;
+            }
         }
 
         function _getChartLengend() {
@@ -1022,21 +1027,40 @@
 
             var obj = {
                 type: vm.currentTab,
-                id: (data.id) ? data.id : 0,
-                name: (data.name) ? data.name : null,
-                cost: (data.cost) ? data.cost : null,
-                paySchedule: (data.paySchedule) ? data.paySchedule : null,
+                id: data.id || 0,
+                name: data.name || null,
+                cost: data.cost || null,
+                paySchedule: data.paySchedule || null,
                 timePaid: (data.timePaid) ? new Date(data.timePaid) : null,
                 beginDate: (data.beginDate) ? new Date(data.beginDate) : null,
                 endDate: (data.endDate) ? new Date(data.endDate) : null,
                 isHiddenOnChart: (data.isHiddenOnChart === true) ? true : false,
-                costMultilplier: (data.costMultilplier) ? data.costMultilplier : 1,
-                style: (data.style) ? data.style : null,
-                rate: (data.rate) ? data.rate : 2,
-                rateMultilplier: (data.rateMultilplier) ? data.rateMultilplier : 1
+                style: data.style || null,
+                rate: data.rate || 2,
+                rateMultilplier: data.rateMultilplier || 1
             };
 
-            if (vm.type === "combined") { obj.type = (data.incomeType) ? "income" : "expense"; }
+            if (data.incomeType || data.expenseType) {
+                if (data.incomeType) {
+                    obj.incomeType = data.incomeType;
+                    obj.type = 'income';
+                }
+                else {
+                    obj.expenseType = data.expenseType;
+                    obj.type = 'expense';
+                }
+            }
+            else {
+                if (vm.currentTab === 'income') {
+                    obj.incomeType = 1;
+                    obj.type = 'income';
+                }
+                else {
+                    obj.expenseType = 1;
+                    obj.type = 'expense';
+                }
+            }
+
 
             var modalInstance = $baseController.modal.open({
                 animation: true
@@ -1094,7 +1118,7 @@
             vm.id = data.id || 0;
             vm.name = data.name;
             vm.cost = data.cost || 0;
-            vm.paySchedule = (data.paySchedule) ? data.paySchedule.toString() : "1";
+            vm.paySchedule = data.paySchedule || 1;
             vm.timePaid = data.timePaid;
             vm.beginDate = data.beginDate;
             vm.endDate = data.endDate;
@@ -1105,8 +1129,8 @@
             vm.isTimePaidOpen = false;
             vm.isBeginDateOpen = false;
             vm.isEndDateOpen = false;
-            vm.rate = data.rate + '' || '2';
-            vm.rateMultilplier = data.rateMultilplier || 1;
+            vm.rate = data.rate || 2;
+            vm.rateMultilplier = data.rateMultilplier || 2;
 
             vm.enums = enums;
             vm.rateScheduleTypes = _availableEnums('rate');
@@ -1117,11 +1141,11 @@
 
             switch (model.type) {
                 case "income":
-                    vm.incomeType = data.incomeType || "1";
+                    vm.incomeType = data.incomeType || 1;
                     break;
 
                 case "expense":
-                    vm.expenseType = data.expenseType || "1";
+                    vm.expenseType = data.expenseType || 1;
                     break;
             }
 

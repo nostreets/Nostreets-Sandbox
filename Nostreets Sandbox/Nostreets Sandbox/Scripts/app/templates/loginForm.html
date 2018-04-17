@@ -5,7 +5,7 @@
                 Login
             </h4>
         </div>
-        <div class="card-content">
+        <div class="card-content" ng-if="!logVm.isLoading">
             <div class="input-group">
                 <span class="input-group-addon">
                     <i class="material-icons" style="color:black">email</i>
@@ -67,7 +67,11 @@
                 </div>
             </div>
         </div>
+
+
+
         <div class="footer text-center">
+
             <div class="text-danger"
                  ng-show="logVm.reason !== null">
                 <em>
@@ -81,8 +85,13 @@
                 </div>
                 <div ng-if="logVm.sentEmail" class="text-success"> Sent Email! </div>
             </div>
+
+            <div ng-show="logVm.isLoading" class="text-center">
+                <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
+            </div>
+
             <button class="btn btn-sm btn-round btn-primary"
-                    ng-disabled="logVm.logForm.password.$invalid"
+                    ng-disabled="logVm.logForm.password.$invalid || logVm.isLoading"
                     ng-click="logVm.login()">
                 Let's go
             </button>

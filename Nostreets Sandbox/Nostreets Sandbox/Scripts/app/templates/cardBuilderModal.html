@@ -295,10 +295,16 @@
                                     <small>*</small> Required fields
                                 </div>
                                 <div class="btn-group btn-group-sm">
-                                    <!--<button type="button" class="btn btn-round card-builder-formSubmit" ng-disabled="pg.isFormValid" ng-click="pg.submitCard()">Submit</button>-->
-                                    <button type="button" class="btn btn-round card-builder-formSubmit" ng-disabled="!pg.validateForm('#cardBuilderForm')" ng-click="pg.submitCard()">Submit</button>
-                                    <!--<button type="button" style="background-color: #914e4e" class="btn btn-round" data-dismiss="modal">Close</button>-->
-                                    <button type="button" style="background-color: #914e4e" class="btn btn-round" ng-click="pg.closeBuilder()">Close</button>
+                                    <button type="button" 
+                                            class="btn btn-round card-builder-formSubmit" 
+                                            ng-disabled="!pg.validateForm('#cardBuilderForm')" 
+                                            ng-click="pg.submitCard()">Submit
+                                    </button>
+                                    <button type="button" 
+                                            style="background-color: #914e4e" 
+                                            class="btn btn-round" 
+                                            ng-click="pg.closeBuilder()">Close
+                                    </button>
                                 </div>
                             </div>
                         </div>

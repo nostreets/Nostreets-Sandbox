@@ -1,7 +1,7 @@
 ﻿<div class="col-xs-12">
     <div class="card" style="padding-bottom: 2%;">
         <div class="card-header">
-            <ul class="nav nav-tabs nav-justified tabs-basic" ng-if="pg.isLockedOut() === 'false'">
+            <ul class="nav nav-tabs nav-justified tabs-basic" ng-show="pg.isLockedOut() === 'false'">
                 <li role="presentation" class="active">
                     <a class="clickable" role="tab" data-target="#userGeneralTab" data-toggle="tab">Account</a>
                 </li>
@@ -14,14 +14,16 @@
             </ul>
         </div>
 
-
-        <div class="card-content text-center">
+        <div class="card-content text-center" ng-show="!pg.isLoading && pg.isLockedOut() === 'false'">
             <h3>
                 {{ pg.user.userName }}
             </h3>
-            <div class="text-center"> <i class="material-icons clickable" ng-click="pg.toggleEditMode()" style="color:black">create</i></div>
 
-            <div class="tab-content" ng-if="pg.isLockedOut() === 'false'">
+            <div class="text-center">
+                <i class="material-icons clickable" ng-click="pg.toggleEditMode()" style="color:black">create</i>
+            </div>
+
+            <div class="tab-content">
                 <div id="userGeneralTab" class="active tab-pane fade in" role="tabpanel">
                     <div class="row">
                         <div ng-if="!pg.editMode">
@@ -104,15 +106,14 @@
                                              name="tfauth"
                                              type="radio"
                                              ng-checked="pg.user.settings.tfAuthByPhone"
-                                             ng-click="pg.toggleTFAuth('email')"/>
+                                             ng-click="pg.toggleTFAuth('email')" />
                         </div>
                         <div class="col-sm-6 col-sm-offset-3">
                             By Phone: <input ng-disabled="!pg.editMode || !pg.user.settings.twoFactorAuthEnabled"
                                              name="tfauth"
                                              type="radio"
                                              ng-checked="pg.user.settings.tfAuthByEmail"
-                                             ng-click="pg.toggleTFAuth('phone')"
-                                             />
+                                             ng-click="pg.toggleTFAuth('phone')" />
                         </div>
                     </div>
                     <div class="row">
@@ -131,16 +132,13 @@
                 </div>
             </div>
 
-            <div ng-if="pg.isLockedOut() !== 'false'">
 
-                 {{ pg.isLockedOut() }}
 
-            </div>
-
-            <button ng-if="pg.hasUserChanged()" 
-                    ng-click="pg.saveChanges()" 
-                    class="btn btn-sm btn-round btn-warning" 
-                    style="background-color:rgb(171, 76, 76)">Apply!
+            <button ng-if="pg.hasUserChanged()"
+                    ng-click="pg.saveChanges()"
+                    class="btn btn-sm btn-round btn-warning"
+                    style="background-color:rgb(171, 76, 76)">
+                Apply!
             </button>
 
             <div class="spacer">
@@ -152,9 +150,22 @@
                 <button class="btn btn-sm btn-round text-center" style="background-color:rgb(103, 103, 131)" ng-click="pg.logout()">Log Out</button>
             </div>
         </div>
+
+
+
+        <div ng-show="pg.isLockedOut() !== 'false'">
+
+            {{ pg.isLockedOut() }}
+
+        </div>
+
+
+        <div ng-show="pg.isLoading" class="text-center">
+            <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
+        </div>
+
     </div>
 </div>
 
 
 
-                 
