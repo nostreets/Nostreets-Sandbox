@@ -41,18 +41,18 @@ namespace Nostreets_Services.Services.Database
             {
                 ip = ip ?? RequestIp;
                 User _sessionUser = null;
-                string userId = CacheManager.GetItem<string>(ip);
+                string userId = CacheManager.Get<string>(ip);
 
 
                 if (userId != null)
                     if (CacheManager.Contains(userId))
-                        _sessionUser = CacheManager.GetItem<User>(userId);
+                        _sessionUser = CacheManager.Get<User>(userId);
                     else
-                        _sessionUser = _userDBSrv.Get(CacheManager.GetItem<string>(ip));
+                        _sessionUser = _userDBSrv.Get(CacheManager.Get<string>(ip));
 
 
                 if (_sessionUser != null && !CacheManager.Contains(_sessionUser.Id))
-                    CacheManager.InsertItem(_sessionUser.Id, _sessionUser, DateTimeOffset.Now.AddHours(2));
+                    CacheManager.AddOrSet(_sessionUser.Id, _sessionUser, DateTimeOffset.Now.AddHours(2));
 
 
                 return _sessionUser;
@@ -75,9 +75,9 @@ namespace Nostreets_Services.Services.Database
         private void UpdateCache(User user)
         {
             if (RequestIp != null && !CacheManager.Contains(RequestIp))
-                CacheManager.InsertItem(RequestIp, user.Id);
+                CacheManager.AddOrSet(RequestIp, user.Id);
 
-            CacheManager.InsertItem(user.Id, user);
+            CacheManager.AddOrSet(user.Id, user);
         }
 
 
@@ -332,8 +332,8 @@ namespace Nostreets_Services.Services.Database
         {
             _userDBSrv.Update(SessionUser);
             HttpContext.Current.SetCookie("loggedIn", "false");
-            CacheManager.DeleteItem(CacheManager.GetItem<string>(RequestIp));
-            CacheManager.DeleteItem(RequestIp);
+            CacheManager.Remove(CacheManager.Get<string>(RequestIp));
+            CacheManager.Remove(RequestIp);
         }
 
         public async void ForgotPasswordEmailAsync(string username)
@@ -415,8 +415,8 @@ namespace Nostreets_Services.Services.Database
 
 
             if (!CacheManager.Contains(RequestIp))
-                CacheManager.InsertItem(RequestIp, user.Id);
-            CacheManager.InsertItem(user.Id, user);
+                CacheManager.AddOrSet(RequestIp, user.Id);
+            CacheManager.AddOrSet(user.Id, user);
 
             return user.Id;
         }

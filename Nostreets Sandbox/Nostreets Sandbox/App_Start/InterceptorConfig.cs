@@ -33,7 +33,7 @@ namespace Nostreets_Sandbox.App_Start
             app.Response.SetCookie(new HttpCookie("loggedIn", "false"));
             if (CacheManager.Contains("user"))
             {
-                CacheManager.DeleteItem("user");
+                CacheManager.Remove("user");
             }
 
             app.CreateResponse(HttpStatusCode.Unauthorized, new ErrorResponse("User is not logged in..."));
