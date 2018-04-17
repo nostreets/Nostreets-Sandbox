@@ -235,15 +235,22 @@
                         <div class="row" style="margin-bottom: 2%;">
                             <div class="col-sm-6">
                                 <div><strong>{{ mc.type == "income" ? "Income" : "Expense" }} Name:</strong></div>
-                                <input type="text" class="input-sm" required ng-model="mc.name" />
+                                <input type="text" 
+                                       class="input-sm" 
+                                       required 
+                                       ng-model="mc.name" />
                             </div>
                             <div class="col-sm-3">
                                 <div><strong>{{ mc.type == "income" ? "Pay" : "Cost" }}:</strong></div>
-                                <input type="number" class="input-sm" required ng-model="mc.cost" />
+                                <input type="number" 
+                                       class="input-sm" 
+                                       required 
+                                       ng-model="mc.cost" />
                             </div>
                             <div class="col-sm-3">
                                 <div><strong>Rate:</strong></div>
-                                <select ng-model="mc.rate" ng-options="item.value as item.label for item in mc.rateScheduleTypes">
+                                <select ng-model="mc.rate" 
+                                        ng-options="item.value as item.label for item in mc.rateScheduleTypes">
 
                                     <!--<option value="2">Once</option>
                                     <option value="3" ng-if="mc.paySchedule != '3' && mc.paySchedule != '4' && mc.paySchedule != '5' && mc.paySchedule != '6' && mc.paySchedule != '7' && mc.paySchedule != '8'">Per Year</option>
