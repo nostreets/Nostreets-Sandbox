@@ -52,7 +52,7 @@ namespace Nostreets_Services.Services.Database
 
 
                 if (_sessionUser != null && !CacheManager.Contains(_sessionUser.Id))
-                    CacheManager.AddOrSet(_sessionUser.Id, _sessionUser, DateTimeOffset.Now.AddHours(2));
+                    CacheManager.Set(_sessionUser.Id, _sessionUser, 120);
 
 
                 return _sessionUser;
@@ -75,9 +75,9 @@ namespace Nostreets_Services.Services.Database
         private void UpdateCache(User user)
         {
             if (RequestIp != null && !CacheManager.Contains(RequestIp))
-                CacheManager.AddOrSet(RequestIp, user.Id);
+                CacheManager.Set(RequestIp, user.Id);
 
-            CacheManager.AddOrSet(user.Id, user);
+            CacheManager.Set(user.Id, user);
         }
 
 
@@ -415,8 +415,8 @@ namespace Nostreets_Services.Services.Database
 
 
             if (!CacheManager.Contains(RequestIp))
-                CacheManager.AddOrSet(RequestIp, user.Id);
-            CacheManager.AddOrSet(user.Id, user);
+                CacheManager.Set(RequestIp, user.Id);
+            CacheManager.Set(user.Id, user);
 
             return user.Id;
         }
