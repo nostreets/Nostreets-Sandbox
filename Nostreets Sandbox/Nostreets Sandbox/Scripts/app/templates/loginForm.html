@@ -5,6 +5,8 @@
                 Login
             </h4>
         </div>
+
+        <!--LOGIN FORM-->
         <div class="card-content" ng-if="!logVm.isLoading">
             <div class="input-group">
                 <span class="input-group-addon">
@@ -69,12 +71,12 @@
         </div>
 
 
-
         <div class="footer text-center">
-
+            
+            <!--ERROR REASON-->
             <div class="text-danger"
                  ng-show="logVm.reason !== null">
-                <em>
+                <em ng-if="logVm.sentEmail">
                     {{ logVm.reason }}
                 </em>
 
@@ -86,17 +88,21 @@
                 <div ng-if="logVm.sentEmail" class="text-success"> Sent Email! </div>
             </div>
 
+            <!-- LOAD SPINNER -->
             <div ng-show="logVm.isLoading" class="text-center">
                 <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
             </div>
 
-            <button class="btn btn-sm btn-round btn-primary"
-                    ng-disabled="logVm.logForm.password.$invalid || logVm.isLoading"
-                    ng-click="logVm.login()">
-                Let's go
-            </button>
-            <div><a href="" ng-click="logVm.signUp()">Don't have an account?</a></div>
-            <div><a href="" ng-click="logVm.forgotPassword()">Forgot Password?</a></div>
+            <!-- LOGIN BTN AND LINKS -->
+            <div  ng-show="!logVm.isLoading">
+                <button class="btn btn-sm btn-round btn-primary"
+                        ng-disabled="logVm.logForm.password.$invalid || logVm.isLoading"
+                        ng-click="logVm.login()">
+                    Let's go
+                </button>
+                <div><a href="" ng-click="logVm.signUp()">Don't have an account?</a></div>
+                <div><a href="" ng-click="logVm.forgotPassword()">Forgot Password?</a></div>
+            </div>
         </div>
     </div>
 </form>
