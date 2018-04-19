@@ -137,26 +137,8 @@ namespace Nostreets_Services.Services.Database
             }
 
 
-            if (user != null && !hasIP)
-            {
-                string html = HttpContext.Current.Server.MapPath("\\assets\\emails\\UnindentifiedLogin.html").ReadFile()
-                                          .Replace("{user}", user.UserName)
-                                          .Replace("{ip}", RequestIp ?? "unknown")
-                                          .Replace("{time}", DateTime.Now.ToLongDateString());
-
-                if (!await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
-                              , user.Contact.PrimaryEmail
-                              , "Nostreets Sandbox Unindentified Login"
-                              , "Nostreets Sandbox Unindentified Login"
-                              , html))
-                    throw new Exception("Unindentified Login Email Did Not Send...");
-            }
-
-
             if (failureReason == null)
-            {
                 user.LastLogIn = DateTime.Now;
-            }
 
             return new Tuple<User, string>(failureReason == null ? user : null, failureReason);
         }
@@ -178,24 +160,41 @@ namespace Nostreets_Services.Services.Database
 
         public async Task<Tuple<User, string>> LogInAsync(NamePasswordPair pair, bool rememberDevice = false)
         {
-            string tokenId = null;
+            string tokenCD = null;
             Tuple<User, string> validUser = await GetUserWithLoginInfo(pair.Username, pair.Password);
+            User user = validUser.Item1;
+            string failureReason = validUser.Item2;
 
-            if (validUser.Item2 != null)
-                if (validUser.Item2.Contains("2auth"))
-                    tokenId = validUser.Item2.Substring(5);
+            if (failureReason != null)
+                if (failureReason.Contains("2auth"))
+                    tokenCD = failureReason.Substring(5);
                 else
-                    throw new Exception(validUser.Item2);
+                    throw new Exception(failureReason);
 
-            else if (validUser.Item1 != null)
+            else if (user != null)
             {
-                if (rememberDevice && !validUser.Item1.Settings.IPAddresses.Contains(RequestIp))
-                    validUser.Item1.Settings.IPAddresses.Add(RequestIp);
+                if (!user.Settings.IPAddresses.Contains(RequestIp))
+                {
+                    string html = HttpContext.Current.Server.MapPath("\\assets\\emails\\UnindentifiedLogin.html").ReadFile()
+                                              .Replace("{user}", user.UserName)
+                                              .Replace("{ip}", RequestIp ?? "unknown")
+                                              .Replace("{time}", DateTime.Now.ToLongDateString());
 
-                Update(validUser.Item1);
+                    if (rememberDevice)
+                        user.Settings.IPAddresses.Add(RequestIp);
+
+                    if (!await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
+                                  , user.Contact.PrimaryEmail
+                                  , "Nostreets Sandbox Unindentified Login"
+                                  , "Nostreets Sandbox Unindentified Login"
+                                  , html))
+                        throw new Exception("Unindentified Login Email Did Not Send...");
+                }
+
+                Update(user);
             }
 
-            return new Tuple<User, string>(validUser.Item1, tokenId);
+            return new Tuple<User, string>(user, tokenCD);
         }
 
         public async Task<string> RegisterAsync(User user)
