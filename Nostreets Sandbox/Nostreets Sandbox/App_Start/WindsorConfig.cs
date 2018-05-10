@@ -54,30 +54,27 @@ namespace Nostreets_Sandbox.App_Start
                     .DependsOn((k, param) =>
                      {
 #if DEBUG
-                         param["connectionKey"] = "AWSConnection";
-                         //     param["connectionKey"] = "DefaultConnection";
+                         param["connectionKey"] = "DefaultConnection";
 #else
-                         param["connectionKey"] = "AWSConnection";
+                         param["connectionKey"] = "GoogleConnection";
 #endif
                      }),
                  Reg.Component.For(typeof(IDBService<,>)).ImplementedBy(typeof(DBService<,>)).LifestyleSingleton()
                      .DependsOn((k, param) =>
                          {
 #if DEBUG
-                             param["connectionKey"] = "AWSConnection";
-                        //     param["connectionKey"] = "DefaultConnection";
+                             param["connectionKey"] = "DefaultConnection";
 #else
-                         param["connectionKey"] = "AWSConnection";
+                         param["connectionKey"] = "GoogleConnection";
 #endif
                          }),
                  Reg.Component.For(typeof(IDBService<,,,>)).ImplementedBy(typeof(DBService<,,,>)).LifestyleSingleton()
                     .DependsOn((k, param) =>
                      {
 #if DEBUG
-                         param["connectionKey"] = "AWSConnection";
-                         //     param["connectionKey"] = "DefaultConnection";
+                         param["connectionKey"] = "DefaultConnection";
 #else
-                         param["connectionKey"] = "AWSConnection";
+                         param["connectionKey"] = "GoogleConnection";
 #endif
                      }),
 
