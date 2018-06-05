@@ -54,6 +54,7 @@ namespace Nostreets_Sandbox.App_Start
                     .DependsOn((k, param) =>
                      {
 #if DEBUG
+                         //param["connectionKey"] = "GoogleConnection";
                          param["connectionKey"] = "DefaultConnection";
 #else
                          param["connectionKey"] = "GoogleConnection";
@@ -63,6 +64,7 @@ namespace Nostreets_Sandbox.App_Start
                      .DependsOn((k, param) =>
                          {
 #if DEBUG
+                             //param["connectionKey"] = "GoogleConnection";
                              param["connectionKey"] = "DefaultConnection";
 #else
                          param["connectionKey"] = "GoogleConnection";
@@ -72,6 +74,7 @@ namespace Nostreets_Sandbox.App_Start
                     .DependsOn((k, param) =>
                      {
 #if DEBUG
+                         //param["connectionKey"] = "GoogleConnection";
                          param["connectionKey"] = "DefaultConnection";
 #else
                          param["connectionKey"] = "GoogleConnection";
