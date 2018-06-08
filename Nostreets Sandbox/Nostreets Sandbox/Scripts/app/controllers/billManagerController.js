@@ -259,7 +259,7 @@
                 else {
                     obj.expenseType = parseInt(chart.expenseType);
 
-                    if (vm.id) {
+                    if (chart.id) {
                         obj.id = chart.id
                         $sandboxService.updateExpense(obj).then(
                             _getUserCharts,
@@ -705,7 +705,7 @@
                 axisX: {
                     labelOffset: {
                         x: 0,
-                        y: 0
+                        y: (chart.labels.any((a) => a.length > 8 )) ? -15 : 0
                     }
                 },
                 plugins: [
@@ -1295,15 +1295,21 @@
 
                         var item = vm.enums.schedule[i];
 
-                        if (page.utilities.in(i, [4, 5, 7, 8]))
+                        if (vm.paySchedule === 1 || vm.paySchedule === 2) {
+                            arr.push({ label: item, value: i });
+                            break;
+                        }
+                        if ([3, 4, 7, 8].in(i))
                             continue;
-                        else if (i == 3 && !page.utilities.in(vm.paySchedule, ['3', '4', '5', '6', '7', '8', '9', '10']))
+                        else if (i == 5 && vm.paySchedule >= 5)//![5, 6, 7, 8, 9, 10, 11].in(vm.paySchedule))
                             continue;
-                        else if (i == 6 && !page.utilities.in(vm.paySchedule, ['6', '7', '8', '9', '10']))
+                        else if (i == 6 && vm.paySchedule >= 6)// ![6, 7, 8, 9, 10, 11].in(vm.paySchedule))
                             continue;
-                        else if (i == 9 && !page.utilities.in(vm.paySchedule, ['9', '10']))
+                        else if (i == 9 && vm.paySchedule >= 9)// ![9, 10, 11].in(vm.paySchedule))
                             continue;
-                        else if (i == 10 && !page.utilities.in(vm.paySchedule, ['10']))
+                        else if (i == 10 && vm.paySchedule >= 10)// ![10, 11].in(vm.paySchedule))
+                            continue;
+                        else if (i == 11 && vm.paySchedule >= 11)// ![11].in(vm.paySchedule))
                             continue;
                         else
                             arr.push({ label: item, value: i });
@@ -1336,11 +1342,11 @@
         function _updateEnums(section) {
             switch (section) {
                 case 'rate':
-                    vm.rateSchedule = _availableEnums('rate');
+                    vm.rateScheduleTypes = _availableEnums('rate');
                     break;
 
                 case 'frequency':
-                    vm.paySchedule = _availableEnums('frequency');
+                    vm.payScheduleTypes = _availableEnums('frequency');
                     break;
 
                 case 'incomeType':
@@ -1348,7 +1354,7 @@
                     break;
 
                 case 'expenseType':
-                    vm.incomeTypes = _availableEnums('expenseType');
+                    vm.expenseTypes = _availableEnums('expenseType');
                     break;
 
             }

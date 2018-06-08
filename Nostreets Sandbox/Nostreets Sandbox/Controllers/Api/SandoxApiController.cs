@@ -55,7 +55,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             return result;
         }
 
-        private User GetCurrentUser() => _userSrv.SessionUser;
+        //private User _userSrv.SessionUser => _userSrv.SessionUser;
 
 
         #endregion
@@ -181,7 +181,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             try
             {
                 BaseResponse response = null;
-                if (user.Id != GetCurrentUser().Id)
+                if (user.Id != _userSrv.SessionUser.Id)
                     throw new Exception("Targeted user is not the current user...");
                 else
                 {
@@ -242,7 +242,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 if (!token.IsValidated)
                     throw new Exception("Code is invalid...");
 
-                return Request.CreateResponse(HttpStatusCode.OK, new ItemResponse<User>(GetCurrentUser()));
+                return Request.CreateResponse(HttpStatusCode.OK, new ItemResponse<User>(_userSrv.SessionUser));
 
             }
             catch (Exception ex)
@@ -278,7 +278,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             try
             {
                 List<Income> result = null;
-                result = _billSrv.GetAllIncome(GetCurrentUser().Id);
+                result = _billSrv.GetAllIncome(_userSrv.SessionUser.Id);
                 ItemsResponse<Income> response = new ItemsResponse<Income>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -297,7 +297,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
 
                 List<Expense> result = null;
-                result = _billSrv.GetAllExpenses(GetCurrentUser().Id);
+                result = _billSrv.GetAllExpenses(_userSrv.SessionUser.Id);
                 ItemsResponse<Expense> response = new ItemsResponse<Expense>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -316,7 +316,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
 
                 Income result = null;
-                result = _billSrv.GetIncome(GetCurrentUser().Id, name);
+                result = _billSrv.GetIncome(_userSrv.SessionUser.Id, name);
                 ItemResponse<Income> response = new ItemResponse<Income>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -335,7 +335,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
 
                 Expense result = null;
-                result = _billSrv.GetExpense(GetCurrentUser().Id, name);
+                result = _billSrv.GetExpense(_userSrv.SessionUser.Id, name);
                 ItemResponse<Expense> response = new ItemResponse<Expense>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -354,7 +354,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
 
                 Chart<List<float>> chart = null;
-                chart = _billSrv.GetIncomeChart(GetCurrentUser().Id, out chartSchedule, startDate, endDate);
+                chart = _billSrv.GetIncomeChart(_userSrv.SessionUser.Id, out chartSchedule, startDate, endDate);
                 ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(chart);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -373,7 +373,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
 
                 Chart<List<float>> result = null;
-                result = _billSrv.GetExpensesChart(GetCurrentUser().Id, out chartSchedule, startDate, endDate);
+                result = _billSrv.GetExpensesChart(_userSrv.SessionUser.Id, out chartSchedule, startDate, endDate);
                 ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -392,7 +392,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
 
                 Chart<List<float>> result = null;
-                result = _billSrv.GetCombinedChart(GetCurrentUser().Id, out chartSchedule, startDate, endDate);
+                result = _billSrv.GetCombinedChart(_userSrv.SessionUser.Id, out chartSchedule, startDate, endDate);
                 ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -409,8 +409,8 @@ namespace Nostreets_Sandbox.Controllers.Api
             try
             {
                 BaseResponse response = null;
-                income.UserId = GetCurrentUser().Id;
-                income.ModifiedUserId = GetCurrentUser().Id;
+                income.UserId = _userSrv.SessionUser.Id;
+                income.ModifiedUserId = _userSrv.SessionUser.Id;
 
 
                 if (!ModelState.IsValid)
@@ -438,8 +438,8 @@ namespace Nostreets_Sandbox.Controllers.Api
             try
             {
                 BaseResponse response = null;
-                expense.UserId = GetCurrentUser().Id;
-                expense.ModifiedUserId = GetCurrentUser().Id;
+                expense.UserId = _userSrv.SessionUser.Id;
+                expense.ModifiedUserId = _userSrv.SessionUser.Id;
 
                 if (!ModelState.IsValid)
                 {
@@ -466,7 +466,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             try
             {
                 BaseResponse response = null;
-                income.ModifiedUserId = GetCurrentUser().Id;
+                income.ModifiedUserId = _userSrv.SessionUser.Id;
 
                 if (!ModelState.IsValid)
                 {
@@ -493,7 +493,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             try
             {
                 BaseResponse response = null;
-                expense.ModifiedUserId = GetCurrentUser().Id;
+                expense.ModifiedUserId = _userSrv.SessionUser.Id;
 
                 if (!ModelState.IsValid)
                 {
@@ -537,8 +537,6 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-
-
                 _billSrv.DeleteExpense(id);
                 SuccessResponse response = new SuccessResponse();
                 return Request.CreateResponse(HttpStatusCode.OK, response);
@@ -560,7 +558,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-                List<StyledCard> filteredList = _cardSrv.Where(a => a.UserId == GetCurrentUser().Id)?.ToList();
+                List<StyledCard> filteredList = _cardSrv.Where(a => a.UserId == _userSrv.SessionUser.Id)?.ToList();
                 ItemsResponse<StyledCard> response = new ItemsResponse<StyledCard>(filteredList);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -607,7 +605,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 {
                     BaseResponse response = null;
 
-                    model.UserId = GetCurrentUser().Id;
+                    model.UserId = _userSrv.SessionUser.Id;
                     int id = (int)_cardSrv.Insert(model);
                     if (id == 0) { throw new Exception("Insert Failed"); }
                     response = new ItemResponse<int>(id);
@@ -636,7 +634,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                 {
-                    model.UserId = GetCurrentUser().Id;
+                    model.UserId = _userSrv.SessionUser.Id;
                     _cardSrv.Update(model);
                     response = new SuccessResponse();
                 }
@@ -703,7 +701,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
 
                 List<Chart<object>> list = _chartsSrv.GetAll();
-                List<Chart<object>> filteredList = list?.Where(a => a.UserId == GetCurrentUser().Id).ToList();
+                List<Chart<object>> filteredList = list?.Where(a => a.UserId == _userSrv.SessionUser.Id).ToList();
                 ItemsResponse<Chart<object>> response = new ItemsResponse<Chart<object>>(filteredList);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -749,7 +747,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                 {
-                    model.UserId = GetCurrentUser().Id;
+                    model.UserId = _userSrv.SessionUser.Id;
                     int id = _chartsSrv.Insert(model, (a) =>
                         {
                             return new Chart<int>
@@ -791,7 +789,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                 {
-                    model.UserId = GetCurrentUser().Id;
+                    model.UserId = _userSrv.SessionUser.Id;
 
                     int id = _chartsSrv.Insert(model,
                         (a) =>
@@ -836,7 +834,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                 {
-                    model.UserId = GetCurrentUser().Id;
+                    model.UserId = _userSrv.SessionUser.Id;
                     _chartsSrv.Update(model, (a) =>
                         {
                             return new Chart<int>
@@ -876,7 +874,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                 {
-                    model.UserId = GetCurrentUser().Id;
+                    model.UserId = _userSrv.SessionUser.Id;
                     _chartsSrv.Update(model, (a) =>
                         {
                             return new Chart<List<int>>

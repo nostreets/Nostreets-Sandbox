@@ -12,6 +12,26 @@ Array.prototype.findByKey = function (key) {
     else { return null; }
 }
 
+Array.prototype.any = function (func) {
+    if (!func instanceof Function)
+        return false;
+    else {
+        for (let item of this) {
+            if (func(item) === true)
+                return true;
+        }
+
+        return false;
+    }
+}
+
+Array.prototype.in = function (value) {
+    for (let item of this) {
+        if (item == value)
+            return true;
+    }
+    return false;
+}
 
 
 Number.prototype.toKey = function (keyAndValueArr) {

@@ -288,7 +288,8 @@
                                 <div><strong>{{ (mc.type === 'income') ? 'Paycheck' : 'Payment' }} Frequency:</strong></div>
 
                                 <select ng-model="mc.paySchedule"
-                                        ng-options="item.value as item.label for item in mc.payScheduleTypes"></select>
+                                        ng-options="item.value as item.label for item in mc.payScheduleTypes"
+                                        ng-change="mc.updateEnums('rate')"></select>
                             </div>
                             <div ng-if="mc.rate != '2'" class="col-sm-6">
                                 <div>

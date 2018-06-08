@@ -1,4 +1,5 @@
 ﻿using System.Web;
+using NostreetsExtensions;
 using System.Web.Optimization;
 
 namespace Nostreets_Sandbox
@@ -8,7 +9,8 @@ namespace Nostreets_Sandbox
         public static void RegisterBundles(BundleCollection bundles)
         {
 
-            bundles.Add(new StyleBundle("~/css").Include(
+            bundles.Add(
+                new StyleBundle("~/css").IncludeWithCssRewriteUrlTransform(
                     //+BOOTSTRAP
                     "~/node_modules/bootstrap/dist/css/bootstrap-theme.css",
                     "~/node_modules/bootstrap/dist/css/bootstrap.css",
@@ -29,10 +31,13 @@ namespace Nostreets_Sandbox
                     "~/node_modules/angular-toastr/dist/angular-toastr.css",
                     "~/node_modules/angularjs-color-picker/dist/angularjs-color-picker.css",
                     "~/node_modules/angularjs-color-picker/dist/themes/angularjs-color-picker-bootstrap.min.css"
-                      ));
+
+               )
+            );
 
 
-            bundles.Add(new ScriptBundle("~/jsRequirements").Include(
+            bundles.Add(
+                new ScriptBundle("~/jsRequirements").Include(
                     //+JQUERY
                     "~/node_modules/jquery/dist/jquery.js",
                     "~/node_modules/jquery-validation/dist/jquery.validate.js",
@@ -57,7 +62,8 @@ namespace Nostreets_Sandbox
                     "~/Scripts/app/services/nostreetsChartistScrollPlugin.js"
                         ));
 
-            bundles.Add(new ScriptBundle("~/angularRequirements").Include(
+            bundles.Add(
+                new ScriptBundle("~/angularRequirements").Include(
 
                     "~/node_modules/angular/angular.js",
                     "~/node_modules/angular-animate/angular-animate.js",
@@ -74,7 +80,8 @@ namespace Nostreets_Sandbox
                         ));
 
 
-            bundles.Add(new ScriptBundle("~/baseJS").Include(
+            bundles.Add(
+                new ScriptBundle("~/baseJS").Include(
                     "~/Scripts/app/core/page.js",
                     "~/Scripts/app/core/extend.js",
                     "~/Scripts/app/services/alertService.js",
@@ -84,14 +91,16 @@ namespace Nostreets_Sandbox
 
 
 
-            bundles.Add(new ScriptBundle("~/customAngular").Include(
+            bundles.Add(
+                new ScriptBundle("~/customAngular").Include(
                     "~/Scripts/app/configs/routeConfig.js",
                     "~/Scripts/app/services/sandboxService.js"
                //     "~/Scripts/app/directives/signInDirective.js"
                        ));
 
 
-            bundles.Add(new ScriptBundle("~/other").Include(
+            bundles.Add(
+                new ScriptBundle("~/other").Include(
                     "~/assets/js/animsition.min.js",
                     "~/assets/js/jquery.magnific-popup.min.js",
                     "~/assets/js/jquery.countdown.min.js",
