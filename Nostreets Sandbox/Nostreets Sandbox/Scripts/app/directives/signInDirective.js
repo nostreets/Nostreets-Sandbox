@@ -244,6 +244,8 @@
             vm.reason = null;
             vm.sentEmail = false;
             vm.isLoading = false;
+            vm.rememberMe = true;
+
         }
 
         function _login() {
@@ -253,7 +255,7 @@
                 vm.isLoading = true;
 
                 return $baseController.http({
-                    url: "/api/login",
+                    url: "/api/login&rememberDevice=" + ( vm.rememberMe ? 'true' : 'false'),
                     method: "POST",
                     data: {
                         username: vm.username,

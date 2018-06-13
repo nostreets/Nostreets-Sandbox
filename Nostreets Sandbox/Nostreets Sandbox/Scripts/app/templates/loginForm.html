@@ -72,7 +72,7 @@
 
 
         <div class="footer text-center">
-            
+
             <!--ERROR REASON-->
             <div class="text-danger"
                  ng-show="logVm.reason !== null">
@@ -94,14 +94,24 @@
             </div>
 
             <!-- LOGIN BTN AND LINKS -->
-            <div  ng-show="!logVm.isLoading">
+            <div ng-show="!logVm.isLoading">
                 <button class="btn btn-sm btn-round btn-primary"
                         ng-disabled="logVm.logForm.password.$invalid || logVm.isLoading"
                         ng-click="logVm.login()">
                     Let's go
                 </button>
-                <div><a href="" ng-click="logVm.signUp()">Don't have an account?</a></div>
-                <div><a href="" ng-click="logVm.forgotPassword()">Forgot Password?</a></div>
+                <div>
+                    <small> Remember Me </small>
+                    <input name="rememberMe" type="checkbox" ng-model="logVm.rememberMe" class="check-mark" />
+                </div>
+                <div>
+                    <div class="col-xs-6">
+                        <a href="" ng-click="logVm.forgotPassword()">Forgot Password?</a>
+                    </div>
+                    <div class="col-xs-6">
+                        <a href="" ng-click="logVm.signUp()">Don't have an account?</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
