@@ -126,6 +126,7 @@
 
         function _render() {
             _setUp();
+            page.utilities.reloadCSS();
         }
 
         function _setUp() {
@@ -235,6 +236,8 @@
 
         function _render() {
             _setUp();
+            page.utilities.reloadCSS();
+
         }
 
         function _setUp() {
@@ -255,7 +258,7 @@
                 vm.isLoading = true;
 
                 return $baseController.http({
-                    url: "/api/login&rememberDevice=" + ( vm.rememberMe ? 'true' : 'false'),
+                    url: "/api/login?rememberDevice=" + ( vm.rememberMe ? 'true' : 'false'),
                     method: "POST",
                     data: {
                         username: vm.username,
@@ -430,6 +433,7 @@
         vm.isLockedOut = _isLockedOut;
         vm.toggleTFAuth = _toggleTFAuth;
 
+
         _render();
 
         function _render() {
@@ -438,6 +442,8 @@
                 _getUserSession().then(a => _setUp(a.data.item));
             else
                 _setUp(user);
+
+            page.utilities.reloadCSS();
 
         }
 
@@ -495,8 +501,10 @@
         function _toggleEditMode() {
             if (!vm.editMode)
                 vm.editMode = true;
+
             else {
-                _saveChanges();
+                vm.user = vm.userSnap;
+                vm.editMode = false;
             }
         }
 

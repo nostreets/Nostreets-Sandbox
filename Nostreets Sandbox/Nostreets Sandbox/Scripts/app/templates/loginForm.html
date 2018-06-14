@@ -1,5 +1,5 @@
 ﻿<form name="logVm.logForm">
-    <div class="card card-login">
+    <div class="card card-login noshadow">
         <div class="card-header text-center">
             <h4 class="card-title">
                 Login
@@ -100,10 +100,15 @@
                         ng-click="logVm.login()">
                     Let's go
                 </button>
-                <div>
-                    <small> Remember Me </small>
-                    <input name="rememberMe" type="checkbox" ng-model="logVm.rememberMe" class="check-mark" />
+
+                <div class="form-group login-group-checkbox">
+                    <label for="remember"> Remember Me </label>
+                    <input id="remember"
+                           name="remember"
+                           type="checkbox"
+                           ng-model="logVm.rememberMe" />
                 </div>
+
                 <div>
                     <div class="col-xs-6">
                         <a href="" ng-click="logVm.forgotPassword()">Forgot Password?</a>

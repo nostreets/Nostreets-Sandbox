@@ -31,7 +31,7 @@ namespace Nostreets_Services.Services.Database
         private IDBService<Token, string> _tokenDBSrv = null;
 
 
-        public string RequestIp => "127:10:101"; //HttpContext.Current.GetIPAddress();
+        public string RequestIp => HttpContext.Current.GetIPAddress();
         public User SessionUser { get { return GetSessionUser(); } }
 
 

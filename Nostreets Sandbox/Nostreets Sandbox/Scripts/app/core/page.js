@@ -31,6 +31,21 @@
             return false;
         },
 
+        reloadCSS: (sheetName) => {
+
+            $.autoUpdateStylesheets();
+
+            //var links = document.getElementsByTagName("link");
+
+            //for (var x in links) {
+            //    var link = links[x];
+
+            //    if (link.href.includes(sheetName) || sheetName === null)
+            //        if (link.href.includes('.css') || ($(link).attr("type") != null && $(link).attr("type").indexOf("css") > -1))
+            //            link.href += (link.href.includes('?') ? '&' : '?') + "id=" + new Date().getMilliseconds();
+
+            //}
+        },
 
         equals: (obj1, obj2) => JSON.stringify(obj1) === JSON.stringify(obj2),
 

@@ -270,6 +270,7 @@
     <Content Include="assets\img\facebook%402x.png" />
     <Content Include="assets\img\googleplus%402x.png" />
     <Content Include="assets\img\twitter%402x.png" />
+    <Content Include="assets\js\auto_update_stylesheets.js" />
     <Content Include="assets\js\chartist-plugin-tooltip.js" />
     <Content Include="assets\js\chartist-plugin-tooltip.min.js" />
     <Content Include="assets\js\chartist-plugin-zoom.js" />

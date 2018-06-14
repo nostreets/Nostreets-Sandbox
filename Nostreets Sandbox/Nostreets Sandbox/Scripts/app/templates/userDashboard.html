@@ -20,7 +20,11 @@
             </h3>
 
             <div class="text-center">
-                <i class="material-icons clickable" ng-click="pg.toggleEditMode()" style="color:black">create</i>
+                <i class="material-icons clickable"
+                   ng-click="pg.toggleEditMode()"
+                   style="color:black">
+                    create
+                </i>
             </div>
 
             <div class="tab-content">
@@ -136,9 +140,16 @@
 
             <button ng-if="pg.hasUserChanged()"
                     ng-click="pg.saveChanges()"
-                    class="btn btn-sm btn-round btn-warning"
-                    style="background-color:rgb(171, 76, 76)">
+                    class="btn btn-sm btn-round"
+                    style="background-color:rgb(218, 206, 93)">
                 Apply!
+            </button>
+
+            <button ng-if="pg.editMode"
+                    ng-click="pg.toggleEditMode()"
+                    class="btn btn-sm btn-round"
+                    style="background-color:rgb(171, 76, 76)">
+                Cancel
             </button>
 
             <div class="spacer">

@@ -33,6 +33,10 @@ a:hover {
     font-weight: 900;
 }
 
+.noshadow {
+    box-shadow:0 0px 0px 0 rgba(0, 0, 0, 0) !important;
+}
+
 .text-greyBold {
     color: rgb(167, 164, 191);
     font-weight: 600;
