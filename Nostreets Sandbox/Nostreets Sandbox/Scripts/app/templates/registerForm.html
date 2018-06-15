@@ -178,7 +178,7 @@
                         <em>
                             Password is to short!
                         </em>
-                          <em>
+                        <em>
                             Needs to be at least 12 charcters...
                         </em>
                     </div>
@@ -222,11 +222,13 @@
             </div>
         </div>
         <div class="card-footer text-center">
-            <button type="submit" 
-                    class="btn btn-primary btn-round" 
-                    id="submitBtn" 
-                    ng-click="regVm.submit()" 
-                    ng-disabled="!checkBox || !regVm.regForm.$valid || !regVm.validateForm()">Get Started</button>
+            <button type="submit"
+                    class="btn btn-primary btn-round"
+                    id="submitBtn"
+                    ng-click="regVm.submit()"
+                    ng-disabled="!checkBox || !regVm.regForm.$valid || !regVm.validateForm()">
+                Get Started
+            </button>
             <br />
             <a href="" ng-click="regVm.login()">Already signed up?</a>
         </div>

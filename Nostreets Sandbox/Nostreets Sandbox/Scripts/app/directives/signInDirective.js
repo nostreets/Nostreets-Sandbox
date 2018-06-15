@@ -126,7 +126,7 @@
 
         function _render() {
             _setUp();
-            page.utilities.reloadCSS();
+            //page.utilities.reloadCSS();
         }
 
         function _setUp() {
@@ -236,7 +236,7 @@
 
         function _render() {
             _setUp();
-            page.utilities.reloadCSS();
+            //page.utilities.reloadCSS();
 
         }
 
@@ -443,7 +443,7 @@
             else
                 _setUp(user);
 
-            page.utilities.reloadCSS();
+            //page.utilities.reloadCSS();
 
         }
 
