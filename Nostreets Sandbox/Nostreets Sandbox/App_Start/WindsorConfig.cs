@@ -17,6 +17,7 @@ using Nostreets_Services.Domain.Base;
 using Nostreets_Services.Domain.Charts;
 using System.Collections.Generic;
 using Nostreets_Services.Models.Request;
+using System.Web;
 
 namespace Nostreets_Sandbox.App_Start
 {
@@ -50,7 +51,9 @@ namespace Nostreets_Sandbox.App_Start
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             container.Register(
-                 Reg.Component.For(typeof(IDBService<>)).ImplementedBy(typeof(DBService<>)).LifestyleSingleton()
+                Reg.Component.For(typeof(HttpContext)).LifestylePerWebRequest()
+                    .UsingFactoryMethod(() => HttpContext.Current),
+                Reg.Component.For(typeof(IDBService<>)).ImplementedBy(typeof(DBService<>)).LifestyleSingleton()
                     .DependsOn((k, param) =>
                      {
 #if DEBUG
@@ -110,4 +113,5 @@ namespace Nostreets_Sandbox.App_Start
 
         }
     }
+
 }

@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Configuration;
@@ -29,11 +30,12 @@ namespace Nostreets_Services.Services.Database
         private IEmailService _emailSrv = null;
         private IDBService<User, string> _userDBSrv = null;
         private IDBService<Token, string> _tokenDBSrv = null;
+        HttpContext _context = null;
 
-
-        public string RequestIp => HttpContext.Current.GetIPAddress();
+        public HttpContext Context => (HttpContext.Current != null) ? HttpContext.Current 
+                                                                    : _context.WindsorResolve("NostreetsSandbox");
+        public string RequestIp => Context.GetIPAddress();
         public User SessionUser { get { return GetSessionUser(); } }
-
 
         private User GetSessionUser(string ip = null)
         {
