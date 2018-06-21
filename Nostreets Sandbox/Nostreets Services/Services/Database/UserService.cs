@@ -20,21 +20,23 @@ namespace Nostreets_Services.Services.Database
 {
     public class UserService : IUserService
     {
-        public UserService(IEmailService emailSrv, IDBService<User, string> userDBSrv, IDBService<Token, string> tokenDBSrv)
+        public UserService(HttpContext context, IEmailService emailSrv, IDBService<User, string> userDBSrv, IDBService<Token, string> tokenDBSrv)
         {
+            if (context == null)
+                throw new NullReferenceException("context");
+
+            _context = context;
             _emailSrv = emailSrv;
             _userDBSrv = userDBSrv;
             _tokenDBSrv = tokenDBSrv;
         }
 
+        private HttpContext _context = null;
         private IEmailService _emailSrv = null;
         private IDBService<User, string> _userDBSrv = null;
         private IDBService<Token, string> _tokenDBSrv = null;
-        HttpContext _context = null;
 
-        public HttpContext Context => (HttpContext.Current != null) ? HttpContext.Current 
-                                                                    : _context.WindsorResolve("NostreetsSandbox");
-        public string RequestIp => Context.GetIPAddress();
+        public string RequestIp => _context.GetIPAddress();
         public User SessionUser { get { return GetSessionUser(); } }
 
         private User GetSessionUser(string ip = null)
@@ -201,6 +203,10 @@ namespace Nostreets_Services.Services.Database
 
         public async Task<string> RegisterAsync(User user)
         {
+            user.Settings = new UserSettings()
+            {
+                IPAddresses = new List<string> { RequestIp }
+            };
             user.Id = Insert(user);
 
             Token token = new Token
