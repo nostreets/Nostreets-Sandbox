@@ -76,7 +76,7 @@
             <!--ERROR REASON-->
             <div class="text-danger"
                  ng-show="logVm.reason !== null">
-                <em ng-if="logVm.sentEmail">
+                <em>
                     {{ logVm.reason }}
                 </em>
 
@@ -85,7 +85,7 @@
                         Resend Validation Email?
                     </a>
                 </div>
-                <div ng-if="logVm.sentEmail" class="text-success"> Sent Email! </div>
+                <div ng-if="logVm.resentEmail" class="text-success"> Sent Email! </div>
             </div>
 
             <!-- LOAD SPINNER -->

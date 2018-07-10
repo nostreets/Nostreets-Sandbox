@@ -245,7 +245,7 @@
             vm.username = null;
             vm.password = null;
             vm.reason = null;
-            vm.sentEmail = false;
+            vm.resentEmail = false;
             vm.isLoading = false;
             vm.rememberMe = true;
 
@@ -255,6 +255,8 @@
 
             if (vm.username && vm.password) {
 
+                vm.reason = null;
+                vm.resentEmail = false;
                 vm.isLoading = true;
 
                 return $baseController.http({
@@ -379,7 +381,7 @@
                     method: "GET",
                     headers: { 'Content-Type': 'application/json' }
                 }).then(
-                    b => { vm.sentEmail = true; vm.reason = ""; },
+                    b => { vm.resentEmail = true; vm.reason = ""; },
                     err => {
                         if (err.data.errors) {
                             vm.reason = err.data.errors.message[0];
@@ -415,7 +417,7 @@
                 url: "/api/user/resendValidationEmail" + "?username=" + vm.username,
                 method: "GET",
                 headers: { 'Content-Type': 'application/json' }
-            }).then(a => { vm.sentEmail = true; vm.reason = ""; });
+            }).then(a => { vm.resentEmail = true; vm.reason = ""; });
         }
 
     }

@@ -34,7 +34,7 @@ a:hover {
 }
 
 .noshadow {
-    box-shadow:0 0px 0px 0 rgba(0, 0, 0, 0) !important;
+    box-shadow: 0 0px 0px 0 rgba(0, 0, 0, 0) !important;
 }
 
 .text-greyBold {
@@ -82,19 +82,7 @@ a:hover {
     background-color: #93d07e
 }
 
-.swiper-container {
-    width: 100%;
-    padding-top: 50px;
-    padding-bottom: 50px;
-}
 
-.swiper-slide {
-    overflow: visible;
-    background-position: center;
-    background-size: 100% 100% !important;
-    min-height: 25em !important;
-    max-width: 100%;
-}
 
 form > div {
     margin-bottom: 10%;
@@ -102,23 +90,6 @@ form > div {
 
 .nav > li {
     padding: 0 0 !important;
-}
-
-
-.spin {
-    position: relative;
-    -webkit-animation-name: spin;
-    -webkit-animation-duration: 40s;
-    -webkit-animation-iteration-count: infinite;
-    -webkit-animation-timing-function: linear;
-}
-
-.reversespin {
-    position: relative;
-    -webkit-animation-name: reversespin;
-    -webkit-animation-duration: 40s;
-    -webkit-animation-iteration-count: infinite;
-    -webkit-animation-timing-function: linear;
 }
 
 .particles {
@@ -130,7 +101,35 @@ form > div {
     z-index: -1;
 }
 
-/*Button Styles*/
+
+
+/*#region SWIPER JS */
+
+.swiper-wrapper {
+    position: relative;
+}
+
+.swiper-container {
+    height: auto !important;
+    width: 100%;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.swiper-slide {
+    overflow: visible;
+    background-position: center;
+    background-size: 100% 100% !important;
+    min-height: 50% !important;
+    max-width: 100%;
+    height: 100% !important;
+}
+
+
+
+/*#endregion */
+
+/*#region Button Styles*/
 .btn-toggle0 {
     background-color: rgb(168, 128, 97) !important;
 }
@@ -138,9 +137,9 @@ form > div {
 .btn-toggle1 {
     background-color: rgb(81, 63, 49) !important;
 }
+/*#endregion */
 
-
-/*Border Styles*/
+/*#region Border Styles*/
 .borderControl {
     position: relative;
     display: inline-block;
@@ -211,8 +210,9 @@ form > div {
 foreignObject > span {
     color: rgba(138, 138, 138, 0.74) !important;
 }
+/*#endregion */
 
-/*Circle Designs*/
+/*#region Circle Designs*/
 .circle {
     -webkit-border-radius: 50%;
     -moz-border-radius: 50%;
@@ -279,6 +279,7 @@ foreignObject > span {
         .circle__content > a:hover {
             font-weight: 900;
         }
+/*#endregion */
 
 .card-footer > span {
     padding-bottom: 1em !important;
@@ -292,17 +293,6 @@ foreignObject > span {
     font-weight: 600;
     font-variant: small-caps;
     text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.36);
-}
-
-.typewriter {
-    color: #ffffff;
-    padding-bottom: 30px;
-    overflow: hidden no-display; /* Ensures the content is not revealed until the animation */
-    border-right: .15em solid #ffffff; /* The typwriter cursor */
-    white-space: pre-line; /* Keeps the content on a single line */
-    margin: 0 auto; /* Gives that scrolling effect as the typing happens */
-    letter-spacing: .15em; /* Adjust as needed */
-    animation: typing 10.5s steps(60, end), blink-caret .5s step-end infinite;
 }
 
 .project {
@@ -359,8 +349,35 @@ foreignObject > span {
         font-size: large
     }
 
+/*#region ANIMATIONS */
+.spin {
+    position: relative;
+    -webkit-animation-name: spin;
+    -webkit-animation-duration: 40s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+}
 
+.reversespin {
+    position: relative;
+    -webkit-animation-name: reversespin;
+    -webkit-animation-duration: 40s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+}
 
+.typewriter {
+    color: #ffffff;
+    padding-bottom: 30px;
+    overflow: hidden no-display; /* Ensures the content is not revealed until the animation */
+    border-right: .15em solid #ffffff; /* The typwriter cursor */
+    white-space: pre-line; /* Keeps the content on a single line */
+    margin: 0 auto; /* Gives that scrolling effect as the typing happens */
+    letter-spacing: .15em; /* Adjust as needed */
+    animation: typing 10.5s steps(60, end), blink-caret .5s step-end infinite;
+}
+
+/*#endregion */
 
 /*#region @medias and @keyframes */
 

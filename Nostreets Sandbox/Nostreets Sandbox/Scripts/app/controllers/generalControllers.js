@@ -1,4 +1,4 @@
-﻿(function() {
+﻿(function () {
 
     angular.module(page.APPNAME).controller("homeController", homeController)
         .controller("applicationsInProgressController", applicationsInProgressController)
@@ -53,6 +53,14 @@
         _render();
 
         function _render() {
+            _setUp();
+        }
+
+        function _setUp() {
+            _swiperSlider();
+        }
+
+        function _swiperSlider() {
             var swiper = new Swiper('.swiper-container', {
                 autoplay: 5000,
                 pagination: '.swiper-pagination',
@@ -71,9 +79,23 @@
                     slideShadows: true
                 }
             });
-        }
 
-        function _setUp() { }
+
+            //$(window).resize(function () {
+            //    var imgPath = $('.swiper-slide-active')[0].style.backgroundImage != ''
+            //        ? window.location.origin + $('.swiper-slide-active')[0].style.backgroundImage.substring(5, $('.swiper-slide-active')[0].style.backgroundImage.length - 2)
+            //        : $('.swiper-slide-active')[0].src
+
+            //    page.utilities.getImage(imgPath).then((a) => {
+            //        $('.swiper-slide').height(a.height);
+            //        $('.swiper-slide').width(a.width);
+            //        swiper.update()
+            //    }, (err) => console.log(err));
+
+            //});
+
+            //$(window).resize();
+        }
     }
 
     function contactUsController($scope, $baseController, $http) {

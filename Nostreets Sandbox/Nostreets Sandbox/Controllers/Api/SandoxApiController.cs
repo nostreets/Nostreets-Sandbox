@@ -519,8 +519,6 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-
-
                 _billSrv.DeleteIncome(id);
                 SuccessResponse response = new SuccessResponse();
                 return Request.CreateResponse(HttpStatusCode.OK, response);

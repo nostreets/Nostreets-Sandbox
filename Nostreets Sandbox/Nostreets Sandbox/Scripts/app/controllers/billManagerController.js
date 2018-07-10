@@ -698,14 +698,17 @@
                 axisY: {
                     offset: 40 + (5 * _getYLabelLength(chart)),
                     labelOffset: {
-                        x: 0,
+                        x:  (chart.series.any((a) => a.any((b) => b > 100)))
+                            ? 10   
+                            : 0,
                         y: 5
                     }
                 },
                 axisX: {
+                    scaleMinSpace: (chart.labels.any((a) => a.length > 8 )) ? 20 : 0,
                     labelOffset: {
                         x: 0,
-                        y: (chart.labels.any((a) => a.length > 8 )) ? -15 : 0
+                        y: 0
                     }
                 },
                 plugins: [

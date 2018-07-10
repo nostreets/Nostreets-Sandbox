@@ -12,6 +12,15 @@
     ],
     utilities: {
 
+        getImage: (path) => {
+            return new Promise((resolve, reject) => {
+                var img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+                img.src = path;
+            });
+        },
+
         length: (obj) => {
             if (Array.isArray(obj))
                 return obj.length;

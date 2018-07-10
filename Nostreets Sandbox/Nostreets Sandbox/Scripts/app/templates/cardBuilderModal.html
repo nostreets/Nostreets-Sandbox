@@ -14,21 +14,43 @@
                                     Template Name
                                     <small>*</small>
                                 </label>
-                                <input type="text" class="form-control" id="cms-FormName" ng-model="pg.name" name="cms-FormName" required aria-required="true">
+                                <input type="text"
+                                       class="form-control"
+                                       id="cms-FormName"
+                                       ng-model="pg.name"
+                                       name="cms-FormName"
+                                       autocomplete="off"
+                                       required
+                                       aria-required="true">
                                 <span class="material-input"></span>
                             </div>
                             <div class="col-sm-3">
                                 <ul class="nav nav-stacked nav-pills">
-                                    <li class="active"><a data-target="#form-headerTab" data-toggle="tab">Head</a></li>
-                                    <li><a data-target="#form-contentTab" data-toggle="tab">Main</a></li>
-                                    <li><a data-target="#form-footerTab" data-toggle="tab">Foot</a></li>
+                                    <li class="active">
+                                        <a data-target="#form-headerTab"
+                                           data-toggle="tab">
+                                            Head
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a data-target="#form-contentTab"
+                                           data-toggle="tab">
+                                            Main
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a data-target="#form-footerTab"
+                                           data-toggle="tab">
+                                            Foot
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
                             <div class="col-sm-9">
 
                                 <div id="sizeGroup" class="form-group text-center">
                                     <div class="row">
-                                        <span><strong>Size: </strong></span>
+                                        <div><strong>Size: </strong></div>
                                         <label for="formSize-smCheckbox" class="label">
                                             Small: <input type="radio"
                                                           ng-checked="pg.size === 1 ? true : false"
@@ -62,7 +84,7 @@
 
                                         <div id="headerAlignmentGroup" class="form-group text-center">
                                             <div class="row">
-                                                <span><strong>Header Alignment: </strong></span>
+                                                <div><strong>Header Alignment: </strong></div>
                                                 <label for="formHeader-leftCheckbox" class="label">
                                                     Left: <input type="radio"
                                                                  value="left"
@@ -92,7 +114,7 @@
 
                                         <div id="headerContentGroup" class="form-group">
                                             <div class="row">
-                                                <span><strong>Header Content: </strong></span>
+                                                <div><strong>Header Content: </strong></div>
                                                 <label for="formHeader-textCheckbox" class="label">
                                                     Text: <input type="radio"
                                                                  name="headerType"
@@ -123,7 +145,7 @@
                                         <div>
                                             <textarea rows="4"
                                                       name="headerContent"
-                                                      cols="50"
+                                                      cols="30"
                                                       ng-if="pg.headerType === 'text' || pg.headerType ===  1"
                                                       ng-model="pg.headerContent"
                                                       id="headerText"></textarea>
@@ -131,7 +153,7 @@
                                                    name="headerContent"
                                                    ng-if="pg.headerType === 'img' || pg.headerType === 'vid' || pg.headerType ===  2 || pg.headerType ===  3"
                                                    id="headerUrl"
-                                                   ng-model="pg.headerContent"/>
+                                                   ng-model="pg.headerContent" />
                                         </div>
                                     </div>
 
@@ -139,7 +161,7 @@
 
                                         <div id="mainAlignmentGroup" class="form-group text-center">
                                             <div class="row">
-                                                <span><strong>Main Alignment: </strong></span>
+                                                <div><strong>Main Alignment: </strong></div>
                                                 <label for="formContent-leftCheckbox" class="label">
                                                     Left: <input type="radio"
                                                                  value="left"
@@ -169,7 +191,7 @@
 
                                         <div id="mainContentGroup" class="form-group text-center">
                                             <div class="row">
-                                                <span><strong>Main Content: </strong></span>
+                                                <div><strong>Main Content: </strong></div>
                                                 <label for="formContent-textCheckbox" class="label">
                                                     Text: <input type="radio"
                                                                  name="mainType"
@@ -200,7 +222,7 @@
                                         <div>
                                             <textarea ng-if="pg.mainType === 'text' || pg.mainType ===  1"
                                                       rows="3"
-                                                      cols="50"
+                                                      cols="30"
                                                       id="contentText"
                                                       name="mainContent"
                                                       ng-model="pg.mainContent"></textarea>
@@ -209,7 +231,7 @@
                                                    class=""
                                                    name="mainContent"
                                                    id="contentUrl"
-                                                   ng-model="pg.mainContent"/>
+                                                   ng-model="pg.mainContent" />
                                         </div>
                                     </div>
 
@@ -217,7 +239,7 @@
 
                                         <div id="footerAlignmentGroup" class="form-group text-center">
                                             <div class="row">
-                                                <span><strong>Footer Alignment: </strong></span>
+                                                <div><strong>Footer Alignment: </strong></div>
                                                 <label for="formFooter-leftCheckbox" class="label">
                                                     Left: <input type="radio"
                                                                  value="left"
@@ -247,7 +269,7 @@
 
                                         <div id="footerContentGroup" class="form-group text-center">
                                             <div class="row">
-                                                <span><strong>Footer Content: </strong></span>
+                                                <div><strong>Footer Content: </strong></div>
                                                 <label for="formFooter-textCheckbox" class="label">
                                                     Text: <input type="radio"
                                                                  name="footerContent"
@@ -273,10 +295,10 @@
                                                 </label>
                                             </div>
                                         </div>
-                                        
+
                                         <div>
                                             <textarea rows="3"
-                                                      cols="50"
+                                                      cols="30"
                                                       ng-if="pg.footerType === 'text' || pg.footerType ===  1"
                                                       id="footerText"
                                                       name="footerContent"
@@ -285,7 +307,7 @@
                                                    ng-if="pg.footerType === 'img' ||pg.footerType === 'vid' || pg.footerType ===  2 || pg.footerType ===  3"
                                                    name="footerContent"
                                                    id="footerUrl"
-                                                   ng-model="pg.footerContent"/>
+                                                   ng-model="pg.footerContent" />
                                         </div>
                                     </div>
                                 </div>
@@ -295,15 +317,17 @@
                                     <small>*</small> Required fields
                                 </div>
                                 <div class="btn-group btn-group-sm">
-                                    <button type="button" 
-                                            class="btn btn-round card-builder-formSubmit" 
-                                            ng-disabled="!pg.validateForm('#cardBuilderForm')" 
-                                            ng-click="pg.submitCard()">Submit
+                                    <button type="button"
+                                            class="btn btn-round card-builder-formSubmit"
+                                            ng-disabled="!pg.validateForm('#cardBuilderForm')"
+                                            ng-click="pg.submitCard()">
+                                        Submit
                                     </button>
-                                    <button type="button" 
-                                            style="background-color: #914e4e" 
-                                            class="btn btn-round" 
-                                            ng-click="pg.closeBuilder()">Close
+                                    <button type="button"
+                                            style="background-color: #914e4e"
+                                            class="btn btn-round"
+                                            ng-click="pg.closeBuilder()">
+                                        Close
                                     </button>
                                 </div>
                             </div>

@@ -241,6 +241,8 @@
     <Content Include="assets\emails\ForgotPasswordEmail.html" />
     <Content Include="assets\emails\NewPasswordEmail.html" />
     <Content Include="assets\emails\TFAuthEmail.html" />
+    <Content Include="assets\img\nile5.jpg" />
+    <Content Include="assets\img\nile6.jpg" />
     <Content Include="assets\img\source.gif" />
     <Content Include="assets\emails\UnindentifiedLogin.html" />
     <Content Include="assets\css\angular-moment-picker.css" />
