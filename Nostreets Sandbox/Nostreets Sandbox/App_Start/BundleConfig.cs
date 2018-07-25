@@ -31,7 +31,6 @@ namespace Nostreets_Sandbox
                     "~/node_modules/angular-toastr/dist/angular-toastr.css",
                     "~/node_modules/angularjs-color-picker/dist/angularjs-color-picker.css",
                     "~/node_modules/angularjs-color-picker/dist/themes/angularjs-color-picker-bootstrap.min.css"
-
                )
             );
 
@@ -95,7 +94,6 @@ namespace Nostreets_Sandbox
                 new ScriptBundle("~/customAngular").Include(
                     "~/Scripts/app/configs/routeConfig.js",
                     "~/Scripts/app/services/sandboxService.js"
-               //     "~/Scripts/app/directives/signInDirective.js"
                        ));
 
 
