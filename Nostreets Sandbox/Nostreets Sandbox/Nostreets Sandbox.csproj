@@ -1856,6 +1856,7 @@
     <Content Include="Scripts\app\core\page.js" />
     <Content Include="Scripts\app\directives\custom-datepicker.js" />
     <Content Include="Scripts\app\directives\carouselDirective.js" />
+    <Content Include="Scripts\app\directives\onRepeatFinishedDirective.js" />
     <Content Include="Scripts\app\directives\particles.js" />
     <Content Include="Scripts\app\directives\renderGraphDirective.js" />
     <Content Include="Scripts\app\directives\signInDirective.js" />

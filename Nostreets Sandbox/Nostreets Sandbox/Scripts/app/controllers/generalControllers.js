@@ -23,9 +23,19 @@
         vm.location = $location;
         _render();
 
-        function _render() { }
+        function _render() {
+            _setUp();
+        }
 
-        function _setUp() { }
+        function _setUp() {
+            vm.homeLinks = [
+                  { label: 'Personal Applications', link: '#!applicationsInProgress' }
+                , { label: 'Previous Workplaces', link: '#!pastProjects' }
+                , { label: 'Contact Nile', link: '#!contact' }
+                , { label: 'About Nile', link: '#!about' }
+            ];
+
+        }
 
     }
 

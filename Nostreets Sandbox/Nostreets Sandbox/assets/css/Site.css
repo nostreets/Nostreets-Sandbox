@@ -184,6 +184,19 @@ foreignObject > span {
 
 /*#region Carousel Classes */
 
+.carousel1_root {
+    margin: 40px 0;
+    margin: 80px auto;
+}
+
+.carousel1_container {
+    position: relative;
+    width: 210px;
+    height: 140px;
+    perspective: 1000px;
+    -webkit-perspective: 1000px;
+}
+
 .carousel1 {
     width: 100%;
     height: 100%;
@@ -196,17 +209,21 @@ foreignObject > span {
 .carousel1_cell {
     background: hsla(245, 18%, 48%, 0.80);
     position: absolute;
-    width: 190px;
+    width: 200px;
     height: 120px;
     left: 10px;
     top: 10px;
     border: 2px solid black;
-    line-height: 116px;
-    font-size: 80px;
+    line-height: 50px;
+    font-size: 2em;
     font-weight: bold;
     color: white;
+    /*COMPLETELY CENTER TEXT*/
     text-align: center;
     transition: transform 1s, opacity 1s;
+    align-items: center;
+    display: flex;
+    justify-content: center;
 }
 
 .carousel1-options {
@@ -216,6 +233,38 @@ foreignObject > span {
     background: hsla(0, 0%, 100%, 0.8);
 }
 
+
+/*#endregion */
+
+/*#region Blur Menu */
+
+.menu ul li {
+    display: inline;
+}
+
+    .menu ul li a {
+        color: black;
+        float: left;
+        text-decoration: none;
+        padding: 10px 25px;
+        letter-spacing: 1px;
+    }
+
+.menu:hover li a {
+    text-shadow: 0 0 3px #555;
+    color: rgba(0,0,0,0); /* completely hide text, only show our blurry shadow ;) */
+    -webkit-transition: all .3s;
+}
+
+.menu li a:hover {
+    color: black;
+    text-shadow: 0 0 0 rgba(0,0,0,0); /* completely removes any trace of a visible text-shadow */
+}
+
+.menu li a:active {
+    position: relative;
+    top: 2px;
+}
 
 /*#endregion */
 
