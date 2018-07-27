@@ -245,6 +245,7 @@
 
         function _render() {
             _setUp();
+            _handlers();
         }
 
         function _setUp() {
@@ -255,6 +256,53 @@
             vm.resentEmail = false;
             vm.isLoading = false;
             vm.rememberMe = true;
+            vm.googleClientId = "545466753618-ap1q43tsr3omjeh0huefc5qg8l3kgk3o.apps.googleusercontent.com";
+
+        }
+
+        function _handlers() {
+
+            vm.googleSignInOnSuccess = (user) => {
+
+                vm.email = user.getEmail();
+                vm.id = user.getId();
+                vm.firstName = user.getGivenName();
+                vm.lastName = user.getFamilyName();
+
+                _checkEmail(vm.email).then((a) => {
+                    if (a.data.item === false) {
+                        var obj = {
+                            username: vm.email,
+                            password: page.utilities.randomString(12),
+                            contact: {
+                                primaryEmail: vm.email,
+                                firstName: vm.firstName,
+                                lastName: vm.lastName
+                            }
+                        };
+
+                        _register(obj);
+                    }
+                    else
+                        _login();
+
+                });
+            };
+        }
+
+        function _register(obj) {
+
+            vm.isLoading = true;
+
+            $baseController.http({
+                url: "/api/register",
+                data: obj,
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' }
+            }).then(
+                (a) => {
+                    vm.isLoading = false;
+                });
 
         }
 
@@ -425,6 +473,32 @@
                 method: "GET",
                 headers: { 'Content-Type': 'application/json' }
             }).then(a => { vm.resentEmail = true; vm.reason = ""; });
+        }
+
+        function _googleInit(clientId) {
+            gapi.load('auth2', function () {
+                // Retrieve the singleton for the GoogleAuth library and set up the client.
+                auth2 = gapi.auth2.init({
+                    client_id: clientId + '.apps.googleusercontent.com',
+                    cookiepolicy: 'single_host_origin',
+                    // Request scopes in addition to 'profile' and 'email'
+                    //scope: 'additional_scope'
+                });
+                attachSignin(document.getElementById('customBtn'));
+            });
+        }
+
+        function _googleSigninPopup(element) {
+
+            console.log(element.id);
+
+            auth2.attachClickHandler(element, {},
+                function (googleUser) {
+                    document.getElementById('name').innerText = "Signed in: " +
+                        googleUser.getBasicProfile().getName();
+                }, function (error) {
+                    alert(JSON.stringify(error, undefined, 2));
+                });
         }
 
     }

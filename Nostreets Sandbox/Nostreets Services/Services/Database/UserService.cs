@@ -22,10 +22,7 @@ namespace Nostreets_Services.Services.Database
     {
         public UserService(HttpContext context, IEmailService emailSrv, IDBService<User, string> userDBSrv, IDBService<Token, string> tokenDBSrv)
         {
-            if (context == null)
-                throw new NullReferenceException("context");
-
-            _context = context;
+            _context = context ?? throw new NullReferenceException("context");
             _emailSrv = emailSrv;
             _userDBSrv = userDBSrv;
             _tokenDBSrv = tokenDBSrv;

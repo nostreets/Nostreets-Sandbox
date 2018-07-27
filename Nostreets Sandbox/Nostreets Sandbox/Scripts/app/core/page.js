@@ -144,6 +144,19 @@
             angular.module(page.APPNAME)['_invokeQueue'].forEach(function (value) {
                 console.log(value[1] + ": " + value[2][0]);
             });
+        },
+
+        randomString: (len) => {
+            if (typeof (len) !== 'number')
+                throw "parameter len has to be a interger...";
+
+            var anysize = len;
+            var charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"; 
+            result = "";
+            for (var i = 0; i < anysize; i++)
+                result += charset[Math.floor(Math.random() * charset.length)];
+
+            return result;
         }
     }
 };

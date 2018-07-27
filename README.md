@@ -1,7 +1,7 @@
 
 ## Nostreets Sandbox Repo
 
- -Web Server Project to [Personal Site](https://nostreets.azurewebsites.net)
+ -Web Server Project to [Personal Site](http://nostreetssolutions.com/#!/)
 
  -Services Class Library Project
 
