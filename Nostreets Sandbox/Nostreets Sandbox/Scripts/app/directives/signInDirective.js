@@ -53,6 +53,10 @@
                         }
                     });
 
+                    modalInstance.rendered.then(() => {
+                        componentHandler.upgradeAllRegistered();
+                    });
+
                 }
 
                 function _openLoginModal() {
@@ -71,6 +75,9 @@
                         }
                     });
 
+                    modalInstance.rendered.then(() => {
+                        componentHandler.upgradeAllRegistered();
+                    });
                 }
 
                 function _openUserModal(user) {
@@ -84,11 +91,14 @@
                         }
                     });
 
+                    modalInstance.rendered.then(() => {
+                        componentHandler.upgradeAllRegistered();
+                    });
                 }
 
                 function _handlers() {
                     $baseController.event.listen("loggedOut", () => { page.isLoggedIn = false; $scope.isLoggedIn = false; });
-                    $baseController.event.listen("loggedIn", () => { page.isLoggedIn = true; $scope.isLoggedIn = true;});
+                    $baseController.event.listen("loggedIn", () => { page.isLoggedIn = true; $scope.isLoggedIn = true; });
 
                     element.on("click", () => {
                         if (page.isLoggedIn)
@@ -126,7 +136,6 @@
 
         function _render() {
             _setUp();
-            //page.utilities.reloadCSS();
         }
 
         function _setUp() {
@@ -236,8 +245,6 @@
 
         function _render() {
             _setUp();
-            //page.utilities.reloadCSS();
-
         }
 
         function _setUp() {
@@ -260,7 +267,7 @@
                 vm.isLoading = true;
 
                 return $baseController.http({
-                    url: "/api/login?rememberDevice=" + ( vm.rememberMe ? 'true' : 'false'),
+                    url: "/api/login?rememberDevice=" + (vm.rememberMe ? 'true' : 'false'),
                     method: "POST",
                     data: {
                         username: vm.username,
@@ -444,8 +451,6 @@
                 _getUserSession().then(a => _setUp(a.data.item));
             else
                 _setUp(user);
-
-            //page.utilities.reloadCSS();
 
         }
 

@@ -4,7 +4,6 @@
 
     carouselDirective.$inject = ["$interval"];
 
-
     function carouselDirective($interval) {
 
         return {
@@ -12,13 +11,15 @@
 
             scope: {
                 collection: '=',
+                isHorizontal: '@',
                 width: '@',
                 height: '@',
                 backgroundColor: '@',
-                textColor: '@'
+                textColor: '@',
+                textFont: '@'
             },
 
-            template: "<div ng-if=\"!isHorizontal\" class=\"col-sm-1\" style=\"padding-left: 25%;\"> <a class=\"carousel_previousBtn\"> <i class=\"material-icons\" style=\"color: white;\">arrow_upward</i> </a> </div> <div class=\"col-sm-12 carousel1_root\"> <div ng-if=\"isHorizontal\" class=\"col-sm-1\" style=\"padding: 7% 0% 0% 0%; margin-right: 10%;\"> <a class=\"carousel_previousBtn\"> <i class=\"material-icons\" style=\"color: white;\">arrow_back</i> </a> </div>  <div class=\"carousel1_container col-sm-10\"> <div class=\"carousel1\"> <a class=\"carousel1_cell\" ng-repeat=\" item in collection \" href=\"{{item.link ? item.link : ''}}\" on-repeat-finished > {{ item.label }} </a> </div> </div> <div ng-if=\"isHorizontal\" class=\"col-sm-1\" style=\"padding: 7% 0% 0% 39%;\"> <a class=\"carousel_nextBtn\"> <i class=\"material-icons\" style=\"color: white;\">arrow_forward</i> </a> </div> </div> <div ng-if=\"!isHorizontal\" class=\"col-sm-1\" style=\"padding-left: 25%;\"> <a class=\"carousel_nextBtn\"> <i class=\"material-icons\" style=\"color: white;\">arrow_downward</i> </a> </div>",
+            template: "<div ng-show=\"!isHorizontal\" class=\"col-sm-1\" style=\"padding-left: 25%;\"> <a class=\"carousel_previousBtn\"> <i class=\"material-icons\" style=\"color: white;\">arrow_upward</i> </a> </div> <div class=\"col-sm-12 carousel1_root\"> <div ng-show=\"isHorizontal\" class=\"col-sm-1\" style=\"padding: 7% 0% 0% 0%; margin-right: 10%;\"> <a class=\"carousel_previousBtn\"> <i class=\"material-icons\" style=\"color: white;\">arrow_back</i> </a> </div>  <div class=\"carousel1_container col-sm-10\"> <div class=\"carousel1\"> <a class=\"carousel1_cell\" ng-repeat=\" item in collection \" href=\"{{item.link ? item.link : ''}}\" on-repeat-finished > {{ item.label }} </a> </div> </div> <div ng-show=\"isHorizontal\" class=\"col-sm-1\" style=\"padding: 7% 0% 0% 39%;\"> <a class=\"carousel_nextBtn\"> <i class=\"material-icons\" style=\"color: white;\">arrow_forward</i> </a> </div> </div> <div ng-show=\"!isHorizontal\" class=\"col-sm-1\" style=\"padding-left: 25%;\"> <a class=\"carousel_nextBtn\"> <i class=\"material-icons\" style=\"color: white;\">arrow_downward</i> </a> </div>",
 
             link: function ($scope, element, attr) {
 
@@ -37,24 +38,25 @@
                     $interval(() => {
                         $scope.selectedIndex++;
                         _rotateCarousel();
-                    }, 5000);
+                    }, 10000);
                 }
 
                 function _setUp() {
 
                     $scope.collection = typeof ($scope.collection) == "string" ? JSON.parse($scope.collection) : $scope.collection ? $scope.collection : [];
+                    $scope.isHorizontal = $scope.isHorizontal && ($scope.isHorizontal == 'false' || $scope.isHorizontal === '0') ? false : true;
                     $scope.width = $scope.width || '200px';
                     $scope.height = $scope.height || '120px';
                     $scope.textColor = $scope.textColor || 'white';
-                    $scope.backgroundColor = ($scope.backgroundColor) ? $scope.backgroundColor : 'hsla(245, 18%, 48%, 0.80)';
+                    $scope.textFont = $scope.textFont || 'Trebuchet MS';
+                    $scope.backgroundColor = $scope.backgroundColor || 'hsla(245, 18%, 48%, 0.80)';
 
-                    $scope.isHorizontal = false;
                     $scope.carousel = document.querySelector('.carousel1');
                     $scope.cells = $scope.carousel.querySelectorAll('.carousel1_cell');
                     $scope.cellCount = $scope.collection.length || 0;
                     $scope.selectedIndex = 0;
-                    $scope.cellWidth = parseInt($scope.width);//$scope.carousel.offsetWidth;
-                    $scope.cellHeight = $scope.carousel.offsetHeight;
+                    $scope.cellWidth = parseInt($scope.width);
+                    $scope.cellHeight = parseInt($scope.height);
                     $scope.rotateFn = $scope.isHorizontal ? 'rotateY' : 'rotateX';
                     $scope.radius = null;
                     $scope.theta = null;
@@ -169,7 +171,7 @@
                 }
 
                 function _setDirectiveStyle() {
-                    var style = ".carousel1_root{margin:40px 0;margin:80px auto}  .carousel1_container{position:relative;width:210px;height:140px;perspective:1000px}  .carousel1{width:100%;height:100%;position:absolute;transform:translateZ(-288px);transform-style:preserve-3d;transition:transform 1s}  .carousel1_cell{background:" + $scope.backgroundColor + ";position:absolute;width:" + $scope.width + ";height:" + $scope.height + ";left:10px;top:10px;border:2px solid black;line-height:50px;font-size:2em;font-weight:bold;color:" + $scope.textColor + ";text-align:center;transition:transform 1s,opacity 1s;align-items:center;display:flex;justify-content:center}  .carousel1-options{text-align:center;position:relative;z-index:2;background:hsla(0,0%,100%,0.8)}";
+                    var style = ".carousel1_root{margin:40px 0;margin:80px auto}  .carousel1_container{position:relative;width:210px;height:140px;perspective:1000px}  .carousel1{width:100%;height:100%;position:absolute;transform:translateZ(-288px);transform-style:preserve-3d;transition:transform 1s}  .carousel1_cell{background:" + $scope.backgroundColor + ";position:absolute;width:" + $scope.width + ";height:" + $scope.height + ";left:10px;top:10px;border:2px solid black;line-height:50px;font-size:2em;font-weight:bold;color:" + $scope.textColor + ";text-align:center;transition:transform 1s,opacity 1s;align-items:center;display:flex;justify-content:center;font-family: " + $scope.textFont + "}  .carousel1-options{text-align:center;position:relative;z-index:2;background:hsla(0,0%,100%,0.8)}";
 
                     _writeStyles("carousel_styles", style);
                 }

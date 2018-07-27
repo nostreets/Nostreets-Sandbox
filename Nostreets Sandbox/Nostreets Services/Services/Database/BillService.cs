@@ -20,6 +20,8 @@ namespace Nostreets_Services.Services.Database
         {
             _incomeSrv = incomeSrv;
             _expenseSrv = expenseSrv;
+
+            incomeSrv.Backup();
         }
 
         private IDBService<Expense> _expenseSrv = null;

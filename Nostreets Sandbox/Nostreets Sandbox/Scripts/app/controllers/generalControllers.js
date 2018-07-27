@@ -33,6 +33,7 @@
                 , { label: 'Previous Workplaces', link: '#!pastProjects' }
                 , { label: 'Contact Nile', link: '#!contact' }
                 , { label: 'About Nile', link: '#!about' }
+                , { label: 'About Nile', link: '#!about' }
             ];
 
         }
