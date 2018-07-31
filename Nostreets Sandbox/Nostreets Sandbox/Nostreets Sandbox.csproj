@@ -413,6 +413,7 @@
     <Content Include="assets\js\photoswipe-ui-default.min.js" />
     <Content Include="assets\js\photoswipe.min.js" />
     <Content Include="assets\js\renderParticles.js" />
+    <Content Include="assets\js\requirejs.js" />
     <Content Include="assets\js\respond.js" />
     <Content Include="assets\js\respond.matchmedia.addListener.js" />
     <Content Include="assets\js\respond.matchmedia.addListener.min.js" />
@@ -1840,6 +1841,18 @@
     <Content Include="node_modules\material-design-lite\src\typography\demo.css" />
     <Content Include="node_modules\material-design-lite\src\typography\demo.html" />
     <Content Include="node_modules\material-design-lite\utils\uniffe.js" />
+    <Content Include="node_modules\popper.js\dist\esm\popper-utils.js" />
+    <Content Include="node_modules\popper.js\dist\esm\popper-utils.min.js" />
+    <Content Include="node_modules\popper.js\dist\esm\popper.js" />
+    <Content Include="node_modules\popper.js\dist\esm\popper.min.js" />
+    <Content Include="node_modules\popper.js\dist\popper-utils.js" />
+    <Content Include="node_modules\popper.js\dist\popper-utils.min.js" />
+    <Content Include="node_modules\popper.js\dist\popper.js" />
+    <Content Include="node_modules\popper.js\dist\popper.min.js" />
+    <Content Include="node_modules\popper.js\dist\umd\popper-utils.js" />
+    <Content Include="node_modules\popper.js\dist\umd\popper-utils.min.js" />
+    <Content Include="node_modules\popper.js\dist\umd\popper.js" />
+    <Content Include="node_modules\popper.js\dist\umd\popper.min.js" />
     <Content Include="node_modules\tinycolor2\demo\demo.css" />
     <Content Include="node_modules\tinycolor2\demo\jquery-1.9.1.js" />
     <Content Include="node_modules\tinycolor2\dist\tinycolor-min.js" />
@@ -1852,6 +1865,31 @@
     <Content Include="node_modules\tinycolor2\test\qunit.js" />
     <Content Include="node_modules\tinycolor2\test\test.js" />
     <Content Include="node_modules\tinycolor2\tinycolor.js" />
+    <Content Include="node_modules\twitter-node-client\index.js" />
+    <Content Include="node_modules\twitter-node-client\lib\Twitter.js" />
+    <Content Include="node_modules\twitter-node-client\node_modules\oauth\examples\express-gdata\server.js" />
+    <Content Include="node_modules\twitter-node-client\node_modules\oauth\examples\github-example.js" />
+    <Content Include="node_modules\twitter-node-client\node_modules\oauth\examples\term.ie.oauth-HMAC-SHA1.js" />
+    <Content Include="node_modules\twitter-node-client\node_modules\oauth\examples\twitter-example.js" />
+    <Content Include="node_modules\twitter-node-client\node_modules\oauth\index.js" />
+    <Content Include="node_modules\twitter-node-client\node_modules\oauth\lib\oauth.js" />
+    <Content Include="node_modules\twitter-node-client\node_modules\oauth\lib\oauth2.js" />
+    <Content Include="node_modules\twitter-node-client\node_modules\oauth\lib\sha1.js" />
+    <Content Include="node_modules\twitter-node-client\node_modules\oauth\lib\_utils.js" />
+    <Content Include="node_modules\twitter-node-client\node_modules\oauth\tests\oauth2tests.js" />
+    <Content Include="node_modules\twitter-node-client\node_modules\oauth\tests\oauthtests.js" />
+    <Content Include="node_modules\twitter-node-client\node_modules\oauth\tests\sha1tests.js" />
+    <Content Include="node_modules\twitter-node-client\node_modules\oauth\tests\shared.js" />
+    <Content Include="node_modules\twitter-node-client\node_modules\qs\dist\qs.js" />
+    <Content Include="node_modules\twitter-node-client\node_modules\qs\lib\formats.js" />
+    <Content Include="node_modules\twitter-node-client\node_modules\qs\lib\index.js" />
+    <Content Include="node_modules\twitter-node-client\node_modules\qs\lib\parse.js" />
+    <Content Include="node_modules\twitter-node-client\node_modules\qs\lib\stringify.js" />
+    <Content Include="node_modules\twitter-node-client\node_modules\qs\lib\utils.js" />
+    <Content Include="node_modules\twitter-node-client\node_modules\qs\test\index.js" />
+    <Content Include="node_modules\twitter-node-client\node_modules\qs\test\parse.js" />
+    <Content Include="node_modules\twitter-node-client\node_modules\qs\test\stringify.js" />
+    <Content Include="node_modules\twitter-node-client\node_modules\qs\test\utils.js" />
     <Content Include="Scripts\app\configs\routeConfig.js" />
     <Content Include="Scripts\app\controllers\billManagerController.js" />
     <Content Include="Scripts\app\controllers\cardController.js" />
@@ -1910,16 +1948,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="package.json" />
-    <Content Include="node_modules\.bin\atob" />
-    <Content Include="node_modules\.bin\atob.cmd" />
-    <Content Include="node_modules\.bin\color-support" />
-    <Content Include="node_modules\.bin\color-support.cmd" />
-    <Content Include="node_modules\.bin\gulp" />
-    <Content Include="node_modules\.bin\gulp.cmd" />
-    <Content Include="node_modules\.bin\semver" />
-    <Content Include="node_modules\.bin\semver.cmd" />
-    <Content Include="node_modules\.bin\which" />
-    <Content Include="node_modules\.bin\which.cmd" />
     <Content Include="node_modules\angular-animate\angular-animate.min.js.map" />
     <Content Include="node_modules\angular-animate\bower.json" />
     <Content Include="node_modules\angular-animate\LICENSE.md" />
@@ -2239,6 +2267,39 @@
     <Content Include="node_modules\tinycolor2\LICENSE" />
     <Content Include="node_modules\tinycolor2\package.json" />
     <Content Include="node_modules\tinycolor2\README.md" />
+    <Content Include="node_modules\twitter-node-client\LICENCE" />
+    <Content Include="node_modules\twitter-node-client\node_modules\oauth\.npmignore" />
+    <Content Include="node_modules\twitter-node-client\node_modules\oauth\examples\express-gdata\views\google_calendars.ejs" />
+    <Content Include="node_modules\twitter-node-client\node_modules\oauth\examples\express-gdata\views\google_contacts.ejs" />
+    <Content Include="node_modules\twitter-node-client\node_modules\oauth\examples\express-gdata\views\layout.ejs" />
+    <Content Include="node_modules\twitter-node-client\node_modules\oauth\LICENSE" />
+    <Content Include="node_modules\twitter-node-client\node_modules\oauth\Makefile" />
+    <Content Include="node_modules\twitter-node-client\node_modules\oauth\package.json" />
+    <Content Include="node_modules\twitter-node-client\node_modules\oauth\Readme.md" />
+    <Content Include="node_modules\twitter-node-client\node_modules\qs\.editorconfig" />
+    <Content Include="node_modules\twitter-node-client\node_modules\qs\.eslintignore" />
+    <Content Include="node_modules\twitter-node-client\node_modules\qs\.eslintrc" />
+    <Content Include="node_modules\twitter-node-client\node_modules\qs\CHANGELOG.md" />
+    <Content Include="node_modules\twitter-node-client\node_modules\qs\LICENSE" />
+    <Content Include="node_modules\twitter-node-client\node_modules\qs\package.json" />
+    <Content Include="node_modules\twitter-node-client\node_modules\qs\README.md" />
+    <Content Include="node_modules\twitter-node-client\node_modules\qs\test\.eslintrc" />
+    <Content Include="node_modules\twitter-node-client\package.json" />
+    <Content Include="node_modules\twitter-node-client\README.md" />
+    <Content Include="node_modules\popper.js\dist\esm\popper-utils.js.map" />
+    <Content Include="node_modules\popper.js\dist\esm\popper-utils.min.js.map" />
+    <Content Include="node_modules\popper.js\dist\esm\popper.js.map" />
+    <Content Include="node_modules\popper.js\dist\esm\popper.min.js.map" />
+    <Content Include="node_modules\popper.js\dist\popper-utils.js.map" />
+    <Content Include="node_modules\popper.js\dist\popper-utils.min.js.map" />
+    <Content Include="node_modules\popper.js\dist\popper.js.map" />
+    <Content Include="node_modules\popper.js\dist\popper.min.js.map" />
+    <Content Include="node_modules\popper.js\dist\umd\popper-utils.js.map" />
+    <Content Include="node_modules\popper.js\dist\umd\popper-utils.min.js.map" />
+    <Content Include="node_modules\popper.js\dist\umd\popper.js.map" />
+    <Content Include="node_modules\popper.js\dist\umd\popper.min.js.map" />
+    <Content Include="node_modules\popper.js\package.json" />
+    <Content Include="node_modules\popper.js\README.md" />
     <None Include="Properties\PublishProfiles\nostreets - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\nostreets - Web Deploy.pubxml" />
     <Content Include="Views\Shared\_MobileNavBar.cshtml" />
@@ -2297,6 +2358,9 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="node_modules\popper.js\index.d.ts" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

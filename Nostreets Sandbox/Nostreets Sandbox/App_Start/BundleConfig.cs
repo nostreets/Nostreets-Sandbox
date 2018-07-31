@@ -56,9 +56,10 @@ namespace Nostreets_Sandbox
                     "~/assets/js/chartist.min.js",
                     "~/assets/js/chartist-plugin-tooltip.min.js",
                     "~/assets/js/chartist-plugin-zoom.min.js",
-                    
+                    "~/assets/js/requirejs.js",
+
                     //+CUSTOM
-                    "~/Scripts/app/services/nostreetsChartistScrollPlugin.js"
+                    "~/Scripts/app/services/nostreetsChartistScrollPlugin.js" // Chartist Plugin
                         ));
 
             bundles.Add(
@@ -80,12 +81,14 @@ namespace Nostreets_Sandbox
 
 
             bundles.Add(
-                new ScriptBundle("~/baseJS").Include(
+                new ScriptBundle("~/customJS").Include(
                     "~/Scripts/app/core/page.js",
                     "~/Scripts/app/core/extend.js",
                     "~/Scripts/app/services/alertService.js",
                     "~/Scripts/app/services/systemEvent.service.js",
-                    "~/Scripts/app/core/baseController.js"
+                    "~/Scripts/app/core/baseController.js",
+
+                    "~/node_modules/twitter-node-client/index.js" // Twitter Api 
                       ));
 
 
