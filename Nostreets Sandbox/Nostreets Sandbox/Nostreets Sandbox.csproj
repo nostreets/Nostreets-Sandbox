@@ -413,6 +413,7 @@
     <Content Include="assets\js\photoswipe-ui-default.min.js" />
     <Content Include="assets\js\photoswipe.min.js" />
     <Content Include="assets\js\renderParticles.js" />
+    <Content Include="assets\js\requirejs.js" />
     <Content Include="assets\js\respond.js" />
     <Content Include="assets\js\respond.matchmedia.addListener.js" />
     <Content Include="assets\js\respond.matchmedia.addListener.min.js" />
@@ -1840,6 +1841,18 @@
     <Content Include="node_modules\material-design-lite\src\typography\demo.css" />
     <Content Include="node_modules\material-design-lite\src\typography\demo.html" />
     <Content Include="node_modules\material-design-lite\utils\uniffe.js" />
+    <Content Include="node_modules\popper.js\dist\esm\popper-utils.js" />
+    <Content Include="node_modules\popper.js\dist\esm\popper-utils.min.js" />
+    <Content Include="node_modules\popper.js\dist\esm\popper.js" />
+    <Content Include="node_modules\popper.js\dist\esm\popper.min.js" />
+    <Content Include="node_modules\popper.js\dist\popper-utils.js" />
+    <Content Include="node_modules\popper.js\dist\popper-utils.min.js" />
+    <Content Include="node_modules\popper.js\dist\popper.js" />
+    <Content Include="node_modules\popper.js\dist\popper.min.js" />
+    <Content Include="node_modules\popper.js\dist\umd\popper-utils.js" />
+    <Content Include="node_modules\popper.js\dist\umd\popper-utils.min.js" />
+    <Content Include="node_modules\popper.js\dist\umd\popper.js" />
+    <Content Include="node_modules\popper.js\dist\umd\popper.min.js" />
     <Content Include="node_modules\tinycolor2\demo\demo.css" />
     <Content Include="node_modules\tinycolor2\demo\jquery-1.9.1.js" />
     <Content Include="node_modules\tinycolor2\dist\tinycolor-min.js" />
@@ -1852,6 +1865,12 @@
     <Content Include="node_modules\tinycolor2\test\qunit.js" />
     <Content Include="node_modules\tinycolor2\test\test.js" />
     <Content Include="node_modules\tinycolor2\tinycolor.js" />
+    <Content Include="node_modules\twitter-login-client\.gitignore" />
+    <Content Include="node_modules\twitter-login-client\example\callback.html" />
+    <Content Include="node_modules\twitter-login-client\example\index.js" />
+    <Content Include="node_modules\twitter-login-client\example\twitter.html" />
+    <Content Include="node_modules\twitter-login-client\src\twitter-client.js" />
+    <Content Include="node_modules\twitter-login-client\src\twitter-client.min.js" />
     <Content Include="Scripts\app\configs\routeConfig.js" />
     <Content Include="Scripts\app\controllers\billManagerController.js" />
     <Content Include="Scripts\app\controllers\cardController.js" />
@@ -1870,6 +1889,7 @@
     <Content Include="Scripts\app\directives\renderGraphDirective.js" />
     <Content Include="Scripts\app\directives\signInDirective.js" />
     <Content Include="Scripts\app\directives\tooltipDirective.js" />
+    <Content Include="Scripts\app\directives\twitterSigninDirective.js" />
     <Content Include="Scripts\app\templates\cardBuilderModal.html" />
     <Content Include="Scripts\app\services\alertService.js" />
     <Content Include="Scripts\app\services\nostreetsChartistScrollPlugin.js" />
@@ -1912,16 +1932,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="package.json" />
-    <Content Include="node_modules\.bin\atob" />
-    <Content Include="node_modules\.bin\atob.cmd" />
-    <Content Include="node_modules\.bin\color-support" />
-    <Content Include="node_modules\.bin\color-support.cmd" />
-    <Content Include="node_modules\.bin\gulp" />
-    <Content Include="node_modules\.bin\gulp.cmd" />
-    <Content Include="node_modules\.bin\semver" />
-    <Content Include="node_modules\.bin\semver.cmd" />
-    <Content Include="node_modules\.bin\which" />
-    <Content Include="node_modules\.bin\which.cmd" />
     <Content Include="node_modules\angular-animate\angular-animate.min.js.map" />
     <Content Include="node_modules\angular-animate\bower.json" />
     <Content Include="node_modules\angular-animate\LICENSE.md" />
@@ -2241,6 +2251,24 @@
     <Content Include="node_modules\tinycolor2\LICENSE" />
     <Content Include="node_modules\tinycolor2\package.json" />
     <Content Include="node_modules\tinycolor2\README.md" />
+    <Content Include="node_modules\popper.js\dist\esm\popper-utils.js.map" />
+    <Content Include="node_modules\popper.js\dist\esm\popper-utils.min.js.map" />
+    <Content Include="node_modules\popper.js\dist\esm\popper.js.map" />
+    <Content Include="node_modules\popper.js\dist\esm\popper.min.js.map" />
+    <Content Include="node_modules\popper.js\dist\popper-utils.js.map" />
+    <Content Include="node_modules\popper.js\dist\popper-utils.min.js.map" />
+    <Content Include="node_modules\popper.js\dist\popper.js.map" />
+    <Content Include="node_modules\popper.js\dist\popper.min.js.map" />
+    <Content Include="node_modules\popper.js\dist\umd\popper-utils.js.map" />
+    <Content Include="node_modules\popper.js\dist\umd\popper-utils.min.js.map" />
+    <Content Include="node_modules\popper.js\dist\umd\popper.js.map" />
+    <Content Include="node_modules\popper.js\dist\umd\popper.min.js.map" />
+    <Content Include="node_modules\popper.js\package.json" />
+    <Content Include="node_modules\popper.js\README.md" />
+    <Content Include="node_modules\twitter-login-client\bower.json" />
+    <Content Include="node_modules\twitter-login-client\LICENSE" />
+    <Content Include="node_modules\twitter-login-client\package.json" />
+    <Content Include="node_modules\twitter-login-client\README.md" />
     <None Include="Properties\PublishProfiles\nostreets - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\nostreets - Web Deploy.pubxml" />
     <Content Include="Views\Shared\_MobileNavBar.cshtml" />
@@ -2299,6 +2327,9 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="node_modules\popper.js\index.d.ts" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

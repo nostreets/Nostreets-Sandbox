@@ -149,6 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Domain\Base\DBObject.cs" />
+    <Compile Include="Domain\Base\Error.cs" />
     <Compile Include="Domain\Base\Token.cs" />
     <Compile Include="Domain\Bills\Asset.cs" />
     <Compile Include="Domain\Bills\Expense.cs" />
