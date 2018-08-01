@@ -56,7 +56,7 @@ namespace Nostreets_Sandbox
                     "~/assets/js/chartist.min.js",
                     "~/assets/js/chartist-plugin-tooltip.min.js",
                     "~/assets/js/chartist-plugin-zoom.min.js",
-                    "~/assets/js/requirejs.js",
+                    "~/assets/js/requirejs.js", 
 
                     //+CUSTOM
                     "~/Scripts/app/services/nostreetsChartistScrollPlugin.js" // Chartist Plugin
@@ -88,7 +88,7 @@ namespace Nostreets_Sandbox
                     "~/Scripts/app/services/systemEvent.service.js",
                     "~/Scripts/app/core/baseController.js",
 
-                    "~/node_modules/twitter-node-client/index.js" // Twitter Api 
+                    "~/node_modules/twitter-login-client/src/twitter-client.js" // Twitter Login 
                       ));
 
 
