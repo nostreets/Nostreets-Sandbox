@@ -1,13 +1,7 @@
-﻿using Nostreets_Services.Domain.Base;
-using Nostreets_Services.Enums;
-using NostreetsExtensions.Utilities;
+﻿using Nostreets_Services.Enums;
+using NostreetsExtensions.DataControl.Classes;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nostreets_Services.Domain.Bills
 {

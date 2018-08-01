@@ -18,9 +18,8 @@ using System.Web;
 using System.Web.Http;
 using NostreetsInterceptor;
 using NostreetsExtensions;
-using NostreetsExtensions.Utilities;
 using NostreetsExtensions.Interfaces;
-using Nostreets_Services.Domain.Base;
+using NostreetsExtensions.DataControl.Classes;
 
 namespace Nostreets_Sandbox.Controllers.Api
 {
@@ -34,13 +33,15 @@ namespace Nostreets_Sandbox.Controllers.Api
             _cardSrv = _cardSrv.WindsorResolve(WindsorConfig.GetContainer());
             _userSrv = _userSrv.WindsorResolve(WindsorConfig.GetContainer());
             _billSrv = _billSrv.WindsorResolve(WindsorConfig.GetContainer());
+            _errorLog = _errorLog.WindsorResolve(WindsorConfig.GetContainer());
         }
 
         IChartService _chartsSrv = null;
         IEmailService _emailSrv = null;
-        IDBService<StyledCard> _cardSrv = null;
         IUserService _userSrv = null;
         IBillService _billSrv = null;
+        IDBService<StyledCard> _cardSrv = null;
+        IDBService<Error> _errorLog = null;
 
         #region Private Members
 
@@ -55,7 +56,11 @@ namespace Nostreets_Sandbox.Controllers.Api
             return result;
         }
 
-        //private User _userSrv.SessionUser => _userSrv.SessionUser;
+        private HttpResponseMessage ErrorResponse(Exception ex)
+        {
+            _errorLog.Insert(new Error(ex));
+            return Request.CreateResponse(HttpStatusCode.InternalServerError, new ErrorResponse(ex));
+        }
 
 
         #endregion
@@ -78,7 +83,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, new ErrorResponse(ex));
+                return ErrorResponse(ex);
             }
         }
 
@@ -99,8 +104,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -117,8 +121,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -134,8 +137,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -151,8 +153,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -170,8 +171,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -193,8 +193,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -211,8 +210,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -228,8 +226,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -247,8 +244,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -264,8 +260,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -284,8 +279,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -303,8 +297,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -322,8 +315,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -341,8 +333,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -360,8 +351,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -379,8 +369,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -389,8 +378,6 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-
-
                 Chart<List<float>> result = null;
                 result = _billSrv.GetCombinedChart(_userSrv.SessionUser.Id, out chartSchedule, startDate, endDate);
                 ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(result);
@@ -398,8 +385,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -427,8 +413,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -455,8 +440,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -482,8 +466,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -509,8 +492,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -525,8 +507,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -541,8 +522,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -562,8 +542,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -582,8 +561,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -612,8 +590,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -641,8 +618,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -661,8 +637,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -684,8 +659,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -705,8 +679,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -725,8 +698,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -767,8 +739,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -812,8 +783,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -852,8 +822,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -892,8 +861,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -915,8 +883,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -948,8 +915,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -984,8 +950,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             catch (Exception ex)
             {
 
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -1044,9 +1009,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 
@@ -1067,9 +1030,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-
-                ErrorResponse response = new ErrorResponse(ex);
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return ErrorResponse(ex);
             }
         }
 

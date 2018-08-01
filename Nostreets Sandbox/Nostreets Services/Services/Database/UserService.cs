@@ -1,17 +1,14 @@
 ﻿using Nostreets_Services.Domain;
-using Nostreets_Services.Domain.Base;
-using Nostreets_Services.Enums;
 using Nostreets_Services.Interfaces.Services;
-using Nostreets_Services.Services.Email;
 using NostreetsExtensions;
+using NostreetsExtensions.DataControl.Classes;
+using NostreetsExtensions.DataControl.Enums;
 using NostreetsExtensions.Interfaces;
 using NostreetsExtensions.Utilities;
-using NostreetsORM;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Configuration;
@@ -20,18 +17,24 @@ namespace Nostreets_Services.Services.Database
 {
     public class UserService : IUserService
     {
-        public UserService(HttpContext context, IEmailService emailSrv, IDBService<User, string> userDBSrv, IDBService<Token, string> tokenDBSrv)
+        public UserService(
+              HttpContext context
+            , IEmailService emailSrv
+            , IDBService<User, string> userDBSrv
+            , IDBService<Token, string> tokenDBSrv)
         {
-            _context = context ?? throw new NullReferenceException("context");
+            _context = context;
             _emailSrv = emailSrv;
             _userDBSrv = userDBSrv;
             _tokenDBSrv = tokenDBSrv;
+
         }
 
         private HttpContext _context = null;
         private IEmailService _emailSrv = null;
         private IDBService<User, string> _userDBSrv = null;
         private IDBService<Token, string> _tokenDBSrv = null;
+        private IDBService<Error> _errorLog = null;
 
         public string RequestIp => _context.GetIPAddress();
         public User SessionUser { get { return GetSessionUser(); } }

@@ -1887,7 +1887,7 @@
     <Content Include="Scripts\app\directives\onRepeatFinishedDirective.js" />
     <Content Include="Scripts\app\directives\particles.js" />
     <Content Include="Scripts\app\directives\renderGraphDirective.js" />
-    <Content Include="Scripts\app\directives\signInDirective.js" />
+    <Content Include="Scripts\app\directives\nostreetsSignInDirective.js" />
     <Content Include="Scripts\app\directives\tooltipDirective.js" />
     <Content Include="Scripts\app\directives\twitterSigninDirective.js" />
     <Content Include="Scripts\app\templates\cardBuilderModal.html" />

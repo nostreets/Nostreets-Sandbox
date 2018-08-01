@@ -7,10 +7,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using NostreetsExtensions;
-using NostreetsORM;
-using NostreetsExtensions.Utilities;
-using Nostreets_Services.Domain;
 using NostreetsExtensions.Interfaces;
+using NostreetsExtensions.DataControl.Classes;
 
 namespace Nostreets_Services.Services.Database
 {
@@ -20,11 +18,11 @@ namespace Nostreets_Services.Services.Database
         {
             _incomeSrv = incomeSrv;
             _expenseSrv = expenseSrv;
-
         }
 
         private IDBService<Expense> _expenseSrv = null;
-        private IDBService<Income> _incomeSrv = null;
+        private IDBService<Income>  _incomeSrv = null;
+        private IDBService<Error>   _errorLog = null;
 
 
         private List<string> CalculateLabelRange(out ScheduleTypes schedule, DateTime startDate, DateTime endDate)

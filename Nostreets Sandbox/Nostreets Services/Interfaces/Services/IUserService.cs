@@ -1,10 +1,7 @@
 ﻿using Nostreets_Services.Domain;
-using Nostreets_Services.Domain.Base;
-using NostreetsExtensions.Interfaces;
+using NostreetsExtensions.DataControl.Classes;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Nostreets_Services.Interfaces.Services

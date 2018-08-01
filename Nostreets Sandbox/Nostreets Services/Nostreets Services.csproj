@@ -148,9 +148,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Domain\Base\DBObject.cs" />
-    <Compile Include="Domain\Base\Error.cs" />
-    <Compile Include="Domain\Base\Token.cs" />
     <Compile Include="Domain\Bills\Asset.cs" />
     <Compile Include="Domain\Bills\Expense.cs" />
     <Compile Include="Domain\Bills\Income.cs" />
@@ -173,7 +170,6 @@
     <Compile Include="Enums\IncomeTypes.cs" />
     <Compile Include="Enums\ScheduleTypes.cs" />
     <Compile Include="Enums\StyledCardTypes.cs" />
-    <Compile Include="Enums\TokenType.cs" />
     <Compile Include="Enums\UserOriginType.cs" />
     <Compile Include="Helpers\RdlGenerator.cs" />
     <Compile Include="Helpers\NostreetsWinService.cs">

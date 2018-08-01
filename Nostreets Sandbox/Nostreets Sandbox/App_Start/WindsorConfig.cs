@@ -13,11 +13,12 @@ using System.Web.Configuration;
 using System.Web.Mvc;
 using System.Web.Http;
 using Nostreets_Services.Domain;
-using Nostreets_Services.Domain.Base;
 using Nostreets_Services.Domain.Charts;
 using System.Collections.Generic;
 using Nostreets_Services.Models.Request;
 using System.Web;
+using NostreetsEntities;
+using NostreetsExtensions.DataControl.Classes;
 
 namespace Nostreets_Sandbox.App_Start
 {
@@ -51,8 +52,17 @@ namespace Nostreets_Sandbox.App_Start
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             container.Register(
-                //Reg.Component.For(typeof(HttpContextWrapper)).LifestyleTransient()
-                //    .UsingFactoryMethod(() => new HttpContextWrapper(HttpContext.Current)),
+              
+                Reg.Component.For(typeof(IDBService<Error>)).ImplementedBy(typeof(EFDBService<Error>)).LifestyleSingleton()
+                    .DependsOn((k, param) =>
+                     {
+#if DEBUG
+                         //param["connectionKey"] = "GoogleConnection";
+                         param["connectionKey"] = "DefaultConnection";
+#else
+                         param["connectionKey"] = "GoogleConnection";
+#endif
+                     }),
 
                 Reg.Component.For(typeof(IDBService<>)).ImplementedBy(typeof(DBService<>)).LifestyleSingleton()
                     .DependsOn((k, param) =>
@@ -106,6 +116,7 @@ namespace Nostreets_Sandbox.App_Start
                      .DependsOn((k, param) =>
                      {
                          param["apiKey"] = WebConfigurationManager.AppSettings["SendGrid.ApiKey"];
+                         param["errorLog"] = k.Resolve<IDBService<Error>>();
                      }),
 
                   Reg.Component.For<IUserService>().ImplementedBy<UserService>().LifestyleSingleton()

@@ -1,9 +1,9 @@
 ﻿using System.Web.Mvc;
 using Nostreets_Services.Domain;
-using Nostreets_Services.Domain.Base;
 using Nostreets_Services.Interfaces.Services;
 using NostreetsExtensions;
 using NostreetsInterceptor;
+using NostreetsExtensions.DataControl.Classes;
 
 namespace Nostreets_Sandbox.Controllers
 {

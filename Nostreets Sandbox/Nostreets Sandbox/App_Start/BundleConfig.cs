@@ -56,7 +56,7 @@ namespace Nostreets_Sandbox
                     "~/assets/js/chartist.min.js",
                     "~/assets/js/chartist-plugin-tooltip.min.js",
                     "~/assets/js/chartist-plugin-zoom.min.js",
-                    "~/assets/js/requirejs.js", 
+                    //"~/assets/js/requirejs.js", 
 
                     //+CUSTOM
                     "~/Scripts/app/services/nostreetsChartistScrollPlugin.js" // Chartist Plugin

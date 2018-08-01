@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Data.Entity;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 using System.ComponentModel.DataAnnotations;
-using Nostreets_Services.Domain.Base;
 using System.Collections.Generic;
 using Nostreets_Services.Enums;
+using NostreetsExtensions.DataControl.Classes;
 
 namespace Nostreets_Services.Domain
 {
-   
+
     public class User
     {
         DateTime _dateCreated = DateTime.Now;

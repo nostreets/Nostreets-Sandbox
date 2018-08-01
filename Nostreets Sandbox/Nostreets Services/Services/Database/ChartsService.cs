@@ -7,19 +7,24 @@ using System.Linq;
 using NostreetsExtensions.Interfaces;
 using NostreetsExtensions;
 using NostreetsORM;
+using NostreetsExtensions.DataControl.Classes;
 
 namespace Nostreets_Services.Services.Database
 {
     public class ChartsService : IChartService
     {
-        public ChartsService(IDBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest> chartDBSrv, IDBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>> pieChartDBSrv)
+        public ChartsService(
+              IDBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest> chartDBSrv
+            , IDBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>> pieChartDBSrv)
         {
-            _chartSrv = chartDBSrv;// new DBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest>();
-            _pieChartSrv = pieChartDBSrv;// new DBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>>();
+            _chartSrv = chartDBSrv;
+            _pieChartSrv = pieChartDBSrv;
+
         }
 
         IDBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest> _chartSrv = null;
         IDBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>> _pieChartSrv = null;
+        IDBService<Error> _errorLog = null;
 
         public void Delete(int id)
         {

@@ -1,5 +1,6 @@
 ﻿using Nostreets_Services.Interfaces.Services;
-using NostreetsExtensions;
+using NostreetsExtensions.DataControl.Classes;
+using NostreetsExtensions.Interfaces;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System;
@@ -11,10 +12,17 @@ namespace Nostreets_Services.Services.Email
     {
         public SendGridService(string apiKey)
         {
-            ApiKey = apiKey;
+            _apiKey = apiKey;
         }
 
-        private string ApiKey { get; }
+        public SendGridService(string apiKey, IDBService<Error> errorLog)
+        {
+            _errorLog = errorLog;
+            _apiKey = apiKey;
+        }
+
+        private string _apiKey = null;
+        private IDBService<Error> _errorLog = null;
 
         public async Task<bool> SendAsync(string email, string toAddress, string subject, string messageText, string messageHtml)
         {
@@ -24,7 +32,7 @@ namespace Nostreets_Services.Services.Email
                 if (messageText == null || messageHtml == "")
                     messageText = subject;
 
-                SendGridClient client = new SendGridClient(ApiKey);
+                SendGridClient client = new SendGridClient(_apiKey);
                 SendGridMessage msg = new SendGridMessage()
                 {
                     From = new EmailAddress(email),
@@ -40,6 +48,9 @@ namespace Nostreets_Services.Services.Email
             }
             catch (Exception ex)
             {
+                if (_errorLog != null)
+                    _errorLog.Insert(new Error(ex));
+
                 throw ex;
             }
         }
