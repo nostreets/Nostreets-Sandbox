@@ -4,9 +4,7 @@
     angular.module(page.APPNAME)
         .directive('googleSignIn', googleSignIn);
 
-    googleSignIn.$inject = ['$timeout', '$parse'];
-
-    function googleSignIn($timeout, $parse) {
+    function googleSignIn() {
         return {
             restrict: 'A',
             scope: {
@@ -52,12 +50,10 @@
 
                 function _googleSigninPopup(element) {
 
-                    console.log(element.id);
-
                     auth2.attachClickHandler(
                           element
                         , {}
-                        , $scope.signinSuccess
+                        , (data) => { $scope.signinSuccess({ user: data }) }
                         , $scope.signinFailure
                     );
                 }

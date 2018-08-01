@@ -7,6 +7,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using System.ComponentModel.DataAnnotations;
 using Nostreets_Services.Domain.Base;
 using System.Collections.Generic;
+using Nostreets_Services.Enums;
 
 namespace Nostreets_Services.Domain
 {
@@ -33,7 +34,11 @@ namespace Nostreets_Services.Domain
 
         public UserSettings Settings { get; set; }
 
+        [Required]
         public Contact Contact { get; set; }
+
+        [Required]
+        public UserOriginType UserOrigin { get; set; }
 
     }
 

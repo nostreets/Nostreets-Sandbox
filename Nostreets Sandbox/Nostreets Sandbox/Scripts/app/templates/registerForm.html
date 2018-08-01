@@ -62,7 +62,7 @@
             </div>
 
             <div class="form-group"
-                 ng-class="{ true: 'has-success', false: 'has-error'}[(regVm.regForm.email.$valid ||  regVm.regForm.email.email.$valid) && (!regVm.emailExists)]">
+                 ng-class="{ true: 'has-success', false: 'has-error'}[regVm.regForm.email.$valid && (!regVm.emailExists)]">
 
                 <div class="input-group">
                     <span class="input-group-addon">

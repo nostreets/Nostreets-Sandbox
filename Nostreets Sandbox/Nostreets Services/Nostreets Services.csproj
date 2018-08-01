@@ -173,6 +173,7 @@
     <Compile Include="Enums\ScheduleTypes.cs" />
     <Compile Include="Enums\StyledCardTypes.cs" />
     <Compile Include="Enums\TokenType.cs" />
+    <Compile Include="Enums\UserOriginType.cs" />
     <Compile Include="Helpers\RdlGenerator.cs" />
     <Compile Include="Helpers\NostreetsWinService.cs">
       <SubType>Component</SubType>

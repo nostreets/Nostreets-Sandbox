@@ -3,15 +3,15 @@
         .controller("modalRegisterController", modalRegisterController)
         .controller("modalLogInController", modalLogInController)
         .controller("modalUserController", modalUserController)
-        .directive("signIn", signInDirective);
+        .directive("signIn", nostreetsSignInDirective);
 
-    signInDirective.$inject = ["$baseController", "$serverModel"];
+    nostreetsSignInDirective.$inject = ["$baseController", "$serverModel"];
     modalRegisterController.$inject = ["$scope", "$baseController", "$uibModalInstance", "links"];
     modalLogInController.$inject = ["$scope", "$baseController", "$uibModalInstance", "links"];
     modalUserController.$inject = ["$scope", "$baseController", "$uibModalInstance", "user"];
 
 
-    function signInDirective($baseController, $serverModel) {
+    function nostreetsSignInDirective($baseController, $serverModel) {
 
         return {
             restrict: "A",
@@ -36,7 +36,14 @@
                             showConfirmButton: false,
                             allowOutsideClick: true
                         });
-
+                    if ($serverModel.tokenOutcome !== null)
+                        swal({
+                            title: $serverModel.tokenOutcome,
+                            type: "error",
+                            showCancelButton: false,
+                            showConfirmButton: false,
+                            allowOutsideClick: true
+                        });
 
                     _handlers();
                 }
@@ -178,8 +185,6 @@
                     vm.requestSuccessful = true;
                     vm.isLoading = false;
                 });
-
-
         }
 
         function _validateForm() {
@@ -250,6 +255,7 @@
 
         function _setUp() {
 
+            vm.registered = false;
             vm.username = null;
             vm.password = null;
             vm.reason = null;
@@ -257,37 +263,69 @@
             vm.isLoading = false;
             vm.rememberMe = true;
             vm.googleClientId = "545466753618-ap1q43tsr3omjeh0huefc5qg8l3kgk3o.apps.googleusercontent.com";
+            vm.instagramClientId = "fb198f3bbf4744bd89e066fd6eeaeb2e";
+            vm.fbAppId = 1903266009978931;
 
         }
 
         function _handlers() {
 
             vm.googleSignInOnSuccess = (user) => {
-
                 vm.email = user.getEmail();
-                vm.id = user.getId();
+                vm.username = user.getEmail();
+                vm.password = user.getId();
                 vm.firstName = user.getGivenName();
                 vm.lastName = user.getFamilyName();
+                vm.userOrigin = 2;
 
-                _checkEmail(vm.email).then((a) => {
-                    if (a.data.item === false) {
-                        var obj = {
-                            username: vm.email,
-                            password: page.utilities.randomString(12),
-                            contact: {
-                                primaryEmail: vm.email,
-                                firstName: vm.firstName,
-                                lastName: vm.lastName
-                            }
-                        };
-
-                        _register(obj);
-                    }
-                    else
-                        _login();
-
-                });
+                _externalSignIn();
             };
+
+
+            vm.facebookSignInOnSuccess = (user) => {
+                vm.email = user.email;
+                vm.username = user.email;
+                vm.password = user.id;
+                vm.firstName = user.first_name;
+                vm.lastName = user.leat_name;
+                vm.userOrigin = 3;
+
+                _externalSignIn();
+            };
+
+            vm.instagramSignInOnSuccess = (user) => {
+                vm.email = user.email;
+                vm.username = user.username;
+                vm.password = user.id;
+                vm.firstName = user.full_name.split(" ")[0];
+                vm.lastName = user.full_name.split(" ").length === 2 ? user.full_name.split(" ")[1] : '';
+                vm.userOrigin = 5;
+
+                _externalSignIn();
+            };
+        }
+
+        function _externalSignIn(user) {
+
+            _checkEmail(vm.email).then((a) => {
+                if (a.data.item === false) {
+                    var obj = {
+                        username: vm.email,
+                        password: vm.id,
+                        userOrigin: vm.userOrigin,
+                        contact: {
+                            primaryEmail: vm.email,
+                            firstName: vm.firstName,
+                            lastName: vm.lastName
+                        }
+                    };
+
+                    _register(obj);
+                }
+                else
+                    _login();
+
+            });
         }
 
         function _register(obj) {
@@ -303,6 +341,8 @@
                 (a) => {
                     vm.isLoading = false;
                 });
+
+            vm.registered = true;
 
         }
 
@@ -475,32 +515,6 @@
             }).then(a => { vm.resentEmail = true; vm.reason = ""; });
         }
 
-        function _googleInit(clientId) {
-            gapi.load('auth2', function () {
-                // Retrieve the singleton for the GoogleAuth library and set up the client.
-                auth2 = gapi.auth2.init({
-                    client_id: clientId + '.apps.googleusercontent.com',
-                    cookiepolicy: 'single_host_origin',
-                    // Request scopes in addition to 'profile' and 'email'
-                    //scope: 'additional_scope'
-                });
-                attachSignin(document.getElementById('customBtn'));
-            });
-        }
-
-        function _googleSigninPopup(element) {
-
-            console.log(element.id);
-
-            auth2.attachClickHandler(element, {},
-                function (googleUser) {
-                    document.getElementById('name').innerText = "Signed in: " +
-                        googleUser.getBasicProfile().getName();
-                }, function (error) {
-                    alert(JSON.stringify(error, undefined, 2));
-                });
-        }
-
     }
 
     function modalUserController($scope, $baseController, $uibModalInstance, user) {
@@ -515,6 +529,7 @@
         vm.hasUserChanged = _hasUserChanged;
         vm.isLockedOut = _isLockedOut;
         vm.toggleTFAuth = _toggleTFAuth;
+        vm.resendEmailValidation = _resendEmailValidation;
 
 
         _render();
@@ -672,6 +687,15 @@
                     }
                     break;
             }
+        }
+
+        function _resendEmailValidation() {
+
+            $baseController.http({
+                url: "/api/user/resendValidationEmail" + "?username=" + vm.username,
+                method: "GET",
+                headers: { 'Content-Type': 'application/json' }
+            }).then(a => { vm.resentEmail = true; vm.reason = ""; });
         }
 
     }

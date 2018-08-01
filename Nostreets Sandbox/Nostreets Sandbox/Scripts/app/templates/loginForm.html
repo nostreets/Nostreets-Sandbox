@@ -1,5 +1,5 @@
 ﻿<form name="logVm.logForm">
-    <div class="card card-login noshadow">
+    <div ng-if="!logVm.registered" class="card card-login noshadow">
         <div class="card-header text-center">
             <h4 class="card-title">
                 Login
@@ -120,28 +120,30 @@
                     <div class="text-center">
                         <h5 style="font-size:small; font-family:'Trebuchet MS'">Log In With...</h5>
                         <div class="row">
-                            <a href="">
+                            <a href="" facebook-sign-in app-id="logVm.facebookAppId" signin-succes="logVm.facebookSignInOnSuccess(user)">
                                 <img src="/assets/svg/facebook.svg" style="width: 25px; height: 25px;" />
                             </a>
-                            <a href="" google-sign-in client-id="logVm.googleClientId" signin-success="logVm.googleSignInOnSuccess(w3)">
+                            <a href="" google-sign-in client-id="logVm.googleClientId" signin-success="logVm.googleSignInOnSuccess(user)">
                                 <img src="/assets/svg/google.svg" style="width: 25px; height: 25px;" />
                             </a>
-                            <a href=""><img src="/assets/svg/insta.svg" style="width: 25px; height: 25px;" /></a>
+                            <!--<a href="" instagram-sign-in client-id="logVm.instagramClientId" signin-success="logVm.instagramSignInOnSuccess(user)">
+                                <img src="/assets/svg/insta.svg" style="width: 25px; height: 25px;" />
+                            </a>-->
                             <a href=""><img src="/assets/svg/snapchat.svg" style="width: 25px; height: 25px;" /></a>
                             <a href=""><img src="/assets/svg/twitter.svg" style="width: 25px; height: 25px;" /></a>
 
-                            <!-- OLD SOCIAL LOGOS
-                                <i class="icon ion-logo-google" style="color:#E02F2F"></i>
-                            <i class="icon ion-logo-twitter" style="color:#55ACEE"></i>
-                            <i class="icon ion-logo-facebook" style="color:#3B5998"></i>
-                            <i class="icon ion-logo-instagram" style="color:#B82252"></i>
-                            <i class="icon ion-logo-snapchat" style="color:#FFE400"></i>
-                                -->
-
+                            
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="card" ng-if="logVm.registered">
+        <div class="card-content text-center">
+            <div>Registation Email has been sent...</div>
+            <div>Validate Email to be able to login!</div>
         </div>
     </div>
 </form>
