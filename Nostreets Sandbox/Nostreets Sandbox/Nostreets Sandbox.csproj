@@ -2271,8 +2271,6 @@
     <Content Include="node_modules\twitter-login-client\README.md" />
     <None Include="Properties\PublishProfiles\nostreets - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\nostreets - Web Deploy.pubxml" />
-    <Content Include="Views\Shared\_MobileNavBar.cshtml" />
-    <Content Include="Views\Shared\_ServerModel.cshtml" />
     <None Include="Properties\PublishProfiles\NostreetsSandbox - Web Deploy.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -2280,14 +2278,6 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
-    <Content Include="Views\Web.config" />
-    <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Shared\Error.cshtml" />
-    <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Shared\Lockout.cshtml" />
-    <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\Shared\_LayoutDeft.cshtml" />
     <Content Include="Connections.config">
       <SubType>Designer</SubType>
     </Content>
