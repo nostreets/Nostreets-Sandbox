@@ -57,7 +57,6 @@ namespace Nostreets_Sandbox.App_Start
                     .DependsOn((k, param) =>
                      {
 #if DEBUG
-                         //param["connectionKey"] = "GoogleConnection";
                          param["connectionKey"] = "DefaultConnection";
 #else
                          param["connectionKey"] = "GoogleConnection";
@@ -68,10 +67,11 @@ namespace Nostreets_Sandbox.App_Start
                     .DependsOn((k, param) =>
                      {
 #if DEBUG
-                         //param["connectionKey"] = "GoogleConnection";
                          param["connectionKey"] = "DefaultConnection";
+                         param["errorLog"] = k.Resolve<IDBService<Error>>();
 #else
                          param["connectionKey"] = "GoogleConnection";
+                         param["errorLog"] = k.Resolve<IDBService<Error>>();
 #endif
                      }),
 
@@ -79,10 +79,11 @@ namespace Nostreets_Sandbox.App_Start
                      .DependsOn((k, param) =>
                          {
 #if DEBUG
-                             //param["connectionKey"] = "GoogleConnection";
-                             param["connectionKey"] = "DefaultConnection";
+                         param["connectionKey"] = "DefaultConnection";
+                         param["errorLog"] = k.Resolve<IDBService<Error>>();
 #else
                          param["connectionKey"] = "GoogleConnection";
+                         param["errorLog"] = k.Resolve<IDBService<Error>>();
 #endif
                          }),
 
@@ -90,10 +91,11 @@ namespace Nostreets_Sandbox.App_Start
                     .DependsOn((k, param) =>
                      {
 #if DEBUG
-                         //param["connectionKey"] = "GoogleConnection";
                          param["connectionKey"] = "DefaultConnection";
+                         param["errorLog"] = k.Resolve<IDBService<Error>>();
 #else
                          param["connectionKey"] = "GoogleConnection";
+                         param["errorLog"] = k.Resolve<IDBService<Error>>();
 #endif
                      }),
 

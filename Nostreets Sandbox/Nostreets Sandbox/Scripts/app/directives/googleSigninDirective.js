@@ -53,7 +53,7 @@
                     auth2.attachClickHandler(
                           element
                         , {}
-                        , (data) => { $scope.signinSuccess({ user: data }) }
+                        , (data) => { $scope.signinSuccess({ user: data.w3 }) }
                         , $scope.signinFailure
                     );
                 }

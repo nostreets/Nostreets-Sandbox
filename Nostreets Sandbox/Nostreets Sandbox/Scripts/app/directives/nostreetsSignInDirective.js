@@ -311,7 +311,7 @@
                 if (a.data.item === false) {
                     var obj = {
                         username: vm.email,
-                        password: vm.id,
+                        password: vm.password,
                         userOrigin: vm.userOrigin,
                         contact: {
                             primaryEmail: vm.email,
