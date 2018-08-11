@@ -650,15 +650,31 @@
         }
 
         function _saveChanges() {
-            _passwordLock().then(
-                () => {
-                    if (vm.user.newPassword && vm.user.newPassword.length >= 12 && vm.user.newPassword !== vm.userSnap.newPassword)
-                        vm.user.password = vm.user.newPassword;
 
-                    _updateUser();
+            if (vm.user.userOrigin === 1)
+                _passwordLock().then(
+                    () => {
+                        if (vm.user.newPassword && vm.user.newPassword.length >= 12 && vm.user.newPassword !== vm.userSnap.newPassword) {
+                            vm.user.password = vm.user.newPassword;
 
-                    vm.editMode = false;
-                });
+                            _updateUser();
+
+                            vm.editMode = false;
+                        }
+                        else {
+                            swal({
+                                title: "Password is Invalid!",
+                                type: "error",
+                                showCancelButton: false,
+                                showConfirmButton: false,
+                                allowOutsideClick: true
+                            });
+                        }
+                    });
+            else {
+                _updateUser();
+                vm.editMode = false;
+            }
         }
 
         function _isLockedOut() {

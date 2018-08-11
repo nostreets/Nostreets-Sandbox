@@ -56,9 +56,9 @@ namespace Nostreets_Sandbox.Controllers.Api
             return result;
         }
 
-        private HttpResponseMessage ErrorResponse(Exception ex)
+        private HttpResponseMessage ErrorResponse(Exception ex, string userId = null)
         {
-            _errorLog.Insert(new Error(ex));
+            _errorLog.Insert(new Error(ex) { UserId = userId });
             return Request.CreateResponse(HttpStatusCode.InternalServerError, new ErrorResponse(ex));
         }
 
