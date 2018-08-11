@@ -40,20 +40,13 @@
             return false;
         },
 
-        reloadCSS: (sheetName) => {
-
-            $.autoUpdateStylesheets();
-
-            //var links = document.getElementsByTagName("link");
-
-            //for (var x in links) {
-            //    var link = links[x];
-
-            //    if (link.href.includes(sheetName) || sheetName === null)
-            //        if (link.href.includes('.css') || ($(link).attr("type") != null && $(link).attr("type").indexOf("css") > -1))
-            //            link.href += (link.href.includes('?') ? '&' : '?') + "id=" + new Date().getMilliseconds();
-
-            //}
+        loadScript: (url, callback) => {
+            jQuery.ajax({
+                url: url,
+                dataType: 'script',
+                success: callback,
+                async: true
+            });
         },
 
         equals: (obj1, obj2) => JSON.stringify(obj1) === JSON.stringify(obj2),
@@ -151,7 +144,7 @@
                 throw "parameter len has to be a interger...";
 
             var anysize = len;
-            var charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"; 
+            var charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
             result = "";
             for (var i = 0; i < anysize; i++)
                 result += charset[Math.floor(Math.random() * charset.length)];
