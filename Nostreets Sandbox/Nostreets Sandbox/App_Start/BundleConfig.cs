@@ -9,6 +9,7 @@ namespace Nostreets_Sandbox
         public static void RegisterBundles(BundleCollection bundles)
         {
 
+            //+CSS Requirements
             bundles.Add(
                 new StyleBundle("~/css").IncludeWithCssRewriteUrlTransform(
                     //+BOOTSTRAP
@@ -35,6 +36,7 @@ namespace Nostreets_Sandbox
             );
 
 
+            //+JS Requirements
             bundles.Add(
                 new ScriptBundle("~/jsRequirements").Include(
                     //+JQUERY
@@ -56,12 +58,13 @@ namespace Nostreets_Sandbox
                     "~/assets/js/chartist.min.js",
                     "~/assets/js/chartist-plugin-tooltip.min.js",
                     "~/assets/js/chartist-plugin-zoom.min.js",
-                    //"~/assets/js/requirejs.js", 
+                    "~/assets/js/requirejs.js", 
 
                     //+CUSTOM
                     "~/Scripts/app/services/nostreetsChartistScrollPlugin.js" // Chartist Plugin
                         ));
 
+            //+Angular Requirements
             bundles.Add(
                 new ScriptBundle("~/angularRequirements").Include(
 
@@ -79,20 +82,20 @@ namespace Nostreets_Sandbox
 
                         ));
 
-
+            //+Custom Javascript
             bundles.Add(
                 new ScriptBundle("~/customJS").Include(
                     "~/Scripts/app/core/page.js",
                     "~/Scripts/app/core/extend.js",
                     "~/Scripts/app/services/alertService.js",
                     "~/Scripts/app/services/systemEvent.service.js",
-                    "~/Scripts/app/core/baseController.js",
-
-                    "~/node_modules/twitter-login-client/src/twitter-client.js" // Twitter Login 
+                    "~/Scripts/app/core/baseController.js"
+                    //"~/node_modules/twitter-login-client/src/twitter-client.js" // Twitter Login 
                       ));
 
 
 
+            //+Custom Angular
             bundles.Add(
                 new ScriptBundle("~/customAngular").Include(
                     "~/Scripts/app/configs/routeConfig.js",
@@ -100,6 +103,7 @@ namespace Nostreets_Sandbox
                        ));
 
 
+            //+Other Javascript
             bundles.Add(
                 new ScriptBundle("~/other").Include(
                     "~/assets/js/animsition.min.js",
