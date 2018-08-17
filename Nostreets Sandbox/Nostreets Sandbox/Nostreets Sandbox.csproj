@@ -293,8 +293,8 @@
     <Content Include="assets\img\facebook%402x.png" />
     <Content Include="assets\img\googleplus%402x.png" />
     <Content Include="assets\img\twitter%402x.png" />
-    <Content Include="assets\js\auto_update_stylesheets.js" />
     <Content Include="assets\js\autotrack.js" />
+    <Content Include="assets\js\auto_update_stylesheets.js" />
     <Content Include="assets\js\chartist-plugin-tooltip.js" />
     <Content Include="assets\js\chartist-plugin-tooltip.min.js" />
     <Content Include="assets\js\chartist-plugin-zoom.js" />
@@ -434,7 +434,6 @@
     <Content Include="assets\js\photoswipe-ui-default.min.js" />
     <Content Include="assets\js\photoswipe.min.js" />
     <Content Include="assets\js\renderParticles.js" />
-    <Content Include="assets\js\requirejs.js" />
     <Content Include="assets\js\respond.js" />
     <Content Include="assets\js\respond.matchmedia.addListener.js" />
     <Content Include="assets\js\spectragram.min.js" />
@@ -1890,6 +1889,7 @@
     <Content Include="node_modules\twitter-login-client\example\twitter.html" />
     <Content Include="node_modules\twitter-login-client\src\twitter-client.js" />
     <Content Include="node_modules\twitter-login-client\src\twitter-client.min.js" />
+    <Content Include="Scripts\app\configs\requireConfig.js" />
     <Content Include="Scripts\app\configs\routeConfig.js" />
     <Content Include="Scripts\app\controllers\billManagerController.js" />
     <Content Include="Scripts\app\controllers\cardController.js" />

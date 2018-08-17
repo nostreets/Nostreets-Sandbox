@@ -58,10 +58,9 @@ namespace Nostreets_Sandbox
                     "~/assets/js/chartist.min.js",
                     "~/assets/js/chartist-plugin-tooltip.min.js",
                     "~/assets/js/chartist-plugin-zoom.min.js",
-                    "~/assets/js/requirejs.js", 
 
                     //+CUSTOM
-                    "~/Scripts/app/services/nostreetsChartistScrollPlugin.js" // Chartist Plugin
+                    "~/Scripts/app/services/nostreetsChartistScrollPlugin.js" // Nostreets Chartist Scroll Plugin
                         ));
 
             //+Angular Requirements
@@ -90,7 +89,7 @@ namespace Nostreets_Sandbox
                     "~/Scripts/app/services/alertService.js",
                     "~/Scripts/app/services/systemEvent.service.js",
                     "~/Scripts/app/core/baseController.js"
-                    //"~/node_modules/twitter-login-client/src/twitter-client.js" // Twitter Login 
+                    //"~/node_modules/twitter-login-client/src/twitter-client.js"   // TWITTER LOGIN 
                       ));
 
 
