@@ -25,7 +25,7 @@ namespace Nostreets_Sandbox
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             //+EF Config
-            Database.SetInitializer(new DropCreateDatabaseIfModelChanges<EFDBContext<Error>>());
+            //Database.SetInitializer(new DropCreateDatabaseIfModelChanges<EFDBContext<Error>>());
 
         }
 
