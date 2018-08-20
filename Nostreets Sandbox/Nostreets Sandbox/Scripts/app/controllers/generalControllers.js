@@ -1,6 +1,7 @@
 ﻿(function () {
 
-    angular.module(page.APPNAME).controller("homeController", homeController)
+    angular.module(page.APPNAME)
+        .controller("homeController", homeController)
         .controller("applicationsInProgressController", applicationsInProgressController)
         .controller("pastProjectsController", pastProjectsController)
         .controller("contactUsController", contactUsController)
@@ -8,12 +9,12 @@
         .controller("modalCodeController", modalCodeController);
 
 
-    homeController.$inject = ["$scope", "$baseController", '$location'];
-    applicationsInProgressController.$inject = ["$scope", "$baseController"];
-    pastProjectsController.$inject = ["$scope", "$baseController"];
-    aboutController.$inject = ["$scope", "$baseController"];
-    contactUsController.$inject = ["$scope", "$baseController", "$http"];
-    modalCodeController.$inject = ['$baseController', '$uibModalInstance', 'code'];
+    homeController.$inject                      = ["$scope", "$baseController", '$location'];
+    applicationsInProgressController.$inject    = ["$scope", "$baseController"];
+    pastProjectsController.$inject              = ["$scope", "$baseController"];
+    aboutController.$inject                     = ["$scope", "$baseController"];
+    contactUsController.$inject                 = ["$scope", "$baseController", "$http"];
+    modalCodeController.$inject                 = ['$baseController', '$uibModalInstance', 'code'];
 
 
     function homeController($scope, $baseController, $location) {
@@ -29,7 +30,7 @@
 
         function _setUp() {
             vm.homeLinks = [
-                  { label: 'Personal Applications', link: '#!applicationsInProgress' }
+                { label: 'Personal Applications', link: '#!applicationsInProgress' }
                 , { label: 'Previous Workplaces', link: '#!pastProjects' }
                 , { label: 'Contact Nile', link: '#!contact' }
                 , { label: 'About Nile', link: '#!about' }

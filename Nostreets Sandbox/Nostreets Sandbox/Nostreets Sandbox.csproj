@@ -262,6 +262,7 @@
     <Content Include="assets\emails\ForgotPasswordEmail.html" />
     <Content Include="assets\emails\NewPasswordEmail.html" />
     <Content Include="assets\emails\TFAuthEmail.html" />
+    <Content Include="assets\img\logo4.png" />
     <Content Include="assets\img\nile5.jpg" />
     <Content Include="assets\img\nile6.jpg" />
     <Content Include="assets\img\source.gif" />
@@ -441,6 +442,7 @@
     <Content Include="assets\js\sweetalert2.js" />
     <Content Include="assets\js\twitterFetcher_min.js" />
     <Content Include="assets\js\ui-bootstrap-tpls-2.5.0.min.js" />
+    <Content Include="Scripts\app\templates\privatePolicy.html" />
     <Content Include="assets\svg\facebook.svg" />
     <Content Include="assets\svg\google.svg" />
     <Content Include="assets\svg\insta.svg" />
@@ -1889,7 +1891,6 @@
     <Content Include="node_modules\twitter-login-client\example\twitter.html" />
     <Content Include="node_modules\twitter-login-client\src\twitter-client.js" />
     <Content Include="node_modules\twitter-login-client\src\twitter-client.min.js" />
-    <Content Include="Scripts\app\configs\requireConfig.js" />
     <Content Include="Scripts\app\configs\routeConfig.js" />
     <Content Include="Scripts\app\controllers\billManagerController.js" />
     <Content Include="Scripts\app\controllers\cardController.js" />
@@ -2301,6 +2302,7 @@
     <Content Include="Views\Shared\_ServerModel.cshtml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Home\PrivatePolicy.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

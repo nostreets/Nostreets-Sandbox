@@ -3,12 +3,14 @@
         .controller("modalRegisterController", modalRegisterController)
         .controller("modalLogInController", modalLogInController)
         .controller("modalUserController", modalUserController)
+        .controller("modalPrivatePolicyController", modalPrivatePolicyController)
         .directive("signIn", nostreetsSignInDirective);
 
     nostreetsSignInDirective.$inject = ["$baseController", "$serverModel"];
     modalRegisterController.$inject = ["$scope", "$baseController", "$uibModalInstance", "links"];
     modalLogInController.$inject = ["$scope", "$baseController", "$uibModalInstance", "links"];
     modalUserController.$inject = ["$scope", "$baseController", "$uibModalInstance", "user"];
+    modalPrivatePolicyController.$inject = ["$scope", "$baseController", "$uibModalInstance"];
 
 
     function nostreetsSignInDirective($baseController, $serverModel) {
@@ -137,6 +139,7 @@
         vm.checkUsername = _checkUsername;
         vm.checkEmail = _checkEmail;
         vm.login = _openLoginModal;
+        vm.privatePolicy = _openPrivatePolicyModal;
 
 
         _render();
@@ -232,6 +235,18 @@
             links.loginModal();
             $uibModalInstance.close();
         }
+
+        function _openPrivatePolicyModal() {
+
+            var modalInstance = $baseController.modal.open({
+                animation: true
+                , templateUrl: "Scripts/app/templates/privatePolicy.html"
+                , controller: "modalPrivatePolicyController as ppVm"
+                , size: "lg"
+            });
+
+        }
+
     }
 
     function modalLogInController($scope, $baseController, $uibModalInstance, links) {
@@ -485,7 +500,7 @@
                             vm.reason = err.data.message;
                         }
                     })
-                );
+            );
         }
 
         function _checkEmail(email) {
@@ -575,7 +590,7 @@
                     vm.isLoading = false;
                     $baseController.alert.error(err);
                 }
-                );
+            );
 
         }
 
@@ -715,5 +730,23 @@
         }
 
     }
+
+    function modalPrivatePolicyController($scope, $baseController, $uibModalInstance) {
+
+        var vm = this;
+        vm.$scope = $scope;
+        vm.$uibModalInstance = $uibModalInstance;
+        vm.close = $uibModalInstance.close;
+
+        _render();
+
+        function _render() {
+            _setUp();
+        }
+
+        function _setUp() { }
+
+    }
+
 
 })();

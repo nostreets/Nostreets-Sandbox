@@ -53,5 +53,10 @@ namespace Nostreets_Sandbox.Controllers
             return View();
         }
 
+        public ActionResult PrivatePolicy()
+        {
+            return View();
+        }
+
     }
 }
