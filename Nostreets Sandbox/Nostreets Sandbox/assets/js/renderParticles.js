@@ -3,13 +3,13 @@
         "particles":
         {
             "number":
-              {
-                  "value": 200,
-                  "density": {
-                      "enable": true,
-                      "value_area": 800
-                  }
-              },
+            {
+                "value": 200,
+                "density": {
+                    "enable": true,
+                    "value_area": 800
+                }
+            },
             "color": {
                 "value": "#ffffff"
             },
@@ -56,20 +56,20 @@
                 "width": 1
             },
             "move":
-                {
-                    "enable": true,
-                    "speed": 6,
-                    "direction": "none",
-                    "random": false,
-                    "straight": false,
-                    "out_mode": "out",
-                    "bounce": false,
-                    "attract": {
-                        "enable": false,
-                        "rotateX": 600,
-                        "rotateY": 1200
-                    }
+            {
+                "enable": true,
+                "speed": 6,
+                "direction": "none",
+                "random": false,
+                "straight": false,
+                "out_mode": "out",
+                "bounce": false,
+                "attract": {
+                    "enable": false,
+                    "rotateX": 600,
+                    "rotateY": 1200
                 }
+            }
         },
         "interactivity": {
             "detect_on": "canvas",
@@ -99,10 +99,10 @@
                     "speed": 3
                 },
                 "repulse":
-                    {
-                        "distance": 200,
-                        "duration": 0.4
-                    },
+                {
+                    "distance": 200,
+                    "duration": 0.4
+                },
                 "push": {
                     "particles_nb": 4
                 },
@@ -113,29 +113,3 @@
         },
         "retina_detect": true
     });
-var count_particles, stats, update;
-
-stats = new Stats;
-
-stats.setMode(0);
-
-stats.domElement.style.position = 'absolute';
-
-stats.domElement.style.left = '0px';
-
-stats.domElement.style.top = '0px';
-
-document.body.appendChild(stats.domElement);
-
-count_particles = document.querySelector('.js-count-particles');
-
-update = function () {
-
-    stats.begin(); stats.end();
-
-    if (window.pJSDom[0].pJS.particles && window.pJSDom[0].pJS.particles.array) {
-        count_particles.innerText = window.pJSDom[0].pJS.particles.array.length;
-    }
-    requestAnimationFrame(update);
-};
-requestAnimationFrame(update);;

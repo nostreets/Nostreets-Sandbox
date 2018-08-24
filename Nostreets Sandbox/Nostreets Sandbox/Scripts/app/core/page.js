@@ -12,6 +12,22 @@
     ],
     utilities: {
 
+        googleSearch: (input) =>{
+
+            if (typeof (input) !== 'string')
+                throw 'input is not a string...';
+
+            var url = 'https://www.google.com/search?q=';
+
+            var keyWords = input.split(' ');
+
+            for (var word of keyWords)
+                url += '+' + word;
+
+            window.open(url);
+
+        },
+
         getImage: (path) => {
             return new Promise((resolve, reject) => {
                 var img = new Image();

@@ -245,14 +245,18 @@ a:hover {
 }
 
 .text-greyBold {
-    color: rgb(167, 164, 191);
+    color: rgb(167, 164, 191) !important;
     font-weight: 600;
     font-variant: inherit;
 }
 
 .text-grey {
-    color: rgb(146, 146, 146);
+    color: rgb(146, 146, 146) !important;
     font-variant: inherit;
+}
+
+.nav-pills > li.active > a {
+    color: white !important;
 }
 
 .spacer {
@@ -424,6 +428,18 @@ form > div {
         font-size: large
     }
 
+.mdl-list__item {
+    color: white !important;
+}
+
+    .mdl-list__item:hover > span > i {
+        padding-right: 60px;
+    }
+
+.icon-xs {
+    width: 25px;
+    height: 25px;
+}
 
 
 /*#endregion */

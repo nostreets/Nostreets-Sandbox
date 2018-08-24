@@ -3,9 +3,9 @@
         <h2 class="title">Send me a message</h2>
         <div class="row">
             <div class="col-md-6">
-                <p class="description">
-                    You can contact me for any questions or inquiries. I'll get in touch with you as soon as possible.<br><br>
-                </p>
+                <small class="description">
+                    You can contact me for any questions or inquiries. I'll get in touch with you as soon as possible.
+                </small>
 
                 <!-- CONTACT FORM -->
                 <form ng-if="!contactUs.hasSent"
@@ -29,6 +29,7 @@
                                    required />
                         </div>
                     </div>
+
                     <div class="col-xs-6">
                         <div class="form-group"
                              ng-class="{'has-error': !contactUsForm.email.$pristine && contactUsForm.email.$invalid}">
@@ -66,7 +67,12 @@
                             <label class="control-label">
                                 Subject
                             </label>
-                            <input type="text"
+
+                            <select ng-model="contactUs.subject"
+                                    ng-options="item as item for item in contactUs.subjects"
+                                    class="form-control"
+                                    required></select>
+                            <!--<input type="text"
                                    name="subject"
                                    class="form-control"
                                    ng-model="contactUs.item.subject"
@@ -81,7 +87,7 @@
                             </p>
                             <p ng-if="contactUsForm.subject.$error.maxlength">
                                 Subject is too long.
-                            </p>
+                            </p>-->
                         </div>
                     </div>
                     <div class="col-xs-12">
@@ -119,11 +125,14 @@
                 </form>
 
 
-                <div ng-if="contactUs.hasSent">
+                <div ng-if="contactUs.hasSent" class="text-center">
                     <h4>
                         Message has been sent!
                     </h4>
+
+                    <a class="btn btn-danger btn-xs" href="#!">Back</a>
                 </div>
+
             </div>
         </div>
     </div>

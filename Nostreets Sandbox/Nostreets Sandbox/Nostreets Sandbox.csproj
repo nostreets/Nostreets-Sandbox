@@ -442,6 +442,7 @@
     <Content Include="assets\js\sweetalert2.js" />
     <Content Include="assets\js\twitterFetcher_min.js" />
     <Content Include="assets\js\ui-bootstrap-tpls-2.5.0.min.js" />
+    <Content Include="assets\svg\upwork.svg" />
     <Content Include="Scripts\app\templates\privatePolicy.html" />
     <Content Include="assets\svg\facebook.svg" />
     <Content Include="assets\svg\google.svg" />

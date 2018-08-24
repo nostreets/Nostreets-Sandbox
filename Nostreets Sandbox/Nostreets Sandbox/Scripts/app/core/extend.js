@@ -46,14 +46,6 @@ Number.prototype.toKey = function (keyAndValueArr) {
     return key;
 }
 
-String.prototype.toValue = function (keyAndValueArr) {
-    if (!Array.isArray(arr)) { return this; }
-    var value = null;
-
-    for (let item of keyAndValueArr) {
-        if (!item || !item.key || !item.value) { continue; };
-
-        value = (this === item.key) ? item.value : this;
-    }
-    return value;
+String.prototype.safeName = function () {
+    return this.replace(/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~\s+]/g, '');
 }

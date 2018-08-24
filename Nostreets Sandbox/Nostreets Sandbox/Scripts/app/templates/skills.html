@@ -1,5 +1,33 @@
 ﻿<div class="row">
 
-    Fill From Linked In...
+    <ul class="nav nav-pills nav-justified">
+        <li ng-repeat="item in pg.topics" 
+            role="presentation"
+            ng-class="{'active' : $index == 1 }">
+            <a role="tab"
+               data-target="#{{ pg.topics[$index].safeName() }}"
+               data-toggle="tab"
+               class="text-grey">{{ item }}</a>
+        </li>
+    </ul>
 
+    <div class="tab-content text-center">
+        <div ng-repeat="list in pg.skills" 
+             id="{{ pg.topics[$index].safeName() }}" 
+             class="tab-pane fade" 
+             role="tabpanel"
+             ng-class="{'active in' : $index == 1 }">
+            <ul class="mdl-list">
+                <li ng-repeat="item in list" class="mdl-list__item">
+                    <span class="mdl-list__item-primary-content">
+                        <i class="material-icons mdl-list__item-icon" ng-click="pg.lookup(item)">play_arrow</i>
+                        {{ item }}
+                    </span>
+                </li>
+
+            </ul>
+        </div>
+
+
+    </div>
 </div>
