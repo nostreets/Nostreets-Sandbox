@@ -5,14 +5,15 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using NostreetsExtensions.Interfaces;
-using NostreetsExtensions;
-using NostreetsORM;
 using NostreetsExtensions.DataControl.Classes;
+using NostreetsExtensions.Extend.Basic;
 
 namespace Nostreets_Services.Services.Database
 {
     public class ChartsService : IChartService
     {
+        #region Public Constructors
+
         public ChartsService(
               IDBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest> chartDBSrv
             , IDBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>> pieChartDBSrv)
@@ -22,9 +23,16 @@ namespace Nostreets_Services.Services.Database
 
         }
 
+        #endregion Public Constructors
+
+        #region Private Fields
+
         IDBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest> _chartSrv = null;
         IDBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>> _pieChartSrv = null;
-        IDBService<Error> _errorLog = null;
+
+        #endregion Private Fields
+
+        #region Public Methods
 
         public void Delete(int id)
         {
@@ -178,6 +186,8 @@ namespace Nostreets_Services.Services.Database
         {
             return _pieChartSrv.Where(predicate);
         }
+
+        #endregion Public Methods
 
     }
 }

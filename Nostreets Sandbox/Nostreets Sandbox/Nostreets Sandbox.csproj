@@ -1947,6 +1947,7 @@
     <Content Include="assets\scss\_var.scss" />
     <Content Include="Project_Readme.html" />
     <Content Include="Scripts\app\templates\registerForm.html" />
+    <Content Include="Scripts\app\templates\skills.html" />
     <Content Include="Scripts\app\templates\userDashboard.html" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

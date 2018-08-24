@@ -1,8 +1,4 @@
 ﻿
-/** {
-    font-family: 'Comic Sans MS';
-    font-size: medium;
-}*/
 
 /*#region SWIPER JS */
 
@@ -251,6 +247,11 @@ a:hover {
 .text-greyBold {
     color: rgb(167, 164, 191);
     font-weight: 600;
+    font-variant: inherit;
+}
+
+.text-grey {
+    color: rgb(146, 146, 146);
     font-variant: inherit;
 }
 

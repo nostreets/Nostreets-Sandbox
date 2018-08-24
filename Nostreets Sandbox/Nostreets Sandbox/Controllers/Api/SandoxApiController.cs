@@ -1,5 +1,4 @@
 ﻿using Nostreets_Sandbox.App_Start;
-using NostreetsRouter.Models.Responses;
 using Nostreets_Services.Domain;
 using Nostreets_Services.Domain.Bills;
 using Nostreets_Services.Domain.Cards;
@@ -7,6 +6,13 @@ using Nostreets_Services.Domain.Charts;
 using Nostreets_Services.Enums;
 using Nostreets_Services.Interfaces.Services;
 using Nostreets_Services.Models.Request;
+using NostreetsExtensions.DataControl.Classes;
+using NostreetsExtensions.Extend.Basic;
+using NostreetsExtensions.Extend.IOC;
+using NostreetsExtensions.Extend.Web;
+using NostreetsExtensions.Interfaces;
+using NostreetsInterceptor;
+using NostreetsRouter.Models.Responses;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,10 +22,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using NostreetsInterceptor;
-using NostreetsExtensions;
-using NostreetsExtensions.Interfaces;
-using NostreetsExtensions.DataControl.Classes;
 
 namespace Nostreets_Sandbox.Controllers.Api
 {
@@ -36,25 +38,14 @@ namespace Nostreets_Sandbox.Controllers.Api
             _errorLog = _errorLog.WindsorResolve(WindsorConfig.GetContainer());
         }
 
-        IChartService _chartsSrv = null;
-        IEmailService _emailSrv = null;
-        IUserService _userSrv = null;
-        IBillService _billSrv = null;
-        IDBService<StyledCard> _cardSrv = null;
-        IDBService<Error> _errorLog = null;
+        private IBillService _billSrv = null;
+        private IDBService<StyledCard> _cardSrv = null;
+        private IChartService _chartsSrv = null;
+        private IEmailService _emailSrv = null;
+        private IDBService<Error> _errorLog = null;
+        private IUserService _userSrv = null;
 
         #region Private Members
-
-        private string GetStringWithinLines(int begining, int ending, string[] file)
-        {
-
-            string result = null;
-            for (int i = begining - 1; i <= ending; i++)
-            {
-                result += "\r\n" + file[i];
-            }
-            return result;
-        }
 
         private HttpResponseMessage ErrorResponse(Exception ex, string userId = null)
         {
@@ -62,10 +53,81 @@ namespace Nostreets_Sandbox.Controllers.Api
             return Request.CreateResponse(HttpStatusCode.InternalServerError, new ErrorResponse(ex));
         }
 
-
-        #endregion
+        private string GetStringWithinLines(int begining, int ending, string[] file)
+        {
+            string result = null;
+            for (int i = begining - 1; i <= ending; i++)
+            {
+                result += "\r\n" + file[i];
+            }
+            return result;
+        }
+        #endregion Private Members
 
         #region User Service Endpoints
+
+        [HttpGet, Route("checkEmail")]
+        public HttpResponseMessage CheckIfEmailExist(string email)
+        {
+            try
+            {
+                bool result = _userSrv.CheckIfEmailExist(email);
+                ItemResponse<bool> response = new ItemResponse<bool>(result);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
+        }
+
+        [HttpGet, Route("checkUsername")]
+        public HttpResponseMessage CheckIfUsernameExist(string username)
+        {
+            try
+            {
+                bool result = _userSrv.CheckIfUsernameExist(username);
+                ItemResponse<bool> response = new ItemResponse<bool>(result);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
+        }
+
+        [HttpGet, Route("user/forgotPassword")]
+        public HttpResponseMessage ForgotPasswordEmail(string username)
+        {
+            try
+            {
+                _userSrv.ForgotPasswordEmailAsync(username);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new SuccessResponse());
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
+        }
+
+        [HttpGet, Route("user/session"), Intercept("LoggedIn")]
+        public HttpResponseMessage GetSessionUser()
+        {
+            try
+            {
+                if (_userSrv.SessionUser == null)
+                    throw new Exception("Session is has not started...");
+
+                ItemResponse<User> response = new ItemResponse<User>(_userSrv.SessionUser);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
+        }
+
         [HttpPost, Route("login")]
         public async Task<HttpResponseMessage> LogInUserAsync(NamePasswordPair request, bool rememberDevice = false)
         {
@@ -87,6 +149,21 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [HttpGet, Route("logout")]
+        public HttpResponseMessage LogOutUser()
+        {
+            try
+            {
+                _userSrv.LogOut();
+                SuccessResponse response = new SuccessResponse();
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
+        }
+
         [HttpPost, Route("register")]
         public async Task<HttpResponseMessage> RegisterAsync(User user)
         {
@@ -100,74 +177,20 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                     throw new Exception("user is invalid...");
-
             }
             catch (Exception ex)
             {
                 return ErrorResponse(ex);
             }
         }
-
-        [HttpGet, Route("logout")]
-        public HttpResponseMessage LogOutUser()
+        [HttpGet, Route("user/resendValidationEmail")]
+        public HttpResponseMessage ResendValidationEmail(string username)
         {
             try
             {
+                _userSrv.ResendValidationEmailAsync(username);
 
-                _userSrv.LogOut();
-                SuccessResponse response = new SuccessResponse();
-                return Request.CreateResponse(HttpStatusCode.OK, response);
-
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
-
-        [HttpGet, Route("checkUsername")]
-        public HttpResponseMessage CheckIfUsernameExist(string username)
-        {
-            try
-            {
-                bool result = _userSrv.CheckIfUsernameExist(username);
-                ItemResponse<bool> response = new ItemResponse<bool>(result);
-                return Request.CreateResponse(HttpStatusCode.OK, response);
-
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
-
-        [HttpGet, Route("checkEmail")]
-        public HttpResponseMessage CheckIfEmailExist(string email)
-        {
-            try
-            {
-                bool result = _userSrv.CheckIfEmailExist(email);
-                ItemResponse<bool> response = new ItemResponse<bool>(result);
-                return Request.CreateResponse(HttpStatusCode.OK, response);
-
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
-
-        [HttpGet, Route("user/session"), Intercept("LoggedIn")]
-        public HttpResponseMessage GetSessionUser()
-        {
-            try
-            {
-                if (_userSrv.SessionUser == null)
-                    throw new Exception("Session is has not started...");
-
-                ItemResponse<User> response = new ItemResponse<User>(_userSrv.SessionUser);
-                return Request.CreateResponse(HttpStatusCode.OK, response);
-
+                return Request.CreateResponse(HttpStatusCode.OK, new SuccessResponse());
             }
             catch (Exception ex)
             {
@@ -189,7 +212,6 @@ namespace Nostreets_Sandbox.Controllers.Api
                     response = new SuccessResponse();
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, response);
-
             }
             catch (Exception ex)
             {
@@ -206,30 +228,12 @@ namespace Nostreets_Sandbox.Controllers.Api
                     throw new Exception("Password is invalid...");
 
                 return Request.CreateResponse(HttpStatusCode.OK, new SuccessResponse());
-
             }
             catch (Exception ex)
             {
                 return ErrorResponse(ex);
             }
         }
-
-        [HttpGet, Route("user/forgotPassword")]
-        public HttpResponseMessage ForgotPasswordEmail(string username)
-        {
-            try
-            {
-                _userSrv.ForgotPasswordEmailAsync(username);
-
-                return Request.CreateResponse(HttpStatusCode.OK, new SuccessResponse());
-
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
-
         [HttpGet, Route("user/tfauth")]
         public HttpResponseMessage ValidateTFAuthCode(string id, string code)
         {
@@ -240,23 +244,24 @@ namespace Nostreets_Sandbox.Controllers.Api
                     throw new Exception("Code is invalid...");
 
                 return Request.CreateResponse(HttpStatusCode.OK, new ItemResponse<User>(_userSrv.SessionUser));
-
             }
             catch (Exception ex)
             {
                 return ErrorResponse(ex);
             }
         }
+        #endregion User Service Endpoints
 
-        [HttpGet, Route("user/resendValidationEmail")]
-        public HttpResponseMessage ResendValidationEmail(string username)
+        #region Bill Service Endpoints
+
+        [HttpDelete, Intercept("LoggedIn"), Route("bill/expenses/{id:int}")]
+        public HttpResponseMessage DeleteExpense(int id)
         {
             try
             {
-                _userSrv.ResendValidationEmailAsync(username);
-
-                return Request.CreateResponse(HttpStatusCode.OK, new SuccessResponse());
-
+                _billSrv.DeleteExpense(id);
+                SuccessResponse response = new SuccessResponse();
+                return Request.CreateResponse(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
             {
@@ -264,9 +269,37 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        #endregion
+        [HttpDelete, Intercept("LoggedIn"), Route("bill/income/{id:int}")]
+        public HttpResponseMessage DeleteIncome(int id)
+        {
+            try
+            {
+                _billSrv.DeleteIncome(id);
+                SuccessResponse response = new SuccessResponse();
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
+        }
 
-        #region Bill Service Endpoints
+        [HttpGet, Route("bill/expenses/all"), Intercept("LoggedIn")]
+        public HttpResponseMessage GetAllExpenses()
+        {
+            try
+            {
+                List<Expense> result = null;
+                result = _billSrv.GetAllExpenses(_userSrv.SessionUser.Id);
+                ItemsResponse<Expense> response = new ItemsResponse<Expense>(result);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
+        }
+
         [HttpGet, Route("bill/income/all"), Intercept("LoggedIn")]
         public HttpResponseMessage GetAllIncome()
         {
@@ -282,97 +315,6 @@ namespace Nostreets_Sandbox.Controllers.Api
                 return ErrorResponse(ex);
             }
         }
-
-        [HttpGet, Route("bill/expenses/all"), Intercept("LoggedIn")]
-        public HttpResponseMessage GetAllExpenses()
-        {
-            try
-            {
-
-
-                List<Expense> result = null;
-                result = _billSrv.GetAllExpenses(_userSrv.SessionUser.Id);
-                ItemsResponse<Expense> response = new ItemsResponse<Expense>(result);
-                return Request.CreateResponse(HttpStatusCode.OK, response);
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
-
-        [HttpGet, Route("bill/income"), Intercept("LoggedIn")]
-        public HttpResponseMessage GetIncome(int id = 0, string name = null, ScheduleTypes scheduleType = ScheduleTypes.Any, IncomeType incomeType = IncomeType.Any)
-        {
-            try
-            {
-
-
-                Income result = null;
-                result = _billSrv.GetIncome(_userSrv.SessionUser.Id, name);
-                ItemResponse<Income> response = new ItemResponse<Income>(result);
-                return Request.CreateResponse(HttpStatusCode.OK, response);
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
-
-        [HttpGet, Route("bill/expenses"), Intercept("LoggedIn")]
-        public HttpResponseMessage GetExpense(int id = 0, string name = null, ScheduleTypes scheduleType = ScheduleTypes.Any, ExpenseType billType = ExpenseType.Any)
-        {
-            try
-            {
-
-
-                Expense result = null;
-                result = _billSrv.GetExpense(_userSrv.SessionUser.Id, name);
-                ItemResponse<Expense> response = new ItemResponse<Expense>(result);
-                return Request.CreateResponse(HttpStatusCode.OK, response);
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
-
-        [HttpGet, Route("bill/income/chart"), Intercept("LoggedIn")]
-        public HttpResponseMessage GetIncomeChart(DateTime? startDate = null, DateTime? endDate = null, ScheduleTypes chartSchedule = ScheduleTypes.Any)
-        {
-            try
-            {
-
-
-                Chart<List<float>> chart = null;
-                chart = _billSrv.GetIncomeChart(_userSrv.SessionUser.Id, out chartSchedule, startDate, endDate);
-                ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(chart);
-                return Request.CreateResponse(HttpStatusCode.OK, response);
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
-
-        [HttpGet, Route("bill/expenses/chart"), Intercept("LoggedIn")]
-        public HttpResponseMessage GetExpensesChart(DateTime? startDate = null, DateTime? endDate = null, ScheduleTypes chartSchedule = ScheduleTypes.Any)
-        {
-            try
-            {
-
-
-                Chart<List<float>> result = null;
-                result = _billSrv.GetExpensesChart(_userSrv.SessionUser.Id, out chartSchedule, startDate, endDate);
-                ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(result);
-                return Request.CreateResponse(HttpStatusCode.OK, response);
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
-
         [HttpGet, Route("bill/combined/chart"), Intercept("LoggedIn")]
         public HttpResponseMessage GetCombinedChart(DateTime? startDate = null, DateTime? endDate = null, ScheduleTypes chartSchedule = ScheduleTypes.Any)
         {
@@ -389,6 +331,95 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
+        [HttpGet, Route("bill/expenses"), Intercept("LoggedIn")]
+        public HttpResponseMessage GetExpense(int id = 0, string name = null, ScheduleTypes scheduleType = ScheduleTypes.Any, ExpenseType billType = ExpenseType.Any)
+        {
+            try
+            {
+                Expense result = null;
+                result = _billSrv.GetExpense(_userSrv.SessionUser.Id, name);
+                ItemResponse<Expense> response = new ItemResponse<Expense>(result);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
+        }
+
+        [HttpGet, Route("bill/expenses/chart"), Intercept("LoggedIn")]
+        public HttpResponseMessage GetExpensesChart(DateTime? startDate = null, DateTime? endDate = null, ScheduleTypes chartSchedule = ScheduleTypes.Any)
+        {
+            try
+            {
+                Chart<List<float>> result = null;
+                result = _billSrv.GetExpensesChart(_userSrv.SessionUser.Id, out chartSchedule, startDate, endDate);
+                ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(result);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
+        }
+
+        [HttpGet, Route("bill/income"), Intercept("LoggedIn")]
+        public HttpResponseMessage GetIncome(int id = 0, string name = null, ScheduleTypes scheduleType = ScheduleTypes.Any, IncomeType incomeType = IncomeType.Any)
+        {
+            try
+            {
+                Income result = null;
+                result = _billSrv.GetIncome(_userSrv.SessionUser.Id, name);
+                ItemResponse<Income> response = new ItemResponse<Income>(result);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
+        }
+        [HttpGet, Route("bill/income/chart"), Intercept("LoggedIn")]
+        public HttpResponseMessage GetIncomeChart(DateTime? startDate = null, DateTime? endDate = null, ScheduleTypes chartSchedule = ScheduleTypes.Any)
+        {
+            try
+            {
+                Chart<List<float>> chart = null;
+                chart = _billSrv.GetIncomeChart(_userSrv.SessionUser.Id, out chartSchedule, startDate, endDate);
+                ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(chart);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
+        }
+        [HttpPost, Route("bill/expenses"), Intercept("LoggedIn")]
+        public HttpResponseMessage InsertExpense(Expense expense)
+        {
+            try
+            {
+                BaseResponse response = null;
+                expense.UserId = _userSrv.SessionUser.Id;
+                expense.ModifiedUserId = _userSrv.SessionUser.Id;
+
+                if (!ModelState.IsValid)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest);
+                }
+                else
+                {
+                    _billSrv.InsertExpense(expense);
+                    response = new SuccessResponse();
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
+        }
+
         [HttpPost, Route("bill/income"), Intercept("LoggedIn")]
         public HttpResponseMessage InsertIncome(Income income)
         {
@@ -397,7 +428,6 @@ namespace Nostreets_Sandbox.Controllers.Api
                 BaseResponse response = null;
                 income.UserId = _userSrv.SessionUser.Id;
                 income.ModifiedUserId = _userSrv.SessionUser.Id;
-
 
                 if (!ModelState.IsValid)
                 {
@@ -416,14 +446,12 @@ namespace Nostreets_Sandbox.Controllers.Api
                 return ErrorResponse(ex);
             }
         }
-
-        [HttpPost, Route("bill/expenses"), Intercept("LoggedIn")]
-        public HttpResponseMessage InsertExpense(Expense expense)
+        [HttpPut, Intercept("LoggedIn"), Route("bill/expenses")]
+        public HttpResponseMessage UpdateExpense(Expense expense)
         {
             try
             {
                 BaseResponse response = null;
-                expense.UserId = _userSrv.SessionUser.Id;
                 expense.ModifiedUserId = _userSrv.SessionUser.Id;
 
                 if (!ModelState.IsValid)
@@ -432,7 +460,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 }
                 else
                 {
-                    _billSrv.InsertExpense(expense);
+                    _billSrv.UpdateExpense(expense);
                     response = new SuccessResponse();
                 }
 
@@ -469,66 +497,27 @@ namespace Nostreets_Sandbox.Controllers.Api
                 return ErrorResponse(ex);
             }
         }
-
-        [HttpPut, Intercept("LoggedIn"), Route("bill/expenses")]
-        public HttpResponseMessage UpdateExpense(Expense expense)
-        {
-            try
-            {
-                BaseResponse response = null;
-                expense.ModifiedUserId = _userSrv.SessionUser.Id;
-
-                if (!ModelState.IsValid)
-                {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest);
-                }
-                else
-                {
-                    _billSrv.UpdateExpense(expense);
-                    response = new SuccessResponse();
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, response);
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
-
-        [HttpDelete, Intercept("LoggedIn"), Route("bill/income/{id:int}")]
-        public HttpResponseMessage DeleteIncome(int id)
-        {
-            try
-            {
-                _billSrv.DeleteIncome(id);
-                SuccessResponse response = new SuccessResponse();
-                return Request.CreateResponse(HttpStatusCode.OK, response);
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
-
-        [HttpDelete, Intercept("LoggedIn"), Route("bill/expenses/{id:int}")]
-        public HttpResponseMessage DeleteExpense(int id)
-        {
-            try
-            {
-                _billSrv.DeleteExpense(id);
-                SuccessResponse response = new SuccessResponse();
-                return Request.CreateResponse(HttpStatusCode.OK, response);
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
-
-        #endregion
+        #endregion Bill Service Endpoints
 
         #region Card Service Endpoints
+
+        [Intercept("LoggedIn")]
+        [Route("cards/delete/{id:int}")]
+        [HttpDelete]
+        public HttpResponseMessage DeleteCard(int id)
+        {
+            try
+            {
+                _cardSrv.Delete(id);
+                SuccessResponse response = new SuccessResponse();
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
+        }
+
         [Intercept("LoggedIn")]
         [Route("cards/user")]
         [HttpGet]
@@ -553,8 +542,6 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-
-
                 StyledCard card = _cardSrv.Get(id);
                 ItemResponse<StyledCard> response = new ItemResponse<StyledCard>(card);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
@@ -572,7 +559,6 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-
                 if (!ModelState.IsValid)
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest);
@@ -621,18 +607,21 @@ namespace Nostreets_Sandbox.Controllers.Api
                 return ErrorResponse(ex);
             }
         }
+        #endregion Card Service Endpoints
+
+        #region Chart Service Endpoints
 
         [Intercept("LoggedIn")]
-        [Route("cards/delete/{id:int}")]
+        [Route("charts/delete/{id:int}")]
         [HttpDelete]
-        public HttpResponseMessage DeleteCard(int id)
+        public HttpResponseMessage DeleteChart(int id)
         {
             try
             {
+                BaseResponse response = null;
 
-
-                _cardSrv.Delete(id);
-                SuccessResponse response = new SuccessResponse();
+                _chartsSrv.Delete(id);
+                response = new SuccessResponse();
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -641,9 +630,6 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        #endregion
-
-        #region Chart Service Endpoints
         [Intercept("LoggedIn")]
         [Route("charts/all")]
         [HttpGet]
@@ -651,8 +637,6 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-
-
                 List<Chart<object>> list = _chartsSrv.GetAll();
                 ItemsResponse<Chart<object>> response = new ItemsResponse<Chart<object>>(list);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
@@ -670,8 +654,6 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-
-
                 List<Chart<object>> list = _chartsSrv.GetAll();
                 List<Chart<object>> filteredList = list?.Where(a => a.UserId == _userSrv.SessionUser.Id).ToList();
                 ItemsResponse<Chart<object>> response = new ItemsResponse<Chart<object>>(filteredList);
@@ -690,8 +672,6 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-
-
                 Chart<object> chart = _chartsSrv.Get(id);
                 ItemResponse<Chart<object>> response = new ItemResponse<Chart<object>>(chart);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
@@ -864,60 +844,9 @@ namespace Nostreets_Sandbox.Controllers.Api
                 return ErrorResponse(ex);
             }
         }
-
-        [Intercept("LoggedIn")]
-        [Route("charts/delete/{id:int}")]
-        [HttpDelete]
-        public HttpResponseMessage DeleteChart(int id)
-        {
-            try
-            {
-
-                BaseResponse response = null;
-
-
-                _chartsSrv.Delete(id);
-                response = new SuccessResponse();
-                return Request.CreateResponse(HttpStatusCode.OK, response);
-
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
-
-        #endregion
+        #endregion Chart Service Endpoints
 
         #region Other Endpoints
-        [Route("send/email")]
-        [HttpPost]
-        public async Task<HttpResponseMessage> SendEmail(Dictionary<string, string> emailRequest)
-        {
-            try
-            {
-                if (!emailRequest.ContainsKey("fromEmail") || !emailRequest.ContainsKey("name") || !emailRequest.ContainsKey("subject") || !emailRequest.ContainsKey("messageText"))
-                { throw new Exception("Invalid Model"); }
-                if (!emailRequest.ContainsKey("toEmail")) { emailRequest["toEmail"] = "nileoverstreet@gmail.com"; }
-                if (!emailRequest.ContainsKey("messageHtml"))
-                {
-                    string phoneNumber = (emailRequest.ContainsKey("phone") ? "Phone Number: " + emailRequest["phone"] : string.Empty);
-                    emailRequest["messageHtml"] = "<div> Email From Contact Me Page </div>"
-                                                + "<div>" + "Name: " + emailRequest["name"] + "</div>"
-                                                + "<div>" + "Email: " + emailRequest["fromEmail"] + "</div>"
-                                                + "<div>" + phoneNumber + "</div>"
-                                                + "<div>" + "Message: " + emailRequest["messageText"] + "</div>";
-                }
-                if (!await _emailSrv.SendAsync(emailRequest["fromEmail"], emailRequest["toEmail"], emailRequest["subject"], emailRequest["messageText"], emailRequest["messageHtml"]))
-                { throw new Exception("Email Was Not Sent"); }
-                SuccessResponse response = new SuccessResponse();
-                return Request.CreateResponse(HttpStatusCode.OK, response);
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
 
         [Route("view/code/{fileName}")]
         [HttpGet]
@@ -949,7 +878,6 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             catch (Exception ex)
             {
-
                 return ErrorResponse(ex);
             }
         }
@@ -1034,8 +962,34 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-
-        #endregion
-
+        [Route("send/email")]
+        [HttpPost]
+        public async Task<HttpResponseMessage> SendEmail(Dictionary<string, string> emailRequest)
+        {
+            try
+            {
+                if (!emailRequest.ContainsKey("fromEmail") || !emailRequest.ContainsKey("name") || !emailRequest.ContainsKey("subject") || !emailRequest.ContainsKey("messageText"))
+                { throw new Exception("Invalid Model"); }
+                if (!emailRequest.ContainsKey("toEmail")) { emailRequest["toEmail"] = "nileoverstreet@gmail.com"; }
+                if (!emailRequest.ContainsKey("messageHtml"))
+                {
+                    string phoneNumber = (emailRequest.ContainsKey("phone") ? "Phone Number: " + emailRequest["phone"] : string.Empty);
+                    emailRequest["messageHtml"] = "<div> Email From Contact Me Page </div>"
+                                                + "<div>" + "Name: " + emailRequest["name"] + "</div>"
+                                                + "<div>" + "Email: " + emailRequest["fromEmail"] + "</div>"
+                                                + "<div>" + phoneNumber + "</div>"
+                                                + "<div>" + "Message: " + emailRequest["messageText"] + "</div>";
+                }
+                if (!await _emailSrv.SendAsync(emailRequest["fromEmail"], emailRequest["toEmail"], emailRequest["subject"], emailRequest["messageText"], emailRequest["messageHtml"]))
+                { throw new Exception("Email Was Not Sent"); }
+                SuccessResponse response = new SuccessResponse();
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
+        }
+        #endregion Other Endpoints
     }
 }

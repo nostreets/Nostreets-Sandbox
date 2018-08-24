@@ -2,16 +2,16 @@
 
     angular.module(page.APPNAME)
         .controller("homeController", homeController)
-        .controller("applicationsInProgressController", applicationsInProgressController)
-        .controller("pastProjectsController", pastProjectsController)
+        .controller("applicationsInProgressController", personalProjectsController)
+        .controller("pastProjectsController", pastEmployersController)
         .controller("contactUsController", contactUsController)
         .controller("aboutController", aboutController)
         .controller("modalCodeController", modalCodeController);
 
 
     homeController.$inject                      = ["$scope", "$baseController", '$location'];
-    applicationsInProgressController.$inject    = ["$scope", "$baseController"];
-    pastProjectsController.$inject              = ["$scope", "$baseController"];
+    personalProjectsController.$inject    = ["$scope", "$baseController"];
+    pastEmployersController.$inject              = ["$scope", "$baseController"];
     aboutController.$inject                     = ["$scope", "$baseController"];
     contactUsController.$inject                 = ["$scope", "$baseController", "$http"];
     modalCodeController.$inject                 = ['$baseController', '$uibModalInstance', 'code'];
@@ -30,18 +30,18 @@
 
         function _setUp() {
             vm.homeLinks = [
-                { label: 'Personal Applications', link: '#!applicationsInProgress' }
-                , { label: 'Previous Workplaces', link: '#!pastProjects' }
-                , { label: 'Contact Nile', link: '#!contact' }
-                , { label: 'About Nile', link: '#!about' }
-                , { label: 'About Nile', link: '#!about' }
+                  { label: 'Personal Projects', link: '#!applicationsInProgress' }
+                , { label: 'Previous Employers', link: '#!pastProjects' }
+                , { label: 'Contact', link: '#!contact' }
+                , { label: 'About', link: '#!about' }
+                , { label: 'Skills', link: '#!skills' }
             ];
 
         }
 
     }
 
-    function applicationsInProgressController($scope, $baseController) {
+    function skillsController($scope, $baseController) {
 
         var vm = this;
         _render;
@@ -51,7 +51,17 @@
         function _setUp() { }
     }
 
-    function pastProjectsController($scope, $baseController) {
+    function personalProjectsController($scope, $baseController) {
+
+        var vm = this;
+        _render;
+
+        function _render() { }
+
+        function _setUp() { }
+    }
+
+    function pastEmployersController($scope, $baseController) {
         var vm = this;
         _render();
 

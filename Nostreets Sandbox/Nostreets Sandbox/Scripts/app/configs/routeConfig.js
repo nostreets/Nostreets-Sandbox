@@ -12,9 +12,13 @@
                     templateUrl: '/Scripts/app/templates/home.html',
                     controller: 'homeController',
                     controllerAs: 'pg'
+                }).when('/skills', {
+                    templateUrl: '/Scripts/app/templates/skills.html',
+                    controller: 'skillsController',
+                    controllerAs: 'pg'
                 }).when('/pastProjects', {
                     templateUrl: '/Scripts/app/templates/pastProjects.html',
-                    controller: 'pastProjectsController',
+                    controller: 'pastEmployersController',
                     controllerAs: 'pg'
                 }).when('/contact', {
                     templateUrl: '/Scripts/app/templates/contact.html',
@@ -26,7 +30,7 @@
                     controllerAs: 'pg'
                 }).when('/applicationsInProgress', {
                     templateUrl: '/Scripts/app/templates/applicationsInProgress.html',
-                    controller: 'applicationsInProgressController',
+                    controller: 'personalProjectsController',
                     controllerAs: 'pg'
                 }).when('/dynamicGraphs', {
                     templateUrl: '/Scripts/app/templates/dynamicGraphs.html',

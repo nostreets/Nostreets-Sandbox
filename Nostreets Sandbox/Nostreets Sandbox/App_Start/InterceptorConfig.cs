@@ -1,6 +1,6 @@
-﻿using Nostreets_Services.Domain;
-using Nostreets_Services.Interfaces.Services;
-using NostreetsExtensions;
+﻿using Nostreets_Services.Interfaces.Services;
+using NostreetsExtensions.Extend.IOC;
+using NostreetsExtensions.Extend.Web;
 using NostreetsExtensions.Utilities;
 using NostreetsInterceptor;
 using NostreetsRouter.Models.Responses;

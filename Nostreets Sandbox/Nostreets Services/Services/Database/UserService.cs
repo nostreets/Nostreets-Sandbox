@@ -1,8 +1,9 @@
 ﻿using Nostreets_Services.Domain;
 using Nostreets_Services.Interfaces.Services;
-using NostreetsExtensions;
 using NostreetsExtensions.DataControl.Classes;
 using NostreetsExtensions.DataControl.Enums;
+using NostreetsExtensions.Extend.Basic;
+using NostreetsExtensions.Extend.Web;
 using NostreetsExtensions.Interfaces;
 using NostreetsExtensions.Utilities;
 using System;
@@ -32,12 +33,19 @@ namespace Nostreets_Services.Services.Database
 
         private HttpContext _context = null;
         private IEmailService _emailSrv = null;
-        private IDBService<User, string> _userDBSrv = null;
-        private IDBService<Token, string> _tokenDBSrv = null;
         private IDBService<Error> _errorLog = null;
-
+        private IDBService<Token, string> _tokenDBSrv = null;
+        private IDBService<User, string> _userDBSrv = null;
         public string RequestIp => _context.GetIPAddress();
         public User SessionUser { get { return GetSessionUser(); } }
+
+        private string DecryptPassword(string encyptedPassword)
+        {
+            string decryptedPassword = encyptedPassword.Decrypt(WebConfigurationManager.AppSettings["CryptoKey"]);
+            decryptedPassword.Log();
+
+            return decryptedPassword;
+        }
 
         private User GetSessionUser(string ip = null)
         {
@@ -67,15 +75,6 @@ namespace Nostreets_Services.Services.Database
             }
 
         }
-
-        private string DecryptPassword(string encyptedPassword)
-        {
-            string decryptedPassword = encyptedPassword.Decrypt(WebConfigurationManager.AppSettings["CryptoKey"]);
-            decryptedPassword.Log();
-
-            return decryptedPassword;
-        }
-
         private void UpdateCache(User user)
         {
             if (RequestIp != null && !CacheManager.Contains(RequestIp))
@@ -84,6 +83,111 @@ namespace Nostreets_Services.Services.Database
             CacheManager.Set(user.Id, user);
         }
 
+
+        public bool ChangeUserPassword(string newPassword, string oldPassword)
+        {
+            bool result = false;
+            User user = SessionUser;
+
+            if (user != null && ValidatePassword(user.Password, oldPassword))
+            {
+                user.Password = newPassword.Encrypt(WebConfigurationManager.AppSettings["CryptoKey"]);
+                _userDBSrv.Update(user);
+            }
+
+            return result;
+        }
+
+        public bool CheckIfEmailExist(string email)
+        {
+            return _userDBSrv.Where(a => a.Contact.PrimaryEmail == email).FirstOrDefault() != null ? true : false;
+        }
+
+        public bool CheckIfUsernameExist(string username)
+        {
+            return _userDBSrv.Where(a => a.UserName == username).FirstOrDefault() != null ? true : false;
+        }
+
+        public void Delete(string id)
+        {
+            _userDBSrv.Delete(id);
+        }
+
+        public async void EmailNewPasswordAsync(User user, string newPassword)
+        {
+            string html = HttpContext.Current.Server.MapPath("\\assets\\emails\\NewPasswordEmail.html").ReadFile()
+                                                    .Replace("{user}", user.UserName)
+                                                    .Replace("{password}", newPassword);
+
+            if (await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
+                              , user.Contact.PrimaryEmail
+                              , "New Password to Nostreets Sandbox"
+                              , "New Password to Nostreets Sandbox"
+                              , html))
+            {
+                user.Password = newPassword.Encrypt(WebConfigurationManager.AppSettings["CryptoKey"]);
+                Update(user);
+            }
+            else
+                throw new Exception("New Password Email Did Not Send...");
+        }
+
+        public User FirstOrDefault(Func<User, bool> predicate)
+        {
+            return _userDBSrv.FirstOrDefault(predicate);
+        }
+
+        public Token FirstOrDefault(Func<Token, bool> predicate)
+        {
+            return _tokenDBSrv.FirstOrDefault(predicate);
+        }
+
+        public async void ForgotPasswordEmailAsync(string username)
+        {
+            if (_userDBSrv.Where(a => a.UserName == username || a.Contact.PrimaryEmail == username) != null)
+            {
+                User user = _userDBSrv.Where(a => a.UserName == username || a.Contact.PrimaryEmail == username).FirstOrDefault();
+                Token token = new Token
+                {
+                    ExpirationDate = DateTime.Now.AddHours(1),
+                    UserId = user.Id,
+                    ModifiedUserId = user.Id,
+                    Value = new Random().RandomString(12),
+                    Name = user.UserName + "'s Password Reset Token",
+                    DateCreated = DateTime.Now,
+                    DateModified = DateTime.Now,
+                    Type = TokenType.PasswordReset
+                };
+                user.Password = token.Value;
+
+
+                token.Id = Insert(token);
+
+
+                string html = HttpContext.Current.Server.MapPath("\\assets\\emails\\ForgotPasswordEmail.html").ReadFile()
+                                                 .Replace("{url}", HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)
+                                                 + "?token={0}&user={1}".FormatString(token.Id, user.Id));
+
+
+                if (!await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
+                              , user.Contact.PrimaryEmail
+                              , "Forgot Password to Nostreets Sandbox"
+                              , "Forgot Password to Nostreets Sandbox"
+                              , html))
+                    throw new Exception("Forgot Password Email did not send...");
+            }
+
+        }
+
+        public List<User> GetAll()
+        {
+            return _userDBSrv.GetAll();
+        }
+
+        public User GetByUsername(string username)
+        {
+            return FirstOrDefault(a => a.UserName == username || a.Contact.PrimaryEmail == username);
+        }
 
         public async Task<Tuple<User, string>> GetUserWithLoginInfo(string username, string password)
         {
@@ -147,19 +251,30 @@ namespace Nostreets_Services.Services.Database
             return new Tuple<User, string>(failureReason == null ? user : null, failureReason);
         }
 
-        public void Delete(string id)
+        public string Insert(User user)
         {
-            _userDBSrv.Delete(id);
+            user.Settings = new UserSettings
+            {
+                IPAddresses = new List<string> { RequestIp }
+            };
+            user.Password = user.Password.Encrypt(WebConfigurationManager.AppSettings["CryptoKey"]);
+            user.Id = _userDBSrv.Insert(user);
+
+
+            if (!CacheManager.Contains(RequestIp))
+                CacheManager.Set(RequestIp, user.Id);
+            CacheManager.Set(user.Id, user);
+
+            return user.Id;
         }
 
-        public List<User> GetAll()
+        public string Insert(Token token)
         {
-            return _userDBSrv.GetAll();
-        }
+            token.UserId = token.UserId ?? SessionUser?.Id;
+            token.ModifiedUserId = token.UserId ?? SessionUser?.Id;
+            token.Id = _tokenDBSrv.Insert(token);
 
-        public User GetByUsername(string username)
-        {
-            return FirstOrDefault(a => a.UserName == username || a.Contact.PrimaryEmail == username);
+            return token.Id;
         }
 
         public async Task<Tuple<User, string>> LogInAsync(NamePasswordPair pair, bool rememberDevice = false)
@@ -201,6 +316,14 @@ namespace Nostreets_Services.Services.Database
             return new Tuple<User, string>(user, tokenCD);
         }
 
+        public void LogOut()
+        {
+            _userDBSrv.Update(SessionUser);
+            HttpContext.Current.SetCookie("loggedIn", "false");
+            CacheManager.Remove(CacheManager.Get<string>(RequestIp));
+            CacheManager.Remove(RequestIp);
+        }
+
         public async Task<string> RegisterAsync(User user)
         {
             user.Settings = new UserSettings()
@@ -234,6 +357,56 @@ namespace Nostreets_Services.Services.Database
                 throw new Exception("Email for registation not sent...");
 
             return user.Id;
+        }
+
+        public async void ResendValidationEmailAsync(string username)
+        {
+            User user = GetByUsername(username);
+
+            _tokenDBSrv.Delete(
+                _tokenDBSrv.Where(
+                    a => a.Type == TokenType.EmailValidtion && a.UserId == user.Id).Select(a => a.Id));
+
+
+            Token token = new Token
+            {
+                ExpirationDate = DateTime.Now.AddDays(7),
+                IsDeleted = false,
+                UserId = user.Id,
+                ModifiedUserId = user.Id,
+                Name = user.UserName + "'s Registion Email Token",
+                Type = TokenType.EmailValidtion
+            };
+            token.Id = Insert(token);
+
+            string html = HttpContext.Current.Server.MapPath("\\assets\\emails\\ValidateEmail.html").ReadFile()
+                                     .Replace("{url}", HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)
+                                     + "?token={0}&user={1}".FormatString(token.Id, user.Id));
+
+
+            if (!await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
+                              , user.Contact.PrimaryEmail
+                              , "Nostreets Sandbox Email Validation"
+                              , "Nostreets Sandbox Email Validation"
+                              , html))
+                throw new Exception("Email for registation not sent...");
+
+        }
+
+        public void Update(User user, bool encryptPassword = false)
+        {
+
+            if (encryptPassword)
+                user.Password = user.Password.Encrypt(WebConfigurationManager.AppSettings["CryptoKey"]);
+
+            UpdateCache(user);
+
+            _userDBSrv.Update(user);
+        }
+
+        public bool ValidatePassword(string encyptedPassword, string password)
+        {
+            return DecryptPassword(encyptedPassword) == password ? true : false;
         }
 
         public Token ValidateToken(TokenRequest request, out string output)
@@ -306,80 +479,6 @@ namespace Nostreets_Services.Services.Database
             return token;
         }
 
-        public bool CheckIfUsernameExist(string username)
-        {
-            return _userDBSrv.Where(a => a.UserName == username).FirstOrDefault() != null ? true : false;
-        }
-
-        public bool CheckIfEmailExist(string email)
-        {
-            return _userDBSrv.Where(a => a.Contact.PrimaryEmail == email).FirstOrDefault() != null ? true : false;
-        }
-
-        public bool ValidatePassword(string encyptedPassword, string password)
-        {
-            return DecryptPassword(encyptedPassword) == password ? true : false;
-        }
-
-        public bool ChangeUserPassword(string newPassword, string oldPassword)
-        {
-            bool result = false;
-            User user = SessionUser;
-
-            if (user != null && ValidatePassword(user.Password, oldPassword))
-            {
-                user.Password = newPassword.Encrypt(WebConfigurationManager.AppSettings["CryptoKey"]);
-                _userDBSrv.Update(user);
-            }
-
-            return result;
-        }
-
-        public void LogOut()
-        {
-            _userDBSrv.Update(SessionUser);
-            HttpContext.Current.SetCookie("loggedIn", "false");
-            CacheManager.Remove(CacheManager.Get<string>(RequestIp));
-            CacheManager.Remove(RequestIp);
-        }
-
-        public async void ForgotPasswordEmailAsync(string username)
-        {
-            if (_userDBSrv.Where(a => a.UserName == username || a.Contact.PrimaryEmail == username) != null)
-            {
-                User user = _userDBSrv.Where(a => a.UserName == username || a.Contact.PrimaryEmail == username).FirstOrDefault();
-                Token token = new Token
-                {
-                    ExpirationDate = DateTime.Now.AddHours(1),
-                    UserId = user.Id,
-                    ModifiedUserId = user.Id,
-                    Value = new Random().RandomString(12),
-                    Name = user.UserName + "'s Password Reset Token",
-                    DateCreated = DateTime.Now,
-                    DateModified = DateTime.Now,
-                    Type = TokenType.PasswordReset
-                };
-                user.Password = token.Value;
-
-
-                token.Id = Insert(token);
-
-
-                string html = HttpContext.Current.Server.MapPath("\\assets\\emails\\ForgotPasswordEmail.html").ReadFile()
-                                                 .Replace("{url}", HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)
-                                                 + "?token={0}&user={1}".FormatString(token.Id, user.Id));
-
-
-                if (!await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
-                              , user.Contact.PrimaryEmail
-                              , "Forgot Password to Nostreets Sandbox"
-                              , "Forgot Password to Nostreets Sandbox"
-                              , html))
-                    throw new Exception("Forgot Password Email did not send...");
-            }
-
-        }
-
         public IEnumerable<User> Where(Func<User, bool> predicate)
         {
             return _userDBSrv.Where(predicate);
@@ -389,109 +488,25 @@ namespace Nostreets_Services.Services.Database
         {
             return _tokenDBSrv.Where(predicate);
         }
-
-        public User FirstOrDefault(Func<User, bool> predicate)
-        {
-            return _userDBSrv.FirstOrDefault(predicate);
-        }
-
-        public Token FirstOrDefault(Func<Token, bool> predicate)
-        {
-            return _tokenDBSrv.FirstOrDefault(predicate);
-        }
-
-        public void Update(User user, bool encryptPassword = false)
-        {
-
-            if (encryptPassword)
-                user.Password = user.Password.Encrypt(WebConfigurationManager.AppSettings["CryptoKey"]);
-
-            UpdateCache(user);
-
-            _userDBSrv.Update(user);
-        }
-
-        public string Insert(User user)
-        {
-            user.Settings = new UserSettings
-            {
-                IPAddresses = new List<string> { RequestIp }
-            };
-            user.Password = user.Password.Encrypt(WebConfigurationManager.AppSettings["CryptoKey"]);
-            user.Id = _userDBSrv.Insert(user);
-
-
-            if (!CacheManager.Contains(RequestIp))
-                CacheManager.Set(RequestIp, user.Id);
-            CacheManager.Set(user.Id, user);
-
-            return user.Id;
-        }
-
-        public string Insert(Token token)
-        {
-            token.UserId = token.UserId ?? SessionUser?.Id;
-            token.ModifiedUserId = token.UserId ?? SessionUser?.Id;
-            token.Id = _tokenDBSrv.Insert(token);
-
-            return token.Id;
-        }
-
-        public async void EmailNewPasswordAsync(User user, string newPassword)
-        {
-            string html = HttpContext.Current.Server.MapPath("\\assets\\emails\\NewPasswordEmail.html").ReadFile()
-                                                    .Replace("{user}", user.UserName)
-                                                    .Replace("{password}", newPassword);
-
-            if (await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
-                              , user.Contact.PrimaryEmail
-                              , "New Password to Nostreets Sandbox"
-                              , "New Password to Nostreets Sandbox"
-                              , html))
-            {
-                user.Password = newPassword.Encrypt(WebConfigurationManager.AppSettings["CryptoKey"]);
-                Update(user);
-            }
-            else
-                throw new Exception("New Password Email Did Not Send...");
-        }
-
-        public async void ResendValidationEmailAsync(string username)
-        {
-            User user = GetByUsername(username);
-
-            _tokenDBSrv.Delete(
-                _tokenDBSrv.Where(
-                    a => a.Type == TokenType.EmailValidtion && a.UserId == user.Id).Select(a => a.Id));
-
-
-            Token token = new Token
-            {
-                ExpirationDate = DateTime.Now.AddDays(7),
-                IsDeleted = false,
-                UserId = user.Id,
-                ModifiedUserId = user.Id,
-                Name = user.UserName + "'s Registion Email Token",
-                Type = TokenType.EmailValidtion
-            };
-            token.Id = Insert(token);
-
-            string html = HttpContext.Current.Server.MapPath("\\assets\\emails\\ValidateEmail.html").ReadFile()
-                                     .Replace("{url}", HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)
-                                     + "?token={0}&user={1}".FormatString(token.Id, user.Id));
-
-
-            if (!await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
-                              , user.Contact.PrimaryEmail
-                              , "Nostreets Sandbox Email Validation"
-                              , "Nostreets Sandbox Email Validation"
-                              , html))
-                throw new Exception("Email for registation not sent...");
-
-        }
     }
 
     #region Legacy
+    public class UserDBContext : DbContext
+    {
+        public UserDBContext()
+            : base("DefaultConnection" /*"AzureDBConnection"*/)
+        {
+        }
+
+        public UserDBContext(string connectionKey)
+            : base(connectionKey)
+        {
+            OnModelCreating(new DbModelBuilder());
+        }
+
+        public IDbSet<User> Users { get; set; }
+    }
+
     public class UserEFService
     {
         public UserEFService()
@@ -532,17 +547,16 @@ namespace Nostreets_Services.Services.Database
             return user;
         }
 
-        public User GetByUsername(string username)
-        {
-            User user = _context.Users.FirstOrDefault(a => a.UserName == username);
-            return user;
-        }
-
         public List<User> GetAll()
         {
             return _context.Users.ToList();
         }
 
+        public User GetByUsername(string username)
+        {
+            User user = _context.Users.FirstOrDefault(a => a.UserName == username);
+            return user;
+        }
         public string Insert(User model)
         {
             model.Id = Guid.NewGuid().ToString();
@@ -566,21 +580,6 @@ namespace Nostreets_Services.Services.Database
         {
             return GetAll().Where(predicate);
         }
-    }
-    public class UserDBContext : DbContext
-    {
-        public UserDBContext()
-            : base("DefaultConnection" /*"AzureDBConnection"*/)
-        {
-        }
-
-        public UserDBContext(string connectionKey)
-            : base(connectionKey)
-        {
-            OnModelCreating(new DbModelBuilder());
-        }
-
-        public IDbSet<User> Users { get; set; }
     }
     #endregion
 }

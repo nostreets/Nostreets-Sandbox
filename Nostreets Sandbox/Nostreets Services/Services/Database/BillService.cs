@@ -6,24 +6,33 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using NostreetsExtensions;
 using NostreetsExtensions.Interfaces;
 using NostreetsExtensions.DataControl.Classes;
+using NostreetsExtensions.Extend.Basic;
 
 namespace Nostreets_Services.Services.Database
 {
     public class BillService : IBillService
     {
+        #region Public Constructors
+
         public BillService(IDBService<Income> incomeSrv, IDBService<Expense> expenseSrv)
         {
             _incomeSrv = incomeSrv;
             _expenseSrv = expenseSrv;
         }
 
+        #endregion Public Constructors
+
+        #region Private Fields
+
+        private IDBService<Error> _errorLog = null;
         private IDBService<Expense> _expenseSrv = null;
         private IDBService<Income>  _incomeSrv = null;
-        private IDBService<Error>   _errorLog = null;
 
+        #endregion Private Fields
+
+        #region Private Methods
 
         private List<string> CalculateLabelRange(out ScheduleTypes schedule, DateTime startDate, DateTime endDate)
         {
@@ -556,6 +565,20 @@ namespace Nostreets_Services.Services.Database
             return pay;
         }
 
+        #endregion Private Methods
+
+
+        #region Public Methods
+
+        public void DeleteExpense(int id)
+        {
+            _expenseSrv.Delete(id);
+        }
+
+        public void DeleteIncome(int id)
+        {
+            _incomeSrv.Delete(id);
+        }
 
         public List<Expense> GetAllExpenses(string userId)
         {
@@ -569,6 +592,63 @@ namespace Nostreets_Services.Services.Database
             List<Income> incomes = _incomeSrv.Where((a) => a.UserId == userId)?.ToList();
             incomes?.Sort((a, b) => DateTime.Compare(a.DateModified.Value, b.DateModified.Value));
             return incomes;
+        }
+
+        public Chart<List<float>> GetCombinedChart(string userId, out ScheduleTypes chartSchedule, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            Chart<List<float>> result = new Chart<List<float>>();
+            DateTime start = (startDate == null) ? DateTime.Now : startDate.Value,
+                     end = (endDate == null) ? DateTime.Now.AddDays(14) : endDate.Value;
+
+            Chart<List<float>> incomeChart = GetIncomeChart(userId, out chartSchedule, start, end);
+            Chart<List<float>> expensesChart = GetExpensesChart(userId, out chartSchedule, start, end);
+
+
+            result.Labels = CalculateLabelRange(out chartSchedule, start, end);
+            result.Name = String.Format("Complete {0} Chart", chartSchedule.ToString());
+            result.UserId = userId;
+            result.TypeId = ChartType.Line;
+            result.Legend = new List<string>();
+
+            if (expensesChart.Series.Any() && incomeChart.Series.Any())
+            {
+                result.Series = new List<List<float>>();
+                result.Series.Add(new List<float>());
+
+                float lastPayment = 0;
+
+                for (int i = 0; i < result.Labels.Count; i++)
+                {
+                    bool hasIncomeLabel = incomeChart.Legend.ElementAtOrDefault(i) != default(string) ? true : false,
+                         hasExpenseLabel = expensesChart.Legend.ElementAtOrDefault(i) != default(string) ? true : false;
+
+
+
+                    result.Legend.Add(
+                          (hasIncomeLabel ? incomeChart.Legend[i] +
+                            (hasExpenseLabel ? " / " : "")
+                          : "") +
+                          (hasExpenseLabel ? expensesChart.Legend[i] : ""));
+
+                    float pay = incomeChart.Series[0][i];
+                    float cost = expensesChart.Series[0][i] > 0
+                                    ? expensesChart.Series[0][i] * -1
+                                    : expensesChart.Series[0][i];
+                    result.Series[0].Add(pay + cost);
+                    lastPayment = pay + cost;
+                }
+
+            }
+            else if (incomeChart.Series.Any())
+                result.Series = incomeChart.Series;
+
+            else if (expensesChart.Series.Any())
+                result.Series = expensesChart.Series;
+
+            else
+                result.Series = new List<List<float>>();
+
+            return result;
         }
 
         public Expense GetExpense(string userId, int id)
@@ -596,6 +676,47 @@ namespace Nostreets_Services.Services.Database
             return _expenseSrv.Where((a) => a.UserId == userId && a.ExpenseType == billType && a.PaySchedule == scheduleType).ToList();
         }
 
+        public Chart<List<float>> GetExpensesChart(string userId, out ScheduleTypes chartSchedule, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            Chart<List<float>> result = new Chart<List<float>>();
+            List<Expense> expenses = GetAllExpenses(userId);
+
+            DateTime start = (startDate == null) ? DateTime.Now : startDate.Value,
+                     end = (endDate == null) ? DateTime.Now.AddDays(14) : endDate.Value;
+
+            TimeSpan diff = (end - start);
+
+            result.Labels = CalculateLabelRange(out chartSchedule, start, end);
+            result.Name = String.Format("Expenses {0} Chart", chartSchedule.ToString());
+            result.TypeId = ChartType.Line;
+            result.UserId = userId;
+
+            if (result.Series == null)
+                result.Series = new List<List<float>>();
+            if (result.Legend == null)
+                result.Legend = new List<string>();
+
+            if (expenses != null && expenses.Count > 0)
+            {
+                result.Series.Add(new List<float>());
+
+                foreach (Expense expense in expenses)
+                    result.Legend.Add(expense.Name);
+
+                float lastPayment = 0;
+
+                for (int i = 0; i < result.Labels.Count; i++)
+                {
+                    float pay = PayOfDay(start, i, chartSchedule, expenses.Cast<FinicialAsset>(), ref lastPayment);
+                    result.Series[0].Add(pay * -1);
+                    lastPayment = pay;
+                }
+            }
+
+
+            return result;
+        }
+
         public Income GetIncome(string userId, int id)
         {
             return _incomeSrv.Get(id);
@@ -604,21 +725,6 @@ namespace Nostreets_Services.Services.Database
         public Income GetIncome(string userId, string incomeName)
         {
             return _incomeSrv.Where(a => a.UserId == userId && a.Name == incomeName).FirstOrDefault();
-        }
-
-        public List<Income> GetIncomes(string userId, IncomeType type)
-        {
-            return _incomeSrv.Where((a) => a.UserId == userId && a.IncomeType == type).ToList();
-        }
-
-        public List<Income> GetIncomes(string userId, ScheduleTypes type)
-        {
-            return _incomeSrv.Where((a) => a.UserId == userId && a.PaySchedule == type).ToList();
-        }
-
-        public List<Income> GetIncomes(string userId, IncomeType incomeType, ScheduleTypes scheduleType)
-        {
-            return _incomeSrv.Where((a) => a.UserId == userId && a.IncomeType == incomeType && a.PaySchedule == scheduleType).ToList();
         }
 
         public Chart<List<float>> GetIncomeChart(string userId, out ScheduleTypes chartSchedule, DateTime? startDate = null, DateTime? endDate = null)
@@ -661,102 +767,19 @@ namespace Nostreets_Services.Services.Database
             return result;
         }
 
-        public Chart<List<float>> GetExpensesChart(string userId, out ScheduleTypes chartSchedule, DateTime? startDate = null, DateTime? endDate = null)
+        public List<Income> GetIncomes(string userId, IncomeType type)
         {
-            Chart<List<float>> result = new Chart<List<float>>();
-            List<Expense> expenses = GetAllExpenses(userId);
-
-            DateTime start = (startDate == null) ? DateTime.Now : startDate.Value,
-                     end = (endDate == null) ? DateTime.Now.AddDays(14) : endDate.Value;
-
-            TimeSpan diff = (end - start);
-
-            result.Labels = CalculateLabelRange(out chartSchedule, start, end);
-            result.Name = String.Format("Expenses {0} Chart", chartSchedule.ToString());
-            result.TypeId = ChartType.Line;
-            result.UserId = userId;
-
-            if (result.Series == null)
-                result.Series = new List<List<float>>();
-            if (result.Legend == null)
-                result.Legend = new List<string>();
-
-            if (expenses != null && expenses.Count > 0)
-            {
-                result.Series.Add(new List<float>());
-
-                foreach(Expense expense in expenses)
-                    result.Legend.Add(expense.Name);
-
-                float lastPayment = 0;
-
-                for (int i = 0; i < result.Labels.Count; i++)
-                {
-                    float pay = PayOfDay(start, i, chartSchedule, expenses.Cast<FinicialAsset>(), ref lastPayment);
-                    result.Series[0].Add(pay * -1);
-                    lastPayment = pay;
-                }
-            }
-
-
-            return result;
+            return _incomeSrv.Where((a) => a.UserId == userId && a.IncomeType == type).ToList();
         }
 
-        public Chart<List<float>> GetCombinedChart(string userId, out ScheduleTypes chartSchedule, DateTime? startDate = null, DateTime? endDate = null)
+        public List<Income> GetIncomes(string userId, ScheduleTypes type)
         {
-            Chart<List<float>> result = new Chart<List<float>>();
-            DateTime start = (startDate == null) ? DateTime.Now : startDate.Value,
-                     end = (endDate == null) ? DateTime.Now.AddDays(14) : endDate.Value;
+            return _incomeSrv.Where((a) => a.UserId == userId && a.PaySchedule == type).ToList();
+        }
 
-            Chart<List<float>> incomeChart = GetIncomeChart(userId, out chartSchedule, start, end);
-            Chart<List<float>> expensesChart = GetExpensesChart(userId, out chartSchedule, start, end);
-
-
-            result.Labels = CalculateLabelRange(out chartSchedule, start, end);
-            result.Name = String.Format("Complete {0} Chart", chartSchedule.ToString());
-            result.UserId = userId;
-            result.TypeId = ChartType.Line;
-            result.Legend = new List<string>();
-
-            if (expensesChart.Series.Any() && incomeChart.Series.Any())
-            {
-                result.Series = new List<List<float>>();
-                result.Series.Add(new List<float>());
-
-                float lastPayment = 0;
-
-                for (int i = 0; i < result.Labels.Count; i++)
-                {
-                    bool hasIncomeLabel = incomeChart.Legend.ElementAtOrDefault(i) != default(string) ? true : false,
-                         hasExpenseLabel = expensesChart.Legend.ElementAtOrDefault(i) != default(string) ? true : false;
-
-
-
-                    result.Legend.Add(
-                          (hasIncomeLabel ? incomeChart.Legend[i] + 
-                            (hasExpenseLabel ? " / " : "") 
-                          : "") +
-                          (hasExpenseLabel ? expensesChart.Legend[i] : ""));
-
-                    float pay = incomeChart.Series[0][i];
-                    float cost = expensesChart.Series[0][i] > 0
-                                    ? expensesChart.Series[0][i] * -1
-                                    : expensesChart.Series[0][i];
-                    result.Series[0].Add(pay + cost);
-                    lastPayment = pay + cost;
-                }
-
-            }
-            else if (incomeChart.Series.Any())
-                result.Series = incomeChart.Series;
-
-            else if (expensesChart.Series.Any())
-                result.Series = expensesChart.Series;
-
-            else
-                result.Series = new List<List<float>>();
-
-            return result;
+        public List<Income> GetIncomes(string userId, IncomeType incomeType, ScheduleTypes scheduleType)
+        {
+            return _incomeSrv.Where((a) => a.UserId == userId && a.IncomeType == incomeType && a.PaySchedule == scheduleType).ToList();
         }
 
         public void InsertExpense(Expense request)
@@ -791,16 +814,6 @@ namespace Nostreets_Services.Services.Database
             _incomeSrv.Update(request);
         }
 
-        public void DeleteExpense(int id)
-        {
-            _expenseSrv.Delete(id);
-        }
-
-        public void DeleteIncome(int id)
-        {
-            _incomeSrv.Delete(id);
-        }
-
-
+        #endregion Public Methods
     }
 }

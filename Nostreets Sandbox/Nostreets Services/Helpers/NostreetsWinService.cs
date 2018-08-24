@@ -1,35 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.ServiceProcess;
 using System.Threading;
 using NostreetsExtensions.Utilities;
-using NostreetsExtensions;
 using System.Reflection;
-using System.Linq.Expressions;
+using NostreetsExtensions.Extend.Basic;
 
 namespace Nostreets_Services.Helpers
 {
     public class NostreetsWinService<T> : ServiceBase, IDisposable
     {
-        public ServiceController ServiceController { get { return _serviceController; } }
-        public string TargetedDirectory { get; set; }
-        protected IEnumerable<object> Params { get; set; }
-
-        protected FileManager _fileManager = null;
-        protected Thread _thread = null;
-        private ServiceController _serviceController = null;
-        private bool _updateComplete = false;
-        private string[] _args = null;
-        private ManualResetEvent _shutdownEvent = new ManualResetEvent(false);
-        private Tuple<
-                        Action<ManualResetEvent>,
-                        Func<ManualResetEvent, object>,
-                        Func<ManualResetEvent, IEnumerable<object>>
-                        >
-            _method = null;
 
         public NostreetsWinService(string serviceName, string directoryPath, Action<ManualResetEvent> method)
         {
@@ -208,6 +189,26 @@ namespace Nostreets_Services.Helpers
             TargetedDirectory = directoryPath;
             Params = parameters;
         }
+
+        private string[] _args = null;
+        private Tuple<
+                        Action<ManualResetEvent>,
+                        Func<ManualResetEvent, object>,
+                        Func<ManualResetEvent, IEnumerable<object>>
+                        >
+            _method = null;
+
+        private ServiceController _serviceController = null;
+        private ManualResetEvent _shutdownEvent = new ManualResetEvent(false);
+        private bool _updateComplete = false;
+
+        protected FileManager _fileManager = null;
+        protected Thread _thread = null;
+
+        protected IEnumerable<object> Params { get; set; }
+
+        public ServiceController ServiceController { get { return _serviceController; } }
+        public string TargetedDirectory { get; set; }
 
         protected override void OnStart(string[] args)
         {
