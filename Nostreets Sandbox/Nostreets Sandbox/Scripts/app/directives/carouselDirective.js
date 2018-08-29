@@ -15,11 +15,13 @@
                 width: '@',
                 height: '@',
                 backgroundColor: '@',
+                showArrows: '@',
                 textColor: '@',
-                textFont: '@'
+                textFont: '@',
+                scrollControl: '@'
             },
 
-            template: "<div ng-show=\"!isHorizontal\" class=\"col-sm-1\" style=\"padding-left: 25%;\"> <a class=\"carousel_previousBtn\"> <i class=\"material-icons\" style=\"color: white;\">arrow_upward</i> </a> </div> <div class=\"col-sm-12 carousel1_root\"> <div ng-show=\"isHorizontal\" class=\"col-sm-1\" style=\"padding: 7% 0% 0% 0%; margin-right: 10%;\"> <a class=\"carousel_previousBtn\"> <i class=\"material-icons\" style=\"color: white;\">arrow_back</i> </a> </div>  <div class=\"carousel1_container col-sm-10\"> <div class=\"carousel1\"> <a class=\"carousel1_cell\" ng-repeat=\" item in collection \" href=\"{{item.link ? item.link : ''}}\" on-repeat-finished > {{ item.label }} </a> </div> </div> <div ng-show=\"isHorizontal\" class=\"col-sm-1\" style=\"padding: 7% 0% 0% 39%;\"> <a class=\"carousel_nextBtn\"> <i class=\"material-icons\" style=\"color: white;\">arrow_forward</i> </a> </div> </div> <div ng-show=\"!isHorizontal\" class=\"col-sm-1\" style=\"padding-left: 25%;\"> <a class=\"carousel_nextBtn\"> <i class=\"material-icons\" style=\"color: white;\">arrow_downward</i> </a> </div>",
+            template: "<div ng-show=\"!isHorizontal && showArrows\" class=\"col-sm-1 carouselVertictalBtn\"> <a class=\"carousel_previousBtn\"> <i class=\"material-icons\" style=\"color: white;\">arrow_upward</i> </a> </div> <div class=\"container carousel1_root\"> <div ng-show=\"isHorizontal && showArrows\" class=\"col-sm-1\" style=\"padding: 7% 0% 0% 0%; margin-right: 10%;\"> <a class=\"carousel_previousBtn\"> <i class=\"material-icons\" style=\"color: white;\">arrow_back</i> </a> </div>     <div class=\"carousel1_container col-sm-10\"> <div class=\"carousel1\"> <a class=\"carousel1_cell\" ng-repeat=\" item in collection \" href=\"{{item.link ? item.link : ''}}\" on-repeat-finished> {{ item.label }} </a> </div> </div>      <div ng-show=\"isHorizontal && showArrows\" class=\"col-sm-1\" style=\"padding: 7% 0% 0% 39%;\"> <a class=\"carousel_nextBtn\"> <i class=\"material-icons\" style=\"color: white;\">arrow_forward</i> </a> </div> </div> <div ng-show=\"!isHorizontal && showArrows\" class=\"col-sm-1 carouselVertictalBtn\"> <a class=\"carousel_nextBtn\"> <i class=\"material-icons\" style=\"color: white;\">arrow_downward</i> </a> </div>",
 
             link: function ($scope, element, attr) {
 
@@ -45,6 +47,8 @@
 
                     $scope.collection = typeof ($scope.collection) == "string" ? JSON.parse($scope.collection) : $scope.collection ? $scope.collection : [];
                     $scope.isHorizontal = $scope.isHorizontal && ($scope.isHorizontal == 'false' || $scope.isHorizontal === '0') ? false : true;
+                    $scope.showArrows = $scope.showArrows && ($scope.showArrows == 'false' || $scope.showArrows === '0') ? false : true;
+                    $scope.scrollControl = $scope.scrollControl && ($scope.scrollControl == 'false' || $scope.scrollControl === '0') ? false : true;
                     $scope.width = $scope.width || '200px';
                     $scope.height = $scope.height || '120px';
                     $scope.textColor = $scope.textColor || 'white';
@@ -60,19 +64,27 @@
                     $scope.rotateFn = $scope.isHorizontal ? 'rotateY' : 'rotateX';
                     $scope.radius = null;
                     $scope.theta = null;
+                    $scope.lastScrollPosition = 0;
                 }
 
                 function _handlers() {
 
-                    $('.carousel_nextBtn').on('click', () => {
+                    var down = () => {
                         $scope.selectedIndex++;
                         _rotateCarousel();
-                    });
+                    },
+                        up = () => {
+                            $scope.selectedIndex--;
+                            _rotateCarousel();
+                        };
 
-                    $('.carousel_previousBtn').on('click', () => {
-                        $scope.selectedIndex--;
-                        _rotateCarousel();
-                    });
+                    $('.carousel_nextBtn').on('click', down);
+
+                    $('.carousel_previousBtn').on('click', up);
+
+                    if ($scope.scrollControl)
+                        _onScroll(down, up);
+
 
                     /* VALINLA JAVASCRIPT WAY
                     $scope.prevButton = document.querySelector('.carousel_previousBtn');
@@ -80,13 +92,13 @@
                         $scope.selectedIndex--;
                         rotateCarousel();
                     });
-
+        
                     $scope.nextButton = document.querySelector('.carousel_nextBtn');
                     $scope.nextButton.addEventListener('click', function () {
                         $scope.selectedIndex++;
                         rotateCarousel();
                     });
-
+        
                     //CHANGE NUMBER OF CELLS
                     var cellsRange = document.querySelector('.cells-range');
                     cellsRange.addEventListener('change', changeCarousel);
@@ -127,15 +139,6 @@
                     _rotateCarousel();
                 }
 
-                ////TOGGLE DIRECTION VERTICAL TO HORIZONATAL
-                //var orientationRadios = document.querySelectorAll('input[name="orientation"]');
-                //(function () {
-                //    for (var i = 0; i < orientationRadios.length; i++) {
-                //        var radio = orientationRadios[i];
-                //        radio.addEventListener('change', onOrientationChange);
-                //    }
-                //})();
-
                 function _onOrientationChange() {
                     //var checkedRadio = document.querySelector('input[name="orientation"]:checked');
                     //$scope.isHorizontal = checkedRadio.value == 'horizontal';
@@ -171,9 +174,29 @@
                 }
 
                 function _setDirectiveStyle() {
-                    var style = ".carousel1_root{margin:40px 0;margin:80px auto}  .carousel1_container{position:relative;width:210px;height:140px;perspective:1000px}  .carousel1{width:100%;height:100%;position:absolute;transform:translateZ(-288px);transform-style:preserve-3d;transition:transform 1s}  .carousel1_cell{background:" + $scope.backgroundColor + ";position:absolute;width:" + $scope.width + ";height:" + $scope.height + ";left:10px;top:10px;border:2px solid black;line-height:50px;font-size:2em;font-weight:bold;color:" + $scope.textColor + ";text-align:center;transition:transform 1s,opacity 1s;align-items:center;display:flex;justify-content:center;font-family: " + $scope.textFont + "}  .carousel1-options{text-align:center;position:relative;z-index:2;background:hsla(0,0%,100%,0.8)}";
+                    var style = ".carousel1_root{margin: 20% 0% 15% 0%;width:" + $scope.width + ";}  .carousel1_container{position:relative;width:210px;height:140px;perspective:1000px}  .carousel1{width:100%;height:100%;position:absolute;transform:translateZ(-288px);transform-style:preserve-3d;transition:transform 1s}  .carousel1_cell{background:" + $scope.backgroundColor + ";position:absolute;width:" + $scope.width + ";height:" + $scope.height + ";left:10px;top:10px;border:2px solid black;line-height:50px;font-size:2em;font-weight:bold;color:" + $scope.textColor + ";text-align:center;transition:transform 1s,opacity 1s;align-items:center;display:flex;justify-content:center;font-family: " + $scope.textFont + "}  .carousel1-options{text-align:center;position:relative;z-index:2;background:hsla(0,0%,100%,0.8)}    @media only screen and (max-width: 480px) {   carsousel{margin-right:20%}  .carouselVertictalBtn{padding-left: 16em;}   }    @media only screen and (min-width: 480px) {   carsousel{margin-right:10%}   .carouselVertictalBtn{padding-left: 11em;}   } ";
 
                     _writeStyles("carousel_styles", style);
+                }
+
+                function _onScroll(onDown, onUp) {
+
+                    if (onUp && onDown && typeof (onUp) === 'function' && typeof (onDown) === 'function')
+                        $('.carousel1_cell, .carouselVertictalBtn').on(
+                            'mousewheel',
+                            (scrollEvent) => {
+
+                                scrollEvent.preventDefault();
+
+                                if (scrollEvent.originalEvent.wheelDelta >= 0) {
+                                    onUp();
+                                    console.log('Scroll up');
+                                }
+                                else {
+                                    onDown();
+                                    console.log('Scroll down');
+                                }
+                            });
                 }
 
             }

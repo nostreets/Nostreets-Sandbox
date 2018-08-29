@@ -4,7 +4,7 @@
         .controller("billManagerController", billManagerController)
         .controller("modalInsertController", modalInsertController);
 
-    billManagerController.$inject = ["$scope", "$baseController", '$sandboxService', '$filter'];
+    billManagerController.$inject = ["$scope", "$baseController", '$sandboxService', '$filter', '$serverModel'];
     modalInsertController.$inject = ["$scope", "$baseController", '$uibModalInstance', '$sandboxService', 'model', 'enums'];
 
 
@@ -76,6 +76,7 @@
             vm.totals = [];
             vm.overallCost = 0;
             vm.isChartEmpty = false;
+            vm.useChartist = page.isLoggedIn|| false;
         }
 
         function _eventHandlers() {
@@ -84,7 +85,11 @@
 
             angular.element('.assetSwitcher').on('shown.bs.tab',
                 () => _getChartLengend().then(
-                    () => _targetGraph(vm.currentTab, ((vm.currentTab === "income") ? "#incomeChart" : (vm.currentTab === "expense") ? "#expenseChart" : "#combinedChart"))
+                    () =>
+                    {
+                        if (vm.useChartist)
+                            _targetChartistGraph(vm.currentTab, ((vm.currentTab === "income") ? "#incomeChart" : (vm.currentTab === "expense") ? "#expenseChart" : "#combinedChart"))
+                    }
                 )
             );
         }
@@ -94,7 +99,10 @@
                 () => _getExpensesChart().then(
                     () => _getCombinedChart().then(
                         () => _getChartLengend().then(
-                            () => _targetGraph(vm.currentTab, ((vm.currentTab === "income") ? "#incomeChart" : (vm.currentTab === "expense") ? "#expenseChart" : "#combinedChart"))
+                            () => {
+                                if (vm.useChartist)
+                                    _targetChartistGraph(vm.currentTab, ((vm.currentTab === "income") ? "#incomeChart" : (vm.currentTab === "expense") ? "#expenseChart" : "#combinedChart"));
+                            }
                         )
                     )
                 )
@@ -617,10 +625,10 @@
 
         }
 
-        function _targetGraph(type, elementId) {
+        function _targetChartistGraph(type, elementId) {
 
             var chart = vm.charts.filter((a) => a.key === type)[0].value;
-            var options = _getChartOptions(chart);
+            var options = _getChartistChartOptions(chart);
 
 
             if (chart.series.length === 0) {
@@ -629,12 +637,12 @@
             }
             else {
                 vm.isChartEmpty = false;
-                _addTooltipDetials(chart);
+                _addChartistTooltipDetials(chart);
 
                 var renderedChart = new Chartist.Line(elementId, chart, options);
 
                 _getTotals(chart);
-                _animateGraph(renderedChart, 200);
+                _animateChartistGraph(renderedChart, 200);
 
                 vm.renderedChart = chart;
                 vm.chartOptions = options;
@@ -669,7 +677,7 @@
                 });
         }
 
-        function _getChartOptions(chart) {
+        function _getChartistChartOptions(chart) {
 
             var lineSmooth = false;
 
@@ -698,14 +706,14 @@
                 axisY: {
                     offset: 40 + (5 * _getYLabelLength(chart)),
                     labelOffset: {
-                        x:  (chart.series.any((a) => a.any((b) => b > 100)))
-                            ? 10   
+                        x: (chart.series.any((a) => a.any((b) => b > 100)))
+                            ? 10
                             : 0,
                         y: 5
                     }
                 },
                 axisX: {
-                    scaleMinSpace: (chart.labels.any((a) => a.length > 8 )) ? 20 : 0,
+                    scaleMinSpace: (chart.labels.any((a) => a.length > 8)) ? 20 : 0,
                     labelOffset: {
                         x: 0,
                         y: 0
@@ -722,7 +730,7 @@
             return options;
         }
 
-        function _addTooltipDetials(chart) {
+        function _addChartistTooltipDetials(chart) {
             if (typeof (chart.series[0][0].value) === 'undefined') {
                 for (var a = 0; a < chart.series.length; a++) {
                     var chartObj = vm.legend[a];
@@ -854,7 +862,7 @@
             vm.overallCost = overallCost;
         }
 
-        function _animateGraph(chart, time) {
+        function _animateChartistGraph(chart, time) {
             // sequence number aside so we can use it in the event callbacks
             var seq = 0,
                 delays = 80,

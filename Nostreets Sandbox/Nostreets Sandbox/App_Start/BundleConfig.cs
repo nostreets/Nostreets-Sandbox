@@ -35,12 +35,18 @@ namespace Nostreets_Sandbox
             );
 
 
-            //+JS Requirements
+            //+JQUERY
             bundles.Add(
-                new ScriptBundle("~/jsRequirements").Include(
-                    //+JQUERY
+                new ScriptBundle("~/jquery").Include(
                     "~/node_modules/jquery/dist/jquery.js",
-                    "~/node_modules/jquery-validation/dist/jquery.validate.js",
+                    "~/node_modules/jquery-validation/dist/jquery.validate.js"
+                    
+                    ));
+
+
+            //+JQUERY Requirements
+            bundles.Add(
+                new ScriptBundle("~/jqueryRequirements").Include(
                     
                     //+POPPER
                     "~/node_modules/popper.js/dist/popper.min.js",
@@ -62,6 +68,8 @@ namespace Nostreets_Sandbox
                     "~/Scripts/app/services/nostreetsChartistScrollPlugin.js" // Nostreets Chartist Scroll Plugin
                         ));
 
+           
+            
             //+Angular Requirements
             bundles.Add(
                 new ScriptBundle("~/angularRequirements").Include(

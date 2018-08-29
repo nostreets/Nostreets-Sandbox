@@ -110,8 +110,8 @@ namespace Nostreets_Sandbox.App_Start
                  Reg.Component.For<IChartService>().ImplementedBy<ChartsService>().LifestyleSingleton()
                      .DependsOn((k, param) =>
                      {
-                         param["charDBtSrv"] = k.Resolve<IDBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest>>();
-                         param["pieDBChartSrv"] = k.Resolve<IDBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>>>();
+                         param["charDBtSrv"] = k.Resolve<IDBService<ChartistChart<List<int>>, int, ChartAddRequest, ChartUpdateRequest>>();
+                         param["pieDBChartSrv"] = k.Resolve<IDBService<ChartistChart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>>>();
                      }),
 
                  Reg.Component.For<IEmailService>().ImplementedBy<SendGridService>().LifestyleSingleton()

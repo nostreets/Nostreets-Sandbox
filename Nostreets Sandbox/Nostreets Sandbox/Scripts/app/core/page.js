@@ -12,7 +12,24 @@
     ],
     utilities: {
 
-        googleSearch: (input) =>{
+        onScroll: (onDown, onUp) => {
+            $(window).scroll(
+                (event) => {
+                    var result = null;
+                    var newPosition = $(this).scrollTop();
+
+                    if (newPosition > window.lastScrollPosition)
+                        onDown();
+
+                    else
+                        onUp();
+
+                    //Updates scroll position
+                    window.lastScrollPosition = newPosition;
+                });
+        },
+
+        googleSearch: (input) => {
 
             if (typeof (input) !== 'string')
                 throw 'input is not a string...';
@@ -57,7 +74,7 @@
         },
 
         loadScript: (url, callback) => {
-            jQuery.ajax({
+            $.ajax({
                 url: url,
                 dataType: 'script',
                 success: callback,

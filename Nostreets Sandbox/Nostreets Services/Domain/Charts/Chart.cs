@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Nostreets_Services.Domain.Charts
 {
-    public class Chart<T>
+    public class ChartistChart<T>
     {
         public int ChartId { get; set; }
         public ChartType TypeId { get; set; }

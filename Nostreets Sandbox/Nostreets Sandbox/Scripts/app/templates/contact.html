@@ -14,6 +14,7 @@
                       ng-submit="contactUs.submitForm(contactUsForm.$valid)"
                       role="form" id="contact-form"
                       method="post">
+
                     <div class="col-xs-6">
                         <div class="form-group"
                              ng-class="{'has-error': !contactUsForm.name.$pristine && (contactUsForm.name.$invalid || contactUsForm.name.$error.minlength || contactUsForm.name.$error.maxlength)}">
@@ -27,6 +28,38 @@
                                    ng-minlength="2"
                                    ng-maxlength="50"
                                    required />
+                        </div>
+                    </div>
+
+                    <div class="col-xs-6">
+                        <div class="form-group"
+                             ng-class="{'has-error': (!contactUsForm.subject.$pristine && contactUsForm.subject.$invalid) || (contactUsForm.subject.$error.minlength)|| (contactUsForm.subject.$error.maxlength)}">
+                            <label class="control-label">
+                                Subject
+                            </label>
+
+                            <select ng-model="contactUs.subject"
+                                    ng-options="item as item for item in contactUs.subjects"
+                                    class="form-control"
+                                    required></select>
+                            <!-- OLD INPUT
+                                <input type="text"
+                                   name="subject"
+                                   class="form-control"
+                                   ng-model="contactUs.item.subject"
+                                   ng-minlength="2"
+                                   ng-maxlength="25"
+                                   required />
+                            <p ng-if="(contactUsForm.subject.$error.required && !contactUsForm.subject.$pristine) || (!contactUsForm.subject.$pristine && contactUsForm.subject.$invalid)">
+                                A Subject is required.
+                            </p>
+                            <p ng-if="contactUsForm.subject.$error.minlength">
+                                Subject is too short
+                            </p>
+                            <p ng-if="contactUsForm.subject.$error.maxlength">
+                                Subject is too long.
+                            </p>
+                                -->
                         </div>
                     </div>
 
@@ -46,6 +79,7 @@
                             </p>
                         </div>
                     </div>
+                    
                     <div class="col-xs-6">
                         <div class="form-group"
                              ng-class="{'has-error': (!contactUsForm.phone.$pristine && contactUsForm.phone.$invalid)}">
@@ -61,35 +95,7 @@
 
                         </div>
                     </div>
-                    <div class="col-xs-6">
-                        <div class="form-group"
-                             ng-class="{'has-error': (!contactUsForm.subject.$pristine && contactUsForm.subject.$invalid) || (contactUsForm.subject.$error.minlength)|| (contactUsForm.subject.$error.maxlength)}">
-                            <label class="control-label">
-                                Subject
-                            </label>
 
-                            <select ng-model="contactUs.subject"
-                                    ng-options="item as item for item in contactUs.subjects"
-                                    class="form-control"
-                                    required></select>
-                            <!--<input type="text"
-                                   name="subject"
-                                   class="form-control"
-                                   ng-model="contactUs.item.subject"
-                                   ng-minlength="2"
-                                   ng-maxlength="25"
-                                   required />
-                            <p ng-if="(contactUsForm.subject.$error.required && !contactUsForm.subject.$pristine) || (!contactUsForm.subject.$pristine && contactUsForm.subject.$invalid)">
-                                A Subject is required.
-                            </p>
-                            <p ng-if="contactUsForm.subject.$error.minlength">
-                                Subject is too short
-                            </p>
-                            <p ng-if="contactUsForm.subject.$error.maxlength">
-                                Subject is too long.
-                            </p>-->
-                        </div>
-                    </div>
                     <div class="col-xs-12">
                         <div class="form-group" ng-class="{'has-error': (!contactUsForm.messageText.$pristine && contactUsForm.messageText.$invalid ) || (contactUsForm.messageText.$error.minlength)|| (contactUsForm.messageText.$error.maxlength)}">
                             <label class="control-label">
@@ -114,6 +120,7 @@
                             </p>
                         </div>
                     </div>
+                  
                     <div class="col-xs-12 text-center">
                         <input style="background-color: #58768b;"
                                type="submit"

@@ -594,14 +594,14 @@ namespace Nostreets_Services.Services.Database
             return incomes;
         }
 
-        public Chart<List<float>> GetCombinedChart(string userId, out ScheduleTypes chartSchedule, DateTime? startDate = null, DateTime? endDate = null)
+        public ChartistChart<List<float>> GetCombinedChart(string userId, out ScheduleTypes chartSchedule, DateTime? startDate = null, DateTime? endDate = null)
         {
-            Chart<List<float>> result = new Chart<List<float>>();
+            ChartistChart<List<float>> result = new ChartistChart<List<float>>();
             DateTime start = (startDate == null) ? DateTime.Now : startDate.Value,
                      end = (endDate == null) ? DateTime.Now.AddDays(14) : endDate.Value;
 
-            Chart<List<float>> incomeChart = GetIncomeChart(userId, out chartSchedule, start, end);
-            Chart<List<float>> expensesChart = GetExpensesChart(userId, out chartSchedule, start, end);
+            ChartistChart<List<float>> incomeChart = GetIncomeChart(userId, out chartSchedule, start, end);
+            ChartistChart<List<float>> expensesChart = GetExpensesChart(userId, out chartSchedule, start, end);
 
 
             result.Labels = CalculateLabelRange(out chartSchedule, start, end);
@@ -676,9 +676,9 @@ namespace Nostreets_Services.Services.Database
             return _expenseSrv.Where((a) => a.UserId == userId && a.ExpenseType == billType && a.PaySchedule == scheduleType).ToList();
         }
 
-        public Chart<List<float>> GetExpensesChart(string userId, out ScheduleTypes chartSchedule, DateTime? startDate = null, DateTime? endDate = null)
+        public ChartistChart<List<float>> GetExpensesChart(string userId, out ScheduleTypes chartSchedule, DateTime? startDate = null, DateTime? endDate = null)
         {
-            Chart<List<float>> result = new Chart<List<float>>();
+            ChartistChart<List<float>> result = new ChartistChart<List<float>>();
             List<Expense> expenses = GetAllExpenses(userId);
 
             DateTime start = (startDate == null) ? DateTime.Now : startDate.Value,
@@ -727,9 +727,9 @@ namespace Nostreets_Services.Services.Database
             return _incomeSrv.Where(a => a.UserId == userId && a.Name == incomeName).FirstOrDefault();
         }
 
-        public Chart<List<float>> GetIncomeChart(string userId, out ScheduleTypes chartSchedule, DateTime? startDate = null, DateTime? endDate = null)
+        public ChartistChart<List<float>> GetIncomeChart(string userId, out ScheduleTypes chartSchedule, DateTime? startDate = null, DateTime? endDate = null)
         {
-            Chart<List<float>> result = new Chart<List<float>>();
+            ChartistChart<List<float>> result = new ChartistChart<List<float>>();
             List<Income> incomes = GetAllIncome(userId);
 
             DateTime start = (startDate == null) ? DateTime.Now : startDate.Value,

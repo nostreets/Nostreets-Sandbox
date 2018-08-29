@@ -320,9 +320,9 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-                Chart<List<float>> result = null;
+                ChartistChart<List<float>> result = null;
                 result = _billSrv.GetCombinedChart(_userSrv.SessionUser.Id, out chartSchedule, startDate, endDate);
-                ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(result);
+                ItemResponse<ChartistChart<List<float>>> response = new ItemResponse<ChartistChart<List<float>>>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -352,9 +352,9 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-                Chart<List<float>> result = null;
+                ChartistChart<List<float>> result = null;
                 result = _billSrv.GetExpensesChart(_userSrv.SessionUser.Id, out chartSchedule, startDate, endDate);
-                ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(result);
+                ItemResponse<ChartistChart<List<float>>> response = new ItemResponse<ChartistChart<List<float>>>(result);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -383,9 +383,9 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-                Chart<List<float>> chart = null;
+                ChartistChart<List<float>> chart = null;
                 chart = _billSrv.GetIncomeChart(_userSrv.SessionUser.Id, out chartSchedule, startDate, endDate);
-                ItemResponse<Chart<List<float>>> response = new ItemResponse<Chart<List<float>>>(chart);
+                ItemResponse<ChartistChart<List<float>>> response = new ItemResponse<ChartistChart<List<float>>>(chart);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -637,8 +637,8 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-                List<Chart<object>> list = _chartsSrv.GetAll();
-                ItemsResponse<Chart<object>> response = new ItemsResponse<Chart<object>>(list);
+                List<ChartistChart<object>> list = _chartsSrv.GetAll();
+                ItemsResponse<ChartistChart<object>> response = new ItemsResponse<ChartistChart<object>>(list);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -654,9 +654,9 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-                List<Chart<object>> list = _chartsSrv.GetAll();
-                List<Chart<object>> filteredList = list?.Where(a => a.UserId == _userSrv.SessionUser.Id).ToList();
-                ItemsResponse<Chart<object>> response = new ItemsResponse<Chart<object>>(filteredList);
+                List<ChartistChart<object>> list = _chartsSrv.GetAll();
+                List<ChartistChart<object>> filteredList = list?.Where(a => a.UserId == _userSrv.SessionUser.Id).ToList();
+                ItemsResponse<ChartistChart<object>> response = new ItemsResponse<ChartistChart<object>>(filteredList);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -672,8 +672,8 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-                Chart<object> chart = _chartsSrv.Get(id);
-                ItemResponse<Chart<object>> response = new ItemResponse<Chart<object>>(chart);
+                ChartistChart<object> chart = _chartsSrv.Get(id);
+                ItemResponse<ChartistChart<object>> response = new ItemResponse<ChartistChart<object>>(chart);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -700,7 +700,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                     model.UserId = _userSrv.SessionUser.Id;
                     int id = _chartsSrv.Insert(model, (a) =>
                         {
-                            return new Chart<int>
+                            return new ChartistChart<int>
                             {
                                 Labels = a.Labels,
                                 Legend = a.Legend,
@@ -743,7 +743,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                     int id = _chartsSrv.Insert(model,
                         (a) =>
                         {
-                            return new Chart<List<int>>
+                            return new ChartistChart<List<int>>
                             {
                                 Labels = a.Labels,
                                 Legend = a.Legend,
@@ -785,7 +785,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                     model.UserId = _userSrv.SessionUser.Id;
                     _chartsSrv.Update(model, (a) =>
                         {
-                            return new Chart<int>
+                            return new ChartistChart<int>
                             {
                                 Labels = a.Labels,
                                 Legend = a.Legend,
@@ -824,7 +824,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                     model.UserId = _userSrv.SessionUser.Id;
                     _chartsSrv.Update(model, (a) =>
                         {
-                            return new Chart<List<int>>
+                            return new ChartistChart<List<int>>
                             {
                                 Labels = a.Labels,
                                 Legend = a.Legend,
