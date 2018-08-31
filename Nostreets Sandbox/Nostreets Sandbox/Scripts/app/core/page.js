@@ -1,4 +1,11 @@
-﻿var page = {
+﻿/*
+DEPENDENCIES
+    -JQUERY
+    -ANGULARJS
+
+*/
+
+var page = {
     APPNAME: "sandbox",
     isLoggedIn: false,
     ngModules: [
@@ -12,21 +19,166 @@
     ],
     utilities: {
 
-        onScroll: (onDown, onUp) => {
-            $(window).scroll(
-                (event) => {
-                    var result = null;
-                    var newPosition = $(this).scrollTop();
+        checkForJQEvent: (element, event) => {
 
-                    if (newPosition > window.lastScrollPosition)
-                        onDown();
+            var result = false,
+                curEvents = $._data($(element).get(0), 'events');
 
-                    else
-                        onUp();
+            for (var e in curEvents) {
+                result = event === e;
 
-                    //Updates scroll position
-                    window.lastScrollPosition = newPosition;
+                if (result)
+                    break;
+            }
+
+            return result;
+        },
+
+        setUpJQSwipeHandlers: () => {
+            var supportTouch = $.support.touch,
+                scrollEvent = "touchmove scroll",
+                touchStartEvent = supportTouch ? "touchstart" : "mousedown",
+                touchStopEvent = supportTouch ? "touchend" : "mouseup",
+                touchMoveEvent = supportTouch ? "touchmove" : "mousemove";
+
+            $.event.special.swipeupdown = {
+
+                setup: function () {
+
+                    var thisObject = this;
+
+                    var $this = $(thisObject);
+
+                    $this.bind(touchStartEvent, (event) => {
+
+                        var data = event.originalEvent.touches ? event.originalEvent.touches[0] : event,
+                            start = {
+                                time: (new Date).getTime(),
+                                coords: [data.pageX, data.pageY],
+                                origin: $(event.target)
+                            },
+                            stop;
+
+                        var moveHandler = (event) => {
+                            if (!start)
+                                return;
+
+                            var data = event.originalEvent.touches ?
+                                event.originalEvent.touches[0] :
+                                event;
+
+                            stop = {
+                                time: (new Date).getTime(),
+                                coords: [data.pageX, data.pageY]
+                            };
+
+                            // prevent scrolling
+                            if (Math.abs(start.coords[1] - stop.coords[1]) > 10)
+                                event.preventDefault();
+
+                        };
+
+                        $this.bind(touchMoveEvent, moveHandler).one(touchStopEvent,
+                            (event) => {
+                                $this.unbind(touchMoveEvent, moveHandler);
+                                if (start && stop) {
+                                    if (stop.time - start.time < 1000 &&
+                                        Math.abs(start.coords[1] - stop.coords[1]) > 30 &&
+                                        Math.abs(start.coords[0] - stop.coords[0]) < 75) {
+                                        start.origin
+                                            .trigger("swipeupdown")
+                                            .trigger(start.coords[1] > stop.coords[1] ? "swipeup" : "swipedown");
+                                    }
+                                }
+                                start = stop = undefined;
+                            });
+                    });
+                }
+
+            };
+
+
+            $.each({ swipedown: "swipeupdown", swipeup: "swipeupdown" },
+                (event, sourceEvent) => {
+                    $.event.special[event] = {
+                        setup: () => {
+                            $(this).bind(sourceEvent, $.noop);
+                        }
+                    };
                 });
+
+        },
+
+        inlineSvgs: (hoverColor) => {
+            hoverColor = hoverColor || 'black';
+            /*
+             * Replace all SVG images with inline SVG
+             */
+
+
+            $('img').each((num, ele) => {
+
+                var $img = $(ele);
+                var imgID = $img.attr('id');
+                var imgClass = $img.attr('class');
+                var imgStyle = $img.attr('style');
+                var imgURL = $img.attr('src');
+
+                if (imgURL && imgURL.includes('.svg'))
+                    $.get(imgURL, (data) => {
+
+                        var $svg = $(data).find('svg');
+
+                        if (typeof imgID !== 'undefined')
+                            $svg = $svg.attr('id', imgID);
+
+
+                        if (typeof imgStyle !== 'undefined')
+                            $svg = $svg.attr('style', imgStyle);
+
+
+                        if (typeof imgClass !== 'undefined')
+                            $svg = $svg.attr('class', imgClass + ' replaced-svg');
+
+
+
+                        //ADD HOVER COLOR CHANGE FOR SVGS
+                        /*
+                        var previousColor = '#FFFFFF';
+                        $svg.mouseover(() => $svg.find("path").each((n, e) => {
+                            var path = $(e);
+                            previousColor = path.attr('fill');
+                            path.css({
+                                fill: hoverColor
+                            });
+                        }));
+
+                        $svg.mouseout(() => $svg.find("path").each((n, e) => {
+                            setTimeout(
+                                () => $(e).css({
+                                    fill: previousColor
+                                }), 1000);
+                        }));
+                        */
+
+
+
+
+
+                        // Remove any invalid XML tags as per http://validator.w3.org
+                        $svg = $svg.removeAttr('xmlns:a');
+
+                        // Check if the viewport is set, if the viewport is not set the SVG wont't scale.
+                        if (!$svg.attr('viewBox') && $svg.attr('height') && $svg.attr('width'))
+                            $svg.attr('viewBox', '0 0 ' + $svg.attr('height') + ' ' + $svg.attr('width'))
+
+
+                        // Replace image with new SVG
+                        $img.replaceWith($svg);
+
+                    }, 'xml');
+
+            });
         },
 
         googleSearch: (input) => {
@@ -188,4 +340,9 @@
 };
 
 (() => angular.module(page.APPNAME, page.ngModules))();
+
+$(document).ready(() => {
+    page.utilities.inlineSvgs();
+    page.utilities.setUpJQSwipeHandlers();
+});
 

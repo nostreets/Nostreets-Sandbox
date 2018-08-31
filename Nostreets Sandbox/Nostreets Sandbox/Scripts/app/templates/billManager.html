@@ -2,9 +2,15 @@
     <div class="row">
         <h2 class="text-center text-primary text-blueish">Bill Manager</h2>
         <ul class="nav nav-tabs nav-justified">
-            <li role="presentation" class="active"><a class="assetSwitcher" role="tab" data-target="#incomeTab" data-toggle="tab" ng-click="pg.changeCurrentTab('income')">Incomes</a></li>
-            <li role="presentation"><a class="assetSwitcher" role="tab" data-target="#combinedTab" data-toggle="tab" ng-click="pg.changeCurrentTab('combined')">Incomes & Expenses</a></li>
-            <li role="presentation"><a class="assetSwitcher" role="tab" data-target="#expenseTab" data-toggle="tab" ng-click="pg.changeCurrentTab('expense')">Expenses</a></li>
+            <li role="presentation" class="active">
+                <a class="assetSwitcher" role="tab" data-target="#incomeTab" data-toggle="tab" ng-click="pg.changeCurrentTab('income')">Incomes</a>
+            </li>
+            <li role="presentation">
+                <a class="assetSwitcher" role="tab" data-target="#combinedTab" data-toggle="tab" ng-click="pg.changeCurrentTab('combined')">Incomes & Expenses</a>
+            </li>
+            <li role="presentation">
+                <a class="assetSwitcher" role="tab" data-target="#expenseTab" data-toggle="tab" ng-click="pg.changeCurrentTab('expense')">Expenses</a>
+            </li>
         </ul>
     </div>
 
@@ -152,7 +158,7 @@
                     </ul>
                 </div>
                 <div class="card-content text-center">
-                    
+
                     <div class="tab-content">
                         <div id="assetsTab" class="active tab-pane fade in" role="tabpanel">
                             <div ng-repeat="item in pg.legend">
@@ -254,16 +260,16 @@
                         <div class="row" style="margin-bottom: 2%;">
                             <div class="col-sm-6">
                                 <div><strong>{{ mc.type == "income" ? "Income" : "Expense" }} Name:</strong></div>
-                                <input type="text" 
-                                       class="input-sm" 
-                                       required 
+                                <input type="text"
+                                       class="input-sm"
+                                       required
                                        ng-model="mc.name" />
                             </div>
                             <div class="col-sm-3">
                                 <div><strong>{{ mc.type == "income" ? "Pay" : "Cost" }}:</strong></div>
-                                <input type="number" 
-                                       class="input-sm" 
-                                       required 
+                                <input type="number"
+                                       class="input-sm"
+                                       required
                                        ng-model="mc.cost" />
                             </div>
                             <div class="col-sm-3">

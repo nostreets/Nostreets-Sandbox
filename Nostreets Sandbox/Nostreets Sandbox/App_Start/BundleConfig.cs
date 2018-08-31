@@ -8,12 +8,22 @@ namespace Nostreets_Sandbox
         public static void RegisterBundles(BundleCollection bundles)
         {
 
-            //+CSS Requirements
-            bundles.Add(
-                new StyleBundle("~/css").IncludeWithCssRewriteUrlTransform(
-                    //+BOOTSTRAP
+            DefineOrder(bundles);
+
+
+          //+BOOTSTRAP CSS
+          bundles.Add(
+                new StyleBundle("~/bootstrapCss").IncludeWithCssRewriteUrlTransform(
+
                     "~/node_modules/bootstrap/dist/css/bootstrap-theme.css",
-                    "~/node_modules/bootstrap/dist/css/bootstrap.css",
+                    "~/node_modules/bootstrap/dist/css/bootstrap.css"
+                )
+            );
+
+
+          //+CUSTOM CSS
+          bundles.Add(
+                new StyleBundle("~/customCss").IncludeWithCssRewriteUrlTransform(
 
                     //+MATERIAL DESIGN LITE
                     "~/node_modules/material-design-lite/material.css",
@@ -24,7 +34,7 @@ namespace Nostreets_Sandbox
                     "~/assets/css/material-dashboard.css",
                     "~/assets/css/chartist-plugin-tooltip.css",
                     "~/assets/css/Site.css",
-                      
+
                     //+OTHER
                     "~/assets/css/font-awesome.css",
                     "~/node_modules/angular-ui-bootstrap/dist/ui-bootstrap-csp.css",
@@ -36,42 +46,33 @@ namespace Nostreets_Sandbox
 
 
             //+JQUERY
-            bundles.Add(
-                new ScriptBundle("~/jquery").Include(
-                    "~/node_modules/jquery/dist/jquery.js",
-                    "~/node_modules/jquery-validation/dist/jquery.validate.js"
-                    
-                    ));
+            bundles.Add(new ScriptBundle("~/jquery").Include("~/node_modules/jquery/dist/jquery.js"));
 
-
-            //+JQUERY Requirements
+            //+JQUERY REQUIREMENTS
             bundles.Add(
                 new ScriptBundle("~/jqueryRequirements").Include(
-                    
+
+                    //+VALIDATION
+                    "~/node_modules/jquery-validation/dist/jquery.validate.js",
+
                     //+POPPER
-                    "~/node_modules/popper.js/dist/popper.min.js",
-                    
+                    "~/node_modules/popper.js/dist/umd/popper.js",
+
                     //+BOOTSTRAP
                     "~/node_modules/bootstrap/dist/js/bootstrap.js",
 
+
                     //+MATERIAL DESIGN LITE
                     "~/node_modules/material-design-lite/material.js",
+                    "~/assets/js/material.min.js"
 
-                    //+OTHER
-                    "~/assets/js/material.min.js",
-                    "~/assets/js/sweetalert2.js",
-                    "~/assets/js/chartist.min.js",
-                    "~/assets/js/chartist-plugin-tooltip.min.js",
-                    "~/assets/js/chartist-plugin-zoom.min.js",
 
-                    //+CUSTOM
-                    "~/Scripts/app/services/nostreetsChartistScrollPlugin.js" // Nostreets Chartist Scroll Plugin
-                        ));
+                )
+            );
 
-           
-            
-            //+Angular Requirements
-            bundles.Add(
+
+           //+ANGULAR REQUIREMENTS
+           bundles.Add(
                 new ScriptBundle("~/angularRequirements").Include(
 
                     "~/node_modules/angular/angular.js",
@@ -86,32 +87,45 @@ namespace Nostreets_Sandbox
                     "~/node_modules/tinycolor2/dist/tinycolor-min.js",
                     "~/node_modules/angularjs-color-picker/dist/angularjs-color-picker.js"
 
-                        ));
+                )
+            );
 
-            //+Custom Javascript
+            //+CUSTOM JAVASCRIPT
             bundles.Add(
                 new ScriptBundle("~/customJS").Include(
+
+                    //+OTHER
+                    "~/assets/js/sweetalert2.js",
+                    "~/assets/js/chartist.min.js",                                   //Chartist.js
+                    "~/assets/js/chartist-plugin-tooltip.min.js",
+                    "~/assets/js/chartist-plugin-zoom.min.js",
+
+                    //+CUSTOM
+                    "~/assets/js/particles.js",
+                    "~/assets/js/renderParticles.js",                                // Background Particles
+                    "~/Scripts/app/services/nostreetsChartistScrollPlugin.js",       // Nostreets Chartist Scroll Plugin
                     "~/Scripts/app/core/page.js",
                     "~/Scripts/app/core/extend.js",
                     "~/Scripts/app/services/alertService.js",
                     "~/Scripts/app/services/systemEvent.service.js",
                     "~/Scripts/app/core/baseController.js"
-                    //"~/node_modules/twitter-login-client/src/twitter-client.js"   // TWITTER LOGIN 
-                      ));
+                )
+            );
 
 
 
-            //+Custom Angular
+            //+CUSTOM ANGULAR
             bundles.Add(
                 new ScriptBundle("~/customAngular").Include(
                     "~/Scripts/app/configs/routeConfig.js",
                     "~/Scripts/app/services/sandboxService.js"
-                       ));
+                )
+            );
 
 
-            //+Other Javascript
+            //+Theme Scripts
             bundles.Add(
-                new ScriptBundle("~/other").Include(
+                new ScriptBundle("~/themeScripts").Include(
                     "~/assets/js/animsition.min.js",
                     "~/assets/js/jquery.magnific-popup.min.js",
                     "~/assets/js/jquery.countdown.min.js",
@@ -122,13 +136,27 @@ namespace Nostreets_Sandbox
                     "~/assets/js/photoswipe.min.js",
                     "~/assets/js/photoswipe-ui-default.min.js",
                     "~/assets/js/jqinstapics.min.js",
-                    "~/assets/js/particles.js",
-                    "~/assets/js/renderParticles.js",
                     "~/assets/js/startUpPageScript.js"
-                      ));
+                )
+            );
 
 
 
+        }
+
+
+        private static void DefineOrder(BundleCollection bundles)
+        {
+            //+ORDER MANAGEMENT
+            bundles.FileSetOrderList.Clear();
+
+            BundleFileSetOrdering ordering = new BundleFileSetOrdering("order");
+            ordering.Files.Add("jquery.js");
+            ordering.Files.Add("jquery.validate.js");
+            ordering.Files.Add("popper.js");
+            ordering.Files.Add("bootstrap.js");
+
+            bundles.FileSetOrderList.Add(ordering);
         }
     }
 }

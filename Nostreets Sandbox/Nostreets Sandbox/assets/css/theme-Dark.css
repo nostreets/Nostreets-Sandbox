@@ -225,6 +225,7 @@ h6 {
     }
 
         .social_icons li i, #homeCenter .social_icons li i {
+
             font-size: 1.4em;
             transition: all .3s;
             display: inline-block;
@@ -235,6 +236,9 @@ h6 {
                 color: black;
                 transition: .1s;
             }
+
+
+   
 
 #homeCenter .social_icons {
     text-align: center;

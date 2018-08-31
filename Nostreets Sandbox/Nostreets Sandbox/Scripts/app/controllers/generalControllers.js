@@ -28,7 +28,7 @@
 
         function _setUp() {
             vm.homeLinks = [
-                  { label: 'Personal Projects', link: '#!applicationsInProgress' }
+                { label: 'Personal Projects', link: '#!applicationsInProgress' }
                 , { label: 'Previous Employers', link: '#!pastProjects' }
                 , { label: 'Contact', link: '#!contact' }
                 , { label: 'About', link: '#!about' }
@@ -44,9 +44,27 @@
 
         function _render() {
             _setUp();
+            _handlers();
+        }
+
+        function _handlers() {
+            $scope.$on('ngRepeatFinished',
+                (ngRepeatFinishedEvent) => {
+
+                    vm.isSkillsRendered = true;
+
+                    //$('.skillTabs').each(
+                    //    (num, ele) => {
+                    //        $(ele).data('target', '#' + vm.topics[num].safeName());
+                    //    });
+                });
+
         }
 
         function _setUp() {
+
+            vm.isSkillsRendered = false;
+
             vm.skills = {
                 'Industry Knowledge': [
                     'Agile Methodologies',

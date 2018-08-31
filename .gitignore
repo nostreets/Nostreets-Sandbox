@@ -287,6 +287,11 @@ __pycache__/
 *.odx.cs
 *.xsd.cs
 
-# # == Commented Files
-#/Nostreets Sandbox/Nostreets Sandbox/Keys.config
-#/Nostreets Sandbox/Nostreets Sandbox/Connections.config
+
+
+
+
+
+# == Commented Files
+/Nostreets Sandbox/Nostreets Sandbox/Keys.config
+/Nostreets Sandbox/Nostreets Sandbox/Connections.config

@@ -76,7 +76,7 @@
             vm.totals = [];
             vm.overallCost = 0;
             vm.isChartEmpty = false;
-            vm.useChartist = page.isLoggedIn|| false;
+            vm.useChartist = page.isLoggedIn || false;
         }
 
         function _eventHandlers() {
@@ -85,8 +85,7 @@
 
             angular.element('.assetSwitcher').on('shown.bs.tab',
                 () => _getChartLengend().then(
-                    () =>
-                    {
+                    () => {
                         if (vm.useChartist)
                             _targetChartistGraph(vm.currentTab, ((vm.currentTab === "income") ? "#incomeChart" : (vm.currentTab === "expense") ? "#expenseChart" : "#combinedChart"))
                     }
@@ -214,6 +213,474 @@
                 _postChart(chart);
             }
         }
+
+        function _findScheduleType(arr) {
+            var item = arr[0];
+            if (!item)
+                return;
+
+            if (
+                item === "January" ||
+                item === "February" ||
+                item === "March" ||
+                item === "April" ||
+                item === "May" ||
+                item === "June" ||
+                item === "July" ||
+                item === "August" ||
+                item === "September" ||
+                item === "October" ||
+                item === "November" ||
+                item === "December") {
+
+                return "Monthly";
+
+            }
+            else if (item.substr(item.length - 3, 3) === "day") {
+
+                return "Daily";
+
+            }
+            else if (item.includes("AM") || item.includes("PM")) {
+
+                return "Hourly";
+
+            }
+            else if (item.includes("Year")) {
+
+                return "Yearly";
+
+            }
+            else {
+                return "Weekly";
+            }
+
+        }
+
+        function _targetChartistGraph(type, elementId) {
+
+            var chart = vm.charts.filter((a) => a.key === type)[0].value;
+            var options = _getChartistChartOptions(chart);
+
+
+            if (chart.series.length === 0) {
+                vm.isChartEmpty = true;
+                //chart.series.push(_arrayOfZeros(chart.labels.length)); // FILLS CHART SERIES WITH ZEROS
+            }
+            else {
+                vm.isChartEmpty = false;
+                _addChartistTooltipDetials(chart);
+
+                var renderedChart = new Chartist.Line(elementId, chart, options);
+
+                _getTotals(chart);
+                _animateChartistGraph(renderedChart, 200);
+
+                vm.renderedChart = chart;
+                vm.chartOptions = options;
+            }
+        }
+
+        function _getChartLengend() {
+
+            var getAssets = () => { return (vm.currentTab == 'income') ? _getIncomes() : (vm.currentTab == 'expense') ? _getExpenses() : _getCombinedAssets() };
+
+            return getAssets().then(
+                () => {
+
+                    var hiddenLines = 0,
+                        arr = [];
+
+                    for (var i = 0; i < vm.legend.length; i++) {
+
+                        var backupColor = page.utilities.getRandomColor(),
+                            lineChar = String.fromCharCode(97 + (i - hiddenLines));
+
+                        if (vm.legend[i].isHiddenOnChart) {
+                            hiddenLines++;
+                            continue;
+                        }
+
+                        if (!vm.legend[i].style)
+                            vm.legend[i].style = { color: backupColor };
+
+                        arr.push('.ct-series-' + lineChar + ' .ct-point, .ct-series-' + lineChar + ' .ct-line, .ct-series-' + lineChar + ' .ct-bar, .ct-series-' + lineChar + '{ stroke: ' + vm.legend[i].style.color + ' !important }');
+                    }
+
+                    page.utilities.writeStyles("_lineStyles", arr);
+                    vm.legend.reverse();
+
+                });
+        }
+
+        function _getChartistChartOptions(chart) {
+
+            var lineSmooth = false;
+
+            switch (vm.chartType) {
+                case 'line':
+                    switch (vm.chartLineStyle) {
+                        case 'none':
+                            lineSmooth = false;
+                            break;
+
+                        case 'smooth':
+                            lineSmooth = true;
+                            break;
+
+                        case 'step':
+                            lineSmooth = Chartist.Interpolation.step();
+                            break;
+                    }
+                    break;
+            }
+
+            var options = {
+                lineSmooth: lineSmooth,
+                width: Math.round(chart.labels.length / 1.5) + "00px",
+
+                axisY: {
+                    offset: 40 + (5 * _getYLabelLengthForChartistOptions(chart)),
+                    labelOffset: {
+                        x: (chart.series.any((a) => a.any((b) => b > 100)))
+                            ? 10
+                            : 0,
+                        y: 5
+                    }
+                },
+                axisX: {
+                    scaleMinSpace: (chart.labels.any((a) => a.length > 8)) ? 20 : 0,
+                    labelOffset: {
+                        x: 0,
+                        y: 0
+                    }
+                },
+                plugins: [
+                    chartistScroll({ height: "8px" }),
+                    Chartist.plugins.tooltip()
+                    //Chartist.plugins.zoom({ onZoom: onZoom })
+                ]
+
+            };
+
+            return options;
+        }
+
+        function _addChartistTooltipDetials(chart) {
+            if (typeof (chart.series[0][0].value) === 'undefined') {
+                for (var a = 0; a < chart.series.length; a++) {
+                    var chartObj = vm.legend[a];
+                    for (var b = 0; b < chart.series[a].length; b++) {
+                        var label = chart.labels[b],
+                            value = chart.series[a][b],
+                            lastValue = (b === 0) ? 0 : chart.series[a][b - 1].value;
+                        var meta = 'Date ' + label + ' ' + ((value - lastValue > 0) ? '+ ' : (value - lastValue == 0) ? ' ' : '- ') + (value - lastValue);
+                        chart.series[a][b] = {
+                            meta: meta,
+                            value: value
+                        }
+                    }
+                }
+            }
+        }
+
+        function _getYLabelLengthForChartistOptions(chart) {
+            var result = 0,
+                hasPositive = false,
+                hasNegative = false;
+            for (var line of chart.series) {
+                for (var point of line) {
+                    if (typeof (point.value) !== 'undefined') {
+                        if ((point.value + '').length > result)
+                            result = (point.value + '').length;
+                        if (point.value > 0)
+                            hasPositive = true;
+                        if (point.value < 0)
+                            hasNegative = true;
+
+                    }
+                    else {
+                        if ((point + '').length > result)
+                            result = (point + '').length;
+                        if (point > 0)
+                            hasPositive = true;
+                        if (point < 0)
+                            hasNegative = true;
+
+                    }
+                }
+            }
+
+            return (hasPositive && !hasNegative) ? ((result > 3) ? result - 3 : 0) : (hasNegative && !hasPositive) ? ((result > 1) ? result - 1 : 0) : ((result > 2) ? result - 2 : 0);
+        }
+
+        function _getTotals(chart) {
+            var a = 0,
+                result = [],
+                overallCost = 0;
+
+            while (chart.labels.length > a) {
+
+                var b = 0,
+                    date = chart.labels[a],
+                    costArr = [];
+
+                while (chart.series.length > b) {
+
+                    var cost = (typeof (chart.series[b][a].value) !== 'undefined')
+                        ? chart.series[b][a].value - ((a === 0) ? 0 : chart.series[b][a - 1].value)
+                        : chart.series[b][a] - ((a === 0) ? 0 : chart.series[b][a - 1]);
+
+                    if (cost !== 0) {
+                        overallCost += cost;
+                        costArr.push({
+                            cost: ((cost > 0) ? '+' : '') + cost,
+                            name: chart.legend[b]
+                        });
+                    }
+
+                    b++;
+                }
+
+                if (costArr.length > 0)
+                    result.push({
+                        date: date,
+                        costs: costArr
+                    });
+
+                a++;
+            }
+
+            vm.totals = result;
+            vm.overallCost = overallCost;
+        }
+
+        function _animateChartistGraph(chart, time) {
+            // sequence number aside so we can use it in the event callbacks
+            var seq = 0,
+                delays = 80,
+                durations = time || 400;
+
+            // Once the chart is fully created we reset the sequence
+            chart.on('created', function () {
+                seq = 0;
+                if (window.__anim21278907124) {
+                    clearTimeout(window.__anim21278907124);
+                    window.__anim21278907124 = null;
+                }
+                window.__anim21278907124 = setTimeout(chart.update.bind(chart), 1800000);
+            });
+
+            // On each drawn element by Chartist we use the Chartist.Svg API to trigger SMIL animations
+            chart.on('draw', function (data) {
+                seq++;
+
+                if (data.type === 'line') {
+                    // If the drawn element is a line we do a simple opacity fade in. This could also be achieved using CSS3 animations.
+                    data.element.animate({
+                        opacity: {
+                            // The delay when we like to start the animation
+                            begin: seq * delays + 1000,
+                            // Duration of the animation
+                            dur: durations,
+                            // The value where the animation should start
+                            from: 0,
+                            // The value where it should end
+                            to: 1
+                        }
+                    });
+                }
+                else if (data.type === 'bar') {
+                    data.element.animate({
+                        y2: {
+                            dur: 1000,
+                            from: data.y1,
+                            to: data.y2,
+                            easing: Chartist.Svg.Easing.easeOutQuint
+                        },
+                        opacity: {
+                            dur: 1000,
+                            from: 0,
+                            to: 1,
+                            easing: Chartist.Svg.Easing.easeOutQuint
+                        }
+                    });
+                }
+                else if (data.type === 'slice') {
+                    // Get the total path length in order to use for dash array animation
+                    var pathLength = data.element._node.getTotalLength();
+
+                    // Set a dasharray that matches the path length as prerequisite to animate dashoffset
+                    data.element.attr({
+                        'stroke-dasharray': pathLength + 'px ' + pathLength + 'px'
+                    });
+
+                    // Create animation definition while also assigning an ID to the animation for later sync usage
+                    var animationDefinition = {
+                        'stroke-dashoffset': {
+                            id: 'anim' + data.index,
+                            dur: 1000,
+                            from: -pathLength + 'px',
+                            to: '0px',
+                            easing: Chartist.Svg.Easing.easeOutQuint,
+                            // We need to use `fill: 'freeze'` otherwise our animation will fall back to initial (not visible)
+                            fill: 'freeze'
+                        }
+                    };
+
+                    // If this was not the first slice, we need to time the animation so that it uses the end sync event of the previous animation
+                    if (data.index !== 0) {
+                        animationDefinition['stroke-dashoffset'].begin = 'anim' + (data.index - 1) + '.end';
+                    }
+
+                    // We need to set an initial value before the animation starts as we are not in guided mode which would do that for us
+                    data.element.attr({
+                        'stroke-dashoffset': -pathLength + 'px'
+                    });
+
+                    // We can't use guided mode as the animations need to rely on setting begin manually
+                    data.element.animate(animationDefinition, false);
+                }
+
+                else if (data.type === 'label' && data.axis === 'x') {
+                    data.element.animate({
+                        y: {
+                            begin: seq * delays,
+                            dur: durations,
+                            from: data.y + 100,
+                            to: data.y,
+                            // We can specify an easing function from Chartist.Svg.Easing
+                            easing: 'easeOutQuart'
+                        }
+                    });
+                }
+                else if (data.type === 'label' && data.axis === 'y') {
+                    data.element.animate({
+                        x: {
+                            begin: seq * delays,
+                            dur: durations,
+                            from: data.x - 100,
+                            to: data.x,
+                            easing: 'easeOutQuart'
+                        }
+                    });
+                }
+                else if (data.type === 'point') {
+                    data.element.animate({
+                        x1: {
+                            begin: seq * delays,
+                            dur: durations,
+                            from: data.x - 10,
+                            to: data.x,
+                            easing: 'easeOutQuart'
+                        },
+                        x2: {
+                            begin: seq * delays,
+                            dur: durations,
+                            from: data.x - 10,
+                            to: data.x,
+                            easing: 'easeOutQuart'
+                        },
+                        opacity: {
+                            begin: seq * delays,
+                            dur: durations,
+                            from: 0,
+                            to: 1,
+                            easing: 'easeOutQuart'
+                        }
+                    });
+                }
+                else if (data.type === 'grid') {
+                    // Using data.axis we get x or y which we can use to construct our animation definition objects
+                    var pos1Animation = {
+                        begin: seq * delays,
+                        dur: durations,
+                        from: data[data.axis.units.pos + '1'] - 30,
+                        to: data[data.axis.units.pos + '1'],
+                        easing: 'easeOutQuart'
+                    };
+
+                    var pos2Animation = {
+                        begin: seq * delays,
+                        dur: durations,
+                        from: data[data.axis.units.pos + '2'] - 100,
+                        to: data[data.axis.units.pos + '2'],
+                        easing: 'easeOutQuart'
+                    };
+
+                    var animations = {};
+                    animations[data.axis.units.pos + '1'] = pos1Animation;
+                    animations[data.axis.units.pos + '2'] = pos2Animation;
+                    animations['opacity'] = {
+                        begin: seq * delays,
+                        dur: durations,
+                        from: 0,
+                        to: 1,
+                        easing: 'easeOutQuart'
+                    };
+
+                    data.element.animate(animations);
+                }
+            });
+
+        }
+
+        function _openInsertModal(data) {
+
+            data = (data) ? data : {};
+
+            var obj = {
+                type: vm.currentTab,
+                id: data.id || 0,
+                name: data.name || null,
+                cost: data.cost || null,
+                paySchedule: data.paySchedule || null,
+                timePaid: (data.timePaid) ? new Date(data.timePaid) : null,
+                beginDate: (data.beginDate) ? new Date(data.beginDate) : null,
+                endDate: (data.endDate) ? new Date(data.endDate) : null,
+                isHiddenOnChart: (data.isHiddenOnChart === true) ? true : false,
+                style: data.style || null,
+                rate: data.rate || 2,
+                rateMultilplier: data.rateMultilplier || 1
+            };
+
+            if (data.incomeType || data.expenseType) {
+                if (data.incomeType) {
+                    obj.incomeType = data.incomeType;
+                    obj.type = 'income';
+                }
+                else {
+                    obj.expenseType = data.expenseType;
+                    obj.type = 'expense';
+                }
+            }
+            else {
+                if (vm.currentTab === 'income') {
+                    obj.incomeType = 1;
+                    obj.type = 'income';
+                }
+                else {
+                    obj.expenseType = 1;
+                    obj.type = 'expense';
+                }
+            }
+
+
+            var modalInstance = $baseController.modal.open({
+                animation: true
+                , templateUrl: "modalExpenseBuilder.html"
+                , controller: "modalInsertController as mc"
+                , size: "lg"
+                , resolve: {
+                    model: () => obj,
+                    enums: () => vm.enums
+                }
+            });
+
+            modalInstance.closed.then(_getUserCharts);
+        }
+
+        // #region Endpoint Calls
 
         function _postChart(chart) {
             if (!chart)
@@ -625,467 +1092,8 @@
 
         }
 
-        function _targetChartistGraph(type, elementId) {
+        // #endregion
 
-            var chart = vm.charts.filter((a) => a.key === type)[0].value;
-            var options = _getChartistChartOptions(chart);
-
-
-            if (chart.series.length === 0) {
-                vm.isChartEmpty = true;
-                //chart.series.push(_arrayOfZeros(chart.labels.length)); // FILLS CHART SERIES WITH ZEROS
-            }
-            else {
-                vm.isChartEmpty = false;
-                _addChartistTooltipDetials(chart);
-
-                var renderedChart = new Chartist.Line(elementId, chart, options);
-
-                _getTotals(chart);
-                _animateChartistGraph(renderedChart, 200);
-
-                vm.renderedChart = chart;
-                vm.chartOptions = options;
-            }
-        }
-
-        function _getChartLengend() {
-
-            var getAssets = () => { return (vm.currentTab == 'income') ? _getIncomes() : (vm.currentTab == 'expense') ? _getExpenses() : _getCombinedAssets() };
-
-            return getAssets().then(
-                () => {
-
-                    var hiddenLines = 0,
-                        arr = [];
-                    for (var i = 0; i < vm.legend.length; i++) {
-                        var backupColor = page.utilities.getRandomColor(),
-                            lineChar = String.fromCharCode(97 + (i - hiddenLines));
-
-                        if (vm.legend[i].isHiddenOnChart) {
-                            hiddenLines++;
-                            continue;
-                        }
-                        if (!vm.legend[i].style)
-                            vm.legend[i].style = { color: backupColor };
-
-                        arr.push('.ct-series-' + lineChar + ' .ct-point, .ct-series-' + lineChar + ' .ct-line, .ct-series-' + lineChar + ' .ct-bar, .ct-series-' + lineChar + '{ stroke: ' + vm.legend[i].style.color + ' !important }');
-                    }
-                    page.utilities.writeStyles("_lineStyles", arr);
-                    vm.legend.reverse();
-
-                });
-        }
-
-        function _getChartistChartOptions(chart) {
-
-            var lineSmooth = false;
-
-            switch (vm.chartType) {
-                case 'line':
-                    switch (vm.chartLineStyle) {
-                        case 'none':
-                            lineSmooth = false;
-                            break;
-
-                        case 'smooth':
-                            lineSmooth = true;
-                            break;
-
-                        case 'step':
-                            lineSmooth = Chartist.Interpolation.step();
-                            break;
-                    }
-                    break;
-            }
-
-            var options = {
-                lineSmooth: lineSmooth,
-                width: Math.round(chart.labels.length / 1.5) + "00px",
-
-                axisY: {
-                    offset: 40 + (5 * _getYLabelLength(chart)),
-                    labelOffset: {
-                        x: (chart.series.any((a) => a.any((b) => b > 100)))
-                            ? 10
-                            : 0,
-                        y: 5
-                    }
-                },
-                axisX: {
-                    scaleMinSpace: (chart.labels.any((a) => a.length > 8)) ? 20 : 0,
-                    labelOffset: {
-                        x: 0,
-                        y: 0
-                    }
-                },
-                plugins: [
-                    chartistScroll({ height: "8px" }),
-                    Chartist.plugins.tooltip()
-                    //Chartist.plugins.zoom({ onZoom: onZoom })
-                ]
-
-            };
-
-            return options;
-        }
-
-        function _addChartistTooltipDetials(chart) {
-            if (typeof (chart.series[0][0].value) === 'undefined') {
-                for (var a = 0; a < chart.series.length; a++) {
-                    var chartObj = vm.legend[a];
-                    for (var b = 0; b < chart.series[a].length; b++) {
-                        var label = chart.labels[b],
-                            value = chart.series[a][b],
-                            lastValue = (b === 0) ? 0 : chart.series[a][b - 1].value;
-                        var meta = 'Date ' + label + ' ' + ((value - lastValue > 0) ? '+ ' : (value - lastValue == 0) ? ' ' : '- ') + (value - lastValue);
-                        chart.series[a][b] = {
-                            meta: meta,
-                            value: value
-                        }
-                    }
-                }
-            }
-        }
-
-        function _findScheduleType(arr) {
-            var item = arr[0];
-            if (!item)
-                return;
-
-            if (
-                item === "January" ||
-                item === "February" ||
-                item === "March" ||
-                item === "April" ||
-                item === "May" ||
-                item === "June" ||
-                item === "July" ||
-                item === "August" ||
-                item === "September" ||
-                item === "October" ||
-                item === "November" ||
-                item === "December") {
-
-                return "Monthly";
-
-            }
-            else if (item.substr(item.length - 3, 3) === "day") {
-
-                return "Daily";
-
-            }
-            else if (item.includes("AM") || item.includes("PM")) {
-
-                return "Hourly";
-
-            }
-            else if (item.includes("Year")) {
-
-                return "Yearly";
-
-            }
-            else {
-                return "Weekly";
-            }
-
-        }
-
-        function _getYLabelLength(chart) {
-            var result = 0,
-                hasPositive = false,
-                hasNegative = false;
-            for (var line of chart.series) {
-                for (var point of line) {
-                    if (typeof (point.value) !== 'undefined') {
-                        if ((point.value + '').length > result)
-                            result = (point.value + '').length;
-                        if (point.value > 0)
-                            hasPositive = true;
-                        if (point.value < 0)
-                            hasNegative = true;
-
-                    }
-                    else {
-                        if ((point + '').length > result)
-                            result = (point + '').length;
-                        if (point > 0)
-                            hasPositive = true;
-                        if (point < 0)
-                            hasNegative = true;
-
-                    }
-                }
-            }
-
-            return (hasPositive && !hasNegative) ? ((result > 3) ? result - 3 : 0) : (hasNegative && !hasPositive) ? ((result > 1) ? result - 1 : 0) : ((result > 2) ? result - 2 : 0);
-        }
-
-        function _getTotals(chart) {
-            var a = 0,
-                result = [],
-                overallCost = 0;
-
-            while (chart.labels.length > a) {
-
-                var b = 0,
-                    date = chart.labels[a],
-                    costArr = [];
-
-                while (chart.series.length > b) {
-
-                    var cost = (typeof (chart.series[b][a].value) !== 'undefined')
-                        ? chart.series[b][a].value - ((a === 0) ? 0 : chart.series[b][a - 1].value)
-                        : chart.series[b][a] - ((a === 0) ? 0 : chart.series[b][a - 1]);
-
-                    if (cost !== 0) {
-                        overallCost += cost;
-                        costArr.push({
-                            cost: ((cost > 0) ? '+' : '') + cost,
-                            name: chart.legend[b]
-                        });
-                    }
-
-                    b++;
-                }
-
-                if (costArr.length > 0)
-                    result.push({
-                        date: date,
-                        costs: costArr
-                    });
-
-                a++;
-            }
-
-            vm.totals = result;
-            vm.overallCost = overallCost;
-        }
-
-        function _animateChartistGraph(chart, time) {
-            // sequence number aside so we can use it in the event callbacks
-            var seq = 0,
-                delays = 80,
-                durations = time || 400;
-
-            // Once the chart is fully created we reset the sequence
-            chart.on('created', function () {
-                seq = 0;
-                if (window.__anim21278907124) {
-                    clearTimeout(window.__anim21278907124);
-                    window.__anim21278907124 = null;
-                }
-                window.__anim21278907124 = setTimeout(chart.update.bind(chart), 1800000);
-            });
-
-            // On each drawn element by Chartist we use the Chartist.Svg API to trigger SMIL animations
-            chart.on('draw', function (data) {
-                seq++;
-
-                if (data.type === 'line') {
-                    // If the drawn element is a line we do a simple opacity fade in. This could also be achieved using CSS3 animations.
-                    data.element.animate({
-                        opacity: {
-                            // The delay when we like to start the animation
-                            begin: seq * delays + 1000,
-                            // Duration of the animation
-                            dur: durations,
-                            // The value where the animation should start
-                            from: 0,
-                            // The value where it should end
-                            to: 1
-                        }
-                    });
-                }
-                else if (data.type === 'bar') {
-                    data.element.animate({
-                        y2: {
-                            dur: 1000,
-                            from: data.y1,
-                            to: data.y2,
-                            easing: Chartist.Svg.Easing.easeOutQuint
-                        },
-                        opacity: {
-                            dur: 1000,
-                            from: 0,
-                            to: 1,
-                            easing: Chartist.Svg.Easing.easeOutQuint
-                        }
-                    });
-                }
-                else if (data.type === 'slice') {
-                    // Get the total path length in order to use for dash array animation
-                    var pathLength = data.element._node.getTotalLength();
-
-                    // Set a dasharray that matches the path length as prerequisite to animate dashoffset
-                    data.element.attr({
-                        'stroke-dasharray': pathLength + 'px ' + pathLength + 'px'
-                    });
-
-                    // Create animation definition while also assigning an ID to the animation for later sync usage
-                    var animationDefinition = {
-                        'stroke-dashoffset': {
-                            id: 'anim' + data.index,
-                            dur: 1000,
-                            from: -pathLength + 'px',
-                            to: '0px',
-                            easing: Chartist.Svg.Easing.easeOutQuint,
-                            // We need to use `fill: 'freeze'` otherwise our animation will fall back to initial (not visible)
-                            fill: 'freeze'
-                        }
-                    };
-
-                    // If this was not the first slice, we need to time the animation so that it uses the end sync event of the previous animation
-                    if (data.index !== 0) {
-                        animationDefinition['stroke-dashoffset'].begin = 'anim' + (data.index - 1) + '.end';
-                    }
-
-                    // We need to set an initial value before the animation starts as we are not in guided mode which would do that for us
-                    data.element.attr({
-                        'stroke-dashoffset': -pathLength + 'px'
-                    });
-
-                    // We can't use guided mode as the animations need to rely on setting begin manually
-                    data.element.animate(animationDefinition, false);
-                }
-
-                else if (data.type === 'label' && data.axis === 'x') {
-                    data.element.animate({
-                        y: {
-                            begin: seq * delays,
-                            dur: durations,
-                            from: data.y + 100,
-                            to: data.y,
-                            // We can specify an easing function from Chartist.Svg.Easing
-                            easing: 'easeOutQuart'
-                        }
-                    });
-                }
-                else if (data.type === 'label' && data.axis === 'y') {
-                    data.element.animate({
-                        x: {
-                            begin: seq * delays,
-                            dur: durations,
-                            from: data.x - 100,
-                            to: data.x,
-                            easing: 'easeOutQuart'
-                        }
-                    });
-                }
-                else if (data.type === 'point') {
-                    data.element.animate({
-                        x1: {
-                            begin: seq * delays,
-                            dur: durations,
-                            from: data.x - 10,
-                            to: data.x,
-                            easing: 'easeOutQuart'
-                        },
-                        x2: {
-                            begin: seq * delays,
-                            dur: durations,
-                            from: data.x - 10,
-                            to: data.x,
-                            easing: 'easeOutQuart'
-                        },
-                        opacity: {
-                            begin: seq * delays,
-                            dur: durations,
-                            from: 0,
-                            to: 1,
-                            easing: 'easeOutQuart'
-                        }
-                    });
-                }
-                else if (data.type === 'grid') {
-                    // Using data.axis we get x or y which we can use to construct our animation definition objects
-                    var pos1Animation = {
-                        begin: seq * delays,
-                        dur: durations,
-                        from: data[data.axis.units.pos + '1'] - 30,
-                        to: data[data.axis.units.pos + '1'],
-                        easing: 'easeOutQuart'
-                    };
-
-                    var pos2Animation = {
-                        begin: seq * delays,
-                        dur: durations,
-                        from: data[data.axis.units.pos + '2'] - 100,
-                        to: data[data.axis.units.pos + '2'],
-                        easing: 'easeOutQuart'
-                    };
-
-                    var animations = {};
-                    animations[data.axis.units.pos + '1'] = pos1Animation;
-                    animations[data.axis.units.pos + '2'] = pos2Animation;
-                    animations['opacity'] = {
-                        begin: seq * delays,
-                        dur: durations,
-                        from: 0,
-                        to: 1,
-                        easing: 'easeOutQuart'
-                    };
-
-                    data.element.animate(animations);
-                }
-            });
-
-        }
-
-        function _openInsertModal(data) {
-
-            data = (data) ? data : {};
-
-            var obj = {
-                type: vm.currentTab,
-                id: data.id || 0,
-                name: data.name || null,
-                cost: data.cost || null,
-                paySchedule: data.paySchedule || null,
-                timePaid: (data.timePaid) ? new Date(data.timePaid) : null,
-                beginDate: (data.beginDate) ? new Date(data.beginDate) : null,
-                endDate: (data.endDate) ? new Date(data.endDate) : null,
-                isHiddenOnChart: (data.isHiddenOnChart === true) ? true : false,
-                style: data.style || null,
-                rate: data.rate || 2,
-                rateMultilplier: data.rateMultilplier || 1
-            };
-
-            if (data.incomeType || data.expenseType) {
-                if (data.incomeType) {
-                    obj.incomeType = data.incomeType;
-                    obj.type = 'income';
-                }
-                else {
-                    obj.expenseType = data.expenseType;
-                    obj.type = 'expense';
-                }
-            }
-            else {
-                if (vm.currentTab === 'income') {
-                    obj.incomeType = 1;
-                    obj.type = 'income';
-                }
-                else {
-                    obj.expenseType = 1;
-                    obj.type = 'expense';
-                }
-            }
-
-
-            var modalInstance = $baseController.modal.open({
-                animation: true
-                , templateUrl: "modalExpenseBuilder.html"
-                , controller: "modalInsertController as mc"
-                , size: "lg"
-                , resolve: {
-                    model: () => obj,
-                    enums: () => vm.enums
-                }
-            });
-
-            modalInstance.closed.then(_getUserCharts);
-        }
 
     }
 

@@ -1,11 +1,38 @@
 
-## Nostreets Sandbox Repo
+# Nostreets Sandbox Repo
 
- -Web Server Project to [Personal Site](http://nostreetssolutions.com/#!/)
+##### An ASP.NET Web Server Project to my [Personal Site...](http://nostreetssolutions.com/#!/)
 
- -Services Class Library Project
+***
 
-- Integrated Middleware
-	- Mailchimp
-	- Sendgrid
-	- Sql Services
+- Integrated Middle-ware
+   -
+  - SQL Micro Services for Custom Classes
+  - Mailchimp Service
+  - Sendgrid Service
+***
+
+- Custom Front End Scripts
+  - 
+    - NostreetsNgCarouselDirective
+      - Example on Home Page...
+      
+    - NostreetsNgSignInDirectives
+      - Example on Login Modal...
+      
+    - NostreetsChartistScrollPlugIn
+      - Example on Bill Manager Modal...
+***
+
+- Dependencies
+  - 
+
+   - My Dependencies
+     - NostreetsExtentions
+     - NostreetsInterceptor
+     - NostreetsORM
+     - NostreetsEntities
+   - 3rd Party Dependencies
+     - Castle.Windsor
+     - Google.Apis.Analytics.v3
+     - Sendgrid

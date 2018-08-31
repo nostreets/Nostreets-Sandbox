@@ -24,7 +24,7 @@ namespace Nostreets_Sandbox
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
 #if DEBUG
-            BundleTable.EnableOptimizations = false;
+            BundleTable.EnableOptimizations = true;
 #else
             BundleTable.EnableOptimizations = true;
 #endif

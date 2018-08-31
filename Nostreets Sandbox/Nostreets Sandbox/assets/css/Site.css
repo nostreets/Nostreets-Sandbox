@@ -436,6 +436,17 @@ form > div {
     height: 25px;
 }
 
+.social_icons li a svg g > g > *, #homeCenter .social_icons li svg g > g > * {
+    font-size: 1.4em;
+    transition: all .3s;
+    display: inline-block;
+    padding: 15px;
+}
+
+    .social_icons li a svg g > g > *:hover, #homeCenter .social_icons li svg g > g > *:hover {
+        fill: black;
+        transition: .1s;
+    }
 
 /*#endregion */
 

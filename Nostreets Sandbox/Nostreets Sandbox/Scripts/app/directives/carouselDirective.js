@@ -1,4 +1,10 @@
-﻿(function () {
+﻿/*
+    DEPENDECIES
+        -JQUERY
+        -ANGULARJS
+*/
+
+(function () {
     angular.module(page.APPNAME)
         .directive("carsousel", carouselDirective);
 
@@ -11,6 +17,7 @@
 
             scope: {
                 collection: '=',
+                debugMode: '@',
                 isHorizontal: '@',
                 width: '@',
                 height: '@',
@@ -18,14 +25,16 @@
                 showArrows: '@',
                 textColor: '@',
                 textFont: '@',
-                scrollControl: '@'
+                scrollControl: '@',
+                swipeControl: '@',
+                interval: '@'
             },
 
             template: "<div ng-show=\"!isHorizontal && showArrows\" class=\"col-sm-1 carouselVertictalBtn\"> <a class=\"carousel_previousBtn\"> <i class=\"material-icons\" style=\"color: white;\">arrow_upward</i> </a> </div> <div class=\"container carousel1_root\"> <div ng-show=\"isHorizontal && showArrows\" class=\"col-sm-1\" style=\"padding: 7% 0% 0% 0%; margin-right: 10%;\"> <a class=\"carousel_previousBtn\"> <i class=\"material-icons\" style=\"color: white;\">arrow_back</i> </a> </div>     <div class=\"carousel1_container col-sm-10\"> <div class=\"carousel1\"> <a class=\"carousel1_cell\" ng-repeat=\" item in collection \" href=\"{{item.link ? item.link : ''}}\" on-repeat-finished> {{ item.label }} </a> </div> </div>      <div ng-show=\"isHorizontal && showArrows\" class=\"col-sm-1\" style=\"padding: 7% 0% 0% 39%;\"> <a class=\"carousel_nextBtn\"> <i class=\"material-icons\" style=\"color: white;\">arrow_forward</i> </a> </div> </div> <div ng-show=\"!isHorizontal && showArrows\" class=\"col-sm-1 carouselVertictalBtn\"> <a class=\"carousel_nextBtn\"> <i class=\"material-icons\" style=\"color: white;\">arrow_downward</i> </a> </div>",
 
             link: function ($scope, element, attr) {
 
-                $scope.$on('ngRepeatFinished', function (ngRepeatFinishedEvent) {
+                $scope.$on('ngRepeatFinished', (ngRepeatFinishedEvent) => {
                     _render();
                 });
 
@@ -40,7 +49,7 @@
                     $interval(() => {
                         $scope.selectedIndex++;
                         _rotateCarousel();
-                    }, 10000);
+                    }, $scope.interval);
                 }
 
                 function _setUp() {
@@ -49,6 +58,9 @@
                     $scope.isHorizontal = $scope.isHorizontal && ($scope.isHorizontal == 'false' || $scope.isHorizontal === '0') ? false : true;
                     $scope.showArrows = $scope.showArrows && ($scope.showArrows == 'false' || $scope.showArrows === '0') ? false : true;
                     $scope.scrollControl = $scope.scrollControl && ($scope.scrollControl == 'false' || $scope.scrollControl === '0') ? false : true;
+                    $scope.swipeControl = $scope.swipeControl && ($scope.swipeControl == 'false' || $scope.swipeControl === '0') ? false : true;
+                    $scope.debugMode = $scope.debugMode && ($scope.debugMode == 'false' || $scope.debugMode === '0') ? false : true;
+                    $scope.interval = $scope.interval && (parseInt($scope.interval) !== NaN) ? parseInt($scope.interval) : 10000;
                     $scope.width = $scope.width || '200px';
                     $scope.height = $scope.height || '120px';
                     $scope.textColor = $scope.textColor || 'white';
@@ -84,6 +96,18 @@
 
                     if ($scope.scrollControl)
                         _onScroll(down, up);
+
+                    if ($scope.swipeControl) {
+
+                        if (!page.utilities.checkForJQEvent(".carousel1_cell, .carouselVertictalBtn", 'swipeup')) {
+                            console.log("Setting Up Swipe Events...");
+                            _setUpSwipeHandlers();
+                            _onSwipe(down, up);
+
+                        }
+                        else
+                            _onSwipe(down, up);
+                    }
 
 
                     /* VALINLA JAVASCRIPT WAY
@@ -189,14 +213,127 @@
                                 scrollEvent.preventDefault();
 
                                 if (scrollEvent.originalEvent.wheelDelta >= 0) {
+                                    if ($scope.debugMode)
+                                        console.log('Scroll up');
                                     onUp();
-                                    console.log('Scroll up');
                                 }
                                 else {
+                                    if ($scope.debugMode)
+                                        console.log('Scroll down');
                                     onDown();
-                                    console.log('Scroll down');
                                 }
                             });
+                }
+
+                function _onSwipe(onDown, onUp) {
+
+                    if (onUp && typeof (onUp) === 'function')
+                        $('.carousel1_cell, .carouselVertictalBtn').on(
+                            'swipeup',
+                            (swipeUpEvent) => {
+
+                                swipeUpEvent.preventDefault();
+
+                                if ($scope.debugMode)
+                                    console.log('Scroll up');
+                                onUp();
+                            }
+                        );
+
+                    if (onDown && typeof (onDown) === 'function')
+                        $('.carousel1_cell, .carouselVertictalBtn').on(
+                            'swipedown',
+                            (swipeDownEvent) => {
+
+                                swipeDownEvent.preventDefault();
+
+                                if ($scope.debugMode)
+                                    console.log('Scroll down');
+                                onDown();
+                            }
+                        );
+                }
+
+                function _setUpSwipeHandlers() {
+
+                    var supportTouch = $.support.touch,
+                        scrollEvent = "touchmove scroll",
+                        touchStartEvent = supportTouch ? "touchstart" : "mousedown",
+                        touchStopEvent = supportTouch ? "touchend" : "mouseup",
+                        touchMoveEvent = supportTouch ? "touchmove" : "mousemove";
+
+                    $.event.special.swipeupdown = {
+
+                        setup: function () {
+
+                            var thisObject = this;
+
+                            var $this = $(thisObject);
+
+                            $this.bind(touchStartEvent, (event) => {
+
+                                var data = event.originalEvent.touches ? event.originalEvent.touches[0] : event,
+                                    start = {
+                                        time: (new Date).getTime(),
+                                        coords: [data.pageX, data.pageY],
+                                        origin: $(event.target)
+                                    },
+                                    stop;
+
+                                var moveHandler = (event) => {
+                                    if (!start)
+                                        return;
+
+                                    var data = event.originalEvent.touches ?
+                                        event.originalEvent.touches[0] :
+                                        event;
+
+                                    stop = {
+                                        time: (new Date).getTime(),
+                                        coords: [data.pageX, data.pageY]
+                                    };
+
+                                    // prevent scrolling
+                                    if (Math.abs(start.coords[1] - stop.coords[1]) > 10)
+                                        event.preventDefault();
+
+                                };
+
+                                $this.bind(touchMoveEvent, moveHandler).one(touchStopEvent,
+                                    (event) => {
+                                        $this.unbind(touchMoveEvent, moveHandler);
+                                        if (start && stop) {
+                                            if (stop.time - start.time < 1000 &&
+                                                Math.abs(start.coords[1] - stop.coords[1]) > 30 &&
+                                                Math.abs(start.coords[0] - stop.coords[0]) < 75) {
+                                                start.origin
+                                                    .trigger("swipeupdown")
+                                                    .trigger(start.coords[1] > stop.coords[1] ? "swipeup" : "swipedown");
+                                            }
+                                        }
+                                        start = stop = undefined;
+                                    });
+                            });
+                        }
+
+                    };
+
+
+                    $.each({ swipedown: "swipeupdown", swipeup: "swipeupdown" },
+                        (event, sourceEvent) => {
+                            $.event.special[event] = {
+                                setup: () => {
+                                    $(this).bind(sourceEvent, $.noop);
+                                }
+                            };
+                        });
+
+
+                }
+
+                function _checkForEvent(element, event) {
+
+
                 }
 
             }
