@@ -3,9 +3,19 @@
     page.baseController = angular.module(page.APPNAME)
         .factory("$baseController", baseController);
 
-    baseController.$inject = ['$document', '$systemEventService', '$alertService', "$window", '$uibModal', '$timeout', '$http', '$sce', '$cookies', '$q'];
+    baseController.$inject = ['$document'
+                            , '$systemEventService'
+                            , '$alertService'
+                            , "$window"
+                            , "$location"
+                            , '$uibModal'
+                            , '$timeout'
+                            , '$http'
+                            , '$sce'
+                            , '$cookies'
+                            , '$q'];
 
-    function baseController($document, $systemEventService, $alertService, $window, $uibModal, $timeout, $http, $sce, $cookies, $q) {
+    function baseController($document, $systemEventService, $alertService, $window, $location, $uibModal, $timeout, $http, $sce, $cookies, $q) {
 
         //PUBLIC
         var base = {
@@ -124,6 +134,33 @@
                             , tryAgainObj.promiseMethod
                             , tryAgainObj.onSuccess);
                         break;
+                }
+            }
+        }
+
+        base.defaultListeners = function (scope, listeners) {
+
+            //#region Defualt Listeners
+
+            $systemEventService.listen('$viewContentLoaded', () => {
+                window.ga('send', 'pageview', { page: $location.url() });
+            }, scope);
+
+            //#endregion
+
+            if (listeners) {
+
+                var isArray = Array.isArray(listeners);
+                var length = isArray ? listeners.length : typeof (listeners) === 'object' ? Object.keys(listeners).length : 0;
+
+                for (var i = 0; i < length; i++) {
+
+                    var event = isArray ? (listeners[i].event || null) : Object.keys(listeners)[i],
+                        method = isArray ? (listeners[i].method || null) : listeners[Object.keys(listeners)[i]];
+
+
+                    if (event && method)
+                        $systemEventService.listen(event, method, scope);
                 }
             }
         }

@@ -16,15 +16,15 @@
 
         svc.$rootScope.$on('$locationChangeStart', svc.broadcast);
 
-        function _listen(event, callback, controllerInstance) {
-            if (controllerInstance) {
+        function _listen(event, callback, $scope) {
 
-                controllerInstance.$scope.$on(event, callback);
+            if ($scope)
+                $scope.$on(event, callback);
 
-            }
-            else {
+
+            else
                 svc.$rootScope.$on(event, callback);
-            }
+
 
         }
 

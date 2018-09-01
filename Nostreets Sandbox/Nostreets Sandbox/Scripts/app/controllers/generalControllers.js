@@ -1,8 +1,8 @@
 ﻿(function () {
     angular.module(page.APPNAME)
         .controller("homeController", homeController)
-        .controller("applicationsInProgressController", personalProjectsController)
-        .controller("pastProjectsController", pastEmployersController)
+        .controller("personalProjectsController", personalProjectsController)
+        .controller("pastEmployersController", pastEmployersController)
         .controller("contactUsController", contactUsController)
         .controller("aboutController", aboutController)
         .controller("skillsController", skillsController)
@@ -24,6 +24,7 @@
 
         function _render() {
             _setUp();
+            $baseController.defaultListeners($scope);
         }
 
         function _setUp() {
@@ -44,26 +45,10 @@
 
         function _render() {
             _setUp();
-            _handlers();
-        }
-
-        function _handlers() {
-            $scope.$on('ngRepeatFinished',
-                (ngRepeatFinishedEvent) => {
-
-                    vm.isSkillsRendered = true;
-
-                    //$('.skillTabs').each(
-                    //    (num, ele) => {
-                    //        $(ele).data('target', '#' + vm.topics[num].safeName());
-                    //    });
-                });
-
+            $baseController.defaultListeners($scope);
         }
 
         function _setUp() {
-
-            vm.isSkillsRendered = false;
 
             vm.skills = {
                 'Industry Knowledge': [
@@ -157,7 +142,9 @@
         var vm = this;
         _render;
 
-        function _render() { }
+        function _render() {
+            $baseController.defaultListeners($scope);
+        }
 
         function _setUp() { }
     }
@@ -166,7 +153,9 @@
         var vm = this;
         _render();
 
-        function _render() { }
+        function _render() {
+            $baseController.defaultListeners($scope);
+        }
 
         function _setUp() { }
     }
@@ -177,6 +166,7 @@
 
         function _render() {
             _setUp();
+            $baseController.defaultListeners($scope);
         }
 
         function _setUp() {
@@ -227,6 +217,7 @@
 
         function _render() {
             _setUp();
+            $baseController.defaultListeners($scope);
         }
 
         function _setUp() {

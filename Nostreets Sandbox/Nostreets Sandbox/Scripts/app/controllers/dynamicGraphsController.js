@@ -21,15 +21,15 @@
         vm.viewDirectiveCode = _viewDirectiveCode;
 
 
-        $rootScope.$on('logGraph', _logMainGraph);
-        $baseController.event.listen('refreshCharts', _refreshResponse);
-        $baseController.event.listen("loggedIn", _setUp);
 
-        _startUp();
+
+
+        _render();
 
         //Controller Functions
-        function _startUp() {
+        function _render() {
             _setUp();
+            _handlers();
         }
 
         function _setUp() {
@@ -43,6 +43,20 @@
 
             $sandboxService.getAllChartsByUser().then(_chartsResponse, _consoleResponse);
         };
+
+        function _handlers() {
+            //$rootScope.$on('logGraph', _logMainGraph);
+            //$baseController.event.listen('refreshCharts', _refreshResponse);
+            //$baseController.event.listen("loggedIn", _setUp);
+
+
+            $baseController.defaultListeners($scope,
+                {
+                    'logGraph': _logMainGraph,
+                    'refreshCharts': _refreshResponse,
+                    "loggedIn": _setUp
+                });
+        }
 
         function _viewDirectiveCode() {
             $baseController.http({

@@ -443,6 +443,9 @@
     <Content Include="assets\js\twitterFetcher_min.js" />
     <Content Include="assets\js\ui-bootstrap-tpls-2.5.0.min.js" />
     <Content Include="assets\svg\upwork.svg" />
+    <Content Include="Connections.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Keys.config">
       <SubType>Designer</SubType>
     </Content>
@@ -3152,9 +3155,6 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
-    <Content Include="Connections.config">
-      <SubType>Designer</SubType>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

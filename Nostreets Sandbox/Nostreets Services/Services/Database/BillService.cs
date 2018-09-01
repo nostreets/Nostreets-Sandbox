@@ -2,13 +2,13 @@
 using Nostreets_Services.Domain.Charts;
 using Nostreets_Services.Enums;
 using Nostreets_Services.Interfaces.Services;
+using NostreetsExtensions.DataControl.Classes;
+using NostreetsExtensions.Extend.Basic;
+using NostreetsExtensions.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using NostreetsExtensions.Interfaces;
-using NostreetsExtensions.DataControl.Classes;
-using NostreetsExtensions.Extend.Basic;
 
 namespace Nostreets_Services.Services.Database
 {
@@ -28,7 +28,7 @@ namespace Nostreets_Services.Services.Database
 
         private IDBService<Error> _errorLog = null;
         private IDBService<Expense> _expenseSrv = null;
-        private IDBService<Income>  _incomeSrv = null;
+        private IDBService<Income> _incomeSrv = null;
 
         #endregion Private Fields
 
@@ -104,7 +104,6 @@ namespace Nostreets_Services.Services.Database
             ,
                 generateDaily = () =>
                 {
-
                     int day = 0;
                     DateTime end = default(DateTime);
                     List<string> daily = new List<string>();
@@ -124,7 +123,6 @@ namespace Nostreets_Services.Services.Database
             ,
                 generateWeekly = () =>
                     {
-
                         List<string> weekly = new List<string>();
 
                         for (int i = 0; i < diff.TotalDays; i += 7)
@@ -161,8 +159,6 @@ namespace Nostreets_Services.Services.Database
 
                     return yearly;
                 };
-
-
 
             if (result == null) { result = new List<string>(); }
 
@@ -212,7 +208,6 @@ namespace Nostreets_Services.Services.Database
                             ? last + (asset.Cost * asset.RateMultilplier)
                             : last + ((asset.Cost * asset.RateMultilplier) * modifier);
                 };
-
 
                 //if (interval != 0) { lastPayment = PayOfDay(start, interval - 1, schedule, assets); };
                 if (asset.IsHiddenOnChart)
@@ -369,14 +364,12 @@ namespace Nostreets_Services.Services.Database
                         }
                         break;
 
-
                     case ScheduleTypes.Weekly:
                         intervalDay = start.AddDays((interval + 1) * 7);
                         int intervalWeek = intervalDay.GetWeekOfMonth();
 
                         switch (asset.PaySchedule)
                         {
-
                             case ScheduleTypes.Hourly:
                                 isPayDay = true;
                                 int? payedHours = (asset.BeginDate.Value == null && asset.EndDate.Value == null)
@@ -428,7 +421,6 @@ namespace Nostreets_Services.Services.Database
                                 isPayDay = (asset.TimePaid.GetWeekOfYear() == intervalDay.GetWeekOfYear()) ? true : false;
                                 pay = getPay(0);
                                 break;
-
 
                             default:
                                 isPayDay = (asset.TimePaid.Year == intervalDay.Year && asset.TimePaid.Month == intervalDay.Month && asset.TimePaid.GetWeekOfMonth() == intervalDay.GetWeekOfMonth())
@@ -490,7 +482,6 @@ namespace Nostreets_Services.Services.Database
                                 pay = getPay(0);
                                 break;
 
-
                             default:
                                 isPayDay = (asset.TimePaid.Year == intervalDay.Year && asset.TimePaid.Month == intervalDay.Month) ? true : false;
                                 pay = getPay(0);
@@ -550,7 +541,6 @@ namespace Nostreets_Services.Services.Database
                                 pay = pay = getPay(0);
                                 break;
 
-
                             default:
                                 isPayDay = (asset.TimePaid.Year == intervalDay.Year && asset.TimePaid.Month == intervalDay.Month && asset.TimePaid.GetWeekOfMonth() == intervalDay.GetWeekOfMonth())
                                          ? true : false;
@@ -558,7 +548,6 @@ namespace Nostreets_Services.Services.Database
                                 break;
                         }
                         break;
-
                 }
             }
 
@@ -566,7 +555,6 @@ namespace Nostreets_Services.Services.Database
         }
 
         #endregion Private Methods
-
 
         #region Public Methods
 
@@ -603,7 +591,6 @@ namespace Nostreets_Services.Services.Database
             ChartistChart<List<float>> incomeChart = GetIncomeChart(userId, out chartSchedule, start, end);
             ChartistChart<List<float>> expensesChart = GetExpensesChart(userId, out chartSchedule, start, end);
 
-
             result.Labels = CalculateLabelRange(out chartSchedule, start, end);
             result.Name = String.Format("Complete {0} Chart", chartSchedule.ToString());
             result.UserId = userId;
@@ -622,8 +609,6 @@ namespace Nostreets_Services.Services.Database
                     bool hasIncomeLabel = incomeChart.Legend.ElementAtOrDefault(i) != default(string) ? true : false,
                          hasExpenseLabel = expensesChart.Legend.ElementAtOrDefault(i) != default(string) ? true : false;
 
-
-
                     result.Legend.Add(
                           (hasIncomeLabel ? incomeChart.Legend[i] +
                             (hasExpenseLabel ? " / " : "")
@@ -637,14 +622,11 @@ namespace Nostreets_Services.Services.Database
                     result.Series[0].Add(pay + cost);
                     lastPayment = pay + cost;
                 }
-
             }
             else if (incomeChart.Series.Any())
                 result.Series = incomeChart.Series;
-
             else if (expensesChart.Series.Any())
                 result.Series = expensesChart.Series;
-
             else
                 result.Series = new List<List<float>>();
 
@@ -713,7 +695,6 @@ namespace Nostreets_Services.Services.Database
                 }
             }
 
-
             return result;
         }
 
@@ -752,7 +733,6 @@ namespace Nostreets_Services.Services.Database
                 result.Series.Add(new List<float>());
                 foreach (Income income in incomes)
                     result.Legend.Add(income.Name);
-
 
                 float lastPayment = 0;
 

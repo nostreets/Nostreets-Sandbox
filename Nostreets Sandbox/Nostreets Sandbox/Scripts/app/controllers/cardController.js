@@ -46,10 +46,19 @@
         }
 
         function _handlers() {
-            $baseController.event.listen("loggedIn", () => {
-                _setUp();
-                _getUserData();
-            });
+            $baseController.defaultListeners($scope,
+                {
+                    "loggedIn": () => {
+                        _setUp();
+                        _getUserData();
+                    }
+                }
+            );
+
+            //$baseController.event.listen("loggedIn", () => {
+            //    _setUp();
+            //    _getUserData();
+            //});
         }
 
         function _getUserData() {

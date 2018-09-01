@@ -81,7 +81,11 @@
 
         function _eventHandlers() {
 
-            $baseController.event.listen("loggedIn", () => { _setUp(); _getUserCharts(); });
+            $baseController.defaultListeners($scope,
+                { "loggedIn": () => { _setUp(); _getUserCharts(); } }
+            );
+
+            //$baseController.event.listen("loggedIn", () => { _setUp(); _getUserCharts(); });
 
             angular.element('.assetSwitcher').on('shown.bs.tab',
                 () => _getChartLengend().then(
@@ -257,30 +261,6 @@
 
         }
 
-        function _targetChartistGraph(type, elementId) {
-
-            var chart = vm.charts.filter((a) => a.key === type)[0].value;
-            var options = _getChartistChartOptions(chart);
-
-
-            if (chart.series.length === 0) {
-                vm.isChartEmpty = true;
-                //chart.series.push(_arrayOfZeros(chart.labels.length)); // FILLS CHART SERIES WITH ZEROS
-            }
-            else {
-                vm.isChartEmpty = false;
-                _addChartistTooltipDetials(chart);
-
-                var renderedChart = new Chartist.Line(elementId, chart, options);
-
-                _getTotals(chart);
-                _animateChartistGraph(renderedChart, 200);
-
-                vm.renderedChart = chart;
-                vm.chartOptions = options;
-            }
-        }
-
         function _getChartLengend() {
 
             var getAssets = () => { return (vm.currentTab == 'income') ? _getIncomes() : (vm.currentTab == 'expense') ? _getExpenses() : _getCombinedAssets() };
@@ -311,6 +291,128 @@
                     vm.legend.reverse();
 
                 });
+        }
+
+        function _openInsertModal(data) {
+
+            data = (data) ? data : {};
+
+            var obj = {
+                type: vm.currentTab,
+                id: data.id || 0,
+                name: data.name || null,
+                cost: data.cost || null,
+                paySchedule: data.paySchedule || null,
+                timePaid: (data.timePaid) ? new Date(data.timePaid) : null,
+                beginDate: (data.beginDate) ? new Date(data.beginDate) : null,
+                endDate: (data.endDate) ? new Date(data.endDate) : null,
+                isHiddenOnChart: (data.isHiddenOnChart === true) ? true : false,
+                style: data.style || null,
+                rate: data.rate || 2,
+                rateMultilplier: data.rateMultilplier || 1
+            };
+
+            if (data.incomeType || data.expenseType) {
+                if (data.incomeType) {
+                    obj.incomeType = data.incomeType;
+                    obj.type = 'income';
+                }
+                else {
+                    obj.expenseType = data.expenseType;
+                    obj.type = 'expense';
+                }
+            }
+            else {
+                if (vm.currentTab === 'income') {
+                    obj.incomeType = 1;
+                    obj.type = 'income';
+                }
+                else {
+                    obj.expenseType = 1;
+                    obj.type = 'expense';
+                }
+            }
+
+
+            var modalInstance = $baseController.modal.open({
+                animation: true
+                , templateUrl: "modalExpenseBuilder.html"
+                , controller: "modalInsertController as mc"
+                , size: "lg"
+                , resolve: {
+                    model: () => obj,
+                    enums: () => vm.enums
+                }
+            });
+
+            modalInstance.closed.then(_getUserCharts);
+        }
+
+        function _getTotals(chart) {
+            var a = 0,
+                result = [],
+                overallCost = 0;
+
+            while (chart.labels.length > a) {
+
+                var b = 0,
+                    date = chart.labels[a],
+                    costArr = [];
+
+                while (chart.series.length > b) {
+
+                    var cost = (typeof (chart.series[b][a].value) !== 'undefined')
+                        ? chart.series[b][a].value - ((a === 0) ? 0 : chart.series[b][a - 1].value)
+                        : chart.series[b][a] - ((a === 0) ? 0 : chart.series[b][a - 1]);
+
+                    if (cost !== 0) {
+                        overallCost += cost;
+                        costArr.push({
+                            cost: ((cost > 0) ? '+' : '') + cost,
+                            name: chart.legend[b]
+                        });
+                    }
+
+                    b++;
+                }
+
+                if (costArr.length > 0)
+                    result.push({
+                        date: date,
+                        costs: costArr
+                    });
+
+                a++;
+            }
+
+            vm.totals = result;
+            vm.overallCost = overallCost;
+        }
+
+        //#region Chartist Methods
+
+        function _targetChartistGraph(type, elementId) {
+
+            var chart = vm.charts.filter((a) => a.key === type)[0].value;
+            var options = _getChartistChartOptions(chart);
+
+
+            if (chart.series.length === 0) {
+                vm.isChartEmpty = true;
+                //chart.series.push(_arrayOfZeros(chart.labels.length)); // FILLS CHART SERIES WITH ZEROS
+            }
+            else {
+                vm.isChartEmpty = false;
+                _addChartistTooltipDetials(chart);
+
+                var renderedChart = new Chartist.Line(elementId, chart, options);
+
+                _getTotals(chart);
+                _animateChartistGraph(renderedChart, 200);
+
+                vm.renderedChart = chart;
+                vm.chartOptions = options;
+            }
         }
 
         function _getChartistChartOptions(chart) {
@@ -412,47 +514,6 @@
             }
 
             return (hasPositive && !hasNegative) ? ((result > 3) ? result - 3 : 0) : (hasNegative && !hasPositive) ? ((result > 1) ? result - 1 : 0) : ((result > 2) ? result - 2 : 0);
-        }
-
-        function _getTotals(chart) {
-            var a = 0,
-                result = [],
-                overallCost = 0;
-
-            while (chart.labels.length > a) {
-
-                var b = 0,
-                    date = chart.labels[a],
-                    costArr = [];
-
-                while (chart.series.length > b) {
-
-                    var cost = (typeof (chart.series[b][a].value) !== 'undefined')
-                        ? chart.series[b][a].value - ((a === 0) ? 0 : chart.series[b][a - 1].value)
-                        : chart.series[b][a] - ((a === 0) ? 0 : chart.series[b][a - 1]);
-
-                    if (cost !== 0) {
-                        overallCost += cost;
-                        costArr.push({
-                            cost: ((cost > 0) ? '+' : '') + cost,
-                            name: chart.legend[b]
-                        });
-                    }
-
-                    b++;
-                }
-
-                if (costArr.length > 0)
-                    result.push({
-                        date: date,
-                        costs: costArr
-                    });
-
-                a++;
-            }
-
-            vm.totals = result;
-            vm.overallCost = overallCost;
         }
 
         function _animateChartistGraph(chart, time) {
@@ -625,60 +686,8 @@
 
         }
 
-        function _openInsertModal(data) {
 
-            data = (data) ? data : {};
-
-            var obj = {
-                type: vm.currentTab,
-                id: data.id || 0,
-                name: data.name || null,
-                cost: data.cost || null,
-                paySchedule: data.paySchedule || null,
-                timePaid: (data.timePaid) ? new Date(data.timePaid) : null,
-                beginDate: (data.beginDate) ? new Date(data.beginDate) : null,
-                endDate: (data.endDate) ? new Date(data.endDate) : null,
-                isHiddenOnChart: (data.isHiddenOnChart === true) ? true : false,
-                style: data.style || null,
-                rate: data.rate || 2,
-                rateMultilplier: data.rateMultilplier || 1
-            };
-
-            if (data.incomeType || data.expenseType) {
-                if (data.incomeType) {
-                    obj.incomeType = data.incomeType;
-                    obj.type = 'income';
-                }
-                else {
-                    obj.expenseType = data.expenseType;
-                    obj.type = 'expense';
-                }
-            }
-            else {
-                if (vm.currentTab === 'income') {
-                    obj.incomeType = 1;
-                    obj.type = 'income';
-                }
-                else {
-                    obj.expenseType = 1;
-                    obj.type = 'expense';
-                }
-            }
-
-
-            var modalInstance = $baseController.modal.open({
-                animation: true
-                , templateUrl: "modalExpenseBuilder.html"
-                , controller: "modalInsertController as mc"
-                , size: "lg"
-                , resolve: {
-                    model: () => obj,
-                    enums: () => vm.enums
-                }
-            });
-
-            modalInstance.closed.then(_getUserCharts);
-        }
+        //#endregion
 
         // #region Endpoint Calls
 

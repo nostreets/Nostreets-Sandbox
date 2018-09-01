@@ -1,6 +1,6 @@
 ﻿<div class="row">
 
-    <ul class="nav nav-pills nav-justified" ng-if="pg.isSkillsRendered">
+    <ul class="nav nav-pills nav-justified">
         <li ng-repeat="item in pg.topics"
             role="presentation"
             ng-class="{'active' : $index == 1 }">
@@ -19,8 +19,7 @@
              role="tabpanel"
              ng-class="{'active in' : $index == 1 }">
             <ul class="mdl-list">
-                <li on-repeat-finished
-                    ng-repeat="item in list"
+                <li ng-repeat="item in list"
                     class="mdl-list__item">
                     <span class="mdl-list__item-primary-content">
                         <i class="material-icons mdl-list__item-icon" ng-click="pg.lookup(item)">play_arrow</i>

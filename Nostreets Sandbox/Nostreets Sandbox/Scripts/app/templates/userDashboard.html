@@ -37,6 +37,7 @@
             </div>
 
             <div class="tab-content">
+
                 <div id="userGeneralTab" class="active tab-pane fade in" role="tabpanel">
                     <div class="row">
                         <div ng-if="!pg.editMode">
@@ -78,6 +79,7 @@
                     </div>
 
                 </div>
+
                 <div id="userContactTab" class="tab-pane fade" role="tabpanel">
                     <div class="row">
                         <div ng-if="!pg.editMode">
@@ -107,13 +109,14 @@
                         </div>
                     </div>
                 </div>
+
                 <div id="userSettingsTab" class="tab-pane fade" role="tabpanel">
                     <div class="row">
                         <div class="col-sm-6 col-sm-offset-3">
-                            Two Factor Authitcation: <input ng-disabled="!pg.editMode"
-                                                            type="checkbox"
-                                                            ng-checked="pg.user.settings.twoFactorAuthEnabled"
-                                                            ng-model="pg.user.settings.twoFactorAuthEnabled" />
+                            Two Factor Authentication: <input ng-disabled="!pg.editMode"
+                                                              type="checkbox"
+                                                              ng-checked="pg.user.settings.twoFactorAuthEnabled"
+                                                              ng-model="pg.user.settings.twoFactorAuthEnabled" />
                         </div>
                         <div class="col-sm-6 col-sm-offset-3">
                             By Email: <input ng-disabled="!pg.editMode || !pg.user.settings.twoFactorAuthEnabled"
@@ -130,19 +133,46 @@
                                              ng-click="pg.toggleTFAuth('phone')" />
                         </div>
                     </div>
+
                     <div class="row">
-                        <div class="col-sm-6  col-sm-offset-3">
-                            Device Authentication Before Login: <input ng-disabled="!pg.editMode"
-                                                                       type="checkbox"
-                                                                       ng-checked="pg.user.settings.validateIPBeforeLogin"
-                                                                       ng-model="pg.user.settings.validateIPBeforeLogin" />
+
+                        <div class="col-sm-6">
+                            Advanced Settings: <input ng-disabled="!pg.editMode"
+                                                      type="checkbox"
+                                                      ng-checked="pg.user.settings.portfolio.isAdvancedUser"
+                                                      ng-model="pg.user.settings.portfolio.isAdvancedUser" />
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-6  col-sm-offset-3">
-                            Hook up card! <i class="material-icons" style="color:black">open_in_browser</i>
+
+                        <div class="row" ng-if="pg.user.settings.portfolio.isAdvancedUser">
+                            <div class="col-sm-6 col-sm-offset-3">
+                                Device Authentication Before Login: <input ng-disabled="!pg.editMode"
+                                                                           type="checkbox"
+                                                                           ng-checked="pg.user.settings.validateIPBeforeLogin"
+                                                                           ng-model="pg.user.settings.validateIPBeforeLogin" />
+                            </div>
+
+                            <div class="col-sm-6 col-sm-offset-3">
+                                Chart Library:
+                                <select ng-disabled="!pg.editMode"
+                                        type="checkbox"
+                                        ng-checked="pg.user.settings.portfolio.chartLibary"
+                                        ng-model="pg.user.settings.portfolio.chartLibary">
+                                    <option value="1">Chartist</option>
+                                    <option value="2">PivotTable</option>
+                                </select>
+                            </div>
+
+                            <div class="col-sm-6 col-sm-offset-3">
+                                Hook up card! <i class="material-icons" style="color:black">open_in_browser</i>
+                            </div>
                         </div>
+
+
                     </div>
+
+
+
+
                 </div>
             </div>
 
