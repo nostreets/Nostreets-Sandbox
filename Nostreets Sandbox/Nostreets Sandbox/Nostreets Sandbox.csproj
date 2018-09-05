@@ -443,12 +443,6 @@
     <Content Include="assets\js\twitterFetcher_min.js" />
     <Content Include="assets\js\ui-bootstrap-tpls-2.5.0.min.js" />
     <Content Include="assets\svg\upwork.svg" />
-    <Content Include="Connections.config">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Keys.config">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="node_modules\bootstrap\dist\css\bootstrap-theme.css" />
     <Content Include="node_modules\bootstrap\dist\css\bootstrap-theme.min.css" />
     <Content Include="node_modules\bootstrap\dist\css\bootstrap.css" />
@@ -3135,6 +3129,8 @@
     <Content Include="node_modules\jquery-mobile\package.json" />
     <Content Include="node_modules\jquery-mobile\README.md" />
     <Content Include="package-lock.json" />
+    <Content Include="Connections.config" />
+    <Content Include="Keys.config" />
     <None Include="Properties\PublishProfiles\nostreets - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\nostreets - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\NostreetsSandbox - Web Deploy.pubxml" />

@@ -16,6 +16,7 @@
 
     <div class="row">
         <div ng-if="pg.isLoggedIn">
+
             <div class="col-sm-4 col-sm-offset-1 text-center" style="margin-top: 2%">
                 <strong class="text-greyBold">Beginning Date:</strong>
                 <div class="input-group">
@@ -35,6 +36,7 @@
                     </span>
                 </div>
             </div>
+
             <div class="col-sm-2 text-center" style="margin: 3% 0% 3% 0%;">
                 <strong class="text-greyBold"> Line Style</strong>
                 <div>
@@ -45,6 +47,7 @@
                     </select>
                 </div>
             </div>
+
             <div class="col-sm-4 col-sm-offset-1 text-center" style="margin-top: 2%">
                 <strong class="text-greyBold">Ending Date:</strong>
                 <div class="input-group">
@@ -64,33 +67,43 @@
                     </span>
                 </div>
             </div>
+
         </div>
     </div>
 
     <div ng-if="pg.isLoggedIn" class="row">
         <div id="assetChartTabContainer" class="tab-content">
+
             <div id="incomeTab" class="tab-pane active fade in" role="tabpanel">
                 <div class="col-xs-12">
                     <div class="card">
+
                         <div class="card-header text-center">
                             <h6>{{ pg.charts[0].data.name }}</h6>
                         </div>
+
                         <div class="card-content text-center">
-                            <div ng-show="!pg.isLoading && !pg.isChartEmpty"
+
+                            <div ng-show="!pg.isLoading && !pg.isChartEmpty && "
                                  id="incomeChart"
                                  class="card-content text-center ct-golden-section">
                             </div>
+
                             <div ng-show="pg.isLoading">
                                 <div class="mdl-spinner mdl-js-spinner mdl-spinner--single-color is-active"></div>
                             </div>
+
                             <div ng-show="pg.isChartEmpty">
                                 <div>Chart currently has no data...</div>
                                 <div>Add an Income or Expense to see payment predictions...</div>
                             </div>
+
                         </div>
+
                     </div>
                 </div>
             </div>
+
             <div id="expenseTab" class="tab-pane fade" role="tabpanel">
                 <div class="col-xs-12">
                     <div class="card">
@@ -113,6 +126,7 @@
                     </div>
                 </div>
             </div>
+
             <div id="combinedTab" class="tab-pane fade" role="tabpanel">
                 <div class="col-xs-12">
                     <div class="card">
@@ -136,6 +150,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 
@@ -148,6 +163,7 @@
                     <button data-toggle="tab" role="tab" class="btn btn-simple pull-right" ng-show="pg.currentTab !== 'combined'" ng-click="pg.openInsertModal()">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                     </button>
+
                     <ul class="nav nav-tabs nav-justified tabs-basic">
                         <li role="presentation" class="active">
                             <a role="tab" data-target="#assetsTab" data-toggle="tab">{{ (pg.currentTab == 'income') ? 'Incomes' : (pg.currentTab == 'expense') ? 'Expenses' : 'Incomes & Expenses' }}</a>
@@ -156,10 +172,12 @@
                             <a role="tab" data-target="#totalsTab" data-toggle="tab">Totals</a>
                         </li>
                     </ul>
+
                 </div>
                 <div class="card-content text-center">
 
                     <div class="tab-content">
+
                         <div id="assetsTab" class="active tab-pane fade in" role="tabpanel">
                             <div ng-repeat="item in pg.legend">
                                 <div class="col-xs-12 text-center">
@@ -215,7 +233,6 @@
                                 </div>
                             </div>
                         </div>
-
 
                         <div id="totalsTab" class="tab-pane fade" role="tabpanel">
                             <div>
