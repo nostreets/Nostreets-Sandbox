@@ -76,7 +76,6 @@
             vm.totals = [];
             vm.overallCost = 0;
             vm.isChartEmpty = false;
-            vm.useChartist = page.isLoggedIn || false;
         }
 
         function _eventHandlers() {
@@ -121,7 +120,7 @@
             angular.element(".ct-golden-section").on("DOMMouseScroll mousewheel onmousewheel", (event) => {
 
                 // cross-browser wheel delta
-                var event = window.event || event; // old IE support
+                event = window.event || event; // old IE support
                 var delta = Math.max(-1, Math.min(1, (event.wheelDelta || -event.detail)));
 
 
@@ -263,7 +262,7 @@
 
         function _getChartLengend() {
 
-            var getAssets = () => { return (vm.currentTab == 'income') ? _getIncomes() : (vm.currentTab == 'expense') ? _getExpenses() : _getCombinedAssets() };
+            var getAssets = () => { return vm.currentTab === 'income' ? _getIncomes() : vm.currentTab === 'expense' ? _getExpenses() : _getCombinedAssets() };
 
             return getAssets().then(
                 () => {
@@ -287,7 +286,9 @@
                         arr.push('.ct-series-' + lineChar + ' .ct-point, .ct-series-' + lineChar + ' .ct-line, .ct-series-' + lineChar + ' .ct-bar, .ct-series-' + lineChar + '{ stroke: ' + vm.legend[i].style.color + ' !important }');
                     }
 
-                    page.utilities.writeStyles("_lineStyles", arr);
+                    if (page.siteOptions.billManagerChartType === "Chartist")
+                        page.utilities.writeStyles("_lineStyles", arr);
+
                     vm.legend.reverse();
 
                 });
@@ -389,6 +390,87 @@
             vm.overallCost = overallCost;
         }
 
+        //#region Google Chart Methods
+
+        function _loadLibrary(callback) {
+            google.charts.load('current', { 'packages': ['line'] });
+            google.charts.setOnLoadCallback(callback);
+        }
+
+        function _targetGoogleGraph(type, elementId) {
+
+            var chart = vm.charts.filter((a) => a.key === type)[0].value;
+
+            if (chart.series.length === 0) {
+                vm.isChartEmpty = true;
+            }
+            else {
+
+                vm.isChartEmpty = false;
+
+                var finalArr = [];
+                for (var i = -1; i < chart.labels.length; i++) {
+
+                    var arr = [];
+
+                    // LEGEND
+                    if (i === -1) {
+                        arr.push('');
+                        for (var x = 0; x < chart.series.length; x++) {
+                            arr.push(chart.legend[x]);
+                            arr.push({ label: null, role: 'tooltip' });
+                        }
+                    }
+
+                    // LABEL AND VALUES
+                    else {
+                        arr.push(chart.labels[i]);
+                        for (var y = 0; y < chart.series.length; y++) {
+                            arr.push(chart.series[y][i]);
+                            arr.push(_getTooltipText(chart, y, i));
+                        }
+                    }
+
+                    finalArr.push(arr);
+                }
+
+                var data = google.visualization.arrayToDataTable(finalArr);
+
+                var options = {
+                    curveType: 'function',
+                    legend: { position: 'bottom' }
+                };
+
+                var renderedChart = new google.visualization.LineChart($(elementId)[0]); //document.getElementById('curve_chart'));
+                renderedChart.draw(data, options);
+
+
+                _getTotals(chart);
+
+
+                vm.renderedChart = chart;
+                vm.chartOptions = options;
+            }
+
+
+
+        }
+
+        function _getTooltipText(chart, lineIndex, pointIndex) {
+
+            var chartObj = vm.legend[lineIndex];
+
+            var label = chart.labels[pointIndex],
+                value = chart.series[lineIndex][pointIndex],
+                lastValue = (b === 0) ? 0 : chart.series[lineIndex][b - 1].value;
+
+            var meta = 'Date ' + label + ' ' + ((value - lastValue > 0) ? '+ ' : (value - lastValue === 0) ? ' ' : '- ') + (value - lastValue);
+
+            return meta;
+        }
+
+        //#endregion
+
         //#region Chartist Methods
 
         function _targetChartistGraph(type, elementId) {
@@ -403,7 +485,7 @@
             }
             else {
                 vm.isChartEmpty = false;
-                _addChartistTooltipDetials(chart);
+                _getTooltipText(chart);
 
                 var renderedChart = new Chartist.Line(elementId, chart, options);
 
@@ -476,11 +558,11 @@
                         var label = chart.labels[b],
                             value = chart.series[a][b],
                             lastValue = (b === 0) ? 0 : chart.series[a][b - 1].value;
-                        var meta = 'Date ' + label + ' ' + ((value - lastValue > 0) ? '+ ' : (value - lastValue == 0) ? ' ' : '- ') + (value - lastValue);
+                        var meta = 'Date ' + label + ' ' + ((value - lastValue > 0) ? '+ ' : (value - lastValue === 0) ? ' ' : '- ') + (value - lastValue);
                         chart.series[a][b] = {
                             meta: meta,
                             value: value
-                        }
+                        };
                     }
                 }
             }
@@ -780,7 +862,7 @@
 
             return $sandboxService.getEnums('income,expense,schedule').then(
                 (obj) => {
-                    vm.enums = obj.data.items
+                    vm.enums = obj.data.items;
                     vm.isLoading = false;
                 },
                 err => $baseController.errorCheck(err,
@@ -790,7 +872,7 @@
                         method: () => {
                             $sandboxService.getEnums('income,expense,schedule').then(
                                 (obj) => {
-                                    vm.enums = obj.data.items
+                                    vm.enums = obj.data.items;
                                     vm.isLoading = false;
                                 });
                         }
@@ -908,7 +990,7 @@
                         for (var i = 0; i < a.data.items.length; i++)
                             a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
-                    vm.legend = a.data.items
+                    vm.legend = a.data.items;
                     vm.isLoading = false;
                 },
                 err => $baseController.errorCheck(err,
@@ -922,7 +1004,7 @@
                                         for (var i = 0; i < a.data.items.length; i++)
                                             a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
-                                    vm.legend = a.data.items
+                                    vm.legend = a.data.items;
                                     vm.isLoading = false;
                                 });
                         }
@@ -940,7 +1022,7 @@
                         for (var i = 0; i < a.data.items.length; i++)
                             a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
-                    vm.legend = a.data.items
+                    vm.legend = a.data.items;
                     vm.isLoading = false;
                 },
                 err => $baseController.errorCheck(err,
@@ -953,7 +1035,7 @@
                                     for (var i = 0; i < a.data.items.length; i++)
                                         a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
-                                vm.legend = a.data.items
+                                vm.legend = a.data.items;
                                 vm.isLoading = false;
                             });
                         }
@@ -971,7 +1053,7 @@
                                 for (var i = 0; i < a.data.items.length; i++)
                                     a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
-                            vm.legend = a.data.items
+                            vm.legend = a.data.items;
                             vm.isLoading = false;
                         },
                         err => $baseController.errorCheck(err,
@@ -985,7 +1067,7 @@
                                                 for (var i = 0; i < a.data.items.length; i++)
                                                     a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
-                                            vm.legend = a.data.items
+                                            vm.legend = a.data.items;
                                             vm.isLoading = false;
                                         });
                                 }
@@ -1000,7 +1082,7 @@
                             for (var i = 0; i < a.data.items.length; i++)
                                 a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
-                            vm.legend = vm.legend.concat(a.data.items)
+                            vm.legend = vm.legend.concat(a.data.items);
                             vm.isLoading = false;
                         },
                         err => $baseController.errorCheck(err,
@@ -1012,7 +1094,7 @@
                                         for (var i = 0; i < a.data.items.length; i++)
                                             a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
-                                        vm.legend = vm.legend.concat(a.data.items)
+                                        vm.legend = vm.legend.concat(a.data.items);
                                         vm.isLoading = false;
                                     });
                                 }
@@ -1027,7 +1109,7 @@
                     {
                         maxLoops: 3,
                         miliseconds: 2000,
-                        method: () => { incomePromise().then(() => expensePromise()) }
+                        method: () => { incomePromise().then(() => expensePromise()); }
                     }));
 
         }
@@ -1138,7 +1220,7 @@
                 lightness: true,
                 swatchPos: 'left',
                 swatchOnly: true,
-                round: true,
+                round: true
             };
 
             vm.isLoading = false;
@@ -1329,15 +1411,15 @@
                         }
                         if ([3, 4, 7, 8].in(i))
                             continue;
-                        else if (i == 5 && vm.paySchedule >= 5)//![5, 6, 7, 8, 9, 10, 11].in(vm.paySchedule))
+                        else if (i === 5 && vm.paySchedule >= 5)//![5, 6, 7, 8, 9, 10, 11].in(vm.paySchedule))
                             continue;
-                        else if (i == 6 && vm.paySchedule >= 6)// ![6, 7, 8, 9, 10, 11].in(vm.paySchedule))
+                        else if (i === 6 && vm.paySchedule >= 6)// ![6, 7, 8, 9, 10, 11].in(vm.paySchedule))
                             continue;
-                        else if (i == 9 && vm.paySchedule >= 9)// ![9, 10, 11].in(vm.paySchedule))
+                        else if (i === 9 && vm.paySchedule >= 9)// ![9, 10, 11].in(vm.paySchedule))
                             continue;
-                        else if (i == 10 && vm.paySchedule >= 10)// ![10, 11].in(vm.paySchedule))
+                        else if (i === 10 && vm.paySchedule >= 10)// ![10, 11].in(vm.paySchedule))
                             continue;
-                        else if (i == 11 && vm.paySchedule >= 11)// ![11].in(vm.paySchedule))
+                        else if (i === 11 && vm.paySchedule >= 11)// ![11].in(vm.paySchedule))
                             continue;
                         else
                             arr.push({ label: item, value: i });
@@ -1346,19 +1428,19 @@
 
                 case 'frequency':
                     length = page.utilities.length(vm.enums.schedule);
-                    for (var i = 1; length > i; i++)
+                    for (let i = 1; length > i; i++)
                         arr.push({ label: vm.enums.schedule[i], value: i });
                     break;
 
                 case 'incomeType':
                     length = page.utilities.length(vm.enums.income);
-                    for (var i = 0; length > i; i++)
+                    for (let i = 0; length > i; i++)
                         arr.push({ label: vm.enums.income[i], value: i });
                     break;
 
                 case 'expenseType':
                     length = page.utilities.length(vm.enums.expense);
-                    for (var i = 0; length > i; i++)
+                    for (let i = 0; length > i; i++)
                         arr.push({ label: vm.enums.expense[i], value: i });
                     break;
 

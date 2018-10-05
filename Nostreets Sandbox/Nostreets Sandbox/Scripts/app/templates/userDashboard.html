@@ -136,7 +136,7 @@
 
                     <div class="row">
 
-                        <div class="col-sm-6">
+                        <div class="col-sm-6 col-sm-offset-3">
                            Show Advanced Settings: <input ng-disabled="!pg.editMode"
                                                       type="checkbox"
                                                       ng-checked="pg.user.settings.portfolio.isAdvancedUser"
@@ -156,9 +156,10 @@
                                 <select ng-disabled="!pg.editMode"
                                         type="checkbox"
                                         ng-checked="pg.user.settings.portfolio.chartLibary"
-                                        ng-model="pg.user.settings.portfolio.chartLibary">
-                                    <option value="1">Chartist (Leagcy)</option>
-                                    <option value="2">PivotTable</option>
+                                        ng-model="pg.user.settings.portfolio.chartLibary"
+                                        ng-options="k as v for (k, v) in pg.enums.chartLibrary">
+                                    <!--<option value="1">Chartist (Leagcy)</option>
+                                    <option value="2">PivotTable</option>-->
                                 </select>
                             </div>
 

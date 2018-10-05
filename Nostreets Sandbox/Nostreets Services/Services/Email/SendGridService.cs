@@ -1,10 +1,10 @@
-﻿using Nostreets_Services.Interfaces.Services;
+﻿using System;
+using System.Threading.Tasks;
+using Nostreets_Services.Interfaces.Services;
 using NostreetsExtensions.DataControl.Classes;
 using NostreetsExtensions.Interfaces;
 using SendGrid;
 using SendGrid.Helpers.Mail;
-using System;
-using System.Threading.Tasks;
 
 namespace Nostreets_Services.Services.Email
 {

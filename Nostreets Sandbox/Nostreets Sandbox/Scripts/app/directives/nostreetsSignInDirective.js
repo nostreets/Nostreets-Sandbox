@@ -1,10 +1,12 @@
 ﻿(function () {
+
     angular.module(page.APPNAME)
         .controller("modalRegisterController", modalRegisterController)
         .controller("modalLogInController", modalLogInController)
         .controller("modalUserController", modalUserController)
         .controller("modalPrivatePolicyController", modalPrivatePolicyController)
         .directive("signIn", nostreetsSignInDirective);
+
 
     nostreetsSignInDirective.$inject = ["$baseController", "$serverModel"];
     modalRegisterController.$inject = ["$scope", "$baseController", "$uibModalInstance", "links"];
@@ -27,25 +29,21 @@
 
                 function _render() {
 
-                    page.isLoggedIn = $serverModel.user != null;
+                    page.isLoggedIn = $serverModel.user !== null;
                     $scope.isLoggedIn = page.isLoggedIn;
 
-                    if ($serverModel.token !== null)
-                        swal({
-                            title: $serverModel.tokenOutcome,
-                            type: "success",
-                            showCancelButton: false,
-                            showConfirmButton: false,
-                            allowOutsideClick: true
-                        });
                     if ($serverModel.tokenOutcome !== null)
                         swal({
                             title: $serverModel.tokenOutcome,
-                            type: "error",
+                            type: $serverModel.state.toLowerCase(),
                             showCancelButton: false,
                             showConfirmButton: false,
                             allowOutsideClick: true
                         });
+
+                    if (page.isLoggedIn)
+                        page.siteOptions.billManagerChartType = $serverModel.user.settings.portfolio.chartLibary;
+
 
                     _handlers();
                 }
@@ -123,8 +121,6 @@
 
             }
         }
-
-
     }
 
     function modalRegisterController($scope, $baseController, $uibModalInstance, links) {
@@ -160,8 +156,8 @@
             vm.emailExists = false;
             vm.usernameExists = false;
             vm.usernameExists = false;
-            vm.requestSuccessful = false;
             vm.isLoading = false;
+            vm.requestSuccessful = null;
         }
 
         function _submit() {
@@ -174,7 +170,8 @@
                     primaryEmail: vm.email,
                     firstName: vm.firstName,
                     lastName: vm.lastName
-                }
+                },
+                userOrigin: 1
             };
 
 
@@ -186,6 +183,10 @@
             }).then(
                 (a) => {
                     vm.requestSuccessful = true;
+                    vm.isLoading = false;
+                },
+                (e) => {
+                    vm.requestSuccessful = false;
                     vm.isLoading = false;
                 });
         }
@@ -500,7 +501,7 @@
                             vm.reason = err.data.message;
                         }
                     })
-            );
+                );
         }
 
         function _checkEmail(email) {
@@ -556,57 +557,30 @@
             else
                 _setUp(user);
 
+            _getEnums("chartLibrary");
+
         }
 
         function _setUp(data) {
+
             vm.user = data;
             vm.isUserChanged = false;
             vm.editMode = false;
             vm.isLoading = false;
             vm.user.newPassword = '            ';
-
             vm.userSnap = page.utilities.clone(vm.user);
+
+
+            page.siteOptions.billManagerChartType = vm.user.settings.portfolio.chartLibary;
+
         }
 
         function _hasUserChanged() {
             return !page.utilities.equals(vm.user, vm.userSnap);
         }
 
-        function _logout() {
-
-            vm.isLoading = true;
-
-            return $baseController.http({
-                url: "/api/logout",
-                method: "GET",
-                headers: { 'Content-Type': 'application/json' }
-            }).then(
-                () => {
-                    vm.isLoading = false;
-                    $baseController.event.broadcast('loggedOut');
-                    vm.$uibModalInstance.close();
-                },
-                err => {
-                    vm.isLoading = false;
-                    $baseController.alert.error(err);
-                }
-            );
-
-        }
-
         function _cancel() {
             vm.$uibModalInstance.dismiss("cancel");
-        }
-
-        function _getUserSession() {
-
-            vm.isLoading = true;
-
-            return $baseController.http({
-                url: "/api/user/session",
-                method: "GET",
-                headers: { 'Content-Type': 'application/json' }
-            }).then(a => { vm.isLoading = false; });
         }
 
         function _toggleEditMode() {
@@ -641,29 +615,6 @@
             });
         }
 
-        function _updateUser() {
-
-            vm.isLoading = true;
-
-            return $baseController.http({
-                url: "/api/user",
-                data: vm.user,
-                method: "PUT",
-                headers: { 'Content-Type': 'application/json' }
-            }).then(() => {
-                vm.isLoading = false;
-                vm.userSnap = page.utilities.clone(vm.user);
-            });
-        }
-
-        function _validatePassword(password) {
-            return $baseController.http({
-                url: "/api/user/validatePassword?password=" + password,
-                method: "GET",
-                headers: { 'Content-Type': 'application/json' }
-            });
-        }
-
         function _saveChanges() {
 
             if (vm.user.userOrigin === 1)
@@ -672,7 +623,7 @@
                         if (vm.user.newPassword && vm.user.newPassword.length >= 12 && vm.user.newPassword !== vm.userSnap.newPassword) {
                             vm.user.password = vm.user.newPassword;
 
-                            _updateUser();
+                            _updateUser().then(_refreshUser);
 
                             vm.editMode = false;
                         }
@@ -687,7 +638,7 @@
                         }
                     });
             else {
-                _updateUser();
+                _updateUser().then(_refreshUser);
                 vm.editMode = false;
             }
         }
@@ -720,6 +671,22 @@
             }
         }
 
+        function _refreshUser() {
+            return _getUserSession().then(a => _setUp(a.data.item));
+        }
+
+        //#region API CALLS
+
+        function _getEnums(enumType) {
+            return $baseController.http({
+                url: "/api/config/enums/" + (Array.isArray(enumType) ? enumType.join(",") : enumType),
+                method: "GET",
+                headers: { 'Content-Type': 'application/json' }
+            }).then(
+                a => { vm.enums = a.data.items; }
+            );
+        }
+
         function _resendEmailValidation() {
 
             $baseController.http({
@@ -728,6 +695,66 @@
                 headers: { 'Content-Type': 'application/json' }
             }).then(a => { vm.resentEmail = true; vm.reason = ""; });
         }
+
+        function _validatePassword(password) {
+            return $baseController.http({
+                url: "/api/user/validatePassword?password=" + password,
+                method: "GET",
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
+
+        function _updateUser() {
+
+            vm.isLoading = true;
+
+            return $baseController.http({
+                url: "/api/user",
+                data: vm.user,
+                method: "PUT",
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
+                vm.isLoading = false;
+                vm.userSnap = page.utilities.clone(vm.user);
+            });
+        }
+
+        function _getUserSession() {
+
+            vm.isLoading = true;
+
+            return $baseController.http({
+                url: "/api/user/session",
+                method: "GET",
+                headers: { 'Content-Type': 'application/json' }
+            }).then(a => { vm.isLoading = false; });
+        }
+
+        function _logout() {
+
+            vm.isLoading = true;
+
+            return $baseController.http({
+                url: "/api/logout",
+                method: "GET",
+                headers: { 'Content-Type': 'application/json' }
+            }).then(
+                () => {
+                    vm.isLoading = false;
+                    $baseController.event.broadcast('loggedOut');
+                    vm.$uibModalInstance.close();
+                },
+                err => {
+                    vm.isLoading = false;
+                    $baseController.alert.error(err);
+                }
+                );
+
+        }
+
+
+
+        //#endregion
 
     }
 

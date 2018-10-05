@@ -1,18 +1,25 @@
 ﻿<div>
-    <div class="card" ng-if="regVm.requestSuccessful">
+    <div class="card" ng-if="regVm.requestSuccessful === true && !regVm.isLoading">
         <div class="card-content text-center">
             <div>Registation Email has been sent...</div>
-            <div>Validate Email to be able to login!</div>
+            <div class="danger">Validate Email to be able to login!</div>
         </div>
     </div>
 
-    <div ng-show="regVm.isLoading">
+    <div class="card" ng-if="regVm.requestSuccessful === false && !regVm.isLoading">
+        <div class="card-content text-center">
+            <div class="danger">Problem sending registation email...</div>
+            <a href="" ng-click="regVm.submit()">Try Again?</a>
+        </div>
+    </div>
+
+    <div class="text-center" ng-show="regVm.isLoading">
         <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
     </div>
 
     <form class="form theRegisterForm card"
           name="regVm.regForm"
-          ng-if="!regVm.requestSuccessful"
+          ng-if="regVm.requestSuccessful === null && !regVm.isLoading"
           novalidate>
         <div class="card-header" style="margin-bottom:auto">
             <div class="card-title">
@@ -20,8 +27,9 @@
             </div>
         </div>
         <div class="card-content">
+
             <div class="form-group"
-                 ng-class="{ 'has-success' : regVm.regForm.username.$valid  && !regVm.userNameExists, 'has-error' : regVm.regForm.username.$dirty && regVm.regForm.username.$error }">
+                 ng-class="{ 'has-success' : regVm.regForm.username.$valid && !regVm.userNameExists, 'has-error' : regVm.regForm.username.$dirty && !regVm.regForm.username.$valid }">
                 <div class="input-group">
                     <span class="input-group-addon">
                         <i class="material-icons" style="color:black">face</i>
@@ -40,18 +48,21 @@
                           ng-show="regVm.regForm.username.$valid && !regVm.usernameExists">
                         <i class="material-icons" style="color:rgb(95, 214, 95)">done</i>
                     </span>
+
                     <div class="text-danger"
                          ng-show="regVm.regForm.username.$error.required && regVm.regForm.username.$dirty">
                         <em>
                             This field is required!
                         </em>
                     </div>
+                    
                     <div class="text-danger"
                          ng-show="(regVm.usernameExists)">
                         <em>
                             Username already exists...
                         </em>
                     </div>
+                 
                     <div class="text-danger"
                          ng-show="regVm.regForm.username.$dirty && regVm.regForm.username.$error.minlength">
                         <em>
@@ -62,7 +73,7 @@
             </div>
 
             <div class="form-group"
-                 ng-class="{ 'has-success' : regVm.regForm.email.$valid  && !regVm.emailExists, 'has-error' : regVm.regForm.email.$dirty && regVm.regForm.email.$error }">
+                 ng-class="{ 'has-success' : regVm.regForm.email.$valid  && !regVm.emailExists, 'has-error' : regVm.regForm.email.$dirty && !regVm.regForm.email.$valid }">
 
                 <div class="input-group">
                     <span class="input-group-addon">
@@ -102,7 +113,7 @@
             </div>
 
             <div class="form-group col-sm-6"
-                 ng-class="{ 'has-success' : regVm.regForm.firstName.$valid , 'has-error' : regVm.regForm.firstName.$dirty && regVm.regForm.firstName.$error }">
+                 ng-class="{ 'has-success' : regVm.regForm.firstName.$valid , 'has-error' : regVm.regForm.firstName.$dirty && !regVm.regForm.firstName.$valid }">
                 <div class="input-group">
                     <span class="input-group-addon">
                         <i class="material-icons" style="color:black">person</i>
@@ -124,7 +135,7 @@
             </div>
 
             <div class="form-group col-sm-6"
-                 ng-class="{ 'has-success' : regVm.regForm.lastName.$valid , 'has-error' : regVm.regForm.lastName.$dirty && regVm.regForm.lastName.$error }">
+                 ng-class="{ 'has-success' : regVm.regForm.lastName.$valid , 'has-error' : regVm.regForm.lastName.$dirty && !regVm.regForm.lastName.$valid }">
                 <div class="input-group">
                     <span class="input-group-addon">
                         <i class="material-icons" style="color:black">person</i>
@@ -146,7 +157,7 @@
             </div>
 
             <div class="form-group col-sm-6"
-                 ng-class="{ 'has-success' : regVm.regForm.password.$valid , 'has-error' : regVm.regForm.password.$dirty && regVm.regForm.password.$error }">
+                 ng-class="{ 'has-success' : regVm.regForm.password.$valid , 'has-error' : regVm.regForm.password.$dirty && !regVm.regForm.password.$valid }">
                 <div class="input-group">
                     <span class="input-group-addon">
                         <i class="material-icons" style="color:black">lock_outline</i>
@@ -186,7 +197,7 @@
             </div>
 
             <div class="form-group col-sm-6"
-                 ng-class="{ 'has-success' : regVm.regForm.rePassword.$valid , 'has-error' : regVm.regForm.rePassword.$dirty && (regVm.regForm.rePassword.$error || regVm.password !== regVm.rePassword) }">
+                 ng-class="{ 'has-success' : regVm.regForm.rePassword.$valid , 'has-error' : regVm.regForm.password.$dirty && (!regVm.regForm.password.$valid || regVm.password !== regVm.rePassword) }">
                 <div class="input-group">
                     <span class="input-group-addon">
                         <i class="material-icons" style="color:black">lock_outline</i>

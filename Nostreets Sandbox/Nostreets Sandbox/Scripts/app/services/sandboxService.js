@@ -48,7 +48,7 @@
 
         function _getEnums(enumType) {
             var url = "/api/config/enums/";
-            url += (Array.isArray(enumType)) ? enumType.join(",") : enumType;
+            url += Array.isArray(enumType) ? enumType.join(",") : enumType;
 
             return $http({
                 url: url,

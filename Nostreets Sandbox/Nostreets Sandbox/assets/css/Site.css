@@ -432,8 +432,8 @@ form > div {
     }
 
 .icon-xs {
-    width: 25px;
-    height: 25px;
+    width: 25px !important;
+    height: 25px !important;
 }
 
 .social_icons li a svg g > g > *, #homeCenter .social_icons li svg g > g > * {

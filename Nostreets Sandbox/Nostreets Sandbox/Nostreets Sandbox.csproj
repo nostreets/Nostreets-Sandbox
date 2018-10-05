@@ -241,10 +241,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="Classes\ConfigKeys.cs" />
     <Compile Include="App_Start\InterceptorConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WindsorResolver.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="App_Start\WindsorConfig.cs" />
@@ -310,8 +310,8 @@
     <Content Include="assets\css\theme-Rradilet.css" />
     <Content Include="assets\css\theme-vooBush.css" />
     <Content Include="assets\css\twilio-chat.css" />
-    <Content Include="assets\fonts\flexslider-icon.svg" />
-    <Content Include="assets\fonts\ionicons.svg" />
+    <Content Include="fonts\flexslider-icon.svg" />
+    <Content Include="fonts\ionicons.svg" />
     <Content Include="assets\img\1400-2000.png" />
     <Content Include="assets\img\1400x2000.jpg" />
     <Content Include="assets\img\1920x1280.jpg" />
@@ -1418,11 +1418,11 @@
     <Content Include="assets\svg\snapchat.svg" />
     <Content Include="assets\svg\twitter.svg" />
     <Content Include="favicon.ico" />
-    <Content Include="assets\fonts\glyphicons-halflings-regular.eot" />
-    <Content Include="assets\fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="assets\fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="assets\fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="assets\fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="Global.asax" />
     <Content Include="assets\css\Site.css" />
     <Content Include="node_modules\angular-animate\angular-animate.js" />
@@ -2755,12 +2755,12 @@
     <Content Include="Scripts\app\templates\cardPartials.html" />
     <Content Include="Scripts\app\templates\loginForm.html" />
     <Content Include="Scripts\app\templates\pastProjects.html" />
-    <Content Include="assets\fonts\flexslider-icon.eot" />
-    <Content Include="assets\fonts\flexslider-icon.ttf" />
-    <Content Include="assets\fonts\flexslider-icon.woff" />
-    <Content Include="assets\fonts\ionicons.eot" />
-    <Content Include="assets\fonts\ionicons.ttf" />
-    <Content Include="assets\fonts\ionicons.woff" />
+    <Content Include="fonts\flexslider-icon.eot" />
+    <Content Include="fonts\flexslider-icon.ttf" />
+    <Content Include="fonts\flexslider-icon.woff" />
+    <Content Include="fonts\ionicons.eot" />
+    <Content Include="fonts\ionicons.ttf" />
+    <Content Include="fonts\ionicons.woff" />
     <Content Include="assets\php\mailer.php" />
     <Content Include="assets\scss\theme-Dark.scss" />
     <Content Include="assets\scss\theme-FuchiStudio.scss" />
@@ -3130,7 +3130,9 @@
     <Content Include="node_modules\jquery-mobile\README.md" />
     <Content Include="package-lock.json" />
     <Content Include="Connections.config" />
-    <Content Include="Keys.config" />
+    <Content Include="Keys.config">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Properties\PublishProfiles\nostreets - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\nostreets - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\NostreetsSandbox - Web Deploy.pubxml" />

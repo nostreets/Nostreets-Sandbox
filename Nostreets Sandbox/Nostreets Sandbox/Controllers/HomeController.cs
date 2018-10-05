@@ -4,6 +4,7 @@ using Nostreets_Services.Interfaces.Services;
 using NostreetsInterceptor;
 using NostreetsExtensions.DataControl.Classes;
 using NostreetsExtensions.Extend.IOC;
+using NostreetsExtensions.DataControl.Enums;
 
 namespace Nostreets_Sandbox.Controllers
 {
@@ -24,9 +25,10 @@ namespace Nostreets_Sandbox.Controllers
             Token userToken = null;
             string outcome = null;
             bool hasVisited = false;
+            State state = State.Error;
 
             if (token != null && user != null)
-                userToken = _userService.ValidateToken(new TokenRequest { TokenId = token, UserId = user }, out outcome);
+                userToken = _userService.ValidateToken(new TokenRequest { TokenId = token, UserId = user }, out state, out outcome);
 
             if (_userService.SessionUser != null)
             {
@@ -40,15 +42,15 @@ namespace Nostreets_Sandbox.Controllers
 
 
 
-
-
             ViewBag.ServerModel = new
             {
                 user = sessionUser,
                 token = userToken,
                 tokenOutcome = outcome,
-                hasVisited
+                hasVisited,
+                state = state.ToString()
             };
+
 
             return View();
         }

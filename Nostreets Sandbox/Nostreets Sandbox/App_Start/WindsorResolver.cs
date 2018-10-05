@@ -1,5 +1,6 @@
 ﻿using Castle.MicroKernel.Lifestyle;
 using Castle.Windsor;
+using NostreetsExtensions.Extend.Basic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,8 +23,9 @@ namespace Nostreets_Sandbox.App_Start
             {
                 return _container.Resolve(serviceType);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ex.Message.LogInDebug();
                 return null;
             }
         }
@@ -37,8 +39,9 @@ namespace Nostreets_Sandbox.App_Start
                     result.Add(item);
                 return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ex.Message.LogInDebug();
                 return new List<object>();
             }
         }

@@ -1,18 +1,20 @@
-﻿using Nostreets_Services.Domain;
-using Nostreets_Services.Interfaces.Services;
-using NostreetsExtensions.DataControl.Classes;
-using NostreetsExtensions.DataControl.Enums;
-using NostreetsExtensions.Extend.Basic;
-using NostreetsExtensions.Extend.Web;
-using NostreetsExtensions.Interfaces;
-using NostreetsExtensions.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Configuration;
+
+using Nostreets_Services.Domain;
+using Nostreets_Services.Interfaces.Services;
+
+using NostreetsExtensions.DataControl.Classes;
+using NostreetsExtensions.DataControl.Enums;
+using NostreetsExtensions.Extend.Basic;
+using NostreetsExtensions.Extend.Web;
+using NostreetsExtensions.Interfaces;
+using NostreetsExtensions.Utilities;
 
 namespace Nostreets_Services.Services.Database
 {
@@ -28,12 +30,10 @@ namespace Nostreets_Services.Services.Database
             _emailSrv = emailSrv;
             _userDBSrv = userDBSrv;
             _tokenDBSrv = tokenDBSrv;
-
         }
 
         private HttpContext _context = null;
         private IEmailService _emailSrv = null;
-        private IDBService<Error> _errorLog = null;
         private IDBService<Token, string> _tokenDBSrv = null;
         private IDBService<User, string> _userDBSrv = null;
         public string RequestIp => _context.GetIPAddress();
@@ -42,7 +42,7 @@ namespace Nostreets_Services.Services.Database
         private string DecryptPassword(string encyptedPassword)
         {
             string decryptedPassword = encyptedPassword.Decrypt(WebConfigurationManager.AppSettings["CryptoKey"]);
-            decryptedPassword.Log();
+            decryptedPassword.LogInDebug();
 
             return decryptedPassword;
         }
@@ -55,17 +55,14 @@ namespace Nostreets_Services.Services.Database
                 User _sessionUser = null;
                 string userId = CacheManager.Get<string>(ip);
 
-
                 if (userId != null)
                     if (CacheManager.Contains(userId))
                         _sessionUser = CacheManager.Get<User>(userId);
                     else
                         _sessionUser = _userDBSrv.Get(CacheManager.Get<string>(ip));
 
-
                 if (_sessionUser != null && !CacheManager.Contains(_sessionUser.Id))
                     CacheManager.Set(_sessionUser.Id, _sessionUser, 120);
-
 
                 return _sessionUser;
             }
@@ -73,8 +70,8 @@ namespace Nostreets_Services.Services.Database
             {
                 throw ex;
             }
-
         }
+
         private void UpdateCache(User user)
         {
             if (RequestIp != null && !CacheManager.Contains(RequestIp))
@@ -82,7 +79,6 @@ namespace Nostreets_Services.Services.Database
 
             CacheManager.Set(user.Id, user);
         }
-
 
         public bool ChangeUserPassword(string newPassword, string oldPassword)
         {
@@ -156,18 +152,15 @@ namespace Nostreets_Services.Services.Database
                     Name = user.UserName + "'s Password Reset Token",
                     DateCreated = DateTime.Now,
                     DateModified = DateTime.Now,
-                    Type = TokenType.PasswordReset
+                    Purpose = TokenPurpose.PasswordReset
                 };
                 user.Password = token.Value;
 
-
                 token.Id = Insert(token);
-
 
                 string html = HttpContext.Current.Server.MapPath("\\assets\\emails\\ForgotPasswordEmail.html").ReadFile()
                                                  .Replace("{url}", HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)
                                                  + "?token={0}&user={1}".FormatString(token.Id, user.Id));
-
 
                 if (!await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
                               , user.Contact.PrimaryEmail
@@ -176,7 +169,6 @@ namespace Nostreets_Services.Services.Database
                               , html))
                     throw new Exception("Forgot Password Email did not send...");
             }
-
         }
 
         public List<User> GetAll()
@@ -195,20 +187,14 @@ namespace Nostreets_Services.Services.Database
             User user = SessionUser ?? GetByUsername(username);
             bool hasIP = (user == null) ? false : user.Settings.IPAddresses.Contains(RequestIp);
 
-
-
             if (user == null)
                 failureReason = "User doesn't exist...";
-
             else if (!ValidatePassword(user.Password, password))
                 failureReason = "Invalid password for " + username + "...";
-
             else if (!user.Settings.HasVaildatedEmail)
                 failureReason = username + "'s email is not validated...";
-
             else if (user.Settings.ValidateIPBeforeLogin && !hasIP)
                 failureReason = username + " does not authorize this computer for login...";
-
             else if (user.Settings.TwoFactorAuthEnabled)
             {
                 Token token = new Token
@@ -216,13 +202,12 @@ namespace Nostreets_Services.Services.Database
                     ExpirationDate = DateTime.Now.AddHours(1),
                     ModifiedUserId = user.Id,
                     UserId = user.Id,
-                    Type = TokenType.TwoFactorAuth,
+                    Purpose = TokenPurpose.TwoFactorAuth,
                     Value = new Random().RandomString(6),
                     Name = user.UserName + "s' TFAuth Code"
                 };
 
                 failureReason = "2auth" + Insert(token);
-
 
                 if (user.Settings.TFAuthByPhone)
                 {
@@ -233,17 +218,14 @@ namespace Nostreets_Services.Services.Database
                     string html = HttpContext.Current.Server.MapPath("\\assets\\emails\\TFAuthEmail.html").ReadFile()
                                                             .Replace("{code}", token.Value);
 
-
                     if (!await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
                               , user.Contact.PrimaryEmail
                               , "Login Code to Nostreets Sandbox"
                               , "Login Code to Nostreets Sandbox"
                               , html))
                         throw new Exception("Login Code Email Did Not Send...");
-
                 }
             }
-
 
             if (failureReason == null)
                 user.LastLogIn = DateTime.Now;
@@ -259,7 +241,6 @@ namespace Nostreets_Services.Services.Database
             };
             user.Password = user.Password.Encrypt(WebConfigurationManager.AppSettings["CryptoKey"]);
             user.Id = _userDBSrv.Insert(user);
-
 
             if (!CacheManager.Contains(RequestIp))
                 CacheManager.Set(RequestIp, user.Id);
@@ -289,7 +270,6 @@ namespace Nostreets_Services.Services.Database
                     tokenCD = failureReason.Substring(5);
                 else
                     throw new Exception(failureReason);
-
             else if (user != null)
             {
                 if (!user.Settings.IPAddresses.Contains(RequestIp))
@@ -339,7 +319,7 @@ namespace Nostreets_Services.Services.Database
                 UserId = user.Id,
                 ModifiedUserId = user.Id,
                 Name = user.UserName + "'s Registion Email Token",
-                Type = TokenType.EmailValidtion
+                Purpose = TokenPurpose.EmailValidtion
             };
 
             token.Id = Insert(token);
@@ -348,13 +328,12 @@ namespace Nostreets_Services.Services.Database
                                      .Replace("{url}", HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)
                                      + "?token={0}&user={1}".FormatString(token.Id, user.Id));
 
-
-            if (!await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
-                              , user.Contact.PrimaryEmail
-                              , "Nostreets Sandbox Email Validation"
-                              , "Nostreets Sandbox Email Validation"
-                              , html))
-                throw new Exception("Email for registation not sent...");
+            await _emailSrv.SendAsync(
+                            "no-reply@nostreetssolutions.com"
+                          , user.Contact.PrimaryEmail
+                          , "Nostreets Sandbox Email Validation"
+                          , "Nostreets Sandbox Email Validation"
+                          , html);
 
             return user.Id;
         }
@@ -365,8 +344,7 @@ namespace Nostreets_Services.Services.Database
 
             _tokenDBSrv.Delete(
                 _tokenDBSrv.Where(
-                    a => a.Type == TokenType.EmailValidtion && a.UserId == user.Id).Select(a => a.Id));
-
+                    a => a.Purpose == TokenPurpose.EmailValidtion && a.UserId == user.Id).Select(a => a.Id));
 
             Token token = new Token
             {
@@ -375,7 +353,7 @@ namespace Nostreets_Services.Services.Database
                 UserId = user.Id,
                 ModifiedUserId = user.Id,
                 Name = user.UserName + "'s Registion Email Token",
-                Type = TokenType.EmailValidtion
+                Purpose = TokenPurpose.EmailValidtion
             };
             token.Id = Insert(token);
 
@@ -383,19 +361,16 @@ namespace Nostreets_Services.Services.Database
                                      .Replace("{url}", HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)
                                      + "?token={0}&user={1}".FormatString(token.Id, user.Id));
 
-
             if (!await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
                               , user.Contact.PrimaryEmail
                               , "Nostreets Sandbox Email Validation"
                               , "Nostreets Sandbox Email Validation"
                               , html))
                 throw new Exception("Email for registation not sent...");
-
         }
 
         public void Update(User user, bool encryptPassword = false)
         {
-
             if (encryptPassword)
                 user.Password = user.Password.Encrypt(WebConfigurationManager.AppSettings["CryptoKey"]);
 
@@ -409,34 +384,43 @@ namespace Nostreets_Services.Services.Database
             return DecryptPassword(encyptedPassword) == password ? true : false;
         }
 
-        public Token ValidateToken(TokenRequest request, out string output)
+        public Token ValidateToken(TokenRequest request, out State state, out string output)
         {
             output = "";
+            state = State.Error;
+
             Token token = _tokenDBSrv.Get(request.TokenId);
             bool updateUser = false;
 
-
             if (token == null)
+            {
                 output = "Token does not exist...";
-
+                state = State.Question;
+            }
             else if (token.ExpirationDate < DateTime.Now)
+            {
                 output = "Token is expired...";
-
+                state = State.Error;
+            }
             else if (token.IsDeleted)
+            {
                 output = "Token no longer exists...";
-
+                state = State.Error;
+            }
             else if (request.UserId != null && token.UserId != request.UserId)
+            {
                 output = "Token does not belong to specified user...";
-
+                state = State.Error;
+            }
             else
             {
+                state = State.Success;
                 User user = SessionUser ?? _userDBSrv.Get(request.UserId ?? token.UserId);
                 token.DateModified = DateTime.Now;
 
-
-                switch (token.Type)
+                switch (token.Purpose)
                 {
-                    case TokenType.EmailValidtion:
+                    case TokenPurpose.EmailValidtion:
                         user.Settings.HasVaildatedEmail = true;
                         user.Settings.IsLockedOut = false;
                         token.IsValidated = true;
@@ -445,14 +429,14 @@ namespace Nostreets_Services.Services.Database
                         updateUser = true;
                         break;
 
-                    case TokenType.PasswordReset:
+                    case TokenPurpose.PasswordReset:
                         EmailNewPasswordAsync(user, token.Value);
                         token.IsValidated = true;
                         token.IsDeleted = true;
                         output = "New Password Was Emailed...";
                         break;
 
-                    case TokenType.PhoneValidtion:
+                    case TokenPurpose.PhoneValidtion:
                         user.Settings.HasVaildatedPhone = true;
                         token.IsValidated = true;
                         token.IsDeleted = true;
@@ -460,20 +444,18 @@ namespace Nostreets_Services.Services.Database
                         updateUser = true;
                         break;
 
-                    case TokenType.TwoFactorAuth:
+                    case TokenPurpose.TwoFactorAuth:
                         token.IsValidated = (token.Value == request.Code) ? true : false;
                         token.IsDeleted = (token.Value == request.Code) ? true : false;
                         output = "Code Validated...";
                         updateUser = true;
                         break;
-
                 }
 
                 _tokenDBSrv.Update(token);
 
                 if (updateUser)
                     Update(user);
-
             }
 
             return token;
@@ -491,6 +473,7 @@ namespace Nostreets_Services.Services.Database
     }
 
     #region Legacy
+
     public class UserDBContext : DbContext
     {
         public UserDBContext()
@@ -523,7 +506,7 @@ namespace Nostreets_Services.Services.Database
             _context = new UserDBContext(connectionKey);
         }
 
-        UserDBContext _context = null;
+        private UserDBContext _context = null;
 
         public bool CheckIfUserExist(string username)
         {
@@ -538,7 +521,6 @@ namespace Nostreets_Services.Services.Database
             _context.Users.Remove(user);
 
             if (_context.SaveChanges() == 0) { throw new Exception("DB changes not saved!"); }
-
         }
 
         public User Get(string id)
@@ -557,6 +539,7 @@ namespace Nostreets_Services.Services.Database
             User user = _context.Users.FirstOrDefault(a => a.UserName == username);
             return user;
         }
+
         public string Insert(User model)
         {
             model.Id = Guid.NewGuid().ToString();
@@ -573,7 +556,6 @@ namespace Nostreets_Services.Services.Database
             targetedUser = model;
 
             if (_context.SaveChanges() == 0) { throw new Exception("DB changes not saved!"); }
-
         }
 
         public IEnumerable<User> Where(Func<User, bool> predicate)
@@ -581,5 +563,6 @@ namespace Nostreets_Services.Services.Database
             return GetAll().Where(predicate);
         }
     }
-    #endregion
+
+    #endregion Legacy
 }

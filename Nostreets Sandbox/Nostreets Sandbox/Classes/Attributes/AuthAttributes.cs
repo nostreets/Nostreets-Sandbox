@@ -41,7 +41,7 @@ namespace Nostreets_Sandbox.Classes.Attributes
                 {
                     a.Add(new SqlParameter("key", authKey));
                 },
-                (reader, set) => { isTrue = DataMapper<bool>.Instance.MapToObject(reader); });
+                (reader, set) => { isTrue = DataMapper.MapToObject<bool>(reader); });
             return isTrue;
         }
 

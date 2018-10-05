@@ -1,39 +1,38 @@
-﻿using Reg = Castle.MicroKernel.Registration;
+﻿using System;
+using System.Collections.Generic;
+using System.Web;
+using System.Web.Http;
+using System.Web.Mvc;
+using Castle.MicroKernel;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using NostreetsExtensions.Utilities;
 using Castle.Windsor.Installer;
-using NostreetsExtensions.Interfaces;
-using NostreetsORM;
+using Nostreets_Sandbox.Classes;
+using Nostreets_Services.Domain;
 using Nostreets_Services.Domain.Bills;
+using Nostreets_Services.Domain.Charts;
 using Nostreets_Services.Interfaces.Services;
+using Nostreets_Services.Models.Request;
 using Nostreets_Services.Services.Database;
 using Nostreets_Services.Services.Email;
-using System.Web.Configuration;
-using System.Web.Mvc;
-using System.Web.Http;
-using Nostreets_Services.Domain;
-using Nostreets_Services.Domain.Charts;
-using System.Collections.Generic;
-using Nostreets_Services.Models.Request;
-using System.Web;
 using NostreetsEntities;
 using NostreetsExtensions.DataControl.Classes;
+using NostreetsExtensions.Interfaces;
+using NostreetsExtensions.Utilities;
+using NostreetsORM;
+using Reg = Castle.MicroKernel.Registration;
 
 namespace Nostreets_Sandbox.App_Start
 {
     public class WindsorConfig : Disposable
     {
-
         public static void RegisterInterfaces(HttpConfiguration config)
         {
             WindsorContainer container = new WindsorContainer();
             container.Install(FromAssembly.This());
 
-
             DependencyResolver.SetResolver(new WindsorResolver(container));
             config.DependencyResolver = new WindsorResolver(container);
-
 
             _container = container;
         }
@@ -44,61 +43,48 @@ namespace Nostreets_Sandbox.App_Start
         }
 
         private static WindsorContainer _container;
-
     }
 
     public class RepositoriesInstaller : Reg.IWindsorInstaller
     {
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
+            #region ORMOptions Func
+            ORMOptions ormOptions(IKernel k) =>
+                   new ORMOptions
+                   {
+                       ConnectionKey = ConfigKeys.DBConnectionKey,
+                       ErrorLog = k.Resolve<IDBService<Error>>(),
+                       WipeDB = false,
+                       NullLock = false
+                   }; 
+            #endregion
+
             container.Register(
-              
+
                 Reg.Component.For(typeof(IDBService<Error>)).ImplementedBy(typeof(EFDBService<Error>)).LifestyleSingleton()
                     .DependsOn((k, param) =>
                      {
-#if DEBUG
-                         param["connectionKey"] = "DefaultConnection";
-#else
-                         param["connectionKey"] = "GoogleConnection";
-#endif
+                         param["connectionKey"] = ConfigKeys.DBConnectionKey;
                      }),
 
                 Reg.Component.For(typeof(IDBService<>)).ImplementedBy(typeof(DBService<>)).LifestyleSingleton()
                     .DependsOn((k, param) =>
                      {
-#if DEBUG
-                         param["connectionKey"] = "DefaultConnection";
-                         param["errorLog"] = k.Resolve<IDBService<Error>>();
-#else
-                         param["connectionKey"] = "GoogleConnection";
-                         param["errorLog"] = k.Resolve<IDBService<Error>>();
-#endif
+                         param["options"] = ormOptions(k);
                      }),
 
                  Reg.Component.For(typeof(IDBService<,>)).ImplementedBy(typeof(DBService<,>)).LifestyleSingleton()
-                     .DependsOn((k, param) =>
-                         {
-#if DEBUG
-                         param["connectionKey"] = "DefaultConnection";
-                         param["errorLog"] = k.Resolve<IDBService<Error>>();
-#else
-                         param["connectionKey"] = "GoogleConnection";
-                         param["errorLog"] = k.Resolve<IDBService<Error>>();
-#endif
-                         }),
+                    .DependsOn((k, param) =>
+                    {
+                        param["options"] = ormOptions(k);
+                    }),
 
                  Reg.Component.For(typeof(IDBService<,,,>)).ImplementedBy(typeof(DBService<,,,>)).LifestyleSingleton()
                     .DependsOn((k, param) =>
                      {
-#if DEBUG
-                         param["connectionKey"] = "DefaultConnection";
-                         param["errorLog"] = k.Resolve<IDBService<Error>>();
-#else
-                         param["connectionKey"] = "GoogleConnection";
-                         param["errorLog"] = k.Resolve<IDBService<Error>>();
-#endif
+                         param["options"] = ormOptions(k);
                      }),
-
 
                  Reg.Component.For<IBillService>().ImplementedBy<BillService>().LifestyleSingleton()
                      .DependsOn((k, param) =>
@@ -117,7 +103,7 @@ namespace Nostreets_Sandbox.App_Start
                  Reg.Component.For<IEmailService>().ImplementedBy<SendGridService>().LifestyleSingleton()
                      .DependsOn((k, param) =>
                      {
-                         param["apiKey"] = WebConfigurationManager.AppSettings["SendGrid.ApiKey"];
+                         param["apiKey"] = ConfigKeys.SendGridApiKey;
                          param["errorLog"] = k.Resolve<IDBService<Error>>();
                      }),
 
@@ -130,8 +116,6 @@ namespace Nostreets_Sandbox.App_Start
                          param["tokenDBSrv"] = k.Resolve<IDBService<Token, string>>();
                      })
              );
-
         }
     }
-
 }

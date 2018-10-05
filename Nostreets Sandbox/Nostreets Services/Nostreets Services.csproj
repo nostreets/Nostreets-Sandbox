@@ -184,7 +184,7 @@
     <Compile Include="Services\Database\BillService.cs" />
     <Compile Include="Services\Database\ChartsService.cs" />
     <Compile Include="Domain\Charts\Chart.cs" />
-    <Compile Include="Enums\ChartTypeId.cs" />
+    <Compile Include="Enums\Chart.cs" />
     <Compile Include="Interfaces\Services\IEmailService.cs" />
     <Compile Include="Models\PagedList.cs" />
     <Compile Include="Models\Requests\ChartAddRequest.cs" />

@@ -1,12 +1,15 @@
-﻿using Nostreets_Sandbox.App_Start;
-using NostreetsEntities;
-using NostreetsExtensions.DataControl.Classes;
-using System.Data.Entity;
-using System.Web;
+﻿using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+
+using Nostreets_Sandbox.App_Start;
+using Nostreets_Sandbox.Classes;
+
+using NostreetsEntities;
+
+using NostreetsExtensions.DataControl.Classes;
 
 namespace Nostreets_Sandbox
 {
@@ -31,8 +34,7 @@ namespace Nostreets_Sandbox
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             //+EF Config
-            //Database.SetInitializer(new DropCreateDatabaseIfModelChanges<EFDBContext<Error>>());
-
+            EFDBService<Error>.Migrate(ConfigKeys.DBConnectionString);
         }
 
         protected void Application_End()

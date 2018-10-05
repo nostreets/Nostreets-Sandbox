@@ -336,6 +336,9 @@ var page = {
 
             return result;
         }
+    },
+    siteOptions: {
+        billManagerChartType : "Google"
     }
 };
 

@@ -1,11 +1,11 @@
 ﻿using Nostreets_Services.Enums;
+using NostreetsExtensions.DataControl.Classes;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Nostreets_Services.Domain.Charts
 {
-    public class ChartistChart<T>
+    public class ChartistChart<T> : DBObject
     {
         public int ChartId { get; set; }
         public ChartType TypeId { get; set; }
@@ -13,9 +13,6 @@ namespace Nostreets_Services.Domain.Charts
         public List<T> Series { get; set; }
         public List<string> Legend { get; set; }
         public List<string> Labels { get; set; }
-        public DateTime DateCreated { get; set; }
-        public DateTime DateModified { get; set; }
-        public string UserId { get; set; }
 
         public Dictionary<string, List<T>> GetSeriesWithKey()
         {

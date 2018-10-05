@@ -1,19 +1,4 @@
-﻿using Nostreets_Sandbox.App_Start;
-using Nostreets_Services.Domain;
-using Nostreets_Services.Domain.Bills;
-using Nostreets_Services.Domain.Cards;
-using Nostreets_Services.Domain.Charts;
-using Nostreets_Services.Enums;
-using Nostreets_Services.Interfaces.Services;
-using Nostreets_Services.Models.Request;
-using NostreetsExtensions.DataControl.Classes;
-using NostreetsExtensions.Extend.Basic;
-using NostreetsExtensions.Extend.IOC;
-using NostreetsExtensions.Extend.Web;
-using NostreetsExtensions.Interfaces;
-using NostreetsInterceptor;
-using NostreetsRouter.Models.Responses;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,6 +7,28 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+
+using Nostreets_Sandbox.App_Start;
+
+using Nostreets_Services.Domain;
+using Nostreets_Services.Domain.Bills;
+using Nostreets_Services.Domain.Cards;
+using Nostreets_Services.Domain.Charts;
+using Nostreets_Services.Enums;
+using Nostreets_Services.Interfaces.Services;
+using Nostreets_Services.Models.Request;
+
+using NostreetsExtensions.DataControl.Classes;
+using NostreetsExtensions.DataControl.Enums;
+using NostreetsExtensions.Extend.Basic;
+using NostreetsExtensions.Extend.IOC;
+using NostreetsExtensions.Extend.Web;
+using NostreetsExtensions.Interfaces;
+using NostreetsExtensions.Utilities;
+
+using NostreetsInterceptor;
+
+using NostreetsRouter.Models.Responses;
 
 namespace Nostreets_Sandbox.Controllers.Api
 {
@@ -62,6 +69,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
             return result;
         }
+
         #endregion Private Members
 
         #region User Service Endpoints
@@ -183,6 +191,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 return ErrorResponse(ex);
             }
         }
+
         [HttpGet, Route("user/resendValidationEmail")]
         public HttpResponseMessage ResendValidationEmail(string username)
         {
@@ -234,12 +243,14 @@ namespace Nostreets_Sandbox.Controllers.Api
                 return ErrorResponse(ex);
             }
         }
+
         [HttpGet, Route("user/tfauth")]
         public HttpResponseMessage ValidateTFAuthCode(string id, string code)
         {
             try
             {
-                Token token = _userSrv.ValidateToken(new TokenRequest { TokenId = id, Code = code }, out string o);
+                Token token = _userSrv.ValidateToken(new TokenRequest { TokenId = id, Code = code }, out State state, out string o);
+
                 if (!token.IsValidated)
                     throw new Exception("Code is invalid...");
 
@@ -250,6 +261,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 return ErrorResponse(ex);
             }
         }
+
         #endregion User Service Endpoints
 
         #region Bill Service Endpoints
@@ -315,6 +327,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 return ErrorResponse(ex);
             }
         }
+
         [HttpGet, Route("bill/combined/chart"), Intercept("LoggedIn")]
         public HttpResponseMessage GetCombinedChart(DateTime? startDate = null, DateTime? endDate = null, ScheduleTypes chartSchedule = ScheduleTypes.Any)
         {
@@ -378,6 +391,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 return ErrorResponse(ex);
             }
         }
+
         [HttpGet, Route("bill/income/chart"), Intercept("LoggedIn")]
         public HttpResponseMessage GetIncomeChart(DateTime? startDate = null, DateTime? endDate = null, ScheduleTypes chartSchedule = ScheduleTypes.Any)
         {
@@ -393,6 +407,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 return ErrorResponse(ex);
             }
         }
+
         [HttpPost, Route("bill/expenses"), Intercept("LoggedIn")]
         public HttpResponseMessage InsertExpense(Expense expense)
         {
@@ -446,6 +461,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 return ErrorResponse(ex);
             }
         }
+
         [HttpPut, Intercept("LoggedIn"), Route("bill/expenses")]
         public HttpResponseMessage UpdateExpense(Expense expense)
         {
@@ -497,6 +513,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 return ErrorResponse(ex);
             }
         }
+
         #endregion Bill Service Endpoints
 
         #region Card Service Endpoints
@@ -607,6 +624,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 return ErrorResponse(ex);
             }
         }
+
         #endregion Card Service Endpoints
 
         #region Chart Service Endpoints
@@ -844,6 +862,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 return ErrorResponse(ex);
             }
         }
+
         #endregion Chart Service Endpoints
 
         #region Other Endpoints
@@ -882,54 +901,45 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Route("config/enums/{enumType}")]
+        [Route("config/enums/{enumString}")]
         [HttpGet]
-        public HttpResponseMessage GetEnums(string enumType)
+        public HttpResponseMessage GetEnums(string enumString)
         {
             try
             {
-                string[] enumTypes = enumType.Split(',');
+                string[] enumTypes = enumString.Split(',');
                 ItemsResponse<string, Dictionary<int, string>> response = null;
                 Dictionary<string, Dictionary<int, string>> result = new Dictionary<string, Dictionary<int, string>>();
 
-                if (enumTypes.FirstOrDefault(a => a == "income") != null)
+                foreach (string _enum in enumTypes)
                 {
-                    var types = typeof(IncomeType).ToDictionary<IncomeType>();
-                    for (int i = 0; i < types.Count; i++)
-                    {
-                        types[i] = types[i].SafeName();
-                    }
-                    result.Add("income", types);
-                }
+                    #region Parse N Search For Enum
 
-                if (enumTypes.FirstOrDefault(a => a == "expense") != null)
-                {
-                    var types = typeof(ExpenseType).ToDictionary<ExpenseType>();
-                    for (int i = 0; i < types.Count; i++)
-                    {
-                        types[i] = types[i].SafeName();
-                    }
-                    result.Add("expense", types);
-                }
+                    Type enumType = null;
+                    string _enumCamel = _enum[0].ToUpperCase().Append(_enum.Where((a, b) => b > 0).ToArray()),
+                           _enumCamelWithType = _enum[0].ToUpperCase().Append(_enum.Where((a, b) => b > 0).ToArray()) + "Type",
+                           _enumCamelWithTypePlural = _enum[0].ToUpperCase().Append(_enum.Where((a, b) => b > 0).ToArray()) + "Types";
 
-                if (enumTypes.FirstOrDefault(a => a == "schedule") != null)
-                {
-                    var types = typeof(ScheduleTypes).ToDictionary<ScheduleTypes>();
-                    for (int i = 0; i < types.Count; i++)
-                    {
-                        types[i] = types[i].SafeName();
-                    }
-                    result.Add("schedule", types);
-                }
+                    enumType = (Type)_enum.ScanAssembliesForObject("Nostreets", ClassTypes.Type, a => a.IsEnum);
+                    if (enumType == null)
+                        enumType = (Type)_enumCamel.ScanAssembliesForObject("Nostreets", ClassTypes.Type, a => a.IsEnum);
+                    if (enumType == null)
+                        enumType = (Type)_enumCamelWithType.ScanAssembliesForObject("Nostreets", ClassTypes.Type, a => a.IsEnum);
+                    if (enumType == null)
+                        enumType = (Type)_enumCamelWithTypePlural.ScanAssembliesForObject("Nostreets", ClassTypes.Type, a => a.IsEnum);
 
-                if (enumTypes.FirstOrDefault(a => a == "chart") != null)
-                {
-                    var types = typeof(ChartType).ToDictionary<ChartType>();
-                    for (int i = 0; i < types.Count; i++)
+                    #endregion Parse N Search For Enum
+
+                    if (enumType != null)
                     {
-                        types[i] = types[i].SafeName();
+                        Dictionary<int, string> types = enumType.EnumToDictionary(),
+                                                safeTypes = new Dictionary<int, string>();
+
+                        foreach (var type in types)
+                            safeTypes.Add(type.Key, type.Value.SafeName());
+
+                        result.Add(_enum, types);
                     }
-                    result.Add("chart", types);
                 }
 
                 response = new ItemsResponse<string, Dictionary<int, string>>(result);
@@ -990,6 +1000,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                 return ErrorResponse(ex);
             }
         }
+
         #endregion Other Endpoints
     }
 }

@@ -123,7 +123,7 @@ namespace Nostreets_Sandbox
             );
 
 
-            //+Theme Scripts
+            //+THEME SCRIPTS
             bundles.Add(
                 new ScriptBundle("~/themeScripts").Include(
                     "~/assets/js/animsition.min.js",
