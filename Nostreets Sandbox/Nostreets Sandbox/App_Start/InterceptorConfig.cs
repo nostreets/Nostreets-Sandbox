@@ -28,6 +28,7 @@ namespace Nostreets_Sandbox.App_Start
                 NotLoggedIn(app); 
         }
 
+
         void NotLoggedIn(HttpApplication app)
         {
             app.Response.SetCookie(new HttpCookie("loggedIn", "false"));

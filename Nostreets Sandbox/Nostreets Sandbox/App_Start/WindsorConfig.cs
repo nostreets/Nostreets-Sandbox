@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -57,10 +56,11 @@ namespace Nostreets_Sandbox.App_Start
                        ErrorLog = k.Resolve<IDBService<Error>>(),
                        WipeDB = false,
                        NullLock = false
-                   }; 
+                   };
             #endregion
 
             container.Register(
+
 
                 Reg.Component.For(typeof(IDBService<Error>)).ImplementedBy(typeof(EFDBService<Error>)).LifestyleSingleton()
                     .DependsOn((k, param) =>
@@ -96,8 +96,8 @@ namespace Nostreets_Sandbox.App_Start
                  Reg.Component.For<IChartService>().ImplementedBy<ChartsService>().LifestyleSingleton()
                      .DependsOn((k, param) =>
                      {
-                         param["charDBtSrv"] = k.Resolve<IDBService<ChartistChart<List<int>>, int, ChartAddRequest, ChartUpdateRequest>>();
-                         param["pieDBChartSrv"] = k.Resolve<IDBService<ChartistChart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>>>();
+                         param["charDBtSrv"] = k.Resolve<IDBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest>>();
+                         param["pieDBChartSrv"] = k.Resolve<IDBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>>>();
                      }),
 
                  Reg.Component.For<IEmailService>().ImplementedBy<SendGridService>().LifestyleSingleton()

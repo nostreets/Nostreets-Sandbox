@@ -7,9 +7,9 @@ namespace Nostreets_Sandbox
     {
         public static void Register(HttpConfiguration config)
         {
-            // Web API configuration and services
+            //Web API configuration and services
 
-            // Web API routes
+            //+Web API routes
             config.MapHttpAttributeRoutes();
 
             config.Routes.MapHttpRoute(
@@ -18,7 +18,7 @@ namespace Nostreets_Sandbox
                 defaults: new { id = RouteParameter.Optional }
             );
 
-            /*GlobalConfiguration.Configuration*/
+            //+GlobalConfiguration.Configuration
             config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
 
             //var container = App_Start.UnityConfig.GetContainer();

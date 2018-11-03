@@ -3,13 +3,13 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-
 using Nostreets_Sandbox.App_Start;
 using Nostreets_Sandbox.Classes;
 
 using NostreetsEntities;
 
 using NostreetsExtensions.DataControl.Classes;
+using HF = Hangfire;
 
 namespace Nostreets_Sandbox
 {
@@ -35,11 +35,19 @@ namespace Nostreets_Sandbox
 
             //+EF Config
             EFDBService<Error>.Migrate(ConfigKeys.DBConnectionString);
+
+            //+Hangfire
+            //HF.RecurringJob.AddOrUpdate(
+            //    () => { }
+            //    , HF.Cron.Daily);
+
+
         }
 
         protected void Application_End()
         {
             WindsorConfig.GetContainer().Dispose();
         }
+        
     }
 }

@@ -13,7 +13,7 @@ using System.Web.Configuration;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 
-namespace Nostreets_Sandbox.Classes.Attributes
+namespace Nostreets_Sandbox.Classes
 {
     public class AuthByKeyAttribute : AuthorizeAttribute
     {

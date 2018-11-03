@@ -15,8 +15,8 @@ namespace Nostreets_Services.Services.Database
         #region Public Constructors
 
         public ChartsService(
-              IDBService<ChartistChart<List<int>>, int, ChartAddRequest, ChartUpdateRequest> chartDBSrv
-            , IDBService<ChartistChart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>> pieChartDBSrv)
+              IDBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest> chartDBSrv
+            , IDBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>> pieChartDBSrv)
         {
             _chartSrv = chartDBSrv;
             _pieChartSrv = pieChartDBSrv;
@@ -27,8 +27,8 @@ namespace Nostreets_Services.Services.Database
 
         #region Private Fields
 
-        IDBService<ChartistChart<List<int>>, int, ChartAddRequest, ChartUpdateRequest> _chartSrv = null;
-        IDBService<ChartistChart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>> _pieChartSrv = null;
+        IDBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest> _chartSrv = null;
+        IDBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>> _pieChartSrv = null;
 
         #endregion Private Fields
 
@@ -39,21 +39,21 @@ namespace Nostreets_Services.Services.Database
             _chartSrv.Delete(id);
         }
 
-        public ChartistChart<object> Get(int id)
+        public Chart<object> Get(int id)
         {
-            return (ChartistChart<object>)typeof(ChartistChart<object>).Cast(_chartSrv.Get(id));
+            return (Chart<object>)typeof(Chart<object>).Cast(_chartSrv.Get(id));
         }
 
-        public List<ChartistChart<object>> GetAll()
+        public List<Chart<object>> GetAll()
         {
-            List<ChartistChart<object>> result = null;
+            List<Chart<object>> result = null;
             var charts = _chartSrv.GetAll().Where(a => a.Series != null);
             var pieCharts = _pieChartSrv.GetAll().Where(a => a.Series != null);
 
             if (pieCharts == null && charts != null)
-                foreach (ChartistChart<List<int>> c in charts)
+                foreach (Chart<List<int>> c in charts)
                 {
-                    ChartistChart<object> newChart = new ChartistChart<object>
+                    Chart<object> newChart = new Chart<object>
                     {
                         ChartId = c.ChartId,
                         DateCreated = c.DateCreated,
@@ -67,13 +67,13 @@ namespace Nostreets_Services.Services.Database
                     newChart.SetPropertyValue("Series", c.Series.Cast(typeof(object)));
 
                     if (result == null)
-                        result = new List<ChartistChart<object>>();
+                        result = new List<Chart<object>>();
                     result.Add(newChart);
                 }
             else if (charts == null && pieCharts != null)
-                foreach (ChartistChart<int> p in pieCharts)
+                foreach (Chart<int> p in pieCharts)
                 {
-                    ChartistChart<object> newChart = new ChartistChart<object>
+                    Chart<object> newChart = new Chart<object>
                     {
                         ChartId = p.ChartId,
                         DateCreated = p.DateCreated,
@@ -87,14 +87,14 @@ namespace Nostreets_Services.Services.Database
                     newChart.SetPropertyValue("Series", p.Series.Cast(typeof(object)));
 
                     if (result == null)
-                        result = new List<ChartistChart<object>>();
+                        result = new List<Chart<object>>();
                     result.Add(newChart);
                 }
             else if (charts != null && pieCharts != null)
             {
-                foreach (ChartistChart<int> p in pieCharts)
+                foreach (Chart<int> p in pieCharts)
                 {
-                    ChartistChart<object> newChart = new ChartistChart<object>
+                    Chart<object> newChart = new Chart<object>
                     {
                         ChartId = p.ChartId,
                         DateCreated = p.DateCreated,
@@ -108,12 +108,12 @@ namespace Nostreets_Services.Services.Database
                     newChart.SetPropertyValue("Series", p.Series.Cast(typeof(object)));
 
                     if (result == null)
-                        result = new List<ChartistChart<object>>();
+                        result = new List<Chart<object>>();
                     result.Add(newChart);
                 }
-                foreach (ChartistChart<List<int>> c in charts)
+                foreach (Chart<List<int>> c in charts)
                 {
-                    ChartistChart<object> newChart = new ChartistChart<object>
+                    Chart<object> newChart = new Chart<object>
                     {
                         ChartId = c.ChartId,
                         DateCreated = c.DateCreated,
@@ -127,7 +127,7 @@ namespace Nostreets_Services.Services.Database
                     newChart.SetPropertyValue("Series", c.Series.Cast(typeof(object)));
 
                     if (result == null)
-                        result = new List<ChartistChart<object>>();
+                        result = new List<Chart<object>>();
                     result.Add(newChart);
                 }
             }
@@ -137,52 +137,52 @@ namespace Nostreets_Services.Services.Database
             return result;
         }
 
-        public int Insert(ChartistChart<List<int>> model)
+        public int Insert(Chart<List<int>> model)
         {
             return _chartSrv.Insert(model);
         }
 
-        public int Insert(ChartAddRequest model, Converter<ChartAddRequest, ChartistChart<List<int>>> converter)
+        public int Insert(ChartAddRequest model, Converter<ChartAddRequest, Chart<List<int>>> converter)
         {
             return _chartSrv.Insert(converter(model));
         }
 
-        public int Insert(ChartistChart<int> model)
+        public int Insert(Chart<int> model)
         {
             return _pieChartSrv.Insert(model);
         }
 
-        public int Insert(ChartAddRequest<int> model, Converter<ChartAddRequest<int>, ChartistChart<int>> converter)
+        public int Insert(ChartAddRequest<int> model, Converter<ChartAddRequest<int>, Chart<int>> converter)
         {
             return _pieChartSrv.Insert(converter(model));
         }
 
-        public void Update(ChartUpdateRequest model, Converter<ChartUpdateRequest, ChartistChart<List<int>>> converter)
+        public void Update(ChartUpdateRequest model, Converter<ChartUpdateRequest, Chart<List<int>>> converter)
         {
             _chartSrv.Update(converter(model));
         }
 
-        public void Update(ChartistChart<List<int>> model)
+        public void Update(Chart<List<int>> model)
         {
             _chartSrv.Update(model);
         }
 
-        public void Update(ChartUpdateRequest<int> model, Converter<ChartUpdateRequest<int>, ChartistChart<int>> converter)
+        public void Update(ChartUpdateRequest<int> model, Converter<ChartUpdateRequest<int>, Chart<int>> converter)
         {
             _pieChartSrv.Update(converter(model));
         }
 
-        public void Update(ChartistChart<int> model)
+        public void Update(Chart<int> model)
         {
             _pieChartSrv.Update(model);
         }
 
-        public IEnumerable<ChartistChart<List<int>>> Where(Func<ChartistChart<List<int>>, bool> predicate)
+        public IEnumerable<Chart<List<int>>> Where(Func<Chart<List<int>>, bool> predicate)
         {
             return _chartSrv.Where(predicate);
         }
 
-        public IEnumerable<ChartistChart<int>> Where(Func<ChartistChart<int>, bool> predicate)
+        public IEnumerable<Chart<int>> Where(Func<Chart<int>, bool> predicate)
         {
             return _pieChartSrv.Where(predicate);
         }

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Nostreets_Services.Domain.Charts
 {
-    public class ChartistChart<T> : DBObject
+    public class Chart<T> : DBObject
     {
         public int ChartId { get; set; }
         public ChartType TypeId { get; set; }

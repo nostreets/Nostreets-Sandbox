@@ -1,6 +1,6 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Nostreets_Services.Enums;
 using NostreetsExtensions.DataControl.Classes;
 
@@ -70,8 +70,35 @@ namespace Nostreets_Services.Domain
     {
         public bool HasPlaidSecret { get; set; } = false;
         public bool IsAdvancedUser { get; set; } = false;
-        public ChartLibraryType ChartLibary { get; set; } = ChartLibraryType.Chartist;
+        public ChartLibraryType ChartLibary { get; set; } = ChartLibraryType.Google;
 
     }
+
+    public class StreetAddress
+    {
+        [Required]
+        public string AddressLine1 { get; set; }
+
+        public string AddressLine2 { get; set; }
+
+        [Required]
+        public string City { get; set; }
+
+        [Required]
+        public string OwnersFirstName { get; set; }
+
+        [Required]
+        public string OwnersLastName { get; set; }
+
+        public string PhoneNumber { get; set; }
+
+        public string State { get; set; }
+
+        public int ZipCode { get; set; }
+
+    }
+
+
+
 
 }

@@ -221,7 +221,7 @@ var page = {
 
         in: (obj, values) => {
             for (var i = 0; i < values.length; i++)
-                if (values[i] == obj) return true;
+                if (values[i] === obj) return true;
             return false;
         },
 
@@ -275,7 +275,7 @@ var page = {
             if ("withCredentials" in xhr) {
                 // XHR for Chrome/Firefox/Opera/Safari.
                 xhr.open(method, url, true);
-            } else if (typeof XDomainRequest != "undefined") {
+            } else if (typeof XDomainRequest !== "undefined") {
                 // XDomainRequest for IE.
                 xhr = new XDomainRequest();
                 xhr.open(method, url);
@@ -338,7 +338,7 @@ var page = {
         }
     },
     siteOptions: {
-        billManagerChartType : "Google"
+        billManagerChartType : 1
     }
 };
 

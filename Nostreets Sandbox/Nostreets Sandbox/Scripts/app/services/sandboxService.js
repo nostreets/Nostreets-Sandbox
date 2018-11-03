@@ -40,7 +40,7 @@
         function _validateUrl(url) {
 
             return $http({
-                url: "/config/site?url=" + encodeURIComponent(url),
+                url: "/api/config/site?url=" + encodeURIComponent(url),
                 method: "GET",
                 headers: { 'Content-Type': 'application/json' }
             });

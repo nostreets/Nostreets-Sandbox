@@ -582,14 +582,19 @@ namespace Nostreets_Services.Services.Database
             return incomes;
         }
 
-        public ChartistChart<List<float>> GetCombinedChart(string userId, out ScheduleTypes chartSchedule, DateTime? startDate = null, DateTime? endDate = null)
+        public Chart<List<float>> GetCombinedChart(
+              string userId
+            , out ScheduleTypes chartSchedule
+            , DateTime? startDate = null
+            , DateTime? endDate = null
+            , ChartLibraryType library = ChartLibraryType.Google )
         {
-            ChartistChart<List<float>> result = new ChartistChart<List<float>>();
+            Chart<List<float>> result = new Chart<List<float>>();
             DateTime start = (startDate == null) ? DateTime.Now : startDate.Value,
                      end = (endDate == null) ? DateTime.Now.AddDays(14) : endDate.Value;
 
-            ChartistChart<List<float>> incomeChart = GetIncomeChart(userId, out chartSchedule, start, end);
-            ChartistChart<List<float>> expensesChart = GetExpensesChart(userId, out chartSchedule, start, end);
+            Chart<List<float>> incomeChart = GetIncomeChart(userId, out chartSchedule, start, end);
+            Chart<List<float>> expensesChart = GetExpensesChart(userId, out chartSchedule, start, end);
 
             result.Labels = CalculateLabelRange(out chartSchedule, start, end);
             result.Name = String.Format("Complete {0} Chart", chartSchedule.ToString());
@@ -658,9 +663,14 @@ namespace Nostreets_Services.Services.Database
             return _expenseSrv.Where((a) => a.UserId == userId && a.ExpenseType == billType && a.PaySchedule == scheduleType).ToList();
         }
 
-        public ChartistChart<List<float>> GetExpensesChart(string userId, out ScheduleTypes chartSchedule, DateTime? startDate = null, DateTime? endDate = null)
+        public Chart<List<float>> GetExpensesChart(
+              string userId
+            , out ScheduleTypes chartSchedule
+            , DateTime? startDate = null
+            , DateTime? endDate = null
+            , ChartLibraryType library = ChartLibraryType.Google )
         {
-            ChartistChart<List<float>> result = new ChartistChart<List<float>>();
+            Chart<List<float>> result = new Chart<List<float>>();
             List<Expense> expenses = GetAllExpenses(userId);
 
             DateTime start = (startDate == null) ? DateTime.Now : startDate.Value,
@@ -708,9 +718,14 @@ namespace Nostreets_Services.Services.Database
             return _incomeSrv.Where(a => a.UserId == userId && a.Name == incomeName).FirstOrDefault();
         }
 
-        public ChartistChart<List<float>> GetIncomeChart(string userId, out ScheduleTypes chartSchedule, DateTime? startDate = null, DateTime? endDate = null)
+        public Chart<List<float>> GetIncomeChart(
+            string userId
+            , out ScheduleTypes chartSchedule
+            , DateTime? startDate = null
+            , DateTime? endDate = null
+            , ChartLibraryType library = ChartLibraryType.Google )
         {
-            ChartistChart<List<float>> result = new ChartistChart<List<float>>();
+            Chart<List<float>> result = new Chart<List<float>>();
             List<Income> incomes = GetAllIncome(userId);
 
             DateTime start = (startDate == null) ? DateTime.Now : startDate.Value,
@@ -719,7 +734,7 @@ namespace Nostreets_Services.Services.Database
             TimeSpan diff = (end - start);
 
             result.Labels = CalculateLabelRange(out chartSchedule, start, end);
-            result.Name = String.Format("Income {0} Chart", chartSchedule.ToString());
+            result.Name = "Income {0} Chart".FormatString(chartSchedule.ToString());
             result.TypeId = ChartType.Line;
             result.UserId = userId;
 
