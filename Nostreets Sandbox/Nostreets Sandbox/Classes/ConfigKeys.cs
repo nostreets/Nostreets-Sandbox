@@ -25,7 +25,8 @@ namespace Nostreets_Sandbox.Classes
 #if DEBUG
                 return ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 #else
-                return ConfigurationManager.ConnectionStrings["GoogleConnection"].ConnectionString;
+                //return ConfigurationManager.ConnectionStrings["GoogleConnection"].ConnectionString;
+                return ConfigurationManager.ConnectionStrings["AWSConnection"].ConnectionString;
 #endif
             }
         }
