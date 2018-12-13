@@ -227,6 +227,7 @@
   <ItemGroup>
     <Compile Include="App_Start\ApplicationOAuthProvider.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\HangfireConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Classes\AuthAttributes.cs" />
     <Compile Include="Classes\ConfigKeys.cs" />

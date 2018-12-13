@@ -1,9 +1,7 @@
 ﻿using Hangfire;
-using Microsoft.AspNet.Identity;
 using Microsoft.Owin;
 using Nostreets_Sandbox.Classes;
 using Owin;
-using System;
 
 [assembly: OwinStartup(typeof(Nostreets_Sandbox.Startup))]
 namespace Nostreets_Sandbox
@@ -12,8 +10,9 @@ namespace Nostreets_Sandbox
     {
         public void Configuration(IAppBuilder app)
         {
-            //ConfigureAuth(app);
-            //Hangfire_Start(app);
+            ConfigureAuth(app);
+            Hangfire_Start(app);
+            HangfireConfig.RegisterJobs();
         }
 
         private void Hangfire_Start(IAppBuilder app)
@@ -22,6 +21,8 @@ namespace Nostreets_Sandbox
 
             app.UseHangfireDashboard();
             app.UseHangfireServer();
+
         }
+
     }
 }

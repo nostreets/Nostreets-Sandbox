@@ -225,6 +225,22 @@ var page = {
             return false;
         },
 
+        select: (converter, values) => {
+
+            var result = [];
+            for (let i = 0; i < values.length; i++)
+                result.push(converter(values[i]));
+
+            return result;
+        },
+
+        any: (predicate, values) => {
+            for (var i = 0; i < values.length; i++)
+                if (predicate(values[i]))
+                    return true;
+            return false;
+        },
+
         loadScript: (url, callback) => {
             $.ajax({
                 url: url,
@@ -309,12 +325,12 @@ var page = {
             document.onkeypress = resetTimer;
 
             var logout = () => {
-                console.log("Inactive action...")
+                console.log("Inactive action...");
             }
 
             var resetTimer = () => {
                 clearTimeout(t);
-                t = setTimeout(logout, 3000)
+                t = setTimeout(logout, 3000);
             }
         },
 
@@ -335,10 +351,51 @@ var page = {
                 result += charset[Math.floor(Math.random() * charset.length)];
 
             return result;
+        },
+
+        removeAllLinks: (link) => {
+            for (var tag of $('a')) {
+                var ele = $(tag);
+
+                if (ele.attr('href'))
+                    ele.attr('href', link || '');
+            }
+        },
+
+        changeTargetedColors: (colorsToCheck, onMatch, onMisMatch) => {
+
+            for (let tag of $('*')) {
+                let ele = $(tag);
+
+                for (let pair of colorsToCheck) {
+                    if (pair[2] && pair[2].length !== 0) {
+                        for (let attr of pair[2]) {
+
+                            let colorToChange = pair[0];
+                            let changeToColor = pair[1];
+
+                            if (ele.css(attr) === colorToChange) {
+
+                                onMatch(ele);
+
+                                if (changeToColor.includes('!important'))
+                                    ele.attr('style', attr + ': ' + changeToColor);
+                                else
+                                    ele.css(attr, changeToColor);
+
+                            }
+                            else {
+                                onMisMatch(ele);
+                            }
+                        }
+                    }
+                }
+            }
         }
+
     },
     siteOptions: {
-        billManagerChartType : 1
+        billManagerChartType: 1
     }
 };
 
