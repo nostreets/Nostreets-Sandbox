@@ -18,19 +18,30 @@ namespace Nostreets_Sandbox.Classes
         }
 
 
-        public static string DBConnectionString
+        public static string PortfolioConnectionString
         {
             get
             {
 #if DEBUG
                 return ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 #else
-                //return ConfigurationManager.ConnectionStrings["GoogleConnection"].ConnectionString;
-                return ConfigurationManager.ConnectionStrings["AWSConnection"].ConnectionString;
+                return ConfigurationManager.ConnectionStrings["AWS_Portfolio_Connection"].ConnectionString;
 #endif
             }
         }
 
+
+        public static string HangfireConnectionString
+        {
+            get
+            {
+#if DEBUG
+                return ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+#else
+                return ConfigurationManager.ConnectionStrings["AWS_Hangfire_Connection"].ConnectionString;
+#endif
+            }
+        }
 
 
         public static string SendGridApiKey

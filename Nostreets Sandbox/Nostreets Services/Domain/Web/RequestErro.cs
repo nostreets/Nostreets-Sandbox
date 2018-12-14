@@ -4,7 +4,7 @@ using System.Web;
 using Newtonsoft.Json;
 using NostreetsExtensions.DataControl.Classes;
 
-namespace Nostreets_Sandbox.Classes
+namespace Nostreets_Services.Domain.Web
 {
     public class RequestError : Error
     {

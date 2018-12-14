@@ -35,7 +35,7 @@ namespace Nostreets_Sandbox
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             //+EF Config
-            EFDBService<Error>.Migrate(ConfigKeys.DBConnectionString);
+            EFDBService<Error>.Migrate(ConfigKeys.PortfolioConnectionString);
 
         }
 

@@ -237,7 +237,6 @@
     <Compile Include="App_Start\WindsorResolver.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="App_Start\WindsorConfig.cs" />
-    <Compile Include="Classes\RequestError.cs" />
     <Compile Include="Controllers\Api\SandoxApiController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">

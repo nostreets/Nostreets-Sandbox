@@ -1,7 +1,5 @@
-﻿using System;
-using System.Reflection;
+﻿using Hangfire;
 using NostreetsExtensions.Extend.Basic;
-using NostreetsExtensions.Helpers;
 
 namespace Nostreets_Sandbox
 {
@@ -14,14 +12,14 @@ namespace Nostreets_Sandbox
 
         public static void RegisterJobs()
         {
-            ((Action)_instance.Test).RegisterJob();
+            RecurringJob.AddOrUpdate(() => _instance.Test(), Cron.Minutely());
         }
 
 
         private void Test()
         {
-            "This is a test method".LogInDebug();
+            "This is a test method for Hangfire...".LogInDebug();
         }
-        
+
     }
 }

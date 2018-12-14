@@ -41,7 +41,7 @@ namespace Nostreets_Services.Services.Database
 
         public Chart<object> Get(int id)
         {
-            return (Chart<object>)typeof(Chart<object>).Cast(_chartSrv.Get(id));
+            return _chartSrv.Get(id).Cast<Chart<object>>();
         }
 
         public List<Chart<object>> GetAll()

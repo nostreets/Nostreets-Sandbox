@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
-using Nostreets_Services.Domain.Newsletter.Lists;
+using Nostreets_Services.Domain.Mailchimp.Lists;
 
 namespace Nostreets_Services.Models.Requests
 {

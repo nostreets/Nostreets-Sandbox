@@ -1,6 +1,6 @@
-﻿using Nostreets_Services.Domain.Newsletter;
-using Nostreets_Services.Domain.Newsletter.Lists;
-using Nostreets_Services.Domain.Newsletter.Members;
+﻿using Nostreets_Services.Domain.Mailchimp;
+using Nostreets_Services.Domain.Mailchimp.Lists;
+using Nostreets_Services.Domain.Mailchimp.Members;
 using Nostreets_Services.Models.Requests;
 using Nostreets_Services.Models;
 using RestSharp;

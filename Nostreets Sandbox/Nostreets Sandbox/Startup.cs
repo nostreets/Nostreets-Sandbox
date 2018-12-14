@@ -17,7 +17,7 @@ namespace Nostreets_Sandbox
 
         private void Hangfire_Start(IAppBuilder app)
         {
-            GlobalConfiguration.Configuration.UseSqlServerStorage(ConfigKeys.DBConnectionString);
+            GlobalConfiguration.Configuration.UseSqlServerStorage(ConfigKeys.HangfireConnectionString);
 
             app.UseHangfireDashboard();
             app.UseHangfireServer();
