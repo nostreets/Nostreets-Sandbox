@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Configuration;
 
-using Nostreets_Services.Domain;
+using Nostreets_Services.Domain.Users;
+using Nostreets_Services.Enums;
 using Nostreets_Services.Interfaces.Services;
 
 using NostreetsExtensions.DataControl.Classes;
@@ -24,17 +25,20 @@ namespace Nostreets_Services.Services.Database
               HttpContext context
             , IEmailService emailSrv
             , IDBService<User, string> userDBSrv
+            , IDBService<UserData, int> idDBSrv
             , IDBService<Token, string> tokenDBSrv)
         {
             _context = context;
             _emailSrv = emailSrv;
             _userDBSrv = userDBSrv;
+            _userDataDBSrv = idDBSrv;
             _tokenDBSrv = tokenDBSrv;
         }
 
         private HttpContext _context = null;
         private IEmailService _emailSrv = null;
         private IDBService<Token, string> _tokenDBSrv = null;
+        private IDBService<UserData, int> _userDataDBSrv = null;
         private IDBService<User, string> _userDBSrv = null;
         public string RequestIp => _context.GetIPAddress();
         public User SessionUser { get { return GetSessionUser(); } }
@@ -104,7 +108,7 @@ namespace Nostreets_Services.Services.Database
             return _userDBSrv.Where(a => a.UserName == username).FirstOrDefault() != null ? true : false;
         }
 
-        public void Delete(string id)
+        public void DeleteUser(string id)
         {
             _userDBSrv.Delete(id);
         }
@@ -122,7 +126,7 @@ namespace Nostreets_Services.Services.Database
                               , html))
             {
                 user.Password = newPassword.Encrypt(WebConfigurationManager.AppSettings["CryptoKey"]);
-                Update(user);
+                UpdateUser(user);
             }
             else
                 throw new Exception("New Password Email Did Not Send...");
@@ -156,7 +160,7 @@ namespace Nostreets_Services.Services.Database
                 };
                 user.Password = token.Value;
 
-                token.Id = Insert(token);
+                token.Id = InsertToken(token);
 
                 string html = HttpContext.Current.Server.MapPath("\\assets\\emails\\ForgotPasswordEmail.html").ReadFile()
                                                  .Replace("{url}", HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)
@@ -171,7 +175,7 @@ namespace Nostreets_Services.Services.Database
             }
         }
 
-        public List<User> GetAll()
+        public List<User> GetAllUsers()
         {
             return _userDBSrv.GetAll();
         }
@@ -181,20 +185,45 @@ namespace Nostreets_Services.Services.Database
             return FirstOrDefault(a => a.UserName == username || a.Contact.PrimaryEmail == username);
         }
 
-        public async Task<Tuple<User, string>> GetUserWithLoginInfo(string username, string password)
+        public void GetUserData(User user)
         {
-            string failureReason = null;
+            _userDataDBSrv.FirstOrDefault(a => a.UserId == user.Id);
+        }
+
+        public void GetUserData(UserData userData)
+        {
+            _userDataDBSrv.FirstOrDefault(a => a.UserId == userData.UserId);
+        }
+
+        public async Task<LogInResponse> GetUserWithLoginInfo(string username, string password)
+        {
+            string message = null;
+            State state = State.Success;
             User user = SessionUser ?? GetByUsername(username);
-            bool hasIP = (user == null) ? false : user.Settings.IPAddresses.Contains(RequestIp);
+            UserData associatedData = _userDataDBSrv.FirstOrDefault(a => a.UserId == user?.Id);
+
+            bool hasIP = (user == null) ? false : associatedData.IPAddresses.Contains(RequestIp);
 
             if (user == null)
-                failureReason = "User doesn't exist...";
+            {
+                message = "User doesn't exist...";
+                state = State.Error;
+            }
             else if (!ValidatePassword(user.Password, password))
-                failureReason = "Invalid password for " + username + "...";
+            {
+                message = "Invalid password for " + username + "...";
+                state = State.Error;
+            }
             else if (!user.Settings.HasVaildatedEmail)
-                failureReason = username + "'s email is not validated...";
+            {
+                message = username + "'s email is not validated...";
+                state = State.Error;
+            }
             else if (user.Settings.ValidateIPBeforeLogin && !hasIP)
-                failureReason = username + " does not authorize this computer for login...";
+            {
+                message = username + " does not authorize this computer for login...";
+                state = State.Error;
+            }
             else if (user.Settings.TwoFactorAuthEnabled)
             {
                 Token token = new Token
@@ -207,7 +236,8 @@ namespace Nostreets_Services.Services.Database
                     Name = user.UserName + "s' TFAuth Code"
                 };
 
-                failureReason = "2auth" + Insert(token);
+                message = "2auth" + InsertToken(token);
+                state = State.Info;
 
                 if (user.Settings.TFAuthByPhone)
                 {
@@ -227,29 +257,18 @@ namespace Nostreets_Services.Services.Database
                 }
             }
 
-            if (failureReason == null)
+            if (message == null)
                 user.LastLogIn = DateTime.Now;
 
-            return new Tuple<User, string>(failureReason == null ? user : null, failureReason);
-        }
-
-        public string Insert(User user)
-        {
-            user.Settings = new UserSettings
+            return new LogInResponse()
             {
-                IPAddresses = new List<string> { RequestIp }
+                User = message == null ? user : null,
+                Message = message,
+                State = state
             };
-            user.Password = user.Password.Encrypt(WebConfigurationManager.AppSettings["CryptoKey"]);
-            user.Id = _userDBSrv.Insert(user);
-
-            if (!CacheManager.Contains(RequestIp))
-                CacheManager.Set(RequestIp, user.Id);
-            CacheManager.Set(user.Id, user);
-
-            return user.Id;
         }
 
-        public string Insert(Token token)
+        public string InsertToken(Token token)
         {
             token.UserId = token.UserId ?? SessionUser?.Id;
             token.ModifiedUserId = token.UserId ?? SessionUser?.Id;
@@ -258,42 +277,90 @@ namespace Nostreets_Services.Services.Database
             return token.Id;
         }
 
-        public async Task<Tuple<User, string>> LogInAsync(NamePasswordPair pair, bool rememberDevice = false)
+        public string InsertUser(User user)
         {
-            string tokenCD = null;
-            Tuple<User, string> validUser = await GetUserWithLoginInfo(pair.Username, pair.Password);
-            User user = validUser.Item1;
-            string failureReason = validUser.Item2;
+            UserData userData = null;
 
-            if (failureReason != null)
-                if (failureReason.Contains("2auth"))
-                    tokenCD = failureReason.Substring(5);
-                else
-                    throw new Exception(failureReason);
-            else if (user != null)
+            if (user.Settings == null)
+                user.Settings = new UserSettings();
+
+
+            if (user.UserOrigin != UserOriginType.Manual)
+                userData = new UserData()
+                {
+                    ApiIDs = new Dictionary<string, string>()
+                    {
+                        { user.UserOrigin.ToString() + "Id", user.Password }
+                    },
+                    IPAddresses = new List<string>() {
+                        RequestIp
+                    }
+                };
+            else
+                userData = new UserData()
+                {
+                    IPAddresses = new List<string>() {
+                        RequestIp
+                    }
+                };
+
+
+            user.Password = user.Password.Encrypt(WebConfigurationManager.AppSettings["CryptoKey"]);
+            user.Id = _userDBSrv.Insert(user);
+
+            userData.UserId = user.Id;
+            userData.ModifiedUserId = user.Id;
+
+            InsertUserData(userData);
+
+            if (!CacheManager.Contains(RequestIp))
+                CacheManager.Set(RequestIp, user.Id);
+            CacheManager.Set(user.Id, user);
+
+            return user.Id;
+        }
+
+        public int InsertUserData(UserData userData)
+        {
+            return _userDataDBSrv.Insert(userData);
+        }
+
+        public async Task<LogInResponse> LogInAsync(NamePasswordPair pair, bool rememberDevice = false)
+        {
+            LogInResponse result = await GetUserWithLoginInfo(pair.Username, pair.Password);
+            UserData userData = _userDataDBSrv.FirstOrDefault(a => a.UserId == result.User?.Id);
+
+            if (result.State == State.Error)
+                throw new Exception(result.Message);
+
+            else if (result.Message.Contains("2auth"))
+                result.Message = result.Message.Substring(5);
+
+            else if (result.User != null)
             {
-                if (!user.Settings.IPAddresses.Contains(RequestIp))
+                if (!userData.IPAddresses.Contains(RequestIp))
                 {
                     string html = HttpContext.Current.Server.MapPath("\\assets\\emails\\UnindentifiedLogin.html").ReadFile()
-                                              .Replace("{user}", user.UserName)
+                                              .Replace("{user}", result.User.UserName)
                                               .Replace("{ip}", RequestIp ?? "unknown")
                                               .Replace("{time}", DateTime.Now.ToLongDateString());
 
                     if (rememberDevice)
-                        user.Settings.IPAddresses.Add(RequestIp);
+                        userData.IPAddresses.Add(RequestIp);
 
                     if (!await _emailSrv.SendAsync("no-reply@nostreetssolutions.com"
-                                  , user.Contact.PrimaryEmail
+                                  , result.User.Contact.PrimaryEmail
                                   , "Nostreets Sandbox Unindentified Login"
                                   , "Nostreets Sandbox Unindentified Login"
                                   , html))
                         throw new Exception("Unindentified Login Email Did Not Send...");
                 }
 
-                Update(user);
+                UpdateUser(result.User);
+                UpdateUserData(userData);
             }
 
-            return new Tuple<User, string>(user, tokenCD);
+            return result;
         }
 
         public void LogOut()
@@ -306,11 +373,7 @@ namespace Nostreets_Services.Services.Database
 
         public async Task<string> RegisterAsync(User user)
         {
-            user.Settings = new UserSettings()
-            {
-                IPAddresses = new List<string> { RequestIp }
-            };
-            user.Id = Insert(user);
+            user.Id = InsertUser(user);
 
             Token token = new Token
             {
@@ -322,7 +385,7 @@ namespace Nostreets_Services.Services.Database
                 Purpose = TokenPurpose.EmailValidtion
             };
 
-            token.Id = Insert(token);
+            token.Id = InsertToken(token);
 
             string html = HttpContext.Current.Server.MapPath("\\assets\\emails\\ValidateEmail.html").ReadFile()
                                      .Replace("{url}", HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)
@@ -355,7 +418,7 @@ namespace Nostreets_Services.Services.Database
                 Name = user.UserName + "'s Registion Email Token",
                 Purpose = TokenPurpose.EmailValidtion
             };
-            token.Id = Insert(token);
+            token.Id = InsertToken(token);
 
             string html = HttpContext.Current.Server.MapPath("\\assets\\emails\\ValidateEmail.html").ReadFile()
                                      .Replace("{url}", HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)
@@ -369,7 +432,7 @@ namespace Nostreets_Services.Services.Database
                 throw new Exception("Email for registation not sent...");
         }
 
-        public void Update(User user, bool encryptPassword = false)
+        public void UpdateUser(User user, bool encryptPassword = false)
         {
             if (encryptPassword)
                 user.Password = user.Password.Encrypt(WebConfigurationManager.AppSettings["CryptoKey"]);
@@ -377,6 +440,11 @@ namespace Nostreets_Services.Services.Database
             UpdateCache(user);
 
             _userDBSrv.Update(user);
+        }
+
+        public void UpdateUserData(UserData userData)
+        {
+            _userDataDBSrv.Update(userData);
         }
 
         public bool ValidatePassword(string encyptedPassword, string password)
@@ -455,7 +523,7 @@ namespace Nostreets_Services.Services.Database
                 _tokenDBSrv.Update(token);
 
                 if (updateUser)
-                    Update(user);
+                    UpdateUser(user);
             }
 
             return token;

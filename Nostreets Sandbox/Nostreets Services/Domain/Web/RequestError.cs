@@ -44,6 +44,18 @@ namespace Nostreets_Services.Domain.Web
             Params = JsonConvert.SerializeObject(HttpUtility.ParseQueryString(request.Url.Query));
         }
 
+        public RequestError(string @params, string route, Exception ex) : base(ex)
+        {
+            Route = route;
+            Params = @params;
+        }
+
+        public RequestError(string @params, string route, Exception ex, string data) : base(ex, data)
+        {
+            Route = route;
+            Params = @params;
+        }
+
         public string Params { get; set; }
         public string Route { get; set; }
     }

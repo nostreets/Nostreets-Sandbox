@@ -9,13 +9,13 @@ using System.Web;
 using System.Web.Http;
 
 using Nostreets_Sandbox.App_Start;
-using Nostreets_Sandbox.Classes;
 
-using Nostreets_Services.Domain;
+using Nostreets_Services.Domain.Users;
 using Nostreets_Services.Domain.Bills;
 using Nostreets_Services.Domain.Cards;
 using Nostreets_Services.Domain.Charts;
 using Nostreets_Services.Domain.Product;
+using Nostreets_Services.Domain.Web;
 using Nostreets_Services.Enums;
 using Nostreets_Services.Interfaces.Services;
 using Nostreets_Services.Models.Request;
@@ -149,12 +149,12 @@ namespace Nostreets_Sandbox.Controllers.Api
             try
             {
                 BaseResponse response = null;
-                Tuple<User, string> result = await _userSrv.LogInAsync(request, rememberDevice);
+                LogInResponse result = await _userSrv.LogInAsync(request, rememberDevice);
 
-                if (result.Item2 == null)
-                    response = new ItemResponse<User>(result.Item1);
+                if (result.Message == null)
+                    response = new ItemResponse<User>(result.User);
                 else
-                    response = new ItemResponse<string>(result.Item2);
+                    response = new ItemResponse<string>(result.Message);
 
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
@@ -224,7 +224,7 @@ namespace Nostreets_Sandbox.Controllers.Api
                     throw new Exception("Targeted user is not the current user...");
                 else
                 {
-                    _userSrv.Update(user, true);
+                    _userSrv.UpdateUser(user, true);
                     response = new SuccessResponse();
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, response);

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Nostreets_Services.Enums;
 using NostreetsExtensions.DataControl.Classes;
+using NostreetsExtensions.DataControl.Enums;
 
-namespace Nostreets_Services.Domain
+namespace Nostreets_Services.Domain.Users
 {
 
     public class User
@@ -36,7 +37,6 @@ namespace Nostreets_Services.Domain
 
     public class UserSettings : DBObject
     {
-        public List<string> IPAddresses { get; set; }
         public NostreetsPortfolioSettings Portfolio { get; set; }
 
         public bool TwoFactorAuthEnabled { get; set; } = false;
@@ -58,15 +58,17 @@ namespace Nostreets_Services.Domain
         public string PrimaryEmail { get; set; }
         public string PrimaryPhone { get; set; }
 
+        public StreetAddress Address { get; set; }
+
     }
 
-    public class NamePasswordPair
+    public class NamePasswordPair 
     {
         public string Username { get; set; }
         public string Password { get; set; }
     }
 
-    public class NostreetsPortfolioSettings
+    public class NostreetsPortfolioSettings : DBObject
     {
         public bool HasPlaidSecret { get; set; } = false;
         public bool IsAdvancedUser { get; set; } = false;
@@ -74,7 +76,7 @@ namespace Nostreets_Services.Domain
 
     }
 
-    public class StreetAddress
+    public class StreetAddress : DBObject
     {
         [Required]
         public string AddressLine1 { get; set; }
@@ -98,7 +100,16 @@ namespace Nostreets_Services.Domain
 
     }
 
+    public class UserData : DBObject
+    {
+        public Dictionary<string, string> ApiIDs { get; set; }
+        public List<string> IPAddresses { get; set; }
+    }
 
+    public class LogInResponse {
 
-
+        public State State { get; set; }
+        public string Message { get; set; }
+        public User User { get; set; }
+    }
 }

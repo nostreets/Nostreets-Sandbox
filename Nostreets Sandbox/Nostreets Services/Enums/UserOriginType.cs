@@ -13,6 +13,7 @@ namespace Nostreets_Services.Enums
         Facebook,
         Twitter,
         Instagram,
-        Snapchat
+        Snapchat,
+        Shopify
     }
 }

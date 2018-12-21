@@ -12,7 +12,7 @@ namespace Nostreets_Sandbox.Classes
 #if DEBUG
                 return "DefaultConnection";
 #else
-                return "GoogleConnection";
+                return "AWS_Portfolio_Connection";
 #endif
             }
         }
@@ -49,6 +49,24 @@ namespace Nostreets_Sandbox.Classes
             get
             {
                 return ConfigurationManager.AppSettings["SendGrid.ApiKey"];
+            }
+        }
+
+
+        public static string ShopifyDomain
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["Shopify.Domain"];
+            }
+        }
+
+
+        public static string ShopifyApiKey
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["Shopify.ApiKey"];
             }
         }
 

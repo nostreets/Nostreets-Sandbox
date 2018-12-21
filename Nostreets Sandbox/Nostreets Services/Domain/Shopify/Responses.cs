@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace Nostreets_Services.Domain.Shopify
 {
-    public class Address
+    public class ShopifyAddress
     {
         public int Id { get; set; }
         [JsonProperty("customer_id")]
@@ -31,7 +31,7 @@ namespace Nostreets_Services.Domain.Shopify
         public bool Default { get; set; }
     }
 
-    public class Customer
+    public class ShopifyCustomer
     {
         public int Id { get; set; }
         public string Email { get; set; }
@@ -64,10 +64,10 @@ namespace Nostreets_Services.Domain.Shopify
         [JsonProperty("last_order_name")]
         public string LastOrderName { get; set; }
         public string Currency { get; set; }
-        public IList<Address> Addresses { get; set; }
+        public IList<ShopifyAddress> Addresses { get; set; }
         [JsonProperty("admin_graphql_api_id")]
         public string AdminGraphqlApiId { get; set; }
         [JsonProperty("default_address")]
-        public Address DefaultAddress { get; set; }
+        public ShopifyAddress DefaultAddress { get; set; }
     }
 }

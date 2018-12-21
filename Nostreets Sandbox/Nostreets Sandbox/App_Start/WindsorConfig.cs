@@ -7,13 +7,15 @@ using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using Castle.Windsor.Installer;
 using Nostreets_Sandbox.Classes;
-using Nostreets_Services.Domain;
+using Nostreets_Services.Domain.Users;
 using Nostreets_Services.Domain.Bills;
 using Nostreets_Services.Domain.Charts;
+using Nostreets_Services.Domain.Web;
 using Nostreets_Services.Interfaces.Services;
 using Nostreets_Services.Models.Request;
 using Nostreets_Services.Services.Database;
 using Nostreets_Services.Services.Email;
+using Nostreets_Services.Services.Shopify;
 using NostreetsEntities;
 using NostreetsExtensions.DataControl.Classes;
 using NostreetsExtensions.Interfaces;
@@ -68,6 +70,12 @@ namespace Nostreets_Sandbox.App_Start
                          param["connectionKey"] = ConfigKeys.DBConnectionKey;
                      }),
 
+                 Reg.Component.For(typeof(IDBService<RequestError>)).ImplementedBy(typeof(EFDBService<RequestError>)).LifestyleSingleton()
+                    .DependsOn((k, param) =>
+                     {
+                         param["connectionKey"] = ConfigKeys.DBConnectionKey;
+                     }),
+
                 Reg.Component.For(typeof(IDBService<>)).ImplementedBy(typeof(DBService<>)).LifestyleSingleton()
                     .DependsOn((k, param) =>
                      {
@@ -114,6 +122,14 @@ namespace Nostreets_Sandbox.App_Start
                          param["emailSrv"] = k.Resolve<IEmailService>();
                          param["userDBSrv"] = k.Resolve<IDBService<User, string>>();
                          param["tokenDBSrv"] = k.Resolve<IDBService<Token, string>>();
+                     }),
+                  Reg.Component.For<IShopifyService>().ImplementedBy<ShopifyService>().LifestyleSingleton()
+                     .DependsOn((k, param) =>
+                     {
+                         param["domian"] = ConfigKeys.ShopifyDomain;
+                         param["apiKey"] = ConfigKeys.ShopifyApiKey;
+                         param["userSrv"] = k.Resolve<IUserService>();
+                         param["errorLog"] = k.Resolve<IDBService<RequestError>>();
                      })
              );
         }

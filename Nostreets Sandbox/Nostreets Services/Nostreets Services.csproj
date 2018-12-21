@@ -168,11 +168,12 @@
     <Compile Include="Domain\Mailchimp\Members\Member.cs" />
     <Compile Include="Domain\Mailchimp\Members\MemberStats.cs" />
     <Compile Include="Domain\Mailchimp\UserListStats.cs" />
-    <Compile Include="Domain\Web\RequestErro.cs" />
+    <Compile Include="Domain\Web\RequestError.cs" />
     <Compile Include="Enums\ExpenseTypes.cs" />
     <Compile Include="Enums\IncomeTypes.cs" />
     <Compile Include="Enums\ScheduleTypes.cs" />
     <Compile Include="Enums\StyledCardTypes.cs" />
+    <Compile Include="Enums\TokenType.cs" />
     <Compile Include="Enums\UserOriginType.cs" />
     <Compile Include="Helpers\RdlGenerator.cs" />
     <Compile Include="Helpers\NostreetsWinService.cs">
@@ -182,6 +183,7 @@
     <Compile Include="Interfaces\Services\ICacheService.cs" />
     <Compile Include="Interfaces\Services\IChartSrv.cs" />
     <Compile Include="Interfaces\Services\IMailChimpService.cs" />
+    <Compile Include="Interfaces\Services\IShopifyService.cs" />
     <Compile Include="Interfaces\Services\IUserService.cs" />
     <Compile Include="Models\Request\BillRequestModels.cs" />
     <Compile Include="Domain\Product\DelevopProduct.cs" />

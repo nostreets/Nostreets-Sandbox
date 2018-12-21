@@ -431,6 +431,7 @@
     <Content Include="assets\js\twitterFetcher_min.js" />
     <Content Include="assets\js\ui-bootstrap-tpls-2.5.0.min.js" />
     <Content Include="assets\svg\upwork.svg" />
+    <Content Include="node_modules\angular\angular-csp.css" />
     <Content Include="node_modules\bootstrap\dist\css\bootstrap-theme.css" />
     <Content Include="node_modules\bootstrap\dist\css\bootstrap-theme.min.css" />
     <Content Include="node_modules\bootstrap\dist\css\bootstrap.css" />
@@ -1749,7 +1750,6 @@
     <Content Include="node_modules\angularjs-color-picker\test\protractor-config.js" />
     <Content Include="node_modules\angularjs-color-picker\test\test-app.js" />
     <Content Include="node_modules\angularjs-color-picker\test\test.html" />
-    <Content Include="node_modules\angular\angular-csp.css" />
     <Content Include="node_modules\angular\angular.js" />
     <Content Include="node_modules\angular\angular.min.js" />
     <Content Include="node_modules\angular\index.js" />
