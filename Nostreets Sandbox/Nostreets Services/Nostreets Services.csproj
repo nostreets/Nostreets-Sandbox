@@ -202,6 +202,7 @@
     <Compile Include="Services\Email\MailChimpService.cs" />
     <Compile Include="Services\Email\SendGridService.cs" />
     <Compile Include="Services\Email\SparkPostService.cs" />
+    <Compile Include="Services\Shopify\PrintfulService.cs" />
     <Compile Include="Services\Shopify\ShopifyService.cs" />
   </ItemGroup>
   <ItemGroup>

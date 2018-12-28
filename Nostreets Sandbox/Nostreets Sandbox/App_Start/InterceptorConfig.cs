@@ -1,4 +1,5 @@
-﻿using Nostreets_Services.Interfaces.Services;
+﻿using Nostreets_Sandbox.Classes;
+using Nostreets_Services.Interfaces.Services;
 using NostreetsExtensions.Extend.IOC;
 using NostreetsExtensions.Extend.Web;
 using NostreetsExtensions.Utilities;
@@ -21,15 +22,20 @@ namespace Nostreets_Sandbox.App_Start
 
         IUserService _userSrv = null;
 
-        [Validator("LoggedIn")]
-        void NeedsToBeLoggedIn(HttpApplication app)
+        [Validator("Authorization")]
+        void NeedsToBeAuthorized(HttpApplication app)
         {
             if (_userSrv.SessionUser == null)
-                NotLoggedIn(app); 
+                NotAuthorized(app); 
+
+            //HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)
+            if(app.Context.Request.UrlReferrer.ToString().Contains(ConfigKeys.ServerDomain))
+                NotAuthorized(app);
+
         }
 
 
-        void NotLoggedIn(HttpApplication app)
+        void NotAuthorized(HttpApplication app)
         {
             app.Response.SetCookie(new HttpCookie("loggedIn", "false"));
             if (CacheManager.Contains("user"))

@@ -24,6 +24,9 @@ namespace Nostreets_Sandbox
 
             //+ASP.NET Configs
             GlobalConfiguration.Configure(WebApiConfig.Register);
+            GlobalConfiguration.Configure(OBL_Website.WebApiConfig.Register);
+
+
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
@@ -33,9 +36,10 @@ namespace Nostreets_Sandbox
             BundleTable.EnableOptimizations = true;
 #endif
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            OBL_Website.BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             //+EF Config
-            EFDBService<Error>.Migrate(ConfigKeys.PortfolioConnectionString);
+            EFDBService<Error>.Migrate(ConfigKeys.WebsiteConnectionString);
 
         }
 

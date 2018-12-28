@@ -5,27 +5,38 @@ namespace Nostreets_Sandbox.Classes
     public class ConfigKeys
     {
 
-        public static string DBConnectionKey
+        public static string ServerDomain {
+            get
+            {
+#if DEBUG
+                return ConfigurationManager.ConnectionStrings["ProdDomain"].ConnectionString;
+#else
+                return ConfigurationManager.ConnectionStrings["DebugDomain"].ConnectionString;
+#endif
+            }
+        }
+
+        public static string ConnectionKey
         {
             get
             {
 #if DEBUG
                 return "DefaultConnection";
 #else
-                return "AWS_Portfolio_Connection";
+                return "Website_Connection";
 #endif
             }
         }
 
 
-        public static string PortfolioConnectionString
+        public static string WebsiteConnectionString
         {
             get
             {
 #if DEBUG
                 return ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 #else
-                return ConfigurationManager.ConnectionStrings["AWS_Portfolio_Connection"].ConnectionString;
+                return ConfigurationManager.ConnectionStrings["WebsiteConnection"].ConnectionString;
 #endif
             }
         }
@@ -38,7 +49,7 @@ namespace Nostreets_Sandbox.Classes
 #if DEBUG
                 return ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 #else
-                return ConfigurationManager.ConnectionStrings["AWS_Hangfire_Connection"].ConnectionString;
+                return ConfigurationManager.ConnectionStrings["HangfireConnection"].ConnectionString;
 #endif
             }
         }
@@ -67,6 +78,23 @@ namespace Nostreets_Sandbox.Classes
             get
             {
                 return ConfigurationManager.AppSettings["Shopify.ApiKey"];
+            }
+        }
+
+        public static string PrintfulDomain
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["Printful.Domain"];
+            }
+        }
+
+
+        public static string PrintfulApiKey
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["Printful.ApiKey"];
             }
         }
 

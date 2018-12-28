@@ -13,7 +13,6 @@ namespace Nostreets_Services.Services.Shopify
 {
     public class ShopifyService : IShopifyService
     {
-
         public ShopifyService(string domain, string apiKey, IUserService userSrv)
         {
             _userSrv = userSrv;
@@ -42,6 +41,7 @@ namespace Nostreets_Services.Services.Shopify
             string url = Domain + endpoint;
             return url.RestSharpEndpoint<T>(method, data, "application/json", Headers);
         }
+
         public List<ShopifyCustomer> GetCustomers()
         {
             try
