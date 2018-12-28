@@ -18,7 +18,6 @@ namespace Nostreets_Sandbox.Controllers
 
         public IUserService _userService = null;
 
-        [Route("~/"), Intercept("LoggedIn")]
         public ActionResult Index(string token = null, string user = null)
         {
             User sessionUser = null;

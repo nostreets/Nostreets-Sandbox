@@ -10,6 +10,7 @@ using Nostreets_Sandbox.Classes;
 using NostreetsEntities;
 
 using NostreetsExtensions.DataControl.Classes;
+using NostreetsExtensions.Extend.Web;
 using NostreetsExtensions.Helpers;
 
 namespace Nostreets_Sandbox
@@ -23,20 +24,24 @@ namespace Nostreets_Sandbox
             //UnityConfig.RegisterInterfaces(GlobalConfiguration.Configuration);
 
             //+ASP.NET Configs
-            GlobalConfiguration.Configure(WebApiConfig.Register);
-            GlobalConfiguration.Configure(OBL_Website.WebApiConfig.Register);
-
-
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
+
+
+            GlobalConfiguration.Configure(WebApiConfig.Register);
+            GlobalConfiguration.Configuration.RegisterApiExternalRoute("OBL_Website");
+
+
             RouteConfig.RegisterRoutes(RouteTable.Routes);
+            RouteTable.Routes.RegisterMvcExternalRoute("OBL_Website");
 
 #if DEBUG
             BundleTable.EnableOptimizations = true;
 #else
             BundleTable.EnableOptimizations = true;
 #endif
+
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-            OBL_Website.BundleConfig.RegisterBundles(BundleTable.Bundles);
+            OBL_Website.BundleConfig.RegisterOBLBundles(BundleTable.Bundles);
 
             //+EF Config
             EFDBService<Error>.Migrate(ConfigKeys.WebsiteConnectionString);

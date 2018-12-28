@@ -35,17 +35,18 @@ using NostreetsRouter.Models.Responses;
 namespace Nostreets_Sandbox.Controllers.Api
 {
     [RoutePrefix("api")]
-    public class ApiController : System.Web.Http.ApiController
+    public class NostreetsApiController : System.Web.Http.ApiController
     {
-        public ApiController()
+        public NostreetsApiController()
         {
-            _chartsSrv = _chartsSrv.WindsorResolve(WindsorConfig.GetContainer());
-            _emailSrv = _emailSrv.WindsorResolve(WindsorConfig.GetContainer());
-            _cardSrv = _cardSrv.WindsorResolve(WindsorConfig.GetContainer());
-            _userSrv = _userSrv.WindsorResolve(WindsorConfig.GetContainer());
-            _billSrv = _billSrv.WindsorResolve(WindsorConfig.GetContainer());
-            _errorLog = _errorLog.WindsorResolve(WindsorConfig.GetContainer());
-            _errorLog = _errorLog.WindsorResolve(WindsorConfig.GetContainer());
+            var container = WindsorConfig.GetContainer();
+            _chartsSrv = _chartsSrv.WindsorResolve(container);
+            _emailSrv = _emailSrv.WindsorResolve(container);
+            _cardSrv = _cardSrv.WindsorResolve(container);
+            _userSrv = _userSrv.WindsorResolve(container);
+            _billSrv = _billSrv.WindsorResolve(container);
+            _errorLog = _errorLog.WindsorResolve(container);
+            _errorLog = _errorLog.WindsorResolve(container);
         }
 
         private IBillService _billSrv = null;
@@ -79,197 +80,197 @@ namespace Nostreets_Sandbox.Controllers.Api
 
         #endregion Private Members
 
-        #region User Service Endpoints
+        //#region User Service Endpoints
 
-        [HttpGet, Route("checkEmail")]
-        public HttpResponseMessage CheckIfEmailExist(string email)
-        {
-            try
-            {
-                bool result = _userSrv.CheckIfEmailExist(email);
-                ItemResponse<bool> response = new ItemResponse<bool>(result);
-                return Request.CreateResponse(HttpStatusCode.OK, response);
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
+        //[HttpGet, Route("checkEmail")]
+        //public HttpResponseMessage CheckIfEmailExist(string email)
+        //{
+        //    try
+        //    {
+        //        bool result = _userSrv.CheckIfEmailExist(email);
+        //        ItemResponse<bool> response = new ItemResponse<bool>(result);
+        //        return Request.CreateResponse(HttpStatusCode.OK, response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ErrorResponse(ex);
+        //    }
+        //}
 
-        [HttpGet, Route("checkUsername")]
-        public HttpResponseMessage CheckIfUsernameExist(string username)
-        {
-            try
-            {
-                bool result = _userSrv.CheckIfUsernameExist(username);
-                ItemResponse<bool> response = new ItemResponse<bool>(result);
-                return Request.CreateResponse(HttpStatusCode.OK, response);
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
+        //[HttpGet, Route("checkUsername")]
+        //public HttpResponseMessage CheckIfUsernameExist(string username)
+        //{
+        //    try
+        //    {
+        //        bool result = _userSrv.CheckIfUsernameExist(username);
+        //        ItemResponse<bool> response = new ItemResponse<bool>(result);
+        //        return Request.CreateResponse(HttpStatusCode.OK, response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ErrorResponse(ex);
+        //    }
+        //}
 
-        [HttpGet, Route("user/forgotPassword")]
-        public HttpResponseMessage ForgotPasswordEmail(string username)
-        {
-            try
-            {
-                _userSrv.ForgotPasswordEmailAsync(username);
+        //[HttpGet, Route("user/forgotPassword")]
+        //public HttpResponseMessage ForgotPasswordEmail(string username)
+        //{
+        //    try
+        //    {
+        //        _userSrv.ForgotPasswordEmailAsync(username);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new SuccessResponse());
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new SuccessResponse());
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ErrorResponse(ex);
+        //    }
+        //}
 
-        [HttpGet, Route("user/session"), Intercept("Authorization")]
-        public HttpResponseMessage GetSessionUser()
-        {
-            try
-            {
-                if (_userSrv.SessionUser == null)
-                    throw new Exception("Session is has not started...");
+        //[HttpGet, Route("user/session"), Intercept("Authorization")]
+        //public HttpResponseMessage GetSessionUser()
+        //{
+        //    try
+        //    {
+        //        if (_userSrv.SessionUser == null)
+        //            throw new Exception("Session is has not started...");
 
-                ItemResponse<User> response = new ItemResponse<User>(_userSrv.SessionUser);
-                return Request.CreateResponse(HttpStatusCode.OK, response);
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
+        //        ItemResponse<User> response = new ItemResponse<User>(_userSrv.SessionUser);
+        //        return Request.CreateResponse(HttpStatusCode.OK, response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ErrorResponse(ex);
+        //    }
+        //}
 
-        [HttpPost, Route("login")]
-        public async Task<HttpResponseMessage> LogInUserAsync(NamePasswordPair request, bool rememberDevice = false)
-        {
-            try
-            {
-                BaseResponse response = null;
-                LogInResponse result = await _userSrv.LogInAsync(request, rememberDevice);
+        //[HttpPost, Route("login")]
+        //public async Task<HttpResponseMessage> LogInUserAsync(NamePasswordPair request, bool rememberDevice = false)
+        //{
+        //    try
+        //    {
+        //        BaseResponse response = null;
+        //        LogInResponse result = await _userSrv.LogInAsync(request, rememberDevice);
 
-                if (result.Message == null)
-                    response = new ItemResponse<User>(result.User);
-                else
-                    response = new ItemResponse<string>(result.Message);
+        //        if (result.Message == null)
+        //            response = new ItemResponse<User>(result.User);
+        //        else
+        //            response = new ItemResponse<string>(result.Message);
 
-                return Request.CreateResponse(HttpStatusCode.OK, response);
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ErrorResponse(ex);
+        //    }
+        //}
 
-        [HttpGet, Route("logout")]
-        public HttpResponseMessage LogOutUser()
-        {
-            try
-            {
-                _userSrv.LogOut();
-                SuccessResponse response = new SuccessResponse();
-                return Request.CreateResponse(HttpStatusCode.OK, response);
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
+        //[HttpGet, Route("logout")]
+        //public HttpResponseMessage LogOutUser()
+        //{
+        //    try
+        //    {
+        //        _userSrv.LogOut();
+        //        SuccessResponse response = new SuccessResponse();
+        //        return Request.CreateResponse(HttpStatusCode.OK, response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ErrorResponse(ex);
+        //    }
+        //}
 
-        [HttpPost, Route("register")]
-        public async Task<HttpResponseMessage> RegisterAsync(User user)
-        {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    string id = await _userSrv.RegisterAsync(user);
-                    ItemResponse<string> response = new ItemResponse<string>(id);
-                    return Request.CreateResponse(HttpStatusCode.OK, response);
-                }
-                else
-                    throw new Exception("user is invalid...");
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
+        //[HttpPost, Route("register")]
+        //public async Task<HttpResponseMessage> RegisterAsync(User user)
+        //{
+        //    try
+        //    {
+        //        if (ModelState.IsValid)
+        //        {
+        //            string id = await _userSrv.RegisterAsync(user);
+        //            ItemResponse<string> response = new ItemResponse<string>(id);
+        //            return Request.CreateResponse(HttpStatusCode.OK, response);
+        //        }
+        //        else
+        //            throw new Exception("user is invalid...");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ErrorResponse(ex);
+        //    }
+        //}
 
-        [HttpGet, Route("user/resendValidationEmail")]
-        public HttpResponseMessage ResendValidationEmail(string username)
-        {
-            try
-            {
-                _userSrv.ResendValidationEmailAsync(username);
+        //[HttpGet, Route("user/resendValidationEmail")]
+        //public HttpResponseMessage ResendValidationEmail(string username)
+        //{
+        //    try
+        //    {
+        //        _userSrv.ResendValidationEmailAsync(username);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new SuccessResponse());
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new SuccessResponse());
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ErrorResponse(ex);
+        //    }
+        //}
 
-        [HttpPut, Route("user"), Intercept("Authorization")]
-        public HttpResponseMessage UpdateUser(User user)
-        {
-            try
-            {
-                BaseResponse response = null;
-                if (user.Id != _userSrv.SessionUser.Id)
-                    throw new Exception("Targeted user is not the current user...");
-                else
-                {
-                    _userSrv.UpdateUser(user, true);
-                    response = new SuccessResponse();
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, response);
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
+        //[HttpPut, Route("user"), Intercept("Authorization")]
+        //public HttpResponseMessage UpdateUser(User user)
+        //{
+        //    try
+        //    {
+        //        BaseResponse response = null;
+        //        if (user.Id != _userSrv.SessionUser.Id)
+        //            throw new Exception("Targeted user is not the current user...");
+        //        else
+        //        {
+        //            _userSrv.UpdateUser(user, true);
+        //            response = new SuccessResponse();
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ErrorResponse(ex);
+        //    }
+        //}
 
-        [HttpGet, Route("user/validatePassword"), Intercept("Authorization")]
-        public HttpResponseMessage ValidatePassword(string password)
-        {
-            try
-            {
-                if (!_userSrv.ValidatePassword(_userSrv.SessionUser.Password, password))
-                    throw new Exception("Password is invalid...");
+        //[HttpGet, Route("user/validatePassword"), Intercept("Authorization")]
+        //public HttpResponseMessage ValidatePassword(string password)
+        //{
+        //    try
+        //    {
+        //        if (!_userSrv.ValidatePassword(_userSrv.SessionUser.Password, password))
+        //            throw new Exception("Password is invalid...");
 
-                return Request.CreateResponse(HttpStatusCode.OK, new SuccessResponse());
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new SuccessResponse());
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ErrorResponse(ex);
+        //    }
+        //}
 
-        [HttpGet, Route("user/tfauth")]
-        public HttpResponseMessage ValidateTFAuthCode(string id, string code)
-        {
-            try
-            {
-                Token token = _userSrv.ValidateToken(new TokenRequest { TokenId = id, Code = code }, out State state, out string o);
+        //[HttpGet, Route("user/tfauth")]
+        //public HttpResponseMessage ValidateTFAuthCode(string id, string code)
+        //{
+        //    try
+        //    {
+        //        Token token = _userSrv.ValidateToken(new TokenRequest { TokenId = id, Code = code }, out State state, out string o);
 
-                if (!token.IsValidated)
-                    throw new Exception("Code is invalid...");
+        //        if (!token.IsValidated)
+        //            throw new Exception("Code is invalid...");
 
-                return Request.CreateResponse(HttpStatusCode.OK, new ItemResponse<User>(_userSrv.SessionUser));
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new ItemResponse<User>(_userSrv.SessionUser));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ErrorResponse(ex);
+        //    }
+        //}
 
-        #endregion User Service Endpoints
+        //#endregion User Service Endpoints
 
         #region Bill Service Endpoints
 
@@ -918,8 +919,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
         #region Other Endpoints
 
-        [Route("view/code/{fileName}")]
-        [HttpGet]
+        [HttpGet, Route("view/code/{fileName}")]
         public HttpResponseMessage GetCode(string fileName)
         {
             try
@@ -952,59 +952,57 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Route("config/enums/{enumString}")]
-        [HttpGet]
-        public HttpResponseMessage GetEnums(string enumString)
-        {
-            try
-            {
-                string[] enumTypes = enumString.Split(',');
-                ItemsResponse<string, Dictionary<int, string>> response = null;
-                Dictionary<string, Dictionary<int, string>> result = new Dictionary<string, Dictionary<int, string>>();
+        //[Route("config/enums/{enumString}")]
+        //[HttpGet]
+        //public HttpResponseMessage GetEnums(string enumString)
+        //{
+        //    try
+        //    {
+        //        string[] enumTypes = enumString.Split(',');
+        //        ItemsResponse<string, Dictionary<int, string>> response = null;
+        //        Dictionary<string, Dictionary<int, string>> result = new Dictionary<string, Dictionary<int, string>>();
 
-                foreach (string _enum in enumTypes)
-                {
-                    #region Parse N Search For Enum
+        //        foreach (string _enum in enumTypes)
+        //        {
+        //            #region Parse N Search For Enum
 
-                    Type enumType = null;
-                    string _enumCamel = _enum[0].ToUpperCase().Append(_enum.Where((a, b) => b > 0).ToArray()),
-                           _enumCamelWithType = _enum[0].ToUpperCase().Append(_enum.Where((a, b) => b > 0).ToArray()) + "Type",
-                           _enumCamelWithTypePlural = _enum[0].ToUpperCase().Append(_enum.Where((a, b) => b > 0).ToArray()) + "Types";
+        //            Type enumType = null;
+        //            string _enumCamel = _enum[0].ToUpperCase().Append(_enum.Where((a, b) => b > 0).ToArray()),
+        //                   _enumCamelWithType = _enum[0].ToUpperCase().Append(_enum.Where((a, b) => b > 0).ToArray()) + "Type",
+        //                   _enumCamelWithTypePlural = _enum[0].ToUpperCase().Append(_enum.Where((a, b) => b > 0).ToArray()) + "Types";
 
-                    enumType = (Type)_enum.ScanAssembliesForObject("Nostreets", ClassTypes.Type, a => a.IsEnum);
-                    if (enumType == null)
-                        enumType = (Type)_enumCamel.ScanAssembliesForObject("Nostreets", ClassTypes.Type, a => a.IsEnum);
-                    if (enumType == null)
-                        enumType = (Type)_enumCamelWithType.ScanAssembliesForObject("Nostreets", ClassTypes.Type, a => a.IsEnum);
-                    if (enumType == null)
-                        enumType = (Type)_enumCamelWithTypePlural.ScanAssembliesForObject("Nostreets", ClassTypes.Type, a => a.IsEnum);
+        //            enumType = (Type)_enum.ScanAssembliesForObject("Nostreets", ClassTypes.Type, a => a.IsEnum);
+        //            if (enumType == null)
+        //                enumType = (Type)_enumCamel.ScanAssembliesForObject("Nostreets", ClassTypes.Type, a => a.IsEnum);
+        //            if (enumType == null)
+        //                enumType = (Type)_enumCamelWithType.ScanAssembliesForObject("Nostreets", ClassTypes.Type, a => a.IsEnum);
+        //            if (enumType == null)
+        //                enumType = (Type)_enumCamelWithTypePlural.ScanAssembliesForObject("Nostreets", ClassTypes.Type, a => a.IsEnum);
 
-                    #endregion Parse N Search For Enum
+        //            #endregion Parse N Search For Enum
 
-                    if (enumType != null)
-                    {
-                        Dictionary<int, string> types = enumType.EnumToDictionary(),
-                                                safeTypes = new Dictionary<int, string>();
+        //            if (enumType != null)
+        //            {
+        //                Dictionary<int, string> types = enumType.EnumToDictionary(),
+        //                                        safeTypes = new Dictionary<int, string>();
 
-                        foreach (var type in types)
-                            safeTypes.Add(type.Key, type.Value.SafeName());
+        //                foreach (var type in types)
+        //                    safeTypes.Add(type.Key, type.Value.SafeName());
 
-                        result.Add(_enum, types);
-                    }
-                }
+        //                result.Add(_enum, types);
+        //            }
+        //        }
 
-                response = new ItemsResponse<string, Dictionary<int, string>>(result);
-                return Request.CreateResponse(HttpStatusCode.OK, response);
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
+        //        response = new ItemsResponse<string, Dictionary<int, string>>(result);
+        //        return Request.CreateResponse(HttpStatusCode.OK, response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ErrorResponse(ex);
+        //    }
+        //}
 
-        [Intercept("Authorization")]
-        [Route("config/site")]
-        [HttpGet]
+        [HttpGet, Route("config/site"), Intercept("Authorization")]
         public HttpResponseMessage GetSite(string url)
         {
             try
@@ -1023,34 +1021,33 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Route("send/email")]
-        [HttpPost]
-        public async Task<HttpResponseMessage> SendEmail(Dictionary<string, string> emailRequest)
-        {
-            try
-            {
-                if (!emailRequest.ContainsKey("fromEmail") || !emailRequest.ContainsKey("name") || !emailRequest.ContainsKey("subject") || !emailRequest.ContainsKey("messageText"))
-                { throw new Exception("Invalid Model"); }
-                if (!emailRequest.ContainsKey("toEmail")) { emailRequest["toEmail"] = "nileoverstreet@gmail.com"; }
-                if (!emailRequest.ContainsKey("messageHtml"))
-                {
-                    string phoneNumber = (emailRequest.ContainsKey("phone") ? "Phone Number: " + emailRequest["phone"] : string.Empty);
-                    emailRequest["messageHtml"] = "<div> Email From Contact Me Page </div>"
-                                                + "<div>" + "Name: " + emailRequest["name"] + "</div>"
-                                                + "<div>" + "Email: " + emailRequest["fromEmail"] + "</div>"
-                                                + "<div>" + phoneNumber + "</div>"
-                                                + "<div>" + "Message: " + emailRequest["messageText"] + "</div>";
-                }
-                if (!await _emailSrv.SendAsync(emailRequest["fromEmail"], emailRequest["toEmail"], emailRequest["subject"], emailRequest["messageText"], emailRequest["messageHtml"]))
-                { throw new Exception("Email Was Not Sent"); }
-                SuccessResponse response = new SuccessResponse();
-                return Request.CreateResponse(HttpStatusCode.OK, response);
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
+        //[HttpPost, Route("send/email")]
+        //public async Task<HttpResponseMessage> SendEmail(Dictionary<string, string> emailRequest)
+        //{
+        //    try
+        //    {
+        //        if (!emailRequest.ContainsKey("fromEmail") || !emailRequest.ContainsKey("name") || !emailRequest.ContainsKey("subject") || !emailRequest.ContainsKey("messageText"))
+        //        { throw new Exception("Invalid Model"); }
+        //        if (!emailRequest.ContainsKey("toEmail")) { emailRequest["toEmail"] = "nileoverstreet@gmail.com"; }
+        //        if (!emailRequest.ContainsKey("messageHtml"))
+        //        {
+        //            string phoneNumber = (emailRequest.ContainsKey("phone") ? "Phone Number: " + emailRequest["phone"] : string.Empty);
+        //            emailRequest["messageHtml"] = "<div> Email From Contact Me Page </div>"
+        //                                        + "<div>" + "Name: " + emailRequest["name"] + "</div>"
+        //                                        + "<div>" + "Email: " + emailRequest["fromEmail"] + "</div>"
+        //                                        + "<div>" + phoneNumber + "</div>"
+        //                                        + "<div>" + "Message: " + emailRequest["messageText"] + "</div>";
+        //        }
+        //        if (!await _emailSrv.SendAsync(emailRequest["fromEmail"], emailRequest["toEmail"], emailRequest["subject"], emailRequest["messageText"], emailRequest["messageHtml"]))
+        //        { throw new Exception("Email Was Not Sent"); }
+        //        SuccessResponse response = new SuccessResponse();
+        //        return Request.CreateResponse(HttpStatusCode.OK, response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ErrorResponse(ex);
+        //    }
+        //}
 
         #endregion Other Endpoints
     }

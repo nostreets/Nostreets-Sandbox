@@ -1,56 +1,45 @@
-﻿using System.Collections.Generic;
-using System.Web;
-using System.Web.Http;
-using System.Web.Mvc;
-using Castle.MicroKernel;
+﻿using Castle.MicroKernel;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using Castle.Windsor.Installer;
+
 using Nostreets_Sandbox.Classes;
-using Nostreets_Services.Domain.Users;
+
 using Nostreets_Services.Domain.Bills;
 using Nostreets_Services.Domain.Charts;
+using Nostreets_Services.Domain.Users;
 using Nostreets_Services.Domain.Web;
 using Nostreets_Services.Interfaces.Services;
 using Nostreets_Services.Models.Request;
 using Nostreets_Services.Services.Database;
 using Nostreets_Services.Services.Email;
 using Nostreets_Services.Services.Shopify;
+
 using NostreetsEntities;
+
 using NostreetsExtensions.DataControl.Classes;
 using NostreetsExtensions.Interfaces;
 using NostreetsExtensions.Utilities;
+
 using NostreetsORM;
+
+using OBL_Website.Services.Database;
+
+using System.Collections.Generic;
+using System.Web;
+using System.Web.Http;
+using System.Web.Mvc;
+
 using Reg = Castle.MicroKernel.Registration;
 
 namespace Nostreets_Sandbox.App_Start
 {
-    public class WindsorConfig : Disposable
-    {
-        public static void RegisterInterfaces(HttpConfiguration config)
-        {
-            WindsorContainer container = new WindsorContainer();
-            container.Install(FromAssembly.This());
-
-            DependencyResolver.SetResolver(new WindsorResolver(container));
-            config.DependencyResolver = new WindsorResolver(container);
-
-            _container = container;
-        }
-
-        public static WindsorContainer GetContainer()
-        {
-            return _container;
-        }
-
-        private static WindsorContainer _container;
-    }
-
     public class RepositoriesInstaller : Reg.IWindsorInstaller
     {
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             #region ORMOptions Func
+
             ORMOptions ormOptions(IKernel k) =>
                    new ORMOptions
                    {
@@ -59,10 +48,10 @@ namespace Nostreets_Sandbox.App_Start
                        WipeDB = false,
                        NullLock = false
                    };
-            #endregion
+
+            #endregion ORMOptions Func
 
             container.Register(
-
 
                 Reg.Component.For(typeof(IDBService<Error>)).ImplementedBy(typeof(EFDBService<Error>)).LifestyleSingleton()
                     .DependsOn((k, param) =>
@@ -132,6 +121,27 @@ namespace Nostreets_Sandbox.App_Start
                          param["errorLog"] = k.Resolve<IDBService<RequestError>>();
                      })
              );
+        }
+    }
+
+    public class WindsorConfig : Disposable
+    {
+        private static WindsorContainer _container;
+
+        public static WindsorContainer GetContainer()
+        {
+            return _container;
+        }
+
+        public static void RegisterInterfaces(HttpConfiguration config)
+        {
+            WindsorContainer container = new WindsorContainer();
+            container.Install(FromAssembly.This());
+
+            DependencyResolver.SetResolver(new WindsorResolver(container));
+            config.DependencyResolver = new WindsorResolver(container);
+
+            _container = container;
         }
     }
 }

@@ -9,12 +9,11 @@
     function onRepeatFinished($timeout, $parse) {
         return {
             restrict: 'A',
-            require: ['ng-repeat'],
             link: function ($scope, element, attr) {
                 if ($scope.$last === true) {
                     $timeout(function () {
                         $scope.$emit('ngRepeatFinished');
-                        if (!!attr.onRepeatFinished) {
+                        if (attr.onRepeatFinished) {
                             $parse(attr.onRepeatFinished)($scope);
                         }
                     });
