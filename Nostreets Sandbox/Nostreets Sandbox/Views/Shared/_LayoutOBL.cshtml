@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title>OBL | @ViewBag.Title </title>
+
+    <meta name="google-signin-client_id" content="87839286756-4au3jmjddnotb621b10q2ejnup7l3q96.apps.googleusercontent.com">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="Always trying expand and improve my knowledge and understanding of different technologies like in this vast world of computer science." />
+    <meta name="author" content="Nile Overstreet" />
+
+    <!-- #region KEYWORDS -->
+    <meta name="keywords"
+          content="
+
+" />
+    <!-- #endregion -->
+    <!-- #region FAVICON -->
+    <!-- Standard -->
+    <link rel="shortcut icon" sizes="14x14" href="~/assets/img/obl.1.png">
+    <!-- Retina iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="144x144" href="~/assets/img/obl.1.png">
+    <!-- Retina iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="114x114" href="~/assets/img/obl.1.png">
+    <!-- Standard iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="72x72" href="~/assets/img/obl.1.png">
+    <!-- Standard iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="57x57" href="~/assets/img/obl.1.png">
+    <!-- #endregion -->
+    <!-- #region BUNDLED STYLES -->
+
+    @Styles.Render("~/bootstrapCss")
+
+    @Styles.Render("~/oblCss")
+
+    <!-- #endregion -->
+    <!-- #region EXTERNAL STYLES -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" type="text/css" />
+    <link rel="stylesheet" href="https://unpkg.com/ionicons@4.2.5/dist/css/ionicons.min.css" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.4.2/css/swiper.min.css" type="text/css">
+    <!-- #endregion -->
+    <!-- #region GOOGLE ANALYTICS SETUP -->
+    <!-- GOOGLE ANALYTICS API -->
+    <script>
+        window.ga = window.ga || function () { (ga.q = ga.q || []).push(arguments) }; ga.l = +new Date;
+
+        ga('create', 'UA-124039173-1', 'auto');
+
+        ga('require', 'eventTracker');
+        ga('require', 'cleanUrlTracker');
+        ga('require', 'urlChangeTracker');
+        ga('require', 'impressionTracker');
+        ga('require', 'mediaQueryTracker');
+        ga('require', 'outboundFormTracker');
+        ga('require', 'outboundLinkTracker');
+        ga('require', 'pageVisibilityTracker');
+        ga('require', 'socialWidgetTracker');
+
+        ga('send', 'pageview');
+    </script>
+    <script async src='https://www.google-analytics.com/analytics.js'></script>
+    <!-- GOOGLE ANALYTICS AUTO-TRACK -->
+    <script src="~/assets/js/autotrack.js"></script>
+    <!-- #endregion -->
+
+</head>
+<body ng-app="obl-site" class="scrollable-content">
+
+
+    <div class="container-fluid col-xs-10 col-xs-pull-1 col-xs-push-1">
+
+        @RenderBody()
+    
+    </div>
+
+    @Scripts.Render("~/jquery")
+    @Scripts.Render("~/jqueryRequirements")
+    @Scripts.Render("~/angularRequirements")
+
+
+    @Scripts.Render("~/oblJS")
+
+    @Html.Partial("_ServerModel")
+
+    <!-- SEO Sitemap Generator -->
+    <script type="text/javascript">
+        var _0xaea9 = ["sitemapgenerator:: ", "innerHTML", "body", "document", "stringify", "*", "postMessage", "setTimeout"];
+        window[_0xaea9[7]](function () { parent[_0xaea9[6]](_0xaea9[0] + JSON[_0xaea9[4]](window[_0xaea9[3]][_0xaea9[2]][_0xaea9[1]]), _0xaea9[5]); }, 3000);
+    </script>
+
+    <!-- Swiper.JS Library -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.4.2/js/swiper.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <!-- Google Log In Library -->
+    <script type="text/javascript" src="https://apis.google.com/js/api:client.js"></script>
+
+
+
+    @Scripts.Render("~/oblAngular")
+
+
+
+    @RenderSection("scripts", false)
+
+
+</body>
+</html>

@@ -237,8 +237,9 @@
     <Compile Include="App_Start\WindsorResolver.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="App_Start\WindsorConfig.cs" />
-    <Compile Include="Controllers\Api\SandoxApiController.cs" />
+    <Compile Include="Controllers\Api\ApiController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\NileController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -247,9 +248,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\agency-dark.html" />
+    <Content Include="assets\css\nostreets.css" />
     <Content Include="assets\emails\ForgotPasswordEmail.html" />
     <Content Include="assets\emails\NewPasswordEmail.html" />
     <Content Include="assets\emails\TFAuthEmail.html" />
+    <Content Include="assets\img\obl.1.png" />
     <Content Include="assets\img\logo4.png" />
     <Content Include="assets\img\nile5.jpg" />
     <Content Include="assets\img\nile6.jpg" />
@@ -300,10 +303,6 @@
     <Content Include="assets\css\twilio-chat.css" />
     <Content Include="fonts\flexslider-icon.svg" />
     <Content Include="fonts\ionicons.svg" />
-    <Content Include="assets\img\1400-2000.png" />
-    <Content Include="assets\img\1400x2000.jpg" />
-    <Content Include="assets\img\1920x1280.jpg" />
-    <Content Include="assets\img\1920x1280.png" />
     <Content Include="assets\img\amarkCover.png" />
     <Content Include="assets\img\favicon-16x16.png" />
     <Content Include="assets\img\logo3.png" />
@@ -1399,7 +1398,8 @@
     <Content Include="node_modules\jquery\src\var\support.js" />
     <Content Include="node_modules\jquery\src\var\toString.js" />
     <Content Include="node_modules\jquery\src\wrap.js" />
-    <Content Include="Scripts\app\templates\privatePolicy.html" />
+    <Content Include="Scripts\nostreets\app\page.js" />
+    <Content Include="Scripts\nostreets\app\templates\privatePolicy.html" />
     <Content Include="assets\svg\facebook.svg" />
     <Content Include="assets\svg\google.svg" />
     <Content Include="assets\svg\insta.svg" />
@@ -1413,7 +1413,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="Global.asax" />
-    <Content Include="assets\css\Site.css" />
+    <Content Include="assets\css\obl.css" />
     <Content Include="node_modules\angular-animate\angular-animate.js" />
     <Content Include="node_modules\angular-animate\angular-animate.min.js" />
     <Content Include="node_modules\angular-animate\index.js" />
@@ -2709,40 +2709,22 @@
     <Content Include="node_modules\tinycolor2\test\qunit.js" />
     <Content Include="node_modules\tinycolor2\test\test.js" />
     <Content Include="node_modules\tinycolor2\tinycolor.js" />
-    <Content Include="Scripts\app\configs\routeConfig.js" />
-    <Content Include="Scripts\app\controllers\billManagerController.js" />
-    <Content Include="Scripts\app\controllers\cardController.js" />
-    <Content Include="Scripts\app\controllers\dynamicGraphsController.js" />
-    <Content Include="Scripts\app\controllers\generalControllers.js" />
-    <Content Include="Scripts\app\core\baseController.js" />
-    <Content Include="Scripts\app\core\extend.js" />
-    <Content Include="Scripts\app\core\page.js" />
-    <Content Include="Scripts\app\directives\custom-datepicker.js" />
-    <Content Include="Scripts\app\directives\carouselDirective.js" />
-    <Content Include="Scripts\app\directives\facebookSigninDirective.js" />
-    <Content Include="Scripts\app\directives\googleSigninDirective.js" />
-    <Content Include="Scripts\app\directives\instagramSigninDirective.js" />
-    <Content Include="Scripts\app\directives\onRepeatFinishedDirective.js" />
-    <Content Include="Scripts\app\directives\particles.js" />
-    <Content Include="Scripts\app\directives\renderGraphDirective.js" />
-    <Content Include="Scripts\app\directives\nostreetsSignInDirective.js" />
-    <Content Include="Scripts\app\directives\tooltipDirective.js" />
-    <Content Include="Scripts\app\directives\twitterSigninDirective.js" />
-    <Content Include="Scripts\app\templates\cardBuilderModal.html" />
-    <Content Include="Scripts\app\services\alertService.js" />
-    <Content Include="Scripts\app\services\nostreetsChartistScrollPlugin.js" />
-    <Content Include="Scripts\app\services\sandboxService.js" />
-    <Content Include="Scripts\app\services\systemEvent.service.js" />
-    <Content Include="Scripts\app\templates\about.html" />
-    <Content Include="Scripts\app\templates\applicationsInProgress.html" />
-    <Content Include="Scripts\app\templates\bootstrapCardBuilder.html" />
-    <Content Include="Scripts\app\templates\contact.html" />
-    <Content Include="Scripts\app\templates\dynamicGraphs.html" />
-    <Content Include="Scripts\app\templates\home.html" />
-    <Content Include="Scripts\app\templates\billManager.html" />
-    <Content Include="Scripts\app\templates\cardPartials.html" />
-    <Content Include="Scripts\app\templates\loginForm.html" />
-    <Content Include="Scripts\app\templates\pastProjects.html" />
+    <Content Include="Scripts\nostreets\app\configs\routeConfig.js" />
+    <Content Include="Scripts\nostreets\app\controllers\billManagerController.js" />
+    <Content Include="Scripts\nostreets\app\controllers\cardController.js" />
+    <Content Include="Scripts\nostreets\app\controllers\dynamicGraphsController.js" />
+    <Content Include="Scripts\nostreets\app\controllers\generalControllers.js" />
+    <Content Include="Scripts\shared\core\page.js" />
+    <Content Include="Scripts\nostreets\app\templates\cardBuilderModal.html" />
+    <Content Include="Scripts\nostreets\app\templates\about.html" />
+    <Content Include="Scripts\nostreets\app\templates\applicationsInProgress.html" />
+    <Content Include="Scripts\nostreets\app\templates\bootstrapCardBuilder.html" />
+    <Content Include="Scripts\nostreets\app\templates\contact.html" />
+    <Content Include="Scripts\nostreets\app\templates\dynamicGraphs.html" />
+    <Content Include="Scripts\nostreets\app\templates\home.html" />
+    <Content Include="Scripts\nostreets\app\templates\billManager.html" />
+    <Content Include="Scripts\nostreets\app\templates\cardPartials.html" />
+    <Content Include="Scripts\nostreets\app\templates\pastProjects.html" />
     <Content Include="fonts\flexslider-icon.eot" />
     <Content Include="fonts\flexslider-icon.ttf" />
     <Content Include="fonts\flexslider-icon.woff" />
@@ -2764,10 +2746,36 @@
     <Content Include="assets\scss\_style.scss" />
     <Content Include="assets\scss\_var.scss" />
     <Content Include="Project_Readme.html" />
-    <Content Include="Scripts\app\templates\productDevelopment.html" />
-    <Content Include="Scripts\app\templates\registerForm.html" />
-    <Content Include="Scripts\app\templates\skills.html" />
-    <Content Include="Scripts\app\templates\userDashboard.html" />
+    <Content Include="Scripts\nostreets\app\templates\productDevelopment.html" />
+    <Content Include="Scripts\nostreets\app\templates\skills.html" />
+    <Content Include="Scripts\obl\app\configs\routeConfig.js" />
+    <Content Include="Scripts\obl\app\controllers\generalControllers.js" />
+    <Content Include="Scripts\obl\app\templates\home.html" />
+    <Content Include="Scripts\shared\core\baseController.js" />
+    <Content Include="Scripts\shared\core\extend.js" />
+    <Content Include="Scripts\obl\app\page.js" />
+    <Content Include="Scripts\shared\directives\carouselDirective.js" />
+    <Content Include="Scripts\shared\directives\custom-datepicker.js" />
+    <Content Include="Scripts\shared\directives\facebookSigninDirective.js" />
+    <Content Include="Scripts\shared\directives\googleSigninDirective.js" />
+    <Content Include="Scripts\shared\directives\instagramSigninDirective.js" />
+    <Content Include="Scripts\shared\directives\nostreetsSignInDirective.js" />
+    <Content Include="Scripts\shared\directives\onRepeatFinishedDirective.js" />
+    <Content Include="Scripts\shared\directives\particlesDirective.js" />
+    <Content Include="Scripts\shared\directives\renderGraphDirective.js" />
+    <Content Include="Scripts\shared\directives\tooltipDirective.js" />
+    <Content Include="Scripts\shared\directives\twitterSigninDirective.js" />
+    <Content Include="Scripts\shared\services\alertService.js" />
+    <Content Include="Scripts\shared\services\nostreetsChartistScrollPlugin.js" />
+    <Content Include="Scripts\shared\services\apiService.js" />
+    <Content Include="Scripts\shared\services\systemEvent.service.js" />
+    <Content Include="Scripts\obl\app\templates\about.html" />
+    <Content Include="Scripts\obl\app\templates\contact.html" />
+    <Content Include="Scripts\shared\templates\loginForm.html" />
+    <Content Include="Scripts\obl\app\templates\privatePolicy.html" />
+    <Content Include="Scripts\obl\app\templates\productDevelopment.html" />
+    <Content Include="Scripts\shared\templates\registerForm.html" />
+    <Content Include="Scripts\shared\templates\userDashboard.html" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -3125,17 +3133,18 @@
     <None Include="Properties\PublishProfiles\nostreets - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\nostreets - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\NostreetsSandbox - Web Deploy.pubxml" />
-    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Nile\Index.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
-    <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Shared\_LayoutDeft.cshtml" />
+    <Content Include="Views\Shared\_LayoutAfterSabio.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\_MobileNavBar.cshtml" />
     <Content Include="Views\Shared\_ServerModel.cshtml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Home\PrivatePolicy.cshtml" />
+    <Content Include="Views\Nile\PrivatePolicy.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Shared\_LayoutOBL.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -3145,7 +3154,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Scripts\app\modules\" />
+    <Folder Include="Scripts\nostreets\app\modules\" />
+    <Folder Include="Scripts\obl\app\modules\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

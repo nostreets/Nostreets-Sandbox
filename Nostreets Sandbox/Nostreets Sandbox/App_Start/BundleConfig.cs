@@ -11,39 +11,15 @@ namespace Nostreets_Sandbox
             DefineOrder(bundles);
 
 
-          //+BOOTSTRAP CSS
-          bundles.Add(
-                new StyleBundle("~/bootstrapCss").IncludeWithCssRewriteUrlTransform(
+            #region Base
+            //+BOOTSTRAP CSS
+            bundles.Add(
+                  new StyleBundle("~/bootstrapCss").IncludeWithCssRewriteUrlTransform(
 
-                    "~/node_modules/bootstrap/dist/css/bootstrap-theme.css",
-                    "~/node_modules/bootstrap/dist/css/bootstrap.css"
-                )
-            );
-
-
-          //+CUSTOM CSS
-          bundles.Add(
-                new StyleBundle("~/customCss").IncludeWithCssRewriteUrlTransform(
-
-                    //+MATERIAL DESIGN LITE
-                    "~/node_modules/material-design-lite/material.css",
-                    "~/node_modules/material-design-lite/dist/material.blue_grey-indigo.min.css",
-
-                    //+CUSTOM
-                    "~/assets/css/theme-Dark.css",
-                    "~/assets/css/material-dashboard.css",
-                    "~/assets/css/chartist-plugin-tooltip.css",
-                    "~/assets/css/Site.css",
-
-                    //+OTHER
-                    "~/assets/css/font-awesome.css",
-                    "~/node_modules/angular-ui-bootstrap/dist/ui-bootstrap-csp.css",
-                    "~/node_modules/angular-toastr/dist/angular-toastr.css",
-                    "~/node_modules/angularjs-color-picker/dist/angularjs-color-picker.css",
-                    "~/node_modules/angularjs-color-picker/dist/themes/angularjs-color-picker-bootstrap.min.css"
-               )
-            );
-
+                      "~/node_modules/bootstrap/dist/css/bootstrap-theme.css",
+                      "~/node_modules/bootstrap/dist/css/bootstrap.css"
+                  )
+              );
 
             //+JQUERY
             bundles.Add(new ScriptBundle("~/jquery").Include("~/node_modules/jquery/dist/jquery.js"));
@@ -70,57 +46,142 @@ namespace Nostreets_Sandbox
                 )
             );
 
-
-           //+ANGULAR REQUIREMENTS
-           bundles.Add(
-                new ScriptBundle("~/angularRequirements").Include(
-
-                    "~/node_modules/angular/angular.js",
-                    "~/node_modules/angular-animate/angular-animate.js",
-                    "~/node_modules/angular-route/angular-route.js",
-                    "~/node_modules/angular-sanitize/angular-sanitize.js",
-                    "~/node_modules/angular-cookies/angular-cookies.js",
-
-                    "~/node_modules/angular-toastr/dist/angular-toastr.tpls.min.js",
-                    "~/node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js",
-
-                    "~/node_modules/tinycolor2/dist/tinycolor-min.js",
-                    "~/node_modules/angularjs-color-picker/dist/angularjs-color-picker.js"
-
-                )
-            );
-
-            //+CUSTOM JAVASCRIPT
+            //+ANGULAR REQUIREMENTS
             bundles.Add(
-                new ScriptBundle("~/customJS").Include(
+                 new ScriptBundle("~/angularRequirements").Include(
+
+                     "~/node_modules/angular/angular.js",
+                     "~/node_modules/angular-animate/angular-animate.js",
+                     "~/node_modules/angular-route/angular-route.js",
+                     "~/node_modules/angular-sanitize/angular-sanitize.js",
+                     "~/node_modules/angular-cookies/angular-cookies.js",
+
+                     "~/node_modules/angular-toastr/dist/angular-toastr.tpls.min.js",
+                     "~/node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js",
+
+                     "~/node_modules/tinycolor2/dist/tinycolor-min.js",
+                     "~/node_modules/angularjs-color-picker/dist/angularjs-color-picker.js"
+
+                 )
+             ); 
+            #endregion
+
+
+            #region Nostreets Portfolio
+            //+Nostreets Portfolio CSS
+            bundles.Add(
+                  new StyleBundle("~/nostreetsCss").IncludeWithCssRewriteUrlTransform(
+
+                      //+MATERIAL DESIGN LITE
+                      "~/node_modules/material-design-lite/material.css",
+                      "~/node_modules/material-design-lite/dist/material.blue_grey-indigo.min.css",
+
+                      //+CUSTOM
+                      "~/assets/css/theme-Dark.css",
+                      "~/assets/css/material-dashboard.css",
+                      "~/assets/css/chartist-plugin-tooltip.css",
+                      "~/assets/css/nostreets.css",
+
+                      //+OTHER
+                      "~/assets/css/font-awesome.css",
+                      "~/node_modules/angular-ui-bootstrap/dist/ui-bootstrap-csp.css",
+                      "~/node_modules/angular-toastr/dist/angular-toastr.css",
+                      "~/node_modules/angularjs-color-picker/dist/angularjs-color-picker.css",
+                      "~/node_modules/angularjs-color-picker/dist/themes/angularjs-color-picker-bootstrap.min.css"
+                 )
+              );
+
+
+            //+Nostreets Portfolio JAVASCRIPT
+            bundles.Add(
+                new ScriptBundle("~/nostreetsJS").Include(
 
                     //+OTHER
                     "~/assets/js/sweetalert2.js",
-                    "~/assets/js/chartist.min.js",                                   //Chartist.js
+                    "~/assets/js/chartist.min.js",                                      //Chartist.js
                     "~/assets/js/chartist-plugin-tooltip.min.js",
                     "~/assets/js/chartist-plugin-zoom.min.js",
 
                     //+CUSTOM
                     "~/assets/js/particles.js",
-                    "~/assets/js/renderParticles.js",                                // Background Particles
-                    "~/Scripts/app/services/nostreetsChartistScrollPlugin.js",       // Nostreets Chartist Scroll Plugin
-                    "~/Scripts/app/core/page.js",
-                    "~/Scripts/app/core/extend.js",
-                    "~/Scripts/app/services/alertService.js",
-                    "~/Scripts/app/services/systemEvent.service.js",
-                    "~/Scripts/app/core/baseController.js"
+                    "~/assets/js/renderParticles.js",                                   // Background Particles
+                    "~/Scripts/shared/services/nostreetsChartistScrollPlugin.js",       // Nostreets Chartist Scroll Plugin
+                    "~/Scripts/nostreets/app/page.js",
+                    "~/Scripts/shared/core/extend.js",
+                    "~/Scripts/shared/services/alertService.js",
+                    "~/Scripts/shared/services/systemEvent.service.js",
+                    "~/Scripts/shared/core/baseController.js"
                 )
             );
 
 
-
-            //+CUSTOM ANGULAR
+            //+Nostreets Portfolio ANGULAR
             bundles.Add(
-                new ScriptBundle("~/customAngular").Include(
-                    "~/Scripts/app/configs/routeConfig.js",
-                    "~/Scripts/app/services/sandboxService.js"
+                new ScriptBundle("~/nostreetsAngular").Include(
+                    "~/Scripts/nostreets/app/configs/routeConfig.js",
+                    "~/Scripts/shared/services/apiService.js"
                 )
             );
+            #endregion
+
+
+            #region OBL
+            //+OBL CSS
+            bundles.Add(
+               new StyleBundle("~/oblCss").IncludeWithCssRewriteUrlTransform(
+
+                   //+MATERIAL DESIGN LITE
+                   "~/node_modules/material-design-lite/material.css",
+                   "~/node_modules/material-design-lite/dist/material.blue_grey-indigo.min.css",
+
+                   //+CUSTOM
+                   "~/assets/css/material-dashboard.css",
+                   "~/assets/css/chartist-plugin-tooltip.css",
+                   "~/assets/css/obl.css",
+
+                   //+OTHER
+                   "~/assets/css/font-awesome.css",
+                   "~/node_modules/angular-ui-bootstrap/dist/ui-bootstrap-csp.css",
+                   "~/node_modules/angular-toastr/dist/angular-toastr.css",
+                   "~/node_modules/angularjs-color-picker/dist/angularjs-color-picker.css",
+                   "~/node_modules/angularjs-color-picker/dist/themes/angularjs-color-picker-bootstrap.min.css"
+              )
+           );
+
+            //+OBL JAVASCRIPT
+            bundles.Add(
+                new ScriptBundle("~/nostreetsJS").Include(
+
+                    //+OTHER
+                    "~/assets/js/sweetalert2.js",
+                    "~/assets/js/chartist.min.js",                                          //Chartist.js
+                    "~/assets/js/chartist-plugin-tooltip.min.js",
+                    "~/assets/js/chartist-plugin-zoom.min.js",
+
+                    //+CUSTOM
+                    "~/assets/js/particles.js",
+                    "~/Scripts/shared/core/page.js",
+                    "~/Scripts/obl/app/page.js",
+                    "~/Scripts/shared/core/extend.js",
+                    "~/Scripts/shared/core/baseController.js",
+                    "~/Scripts/shared/services/alertService.js",
+                    "~/Scripts/shared/services/systemEvent.service.js",
+                    "~/Scripts/shared/services/nostreetsChartistScrollPlugin.js"            // Nostreets Chartist Scroll Plugin
+                )
+            );
+
+
+
+            //+OBL ANGULAR
+            bundles.Add(
+                new ScriptBundle("~/nostreetsAngular").Include(
+                    "~/Scripts/obl/app/configs/routeConfig.js",
+                    "~/Scripts/shared/services/apiService.js",
+                    "~/Scripts/shared/directives/particlesDirective.js" 
+)
+            );
+
+            #endregion
 
 
             //+THEME SCRIPTS

@@ -1,0 +1,124 @@
+﻿
+<div id="dynamicGraphs" class="container-fluid">
+    <div class="row text-center">
+        <div class="col-xs-3 dropdown text-blueish" style="margin-left: 37%">
+            <a class="dropdown-toggle" data-toggle="dropdown">View Code</a>
+            <ul class="dropdown-menu" ng-click="pg.viewCode()">
+                <li>
+                    <a class="btn btn-xs btn-simple btn-round" ng-click="pg.viewDirectiveCode()">Directive</a>
+                </li>
+                <li>
+                    <a data-target="#" class="btn btn-xs btn-simple btn-round" ng-click="pg.viewControllerCode()">Controller</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row" align="center">
+        <h2 class="text-center text-blueish">Dynamic Graph Builder</h2>
+        <button class="btn btn-xs btn-round" ng-click="pg.openModal()">Build Graph</button>
+    </div>
+    <div class="row">
+        <div class="text-center" ng-if="pg.graphName"><h3>{{ pg.graphName }}</h3></div>
+        <div id="graphMainDiv" class="ct-golden-section hidden"></div>
+        <div align="center">
+            <button ng-if="pg.rendered && pg.isLoggedIn" 
+                    ng-disabled="pg.saved" 
+                    ng-click="pg.saveGraph()" 
+                    style="margin-right: 10%;" 
+                    class="btn btn-sm btn-round">{{ !pg.saved ? "Save Graph" : "Saved" }}
+            </button>
+        </div>
+        <div class="row" ng-if="pg.legend[0]">
+            Legend:
+            <div ng-repeat="key in pg.legend">
+                <i></i>Line {{ $index + 1 }}: {{ key }}
+            </div>
+        </div>
+        <div class="row">
+            <div ng-if="pg.isLoggedIn">
+                <div ng-repeat="chart in pg.charts" class="col-xs-10 col-xs-offset-1">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <h6>Name: {{ chart.name }}</h6>
+                            <h6>Type: {{ chart.typeId == 1 ? 'Line' : chart.typeId == 2 ? 'Bar' : chart.typeId == 3 ? 'Pie' : 'N/A' }}</h6>
+                        </div>
+                        <div class="card-content text-center">
+                            <chart graph="chart"></chart>
+                        </div>
+                        <div class="card-footer">
+                            <span class="pull-left">Modified On: {{ chart.dateModified | date }}</span>
+                            <span class="pull-right">Created On: {{ chart.dateCreated | date }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/ng-template" id="modalGraphBuilder.html">
+    <div class="card modal-body">
+        <form name="form" novalidate>
+            <div class="card-content">
+                <div class="row" align="center">
+                    <div class="col-sm-4">
+                        <span><strong>Graph Name:</strong></span>
+                        <input type="text" class="input-sm" required ng-model="mc.name" ng-disabled="mc.items[0]" />
+                    </div>
+                    <div class="col-sm-4">
+                        <span><strong>Graph Type:</strong></span>
+                        <select ng-model="mc.typeId" ng-disabled="mc.items[0]">
+                            <option value="1">Line</option>
+                            <option value="2">Bar</option>
+                            <option value="3">Pie</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <span><strong>Number of {{ mc.typeId == 1 ? 'Points' : mc.typeId == 2 ? 'Bars' : mc.typeId == 3 ? 'Slices' : 'Points' }} in Graph:</strong></span>
+                        <input type="number" class="input-sm" ng-model="mc.points" ng-disabled="mc.items[0]" required min="2" />
+                    </div>
+                    <button class="btn btn-sm btn-round"
+                            ng-disabled="!mc.name || !mc.points || !mc.typeId || (mc.typeId == 3 && mc.items[0])"
+                            ng-click="mc.createLine(mc.points)">
+                        Add {{ mc.typeId == 1 ? 'Lines' : mc.typeId == 2 ? 'Bars' : mc.typeId == 3 ? 'Slices' : '' }}
+                    </button>
+
+                    <button class="btn btn-sm btn-round" ng-click="mc.reset()">
+                        Reset Graph
+                    </button>
+                </div>
+
+                <div ng-if="mc.items[0]" class="row">
+                    <div class="col-xs-3" ng-repeat="label in mc.labels track by $index">
+                        <small><strong>Label {{ $index + 1 }}</strong></small>
+                        <input class="form-control" type="text" ng-model="label.label" />
+                    </div>
+                </div>
+
+                <div ng-if="mc.items[0]" ng-repeat="item in mc.items">
+
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <small><strong>{{ mc.typeId == 1 ? 'Line' : mc.typeId == 2 ? 'Bar' : mc.typeId == 3 ? 'Slice' : 'Line' }} {{ $index + 1 }}'s Name</strong></small>
+                            <input class="form-control" type="text" ng-model="item.key" ng-disabled="mc.typeId == 3" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-3" ng-repeat="point in item.points track by $index">
+                            <small><strong>{{ mc.typeId == 1 ? 'Point' : mc.typeId == 2 ? 'Bar' : mc.typeId == 3 ? 'Slice' : 'Line' }} {{ $index + 1 }}</strong></small>
+                            <input class="form-control" type="number" ng-model="point.point" />
+                        </div>
+                    </div>
+
+                </div>
+
+                <div align="center" ng-if="mc.items[0]">
+                    <button class="btn btn-sm btn-round" ng-disabled="!mc.validateData()" ng-click="mc.submit(mc.items)">Make Graph!</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</script>

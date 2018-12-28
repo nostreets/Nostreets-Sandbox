@@ -1,0 +1,31 @@
+﻿
+<div class="container-fluid" card-builder>
+    <div class="row text-center">
+        <a class="text-blueish" ng-click="pg.viewCode()">View Code</a>
+    </div>
+    <div class="row">
+        <h2 class="text-center text-primary text-blueish">Bootstrap Card Builder</h2>
+    </div>
+    <div class="row" align="center">
+        <button class="btn btn-simple" ng-click="pg.activateMode('update')"><i class="material-icons">create</i></button>
+        <button class="card-builder-openModal btn btn-xs btn-round" data-toggle="modal" data-target=".card-builder-formModal">Open Builder</button>
+        <button class="btn btn-simple" ng-click="pg.activateMode('delete')"><i class="material-icons">delete</i></button>
+    </div>
+    <div class="row">
+        <div ng-if="pg.isLoggedIn">
+            <div ng-repeat="item in pg.cards" ng-class="{'delete': pg.deleteMode, 'update': pg.updateMode}">
+                <div ng-bind-html="item.html" ng-click="pg.selectElement($index)"></div>
+            </div>
+        </div>
+        <!--<div ng-if="!pg.isLoggedIn" class="text-blueish text-center">
+            User needs to be logged in to use this service...
+        </div>-->
+    </div>
+
+</div>
+
+<ng-include src="'Scripts/app/templates/cardPartials.html'"></ng-include>
+<ng-include src="'Scripts/app/templates/cardBuilderModal.html'"></ng-include>
+
+
+

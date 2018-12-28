@@ -1,0 +1,147 @@
+﻿<div>
+    <div class="container" ng-controller="contactUsController as contactUs">
+        <h2 class="title">Send me a message</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <small class="description">
+                    You can contact me for any questions or inquiries. I'll get in touch with you as soon as possible.
+                </small>
+
+                <!-- CONTACT FORM -->
+                <form ng-if="!contactUs.hasSent"
+                      name="contactUsForm"
+                      novalidate
+                      ng-submit="contactUs.submitForm(contactUsForm.$valid)"
+                      role="form" id="contact-form"
+                      method="post">
+
+                    <div class="col-xs-6">
+                        <div class="form-group"
+                             ng-class="{'has-error': !contactUsForm.name.$pristine && (contactUsForm.name.$invalid || contactUsForm.name.$error.minlength || contactUsForm.name.$error.maxlength)}">
+                            <label class="control-label">
+                                Name
+                            </label>
+                            <input type="text"
+                                   name="name"
+                                   class="form-control"
+                                   ng-model="contactUs.item.name"
+                                   ng-minlength="2"
+                                   ng-maxlength="50"
+                                   required />
+                        </div>
+                    </div>
+
+                    <div class="col-xs-6">
+                        <div class="form-group"
+                             ng-class="{'has-error': (!contactUsForm.subject.$pristine && contactUsForm.subject.$invalid) || (contactUsForm.subject.$error.minlength)|| (contactUsForm.subject.$error.maxlength)}">
+                            <label class="control-label">
+                                Subject
+                            </label>
+
+                            <select ng-model="contactUs.item.subject"
+                                    ng-options="item as item for item in contactUs.subjects"
+                                    class="form-control"
+                                    required></select>
+
+                            <!-- OLD INPUT
+                                <input type="text"
+                                   name="subject"
+                                   class="form-control"
+                                   ng-model="contactUs.item.subject"
+                                   ng-minlength="2"
+                                   ng-maxlength="25"
+                                   required />
+                            <p ng-if="(contactUsForm.subject.$error.required && !contactUsForm.subject.$pristine) || (!contactUsForm.subject.$pristine && contactUsForm.subject.$invalid)">
+                                A Subject is required.
+                            </p>
+                            <p ng-if="contactUsForm.subject.$error.minlength">
+                                Subject is too short
+                            </p>
+                            <p ng-if="contactUsForm.subject.$error.maxlength">
+                                Subject is too long.
+                            </p>
+                                -->
+                        </div>
+                    </div>
+
+                    <div class="col-xs-6">
+                        <div class="form-group"
+                             ng-class="{'has-error': !contactUsForm.email.$pristine && contactUsForm.email.$invalid}">
+                            <label class="control-label">
+                                Email address
+                            </label>
+                            <input type="email"
+                                   name="email"
+                                   class="form-control"
+                                   ng-model="contactUs.item.fromEmail"
+                                   required />
+                            <p ng-if="!contactUsForm.email.$pristine && contactUsForm.email.$invalid ">
+                                Enter a valid email.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-xs-6">
+                        <div class="form-group"
+                             ng-class="{'has-error': (!contactUsForm.phone.$pristine && contactUsForm.phone.$invalid)}">
+                            <label class="control-label">Phone</label>
+                            <input type="tel"
+                                   pattern="^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$"
+                                   name="phone"
+                                   class="form-control"
+                                   ng-model="contactUs.item.phone" />
+                            <p ng-if="contactUsForm.phone.$invalid && !contactUsForm.phone.$pristine">
+                                Invalid Format
+                            </p>
+
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12">
+                        <div class="form-group" ng-class="{'has-error': (!contactUsForm.messageText.$pristine && contactUsForm.messageText.$invalid ) || (contactUsForm.messageText.$error.minlength)|| (contactUsForm.messageText.$error.maxlength)}">
+                            <label class="control-label">
+                                Your message
+                            </label>
+                            <textarea name="messageText"
+                                      class="form-control"
+                                      id="message"
+                                      rows="6"
+                                      ng-model="contactUs.item.messageText"
+                                      ng-minlength="4"
+                                      ng-maxlength="500"
+                                      required></textarea>
+                            <p ng-if="(contactUsForm.messageText.$error.required && !contactUsForm.messageText.$pristine)">
+                                Message is required.
+                            </p>
+                            <p ng-if="contactUsForm.messageText.$error.minlength">
+                                Message is too short
+                            </p>
+                            <p ng-if="contactUsForm.messageText.$error.maxlength">
+                                Message is too long.
+                            </p>
+                        </div>
+                    </div>
+                  
+                    <div class="col-xs-12 text-center">
+                        <input style="background-color: #58768b;"
+                               type="submit"
+                               class="btn btn-round btn-xs"
+                               value="Send"
+                               ng-disabled="contactUsForm.$invalid"
+                               ng-click="contactUs.sendEmail(contactUs.item)" />
+                    </div>
+                </form>
+
+
+                <div ng-if="contactUs.hasSent" class="text-center">
+                    <h4>
+                        Message has been sent!
+                    </h4>
+
+                    <a class="btn btn-danger btn-xs" href="#!">Back</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
