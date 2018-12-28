@@ -252,6 +252,7 @@
     <Content Include="assets\emails\ForgotPasswordEmail.html" />
     <Content Include="assets\emails\NewPasswordEmail.html" />
     <Content Include="assets\emails\TFAuthEmail.html" />
+    <Content Include="assets\img\body-bg.png" />
     <Content Include="assets\img\obl.1.png" />
     <Content Include="assets\img\logo4.png" />
     <Content Include="assets\img\nile5.jpg" />
