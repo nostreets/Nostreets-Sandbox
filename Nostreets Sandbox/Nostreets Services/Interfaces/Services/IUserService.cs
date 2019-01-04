@@ -50,12 +50,18 @@ namespace Nostreets_Services.Interfaces.Services
         /// <returns></returns>
         bool CheckIfEmailExist(string email);
 
+        List<User> GetAllUsers();
+            
         /// <summary>
         /// Gets the by username.
         /// </summary>
         /// <param name="username">The username.</param>
         /// <returns></returns>
         User GetByUsername(string username);
+
+        Dictionary<User, UserData> GetAllUsersWithUserData();
+
+        UserData GetUserData(User user);
 
         /// <summary>
         /// Logs out.
@@ -182,17 +188,6 @@ namespace Nostreets_Services.Interfaces.Services
         /// </summary>
         /// <param name="userData">The user data.</param>
         void UpdateUserData(UserData userData);
-
-        /// <summary>
-        /// Gets the user data.
-        /// </summary>
-        /// <param name="user">The user.</param>
-        void GetUserData(User user);
-
-        /// <summary>
-        /// Gets the user data.
-        /// </summary>
-        /// <param name="userData">The user data.</param>
-        void GetUserData(UserData userData);
+         
     }
 }

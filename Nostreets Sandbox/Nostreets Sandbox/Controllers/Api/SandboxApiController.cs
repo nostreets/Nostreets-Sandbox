@@ -34,7 +34,7 @@ using NostreetsRouter.Models.Responses;
 
 namespace Nostreets_Sandbox.Controllers.Api
 {
-    [RoutePrefix("api")]
+    [RoutePrefix("nostreets/api")]
     public class SandboxApiController : System.Web.Http.ApiController
     {
         public SandboxApiController()

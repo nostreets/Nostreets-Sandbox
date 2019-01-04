@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NostreetsEntities", "..\..\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nostreets Sandbox", "Nostreets Sandbox\Nostreets Sandbox.csproj", "{98CC2DEE-C321-4BF9-8D29-9E5E1ED60060}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OBL_Website", "..\..\OBL-Website\OBL_Website\OBL_Website.csproj", "{AB0F8DF3-9CBD-4023-9BDA-DB61A42E1788}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OBL_Website", "..\..\OBL_Website\OBL_Website\OBL_Website.csproj", "{AB0F8DF3-9CBD-4023-9BDA-DB61A42E1788}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

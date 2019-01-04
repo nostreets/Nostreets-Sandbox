@@ -8,7 +8,7 @@ using Nostreets_Services.Domain.Users;
 
 namespace Nostreets_Sandbox.Controllers
 {
-    //[RoutePrefix("nile")]
+    [RoutePrefix("nostreets")]
     public class SandboxController : Controller
     {
         public SandboxController()

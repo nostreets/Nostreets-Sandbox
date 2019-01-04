@@ -5,7 +5,8 @@ namespace Nostreets_Services.Interfaces.Services
 {
     public interface IShopifyService
     {
-        List<ShopifyCustomer> GetCustomers();
+        void CheckForUnregisteredCustomers();
+        List<ShopifyCustomer> GetAllCustomers();
         void InsertUser(ShopifyCustomer customer);
         void RemoveCustomer(string customerId);
         void UpdateCustomer(ShopifyCustomer customer);

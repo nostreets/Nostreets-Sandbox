@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Nostreets_Services.Domain.Shopify;
 using Nostreets_Services.Domain.Users;
 using Nostreets_Services.Domain.Web;
@@ -42,7 +43,7 @@ namespace Nostreets_Services.Services.Shopify
             return url.RestSharpEndpoint<T>(method, data, "application/json", Headers);
         }
 
-        public List<ShopifyCustomer> GetCustomers()
+        public List<ShopifyCustomer> GetAllCustomers()
         {
             try
             {
@@ -114,6 +115,45 @@ namespace Nostreets_Services.Services.Shopify
                     _errorLog.Insert(new RequestError(null, Domain + "/admin/customers.json", ex));
 
                 throw ex;
+            }
+        }
+
+        public void CheckForUnregisteredCustomers()
+        {
+            List<ShopifyCustomer> shopifyCustomers = GetAllCustomers();
+            Dictionary<User, UserData> dbUsers = _userSrv.GetAllUsersWithUserData();
+            List<ShopifyCustomer> customersNotInDB = shopifyCustomers.Where(a => !customerIsInDB(a)).ToList();
+
+            foreach (ShopifyCustomer _customer in customersNotInDB)
+            {
+                _userSrv.RegisterAsync(new User()
+                {
+                    UserName = _customer.Email,
+                    Password = _customer.Id.ToString(),
+                    UserOrigin = UserOriginType.Shopify,
+                    Contact = new Contact()
+                    {
+                        FirstName = _customer.FirstName,
+                        LastName = _customer.LastName,
+                        PrimaryEmail = _customer.Email,
+                        PrimaryPhone = _customer.Phone.ToString(),
+                        Address = new StreetAddress() {
+                            OwnersFirstName = _customer.DefaultAddress.FirstName.ToString(),
+                            OwnersLastName = _customer.DefaultAddress.LastName.ToString(),
+                            AddressLine1 = _customer.DefaultAddress.Address1,
+                            AddressLine2 = _customer.DefaultAddress.Address2,
+                            City = _customer.DefaultAddress.City,
+                            State = _customer.State,
+                            ZipCode = int.Parse(_customer.DefaultAddress.Zip),
+                            PhoneNumber = _customer.DefaultAddress.Phone
+                        }
+                    }
+                });
+            }
+
+            bool customerIsInDB(ShopifyCustomer customer)
+            {
+                return dbUsers.Any(a => a.Key.Contact.PrimaryEmail == customer.Email || a.Value.ApiIDs["ShopifyId"] == customer.Id.ToString());
             }
         }
     }
