@@ -1,5 +1,16 @@
 ﻿
 
+#particles-js {
+    position: fixed;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    left: 0;
+    z-index: -1;
+}
+
+
+
 /*#region SWIPER JS */
 
 .swiper-wrapper {

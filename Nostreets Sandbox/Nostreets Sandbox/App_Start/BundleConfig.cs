@@ -126,63 +126,7 @@ namespace Nostreets_Sandbox
             #endregion
 
 
-//            #region OBL
-//            //+OBL CSS
-//            bundles.Add(
-//               new StyleBundle("~/oblCss").IncludeWithCssRewriteUrlTransform(
-
-//                   //+MATERIAL DESIGN LITE
-//                   "~/node_modules/material-design-lite/material.css",
-//                   "~/node_modules/material-design-lite/dist/material.blue_grey-indigo.min.css",
-
-//                   //+CUSTOM
-//                   "~/assets/css/material-dashboard.css",
-//                   "~/assets/css/chartist-plugin-tooltip.css",
-//                   "~/assets/css/obl.css",
-
-//                   //+OTHER
-//                   "~/assets/css/font-awesome.css",
-//                   "~/node_modules/angular-ui-bootstrap/dist/ui-bootstrap-csp.css",
-//                   "~/node_modules/angular-toastr/dist/angular-toastr.css",
-//                   "~/node_modules/angularjs-color-picker/dist/angularjs-color-picker.css",
-//                   "~/node_modules/angularjs-color-picker/dist/themes/angularjs-color-picker-bootstrap.min.css"
-//              )
-//           );
-
-//            //+OBL JAVASCRIPT
-//            bundles.Add(
-//                new ScriptBundle("~/nostreetsJS").Include(
-
-//                    //+OTHER
-//                    "~/assets/js/sweetalert2.js",
-//                    "~/assets/js/chartist.min.js",                                          //Chartist.js
-//                    "~/assets/js/chartist-plugin-tooltip.min.js",
-//                    "~/assets/js/chartist-plugin-zoom.min.js",
-
-//                    //+CUSTOM
-//                    "~/assets/js/particles.js",
-//                    "~/Scripts/shared/core/page.js",
-//                    "~/Scripts/obl/app/page.js",
-//                    "~/Scripts/shared/core/extend.js",
-//                    "~/Scripts/shared/core/baseController.js",
-//                    "~/Scripts/shared/services/alertService.js",
-//                    "~/Scripts/shared/services/systemEvent.service.js",
-//                    "~/Scripts/shared/services/nostreetsChartistScrollPlugin.js"            // Nostreets Chartist Scroll Plugin
-//                )
-//            );
-
-
-
-//            //+OBL ANGULAR
-//            bundles.Add(
-//                new ScriptBundle("~/nostreetsAngular").Include(
-//                    "~/Scripts/obl/app/configs/routeConfig.js",
-//                    "~/Scripts/shared/services/apiService.js",
-//                    "~/Scripts/shared/directives/particlesDirective.js" 
-//)
-//            );
-
-//            #endregion
+            OBL_Website.BundleConfig.RegisterOBLBundles(bundles);
 
 
             //+THEME SCRIPTS

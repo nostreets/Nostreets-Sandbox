@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Web;
+﻿using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -11,7 +10,6 @@ using NostreetsEntities;
 
 using NostreetsExtensions.DataControl.Classes;
 using NostreetsExtensions.Extend.Web;
-using NostreetsExtensions.Helpers;
 
 namespace Nostreets_Sandbox
 {
@@ -23,16 +21,17 @@ namespace Nostreets_Sandbox
             WindsorConfig.RegisterInterfaces(GlobalConfiguration.Configuration);
             //UnityConfig.RegisterInterfaces(GlobalConfiguration.Configuration);
 
+            
             //+ASP.NET Configs
+            AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
+            
+
+            RouteConfig.RegisterRoutes(RouteTable.Routes);
 
 
             GlobalConfiguration.Configure(WebApiConfig.Register);
-            GlobalConfiguration.Configuration.RegisterApiExternalRoute("OBL_Website");
-
-
-            RouteConfig.RegisterRoutes(RouteTable.Routes);
-            RouteTable.Routes.RegisterMvcExternalRoute("OBL_Website");
+           
 
 #if DEBUG
             BundleTable.EnableOptimizations = true;
@@ -41,7 +40,7 @@ namespace Nostreets_Sandbox
 #endif
 
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-            OBL_Website.BundleConfig.RegisterOBLBundles(BundleTable.Bundles);
+
 
             //+EF Config
             EFDBService<Error>.Migrate(ConfigKeys.WebsiteConnectionString);

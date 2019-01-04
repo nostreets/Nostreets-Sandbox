@@ -24,6 +24,9 @@ namespace Nostreets_Sandbox
 
             //var container = App_Start.UnityConfig.GetContainer();
             //config.DependencyResolver = new App_Start.UnityResolver(container);
+
+            config.RegisterApiExternalRoute("OBL_Website.Controllers");
+
         }
     }
 }

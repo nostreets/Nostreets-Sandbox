@@ -35,9 +35,9 @@ using NostreetsRouter.Models.Responses;
 namespace Nostreets_Sandbox.Controllers.Api
 {
     [RoutePrefix("api")]
-    public class NostreetsApiController : System.Web.Http.ApiController
+    public class SandboxApiController : System.Web.Http.ApiController
     {
-        public NostreetsApiController()
+        public SandboxApiController()
         {
             var container = WindsorConfig.GetContainer();
             _chartsSrv = _chartsSrv.WindsorResolve(container);

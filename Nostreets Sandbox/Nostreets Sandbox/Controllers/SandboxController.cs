@@ -8,10 +8,10 @@ using Nostreets_Services.Domain.Users;
 
 namespace Nostreets_Sandbox.Controllers
 {
-    [RoutePrefix("nile")]
-    public class NileController : Controller
+    //[RoutePrefix("nile")]
+    public class SandboxController : Controller
     {
-        public NileController()
+        public SandboxController()
         {
             _userService = _userService.WindsorResolve(App_Start.WindsorConfig.GetContainer());
         }

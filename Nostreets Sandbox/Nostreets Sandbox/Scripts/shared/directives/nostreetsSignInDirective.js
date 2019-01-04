@@ -52,7 +52,7 @@
 
                     var modalInstance = $baseController.modal.open({
                         animation: true
-                        , templateUrl: "Scripts/app/templates/registerForm.html"
+                        , templateUrl: "Scripts/shared/templates/registerForm.html"
                         , controller: "modalRegisterController as regVm"
                         , size: "lg"
                         , resolve: {
@@ -69,7 +69,7 @@
                 function _openLoginModal() {
                     var modalInstance = $baseController.modal.open({
                         animation: true
-                        , templateUrl: "Scripts/app/templates/loginForm.html"
+                        , templateUrl: "Scripts/shared/templates/loginForm.html"
                         , controller: "modalLogInController as logVm"
                         , size: "lg"
                         , resolve: {
@@ -90,7 +90,7 @@
                 function _openUserModal(user) {
                     var modalInstance = $baseController.modal.open({
                         animation: true
-                        , templateUrl: "Scripts/app/templates/userDashboard.html"
+                        , templateUrl: "Scripts/shared/templates/userDashboard.html"
                         , controller: "modalUserController as pg"
                         , size: "lg"
                         , resolve: {
