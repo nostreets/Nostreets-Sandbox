@@ -258,7 +258,6 @@
   <ItemGroup>
     <Compile Include="App_Start\ApplicationOAuthProvider.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
-    <Compile Include="App_Start\RazorGeneratorMvcStart.cs" />
     <Compile Include="App_Start\ViewEngineConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Classes\AuthAttributes.cs" />
@@ -278,7 +277,7 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="assets\agency-dark.html" />
+    <Content Include="assets\css\fullpage.css" />
     <Content Include="assets\css\nostreets.css" />
     <Content Include="assets\emails\ForgotPasswordEmail.html" />
     <Content Include="assets\emails\NewPasswordEmail.html" />
@@ -334,6 +333,7 @@
     <Content Include="assets\css\theme-Rradilet.css" />
     <Content Include="assets\css\theme-vooBush.css" />
     <Content Include="assets\css\twilio-chat.css" />
+    <Content Include="assets\js\renderOBLParticles.js" />
     <Content Include="fonts\flexslider-icon.svg" />
     <Content Include="fonts\ionicons.svg" />
     <Content Include="assets\img\amarkCover.png" />
@@ -454,7 +454,7 @@
     <Content Include="assets\js\perfect-scrollbar.jquery.min.js" />
     <Content Include="assets\js\photoswipe-ui-default.min.js" />
     <Content Include="assets\js\photoswipe.min.js" />
-    <Content Include="assets\js\renderParticles.js" />
+    <Content Include="assets\js\renderNostreetsParticles.js" />
     <Content Include="assets\js\respond.js" />
     <Content Include="assets\js\respond.matchmedia.addListener.js" />
     <Content Include="assets\js\spectragram.min.js" />
@@ -463,6 +463,183 @@
     <Content Include="assets\js\twitterFetcher_min.js" />
     <Content Include="assets\js\ui-bootstrap-tpls-2.5.0.min.js" />
     <Content Include="assets\svg\upwork.svg" />
+    <Content Include="node_modules\angular-fullpage.js\angular-fullpage.js" />
+    <Content Include="node_modules\angular-fullpage.js\angular-fullpage.min.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\app\app.config.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\app\app.controller.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\app\app.module.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\app\directives\angular-fullPage.min.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\app\views\dynamic\dynamic.controller.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\app\views\dynamic\dynamic.html" />
+    <Content Include="node_modules\angular-fullpage.js\sample\app\views\main\main.controller.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\app\views\main\main.html" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\1.png" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\2.png" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\3.png" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\bg1.jpg" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\bg2.jpg" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\bg3.jpg" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\bg4.jpg" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\bg5.jpg" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\compatible.gif" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\copyright.txt" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\example.png" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\example2.png" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\flowers.mp4" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\fullPage.png" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\intro.png" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\iphone-blue.png" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\iphone-green.png" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\iphone-red.png" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\iphone-two.png" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\iphone-yellow.png" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\iphone1.jpg" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\iphone2.png" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\iphone3.png" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\iphone4.png" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\slider.png" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\tablets.png" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\used-by-fullpage.png" />
+    <Content Include="node_modules\angular-fullpage.js\sample\index.html" />
+    <Content Include="node_modules\angular-fullpage.js\sample\styles.css" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular-ui-router\release\angular-ui-router.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular-ui-router\release\angular-ui-router.min.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular-ui-router\src\common.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular-ui-router\src\resolve.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular-ui-router\src\state.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular-ui-router\src\stateDirectives.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular-ui-router\src\stateFilters.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular-ui-router\src\templateFactory.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular-ui-router\src\urlMatcherFactory.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular-ui-router\src\urlRouter.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular-ui-router\src\view.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular-ui-router\src\viewDirective.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular-ui-router\src\viewScroll.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular\angular-csp.css" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular\angular.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular\angular.min.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular\index.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\fullpage.js\jquery.fullPage.css" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\fullpage.js\jquery.fullPage.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\fullpage.js\vendors\jquery.easings.min.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\fullpage.js\vendors\jquery.slimscroll.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\fullpage.js\vendors\jquery.slimscroll.min.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\AUTHORS.txt" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\dist\jquery.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\dist\jquery.min.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\dist\jquery.slim.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\dist\jquery.slim.min.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\LICENSE.txt" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\sizzle\dist\sizzle.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\sizzle\dist\sizzle.min.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\sizzle\LICENSE.txt" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\ajax.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\ajax\jsonp.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\ajax\load.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\ajax\parseJSON.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\ajax\parseXML.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\ajax\script.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\ajax\var\location.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\ajax\var\nonce.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\ajax\var\rquery.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\ajax\xhr.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\attributes.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\attributes\attr.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\attributes\classes.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\attributes\prop.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\attributes\support.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\attributes\val.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\callbacks.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\core.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\core\access.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\core\DOMEval.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\core\init.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\core\parseHTML.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\core\ready.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\core\support.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\core\var\rsingleTag.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\css.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\css\addGetHookIf.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\css\adjustCSS.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\css\curCSS.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\css\defaultDisplay.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\css\hiddenVisibleSelectors.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\css\showHide.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\css\support.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\css\var\cssExpand.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\css\var\getStyles.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\css\var\isHidden.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\css\var\rmargin.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\css\var\rnumnonpx.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\css\var\swap.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\data.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\data\accepts.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\data\Data.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\data\support.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\data\var\acceptData.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\data\var\dataPriv.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\data\var\dataUser.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\deferred.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\deferred\exceptionHook.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\deprecated.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\dimensions.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\effects.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\effects\animatedSelector.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\effects\support.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\effects\Tween.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\event.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\event\ajax.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\event\alias.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\event\focusin.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\event\support.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\event\trigger.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\exports\amd.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\exports\global.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\intro.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\jquery.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\manipulation.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\manipulation\buildFragment.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\manipulation\createSafeFragment.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\manipulation\getAll.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\manipulation\setGlobalEval.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\manipulation\support.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\manipulation\var\nodeNames.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\manipulation\var\rcheckableType.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\manipulation\var\rleadingWhitespace.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\manipulation\var\rscriptType.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\manipulation\var\rtagName.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\manipulation\wrapMap.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\manipulation\_evalUrl.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\offset.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\outro.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\queue.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\queue\delay.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\selector-native.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\selector-sizzle.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\selector.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\serialize.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\support.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\traversing.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\traversing\findFilter.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\traversing\var\dir.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\traversing\var\rneedsContext.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\traversing\var\siblings.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\var\arr.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\var\class2type.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\var\concat.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\var\deletedIds.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\var\document.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\var\documentElement.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\var\hasOwn.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\var\indexOf.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\var\pnum.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\var\push.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\var\rcssNum.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\var\rnotwhite.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\var\slice.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\var\support.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\var\toString.js" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\wrap.js" />
     <Content Include="node_modules\angular\angular-csp.css" />
     <Content Include="node_modules\bootstrap\dist\css\bootstrap-theme.css" />
     <Content Include="node_modules\bootstrap\dist\css\bootstrap-theme.min.css" />
@@ -491,6 +668,12 @@
     <Content Include="node_modules\bootstrap\js\tab.js" />
     <Content Include="node_modules\bootstrap\js\tooltip.js" />
     <Content Include="node_modules\bootstrap\js\transition.js" />
+    <Content Include="node_modules\fullpage.js\jquery.fullPage.css" />
+    <Content Include="node_modules\fullpage.js\jquery.fullPage.js" />
+    <Content Include="node_modules\fullpage.js\vendors\jquery.easings.min.js" />
+    <Content Include="node_modules\fullpage.js\vendors\jquery.slimscroll.js" />
+    <Content Include="node_modules\fullpage.js\vendors\jquery.slimscroll.min.js" />
+    <Content Include="node_modules\fullpage.js\vendors\velocity.min.js" />
     <Content Include="node_modules\jquery-mobile\AUTHORS.txt" />
     <Content Include="node_modules\jquery-mobile\dist\demos\backbone-requirejs\backbone-require.html" />
     <Content Include="node_modules\jquery-mobile\dist\demos\backbone-requirejs\index.html" />
@@ -1444,17 +1627,6 @@
     <Content Include="node_modules\jquery\src\var\support.js" />
     <Content Include="node_modules\jquery\src\var\toString.js" />
     <Content Include="node_modules\jquery\src\wrap.js" />
-    <None Include="Scripts\jquery-3.3.1.intellisense.js" />
-    <Content Include="Scripts\jquery-3.3.1.js" />
-    <Content Include="Scripts\jquery-3.3.1.min.js" />
-    <Content Include="Scripts\jquery-3.3.1.slim.js" />
-    <Content Include="Scripts\jquery-3.3.1.slim.min.js" />
-    <None Include="Scripts\jquery.validate-vsdoc.js" />
-    <Content Include="Scripts\jquery.validate.js" />
-    <Content Include="Scripts\jquery.validate.min.js" />
-    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
-    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
-    <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\nostreets\app\page.js" />
     <Content Include="Scripts\nostreets\app\templates\privatePolicy.html" />
     <Content Include="assets\svg\facebook.svg" />
@@ -2771,10 +2943,31 @@
     <Content Include="Scripts\nostreets\app\controllers\cardController.js" />
     <Content Include="Scripts\nostreets\app\controllers\dynamicGraphsController.js" />
     <Content Include="Scripts\nostreets\app\controllers\generalControllers.js" />
-    <Content Include="Scripts\respond.js" />
-    <Content Include="Scripts\respond.matchmedia.addListener.js" />
-    <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
-    <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\obl\app\configs\overlayConfig.js" />
+    <Content Include="Scripts\obl\app\configs\routeConfig.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\obl\app\controllers\generalControllers.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\obl\app\page.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\obl\app\templates\about.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\obl\app\templates\contact.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\obl\app\templates\home.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\obl\app\templates\privatePolicy.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\obl\app\templates\productDevelopment.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Scripts\shared\core\page.js" />
     <Content Include="Scripts\nostreets\app\templates\cardBuilderModal.html" />
     <Content Include="Scripts\nostreets\app\templates\about.html" />
@@ -3184,7 +3377,7 @@
     <Content Include="node_modules\jquery\package.json" />
     <Content Include="node_modules\jquery\README.md" />
     <Content Include="node_modules\jquery\src\.eslintrc.json" />
-    <Content Include="Views\Sandbox\Index.cshtml" />
+    <Content Include="Views\Nostreets\Index.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LayoutAfterSabio.cshtml" />
@@ -3195,10 +3388,36 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Sandbox\PrivatePolicy.cshtml" />
+    <Content Include="Views\Nostreets\PrivatePolicy.cshtml" />
+    <Content Include="node_modules\angular-fullpage.js\package.json" />
+    <Content Include="node_modules\angular-fullpage.js\README.md" />
+    <Content Include="node_modules\angular-fullpage.js\sample\images\flowers.webm" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular-ui-router\.bower.json" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular-ui-router\bower.json" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular-ui-router\CHANGELOG.md" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular-ui-router\CONTRIBUTING.md" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular-ui-router\LICENSE" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular-ui-router\README.md" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular\.bower.json" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular\angular.min.js.gzip" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular\angular.min.js.map" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular\bower.json" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular\package.json" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\angular\README.md" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\fullpage.js\jquery.fullPage.scss" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\fullpage.js\package.json" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\fullpage.js\README.md" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\.bower.json" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\bower.json" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\dist\jquery.min.map" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\dist\jquery.slim.min.map" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\README.md" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\sizzle\dist\sizzle.min.map" />
+    <Content Include="node_modules\angular-fullpage.js\sample\vendor\jquery\src\.jshintrc" />
+    <Content Include="node_modules\fullpage.js\jquery.fullPage.scss" />
+    <Content Include="node_modules\fullpage.js\package.json" />
+    <Content Include="node_modules\fullpage.js\README.md" />
     <None Include="packages.config" />
-    <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
-    <Content Include="Scripts\jquery-3.3.1.min.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -3209,6 +3428,8 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Scripts\nostreets\app\modules\" />
+    <Folder Include="Scripts\obl\app\modules\" />
+    <Folder Include="Scripts\obl\app\NewFolder1\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\NostreetsEntities\NostreetsEntities.csproj">
@@ -3281,7 +3502,9 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.10.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.10.0\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\packages\RazorGenerator.MsBuild.2.5.0\build\RazorGenerator.MsBuild.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\RazorGenerator.MsBuild.2.5.0\build\RazorGenerator.MsBuild.targets'))" />
   </Target>
+  <Import Project="..\packages\RazorGenerator.MsBuild.2.5.0\build\RazorGenerator.MsBuild.targets" Condition="Exists('..\packages\RazorGenerator.MsBuild.2.5.0\build\RazorGenerator.MsBuild.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

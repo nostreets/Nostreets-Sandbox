@@ -34,7 +34,7 @@ namespace Nostreets_Sandbox
            
 
 #if DEBUG
-            BundleTable.EnableOptimizations = true;
+            BundleTable.EnableOptimizations = false;
 #else
             BundleTable.EnableOptimizations = true;
 #endif

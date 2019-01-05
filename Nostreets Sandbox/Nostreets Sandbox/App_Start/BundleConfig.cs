@@ -104,7 +104,7 @@ namespace Nostreets_Sandbox
 
                     //+CUSTOM
                     "~/assets/js/particles.js",
-                    "~/assets/js/renderParticles.js",                                   // Background Particles
+                    "~/assets/js/renderNostreetsParticles.js",                                   // Background Particles
                     "~/Scripts/shared/services/nostreetsChartistScrollPlugin.js",       // Nostreets Chartist Scroll Plugin
                     "~/Scripts/shared/core/page.js",
                     "~/Scripts/nostreets/app/page.js",
