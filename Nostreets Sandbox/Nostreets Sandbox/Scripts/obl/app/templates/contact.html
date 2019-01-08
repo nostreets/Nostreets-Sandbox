@@ -1,6 +1,6 @@
 ﻿<div>
     <div class="container" ng-controller="contactUsController as contactUs">
-        <h2 class="title">Send me a message</h2>
+        <h2 class="title">Send Us A Message</h2>
         <div class="row">
             <div class="col-md-6">
                 <small class="description">
@@ -42,25 +42,6 @@
                                     ng-options="item as item for item in contactUs.subjects"
                                     class="form-control"
                                     required></select>
-
-                            <!-- OLD INPUT
-                                <input type="text"
-                                   name="subject"
-                                   class="form-control"
-                                   ng-model="contactUs.item.subject"
-                                   ng-minlength="2"
-                                   ng-maxlength="25"
-                                   required />
-                            <p ng-if="(contactUsForm.subject.$error.required && !contactUsForm.subject.$pristine) || (!contactUsForm.subject.$pristine && contactUsForm.subject.$invalid)">
-                                A Subject is required.
-                            </p>
-                            <p ng-if="contactUsForm.subject.$error.minlength">
-                                Subject is too short
-                            </p>
-                            <p ng-if="contactUsForm.subject.$error.maxlength">
-                                Subject is too long.
-                            </p>
-                                -->
                         </div>
                     </div>
 

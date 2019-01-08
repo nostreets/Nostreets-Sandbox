@@ -29,7 +29,7 @@
             sce: $sce,
             cookies: $cookies,
             Q: $q
-        }
+        };
 
         base.tryAgain = function (maxLoops, miliseconds, promiseMethod, onSuccess) {
 

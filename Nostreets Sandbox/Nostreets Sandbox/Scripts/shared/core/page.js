@@ -25,13 +25,10 @@ var page = {
             page.utilities.inlineSvgs();
             page.utilities.setUpJQSwipeHandlers();
         });
-
     },
 
     utilities: {
-
         checkForJQEvent: (element, event) => {
-
             var result = false,
                 curEvents = $._data($(element).get(0), 'events');
 
@@ -53,15 +50,12 @@ var page = {
                 touchMoveEvent = supportTouch ? "touchmove" : "mousemove";
 
             $.event.special.swipeupdown = {
-
                 setup: function () {
-
                     var thisObject = this;
 
                     var $this = $(thisObject);
 
                     $this.bind(touchStartEvent, (event) => {
-
                         var data = event.originalEvent.touches ? event.originalEvent.touches[0] : event,
                             start = {
                                 time: (new Date).getTime(),
@@ -86,7 +80,6 @@ var page = {
                             // prevent scrolling
                             if (Math.abs(start.coords[1] - stop.coords[1]) > 10)
                                 event.preventDefault();
-
                         };
 
                         $this.bind(touchMoveEvent, moveHandler).one(touchStopEvent,
@@ -105,9 +98,7 @@ var page = {
                             });
                     });
                 }
-
             };
-
 
             $.each({ swipedown: "swipeupdown", swipeup: "swipeupdown" },
                 (event, sourceEvent) => {
@@ -117,7 +108,6 @@ var page = {
                         }
                     };
                 });
-
         },
 
         inlineSvgs: (hoverColor) => {
@@ -126,9 +116,7 @@ var page = {
              * Replace all SVG images with inline SVG
              */
 
-
             $('img').each((num, ele) => {
-
                 var $img = $(ele);
                 var imgID = $img.attr('id');
                 var imgClass = $img.attr('class');
@@ -137,21 +125,16 @@ var page = {
 
                 if (imgURL && imgURL.includes('.svg'))
                     $.get(imgURL, (data) => {
-
                         var $svg = $(data).find('svg');
 
                         if (typeof imgID !== 'undefined')
                             $svg = $svg.attr('id', imgID);
 
-
                         if (typeof imgStyle !== 'undefined')
                             $svg = $svg.attr('style', imgStyle);
 
-
                         if (typeof imgClass !== 'undefined')
                             $svg = $svg.attr('class', imgClass + ' replaced-svg');
-
-
 
                         //ADD HOVER COLOR CHANGE FOR SVGS
                         /*
@@ -172,10 +155,6 @@ var page = {
                         }));
                         */
 
-
-
-
-
                         // Remove any invalid XML tags as per http://validator.w3.org
                         $svg = $svg.removeAttr('xmlns:a');
 
@@ -183,17 +162,13 @@ var page = {
                         if (!$svg.attr('viewBox') && $svg.attr('height') && $svg.attr('width'))
                             $svg.attr('viewBox', '0 0 ' + $svg.attr('height') + ' ' + $svg.attr('width'))
 
-
                         // Replace image with new SVG
                         $img.replaceWith($svg);
-
                     }, 'xml');
-
             });
         },
 
         googleSearch: (input) => {
-
             if (typeof (input) !== 'string')
                 throw 'input is not a string...';
 
@@ -205,7 +180,6 @@ var page = {
                 url += '+' + word;
 
             window.open(url);
-
         },
 
         getImage: (path) => {
@@ -237,7 +211,6 @@ var page = {
         },
 
         select: (converter, values) => {
-
             var result = [];
             for (let i = 0; i < values.length; i++)
                 result.push(converter(values[i]));
@@ -252,10 +225,10 @@ var page = {
             return false;
         },
 
-        loadScript: (url, callback) => {
+        loadFromSource: (url, callback, sourceType) => {
             $.ajax({
                 url: url,
-                dataType: 'script',
+                dataType: sourceType || 'script',
                 success: callback,
                 async: true
             });
@@ -265,14 +238,27 @@ var page = {
 
         clone: (obj) => JSON.parse(JSON.stringify(obj)),
 
-        getStyle: (id) => {
-            return document.getElementById(id) ? document.getElementById(id).style : document.querySelector('.ct-series-a').style;
+        getStyleInHtml: (id) => {
+            return document.getElementById(id).style;
+        },
+
+        getStyleFromUrl: (url, linkId) => {
+            linkId = linkId || randomString();
+            if (!document.getElementById(linkId)) {
+                var head = document.getElementsByTagName('head')[0];
+                var link = document.createElement('link');
+                link.id = linkId;
+                link.rel = 'stylesheet';
+                link.type = 'text/css';
+                link.href = url;
+                link.media = 'all';
+                head.appendChild(link);
+            }
         },
 
         writeStyles: (styleName, cssRules) => {
             var styleElement = document.getElementById(styleName);
             var pastCssRules = (styleElement && styleElement.textContent) ? styleElement.textContent : null;
-
 
             if (styleElement) {
                 document.getElementsByTagName('head')[0].removeChild(
@@ -282,7 +268,6 @@ var page = {
             styleElement = document.createElement('style');
             styleElement.type = 'text/css';
             styleElement.id = styleName;
-
 
             if (cssRules.length) {
                 for (var css of cssRules) {
@@ -297,7 +282,6 @@ var page = {
         },
 
         doesUrlExist: (method, url) => {
-
             var xhr = new XMLHttpRequest();
             if ("withCredentials" in xhr) {
                 // XHR for Chrome/Firefox/Opera/Safari.
@@ -311,8 +295,6 @@ var page = {
                 xhr = null;
             }
             return xhr;
-
-
         },
 
         getRandomColor: () => {
@@ -374,26 +356,22 @@ var page = {
         },
 
         changeTargetedColors: (colorsToCheck, onMatch, onMisMatch) => {
-
             for (let tag of $('*')) {
                 let ele = $(tag);
 
                 for (let pair of colorsToCheck) {
                     if (pair[2] && pair[2].length !== 0) {
                         for (let attr of pair[2]) {
-
                             let colorToChange = pair[0];
                             let changeToColor = pair[1];
 
                             if (ele.css(attr) === colorToChange) {
-
                                 onMatch(ele);
 
                                 if (changeToColor.includes('!important'))
                                     ele.attr('style', attr + ': ' + changeToColor);
                                 else
                                     ele.css(attr, changeToColor);
-
                             }
                             else {
                                 onMisMatch(ele);
@@ -402,10 +380,15 @@ var page = {
                     }
                 }
             }
+        },
+
+        isValidURL: (str) => {
+          var urlPattern = "(https?|ftp)://(www\\.)?(((([a-zA-Z0-9.-]+\\.){1,}[a-zA-Z]{2,4}|localhost))|((\\d{1,3}\\.){3}(\\d{1,3})))(:(\\d+))?(/([a-zA-Z0-9-._~!$&'()*+,;=:@/]|%[0-9A-F]{2})*)?(\\?([a-zA-Z0-9-._~!$&'()*+,;=:/?@]|%[0-9A-F]{2})*)?(#([a-zA-Z0-9._-]|%[0-9A-F]{2})*)?";
+
+            urlPattern = "^" + urlPattern + "$";
+            var regex = new RegExp(urlPattern);
+
+            return regex.test(url);
         }
-
     }
-    
 };
-
-
