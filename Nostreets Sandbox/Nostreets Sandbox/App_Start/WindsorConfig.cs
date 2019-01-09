@@ -43,7 +43,7 @@ namespace Nostreets_Sandbox.App_Start
             ORMOptions ormOptions(IKernel k) =>
                    new ORMOptions
                    {
-                       ConnectionKey = ConfigKeys.ConnectionKey,
+                       ConnectionKey = ConfigKeys.WebsiteConnectionKey,
                        ErrorLog = k.Resolve<IDBService<Error>>(),
                        WipeDB = false,
                        NullLock = false
@@ -56,13 +56,13 @@ namespace Nostreets_Sandbox.App_Start
                 Reg.Component.For(typeof(IDBService<Error>)).ImplementedBy(typeof(EFDBService<Error>)).LifestyleSingleton()
                     .DependsOn((k, param) =>
                      {
-                         param["connectionKey"] = ConfigKeys.ConnectionKey;
+                         param["connectionKey"] = ConfigKeys.WebsiteConnectionKey;
                      }),
 
                  Reg.Component.For(typeof(IDBService<RequestError>)).ImplementedBy(typeof(EFDBService<RequestError>)).LifestyleSingleton()
                     .DependsOn((k, param) =>
                      {
-                         param["connectionKey"] = ConfigKeys.ConnectionKey;
+                         param["connectionKey"] = ConfigKeys.WebsiteConnectionKey;
                      }),
 
                 Reg.Component.For(typeof(IDBService<>)).ImplementedBy(typeof(DBService<>)).LifestyleSingleton()

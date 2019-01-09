@@ -16,14 +16,14 @@ namespace Nostreets_Sandbox.Classes
             }
         }
 
-        public static string ConnectionKey
+        public static string WebsiteConnectionKey
         {
             get
             {
 #if DEBUG
                 return "DefaultConnection";
 #else
-                return "Website_Connection";
+                return "AWS_Portfolio_Connection";
 #endif
             }
         }
@@ -33,11 +33,7 @@ namespace Nostreets_Sandbox.Classes
         {
             get
             {
-#if DEBUG
-                return ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
-#else
-                return ConfigurationManager.ConnectionStrings["WebsiteConnection"].ConnectionString;
-#endif
+                return ConfigurationManager.ConnectionStrings[WebsiteConnectionKey].ConnectionString;
             }
         }
 
@@ -49,7 +45,7 @@ namespace Nostreets_Sandbox.Classes
 #if DEBUG
                 return ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 #else
-                return ConfigurationManager.ConnectionStrings["HangfireConnection"].ConnectionString;
+                return ConfigurationManager.ConnectionStrings["AWS_Hangfire_Connection"].ConnectionString;
 #endif
             }
         }
