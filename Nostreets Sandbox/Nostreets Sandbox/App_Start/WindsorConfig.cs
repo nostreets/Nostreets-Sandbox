@@ -115,7 +115,7 @@ namespace Nostreets_Sandbox.App_Start
                   Reg.Component.For<IShopifyService>().ImplementedBy<ShopifyService>().LifestyleSingleton()
                      .DependsOn((k, param) =>
                      {
-                         param["domian"] = ConfigKeys.ShopifyDomain;
+                         param["domain"] = ConfigKeys.ShopifyDomain;
                          param["apiKey"] = ConfigKeys.ShopifyApiKey;
                          param["userSrv"] = k.Resolve<IUserService>();
                          param["errorLog"] = k.Resolve<IDBService<RequestError>>();

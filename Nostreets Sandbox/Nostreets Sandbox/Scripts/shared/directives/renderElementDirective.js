@@ -59,7 +59,6 @@
                                 (data) => {
                                     js = data;
                                     eval('(' + js + ')');
-                                    //JSON.parse(js, () => eval('(function () {' + js + '})();'));
                                 });
                         }
                     }
@@ -89,15 +88,16 @@
 
         function _getStyleFromUrl(url) {
 
-            var head = document.getElementsByTagName('head')[0];
-            var link = document.createElement('link');
-            link.id = 'renderedStyle_' + _randomString(10);
-            link.rel = 'stylesheet';
-            link.type = 'text/css';
-            link.href = url;
-            link.media = 'all';
-            head.appendChild(link);
-
+            if (!$('link').filter((i, ele) => ele.href === url)[0]) {
+                var head = document.getElementsByTagName('head')[0];
+                var link = document.createElement('link');
+                link.id = 'renderedStyle_' + _randomString(10);
+                link.rel = 'stylesheet';
+                link.type = 'text/css';
+                link.href = url;
+                link.media = 'all';
+                head.appendChild(link);
+            }
         }
 
         function _randomString(len) {

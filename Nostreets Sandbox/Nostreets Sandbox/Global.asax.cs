@@ -33,12 +33,7 @@ namespace Nostreets_Sandbox
             GlobalConfiguration.Configure(WebApiConfig.Register);
            
 
-#if DEBUG
-            BundleTable.EnableOptimizations = false;
-#else
             BundleTable.EnableOptimizations = true;
-#endif
-
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
 
