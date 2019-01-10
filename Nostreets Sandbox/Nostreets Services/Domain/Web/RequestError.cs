@@ -8,6 +8,8 @@ namespace Nostreets_Services.Domain.Web
 {
     public class RequestError : Error
     {
+        public RequestError() { }
+
         public RequestError(HttpRequestMessage request) : base()
         {
             Route = request.RequestUri.AbsoluteUri;

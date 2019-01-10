@@ -5,7 +5,7 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using Nostreets_Sandbox.App_Start;
 using Nostreets_Sandbox.Classes;
-
+using Nostreets_Services.Domain.Web;
 using NostreetsEntities;
 
 using NostreetsExtensions.DataControl.Classes;
@@ -39,6 +39,7 @@ namespace Nostreets_Sandbox
 
             //+EF Config
             EFDBService<Error>.Migrate(ConfigKeys.WebsiteConnectionString);
+            EFDBService<RequestError>.Migrate(ConfigKeys.WebsiteConnectionString);
 
         }
 

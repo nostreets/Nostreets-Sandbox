@@ -19,7 +19,7 @@ namespace Nostreets_Services.Services.Shopify
             _userSrv = userSrv;
             Domain = domain;
             Headers.Add("authentication", apiKey);
-            Headers.Add("contentType", "JSON");
+            //Headers.Add("contentType", "JSON");
         }
 
         public ShopifyService(string domain, string apiKey, IUserService userSrv, IDBService<RequestError> errorLog)
@@ -28,12 +28,12 @@ namespace Nostreets_Services.Services.Shopify
             _errorLog = errorLog;
             Domain = domain;
             Headers.Add("authentication", apiKey);
-            Headers.Add("contentType", "JSON");
+            //Headers.Add("contentType", "JSON");
         }
 
         private string Domain { get; set; }
 
-        private Dictionary<string, string> Headers { get; set; }
+        private Dictionary<string, string> Headers { get; set; } = new Dictionary<string, string>();
 
         private IDBService<RequestError> _errorLog = null;
         private IUserService _userSrv = null;
