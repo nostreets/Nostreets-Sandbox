@@ -6,6 +6,7 @@ using NostreetsExtensions.Extend.IOC;
 using NostreetsExtensions.DataControl.Enums;
 using Nostreets_Services.Classes.Domain.Users;
 using NostreetsExtensions.DataControl.Attributes;
+using System.Text;
 
 namespace Nostreets_Sandbox.Controllers
 {
@@ -55,10 +56,32 @@ namespace Nostreets_Sandbox.Controllers
             return View();
         }
 
+        [Route("Robots.txt"), Route("robots.txt"), Gzip]
+        public FileContentResult Robots()
+        {
+            StringBuilder robotsEntries = new StringBuilder();
+            robotsEntries.AppendLine("User-agent: *");
+
+            //If the website is in debug mode, then set the robots.txt file to not index the site.
+            if (System.Web.HttpContext.Current.IsDebuggingEnabled)
+            {
+                robotsEntries.AppendLine("Disallow: /");
+            }
+            else
+            {
+                robotsEntries.AppendLine("Disallow: /Error");
+                robotsEntries.AppendLine("Disallow: /resources");
+                robotsEntries.AppendLine("Sitemap: http://www.surinderbhomra.com/sitemap.xml");
+            }
+
+            return File(Encoding.UTF8.GetBytes(robotsEntries.ToString()), "text/plain");
+        }
+
         public ActionResult PrivatePolicy()
         {
             return View();
         }
+
 
     }
 }

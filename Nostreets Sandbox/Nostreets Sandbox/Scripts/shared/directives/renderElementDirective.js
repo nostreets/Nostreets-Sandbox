@@ -68,12 +68,12 @@
         }
 
         function _isValidURL(url) {
-            var urlPattern = "(https?|http|ftp)://(www\\.)?(((([a-zA-Z0-9.-]+\\.){1,}[a-zA-Z]{2,4}|localhost))|((\\d{1,3}\\.){3}(\\d{1,3})))(:(\\d+))?(/([a-zA-Z0-9-._~!$&'()*+,;=:@/]|%[0-9A-F]{2})*)?(\\?([a-zA-Z0-9-._~!$&'()*+,;=:/?@]|%[0-9A-F]{2})*)?(#([a-zA-Z0-9._-]|%[0-9A-F]{2})*)?";
 
-            urlPattern = "^" + urlPattern + "$";
-            var regex = new RegExp(urlPattern);
+            //var urlPattern = "(https?|http|ftp)://(www\\.)?(((([a-zA-Z0-9.-]+\\.){1,}[a-zA-Z]{2,4}|localhost))|((\\d{1,3}\\.){3}(\\d{1,3})))(:(\\d+))?(/([a-zA-Z0-9-._~!$&'()*+,;=:@/]|%[0-9A-F]{2})*)?(\\?([a-zA-Z0-9-._~!$&'()*+,;=:/?@]|%[0-9A-F]{2})*)?(#([a-zA-Z0-9._-]|%[0-9A-F]{2})*)?";
+            //urlPattern = "^" + urlPattern + "$";
+            //var regex = new RegExp(urlPattern);
 
-            return regex.test(url);
+            return /^(f|ht)tps?:\/\//i.test(url);
 
         }
 
