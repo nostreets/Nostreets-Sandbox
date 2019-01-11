@@ -1,5 +1,5 @@
-﻿using Nostreets_Services.Domain.Bills;
-using Nostreets_Services.Domain.Charts;
+﻿using Nostreets_Services.Classes.Domain.Bills;
+using Nostreets_Services.Classes.Domain.Charts;
 using Nostreets_Services.Enums;
 using System;
 using System.Collections.Generic;

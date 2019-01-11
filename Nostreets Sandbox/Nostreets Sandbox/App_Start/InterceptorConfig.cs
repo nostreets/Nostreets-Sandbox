@@ -9,7 +9,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Net.Http;
 using System.Web;
-using System.Web.SessionState;
 
 namespace Nostreets_Sandbox.App_Start
 {
@@ -20,32 +19,44 @@ namespace Nostreets_Sandbox.App_Start
             _userSrv = _userSrv.WindsorResolve(WindsorConfig.GetContainer());
         }
 
-        IUserService _userSrv = null;
+        private IUserService _userSrv = null;
 
-        [Validator("Authorization")]
-        void NeedsToBeAuthorized(HttpApplication app)
+        #region Validators
+
+        [Validator("LoggedIn")]
+        private void LoggedIn(HttpApplication app)
         {
             if (_userSrv.SessionUser == null)
-                NotAuthorized(app); 
+                Not_LoggedIn(app);
+        }
 
-            //HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)
-            if(app.Context.Request.UrlReferrer.ToString().Contains(ConfigKeys.ServerDomain))
-                NotAuthorized(app);
+        [Validator("ValidReferer")]
+        private void ValidAPIReferer(HttpApplication app)
+        {
+            if (app.Context.Request.UrlReferrer.ToString().Contains(ConfigKeys.ServerDomain))
+                Not_ValidAPIReferer(app);
 
         }
 
+        #endregion
 
-        void NotAuthorized(HttpApplication app)
+        #region Error Responses
+
+        private void Not_LoggedIn(HttpApplication app)
         {
             app.Response.SetCookie(new HttpCookie("loggedIn", "false"));
             if (CacheManager.Contains("user"))
-            {
                 CacheManager.Remove("user");
-            }
 
             app.CreateResponse(HttpStatusCode.Unauthorized, new ErrorResponse("User is not logged in..."));
         }
 
+        private void Not_ValidAPIReferer(HttpApplication app)
+        {
+            app.CreateResponse(HttpStatusCode.Unauthorized, new ErrorResponse("API is private..."));
+        }
+
+        #endregion
 
     }
 }

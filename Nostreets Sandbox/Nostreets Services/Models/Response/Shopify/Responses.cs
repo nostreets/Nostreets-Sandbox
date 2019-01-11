@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Nostreets_Services.Domain.Shopify
+namespace Nostreets_Services.Classes.Domain.Shopify
 {
     public class ShopifyAddress
     {

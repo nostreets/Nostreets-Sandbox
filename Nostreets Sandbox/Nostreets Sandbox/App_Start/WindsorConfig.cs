@@ -4,11 +4,10 @@ using Castle.Windsor;
 using Castle.Windsor.Installer;
 
 using Nostreets_Sandbox.Classes;
-
-using Nostreets_Services.Domain.Bills;
-using Nostreets_Services.Domain.Charts;
-using Nostreets_Services.Domain.Users;
-using Nostreets_Services.Domain.Web;
+using Nostreets_Services.Classes.Domain.Bills;
+using Nostreets_Services.Classes.Domain.Charts;
+using Nostreets_Services.Classes.Domain.Users;
+using Nostreets_Services.Classes.Domain.Web;
 using Nostreets_Services.Interfaces.Services;
 using Nostreets_Services.Models.Request;
 using Nostreets_Services.Services.Database;
@@ -59,7 +58,7 @@ namespace Nostreets_Sandbox.App_Start
                          param["connectionKey"] = ConfigKeys.WebsiteConnectionKey;
                      }),
 
-                 Reg.Component.For(typeof(IDBService<RequestError>)).ImplementedBy(typeof(EFDBService<RequestError>)).LifestyleSingleton()
+                 Reg.Component.For(typeof(IDBService<WebRequestError>)).ImplementedBy(typeof(EFDBService<WebRequestError>)).LifestyleSingleton()
                     .DependsOn((k, param) =>
                      {
                          param["connectionKey"] = ConfigKeys.WebsiteConnectionKey;
@@ -118,7 +117,7 @@ namespace Nostreets_Sandbox.App_Start
                          param["domain"] = ConfigKeys.ShopifyDomain;
                          param["apiKey"] = ConfigKeys.ShopifyApiKey;
                          param["userSrv"] = k.Resolve<IUserService>();
-                         param["errorLog"] = k.Resolve<IDBService<RequestError>>();
+                         param["errorLog"] = k.Resolve<IDBService<WebRequestError>>();
                      })
              );
         }

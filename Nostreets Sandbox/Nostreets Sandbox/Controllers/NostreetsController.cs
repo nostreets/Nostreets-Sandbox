@@ -4,7 +4,7 @@ using NostreetsInterceptor;
 using NostreetsExtensions.DataControl.Classes;
 using NostreetsExtensions.Extend.IOC;
 using NostreetsExtensions.DataControl.Enums;
-using Nostreets_Services.Domain.Users;
+using Nostreets_Services.Classes.Domain.Users;
 
 namespace Nostreets_Sandbox.Controllers
 {
@@ -16,6 +16,7 @@ namespace Nostreets_Sandbox.Controllers
         }
 
         public IUserService _userService = null;
+
 
         public ActionResult Index(string token = null, string user = null)
         {

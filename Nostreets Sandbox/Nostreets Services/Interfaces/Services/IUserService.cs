@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using Nostreets_Services.Domain.Users;
+using Nostreets_Services.Classes.Domain.Users;
 using NostreetsExtensions.DataControl.Classes;
 using NostreetsExtensions.DataControl.Enums;
 

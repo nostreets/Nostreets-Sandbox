@@ -1,6 +1,6 @@
-﻿using Nostreets_Services.Domain.Mailchimp;
-using Nostreets_Services.Domain.Mailchimp.Lists;
-using Nostreets_Services.Domain.Mailchimp.Members;
+﻿using Nostreets_Services.Classes.Domain.Mailchimp;
+using Nostreets_Services.Classes.Domain.Mailchimp.Lists;
+using Nostreets_Services.Classes.Domain.Mailchimp.Members;
 using Nostreets_Services.Models.Requests;
 using Nostreets_Services.Models;
 using RestSharp;

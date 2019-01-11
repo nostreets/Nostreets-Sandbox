@@ -1,4 +1,4 @@
-﻿using Nostreets_Services.Domain.Charts;
+﻿using Nostreets_Services.Classes.Domain.Charts;
 using Nostreets_Services.Models.Request;
 using NostreetsExtensions.Interfaces;
 using System;

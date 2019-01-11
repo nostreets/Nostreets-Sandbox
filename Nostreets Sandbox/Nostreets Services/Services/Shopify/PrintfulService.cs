@@ -1,4 +1,4 @@
-﻿using Nostreets_Services.Domain.Web;
+﻿using Nostreets_Services.Classes.Domain.Web;
 using Nostreets_Services.Interfaces.Services;
 using NostreetsExtensions.Extend.Web;
 using NostreetsExtensions.Interfaces;
@@ -20,7 +20,7 @@ namespace Nostreets_Services.Services.Shopify
         public string ApiKey { get; set; }
         private Dictionary<string, string> Headers { get; set; }
 
-        private IDBService<RequestError> _errorLog = null;
+        private IDBService<WebRequestError> _errorLog = null;
         private IUserService _userSrv = null;
         private IRestResponse<T> Endpoint<T>(string endpoint, string method = null, object data = null) where T : new()
         {
@@ -43,7 +43,7 @@ namespace Nostreets_Services.Services.Shopify
             catch (Exception ex)
             {
                 if (_errorLog != null)
-                    _errorLog.Insert(new RequestError(null, Domain + "/admin/customers.json", ex));
+                    _errorLog.Insert(new WebRequestError(null, Domain + "/admin/customers.json", ex));
 
                 throw ex;
             }

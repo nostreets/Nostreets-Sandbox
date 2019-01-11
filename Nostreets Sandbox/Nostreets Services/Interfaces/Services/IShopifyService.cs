@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Nostreets_Services.Domain.Shopify;
+using Nostreets_Services.Classes.Domain.Shopify;
 
 namespace Nostreets_Services.Interfaces.Services
 {
