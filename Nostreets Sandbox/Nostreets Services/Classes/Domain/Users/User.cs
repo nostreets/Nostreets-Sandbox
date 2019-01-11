@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Principal;
 using Nostreets_Services.Enums;
 using NostreetsExtensions.DataControl.Classes;
 using NostreetsExtensions.DataControl.Enums;
@@ -33,6 +34,12 @@ namespace Nostreets_Services.Classes.Domain.Users
         [Required]
         public UserOriginType UserOrigin { get; set; }
 
+        public IIdentity Identity => throw new NotImplementedException();
+
+        public bool IsInRole(string role)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class UserSettings : DBObject

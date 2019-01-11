@@ -21,6 +21,7 @@ namespace Nostreets_Sandbox
             WindsorConfig.RegisterInterfaces(GlobalConfiguration.Configuration);
             //UnityConfig.RegisterInterfaces(GlobalConfiguration.Configuration);
 
+
             
             //+ASP.NET Configs
             AreaRegistration.RegisterAllAreas();
@@ -41,7 +42,10 @@ namespace Nostreets_Sandbox
             EFDBService<Error>.Migrate(ConfigKeys.WebsiteConnectionString);
             EFDBService<WebRequestError>.Migrate(ConfigKeys.WebsiteConnectionString);
 
+
         }
+
+
 
         protected void Application_End()
         {

@@ -15,6 +15,12 @@ Navigation
     transform: translateY(-100%);
 }
 
+@media (max-width: 425px) {
+    .overlay-navigation > nav > ul > li > a {
+        transform: rotate(90deg);
+    }
+}
+
 .overlay-slide-down {
     transition: all .4s ease-in-out;
     transform: translateY(0)
@@ -24,6 +30,11 @@ Navigation
     transition: all .8s ease-in-out;
     transform: translateY(-100%)
 }
+
+
+
+
+/*#region nav */
 
 nav,
 nav ul {
@@ -126,6 +137,11 @@ nav ul {
         background-color: #99B998
     }
 
+/*#endregion */
+
+/*#region .slide-in-nav-item */
+
+
 .slide-in-nav-item {
     animation: slide-in-nav-item 0.4s linear 1 .2s both;
 }
@@ -165,6 +181,10 @@ nav ul {
 .slide-in-nav-item-delay-4-reverse {
     animation: slide-in-nav-item-reverse .3s linear 1 both;
 }
+
+
+/*#endregion */
+
 
 .open-overlay {
     position: absolute;
@@ -357,18 +377,21 @@ Animation keyframes
 }
 
 @media (max-width: 640px) {
-  nav ul li a {
-    font-size: 11px;
-  }
-  nav li a:after {
-    font-size: 0.6rem;
-  }
-  .open-overlay {
-    right: 1rem;
-  }
-  nav li a:before {
-    width: 15px;
-  }
+    nav ul li a {
+        font-size: 11px;
+    }
+
+    nav li a:after {
+        font-size: 0.6rem;
+    }
+
+    .open-overlay {
+        right: 1rem;
+    }
+
+    nav li a:before {
+        width: 15px;
+    }
 }
 
 /*#endregion */

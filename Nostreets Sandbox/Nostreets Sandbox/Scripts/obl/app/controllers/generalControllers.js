@@ -13,6 +13,7 @@
 
     function homeController($scope, $baseController) {
         var vm = this;
+        vm.getDeviceWidth = page.utilities.getDeviceWidth;
 
         _render();
 
@@ -25,6 +26,7 @@
 
         }
 
+         
 
     }
 

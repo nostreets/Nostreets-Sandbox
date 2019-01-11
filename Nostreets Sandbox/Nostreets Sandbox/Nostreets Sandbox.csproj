@@ -261,7 +261,6 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\ViewEngineConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
-    <Compile Include="Classes\AuthAttributes.cs" />
     <Compile Include="Config\ConfigKeys.cs" />
     <Compile Include="App_Start\InterceptorConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />

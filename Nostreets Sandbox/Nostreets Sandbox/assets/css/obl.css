@@ -6,7 +6,6 @@ body {
 }
 
 .bold {
-
     font-weight: 500;
 }
 
@@ -21,7 +20,58 @@ body {
 }
 
 
+@media (min-width: 576px) {
 
+    .mobile-img-xs-only {
+        display: none;
+    }
+
+    .mobile-img-xxs-only {
+        display: none;
+    }
+
+}
+
+
+@media (min-width: 576px) {
+
+    .mobile-img-xs-only {
+        display: none;
+    }
+
+    .mobile-img-xxs-only {
+        display: none;
+    }
+
+}
+
+@media (max-width: 576px) {
+
+    .mobile-img-xs-only {
+        display: initial;
+        width: 50%;
+    }
+
+    .mobile-img-xxs-only {
+        display: none;
+    }
+
+}
+@media (max-width: 320px) {
+
+    .mobile-img-xs-only {
+        display: none;
+    }
+
+    .mobile-img-xxs-only {
+        display: initial;
+        width: 50%;
+    }
+
+    .mobile-text {
+        overflow-y: scroll;
+    }
+}
 
 
 /*#region SWIPER JS */

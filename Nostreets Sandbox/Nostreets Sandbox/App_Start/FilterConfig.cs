@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using NostreetsExtensions.DataControl.Attributes;
+using System.Web;
 using System.Web.Mvc;
 
 namespace Nostreets_Sandbox
@@ -8,6 +9,7 @@ namespace Nostreets_Sandbox
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
+            filters.Add(new GzipAttribute());
         }
     }
 }
