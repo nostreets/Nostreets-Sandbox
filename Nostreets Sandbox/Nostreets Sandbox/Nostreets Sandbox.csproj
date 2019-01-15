@@ -277,7 +277,7 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="assets\css\cardStyles.css" />
+    <Content Include="assets\css\buisnessCard.css" />
     <Content Include="assets\css\fullpage.css" />
     <Content Include="assets\css\nostreets.css" />
     <Content Include="assets\css\overlayCss.css" />
@@ -307,6 +307,7 @@
     <Content Include="assets\js\angular-fullpage.js" />
     <Content Include="assets\js\autotrack.js" />
     <Content Include="assets\js\auto_update_stylesheets.js" />
+    <Content Include="assets\js\buisnessCardConfig.js" />
     <Content Include="assets\js\chartist-plugin-tooltip.js" />
     <Content Include="assets\js\chartist-plugin-tooltip.min.js" />
     <Content Include="assets\js\chartist-plugin-zoom.js" />
@@ -315,8 +316,6 @@
     <Content Include="assets\css\jquery.fullPage.css" />
     <Content Include="assets\js\easings.js" />
     <Content Include="assets\js\renderOBLParticles.js" />
-    <Content Include="assets\partials\customCard1.html" />
-    <Content Include="assets\partials\customCard2.html" />
     <Content Include="fonts\flexslider-icon.svg" />
     <Content Include="fonts\ionicons.svg" />
     <Content Include="assets\img\amarkCover.png" />
@@ -2798,6 +2797,7 @@
     <Content Include="Scripts\obl\app\page.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="assets\partials\buisnessCard.html" />
     <Content Include="Scripts\obl\app\templates\muisc.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -14,7 +14,9 @@
                 scope: {
                     html: '@',
                     css: '@',
-                    js: '@'
+                    js: '@',
+                    passElement: "@",
+                    params: '@'
                 },
                 link: function (scope, element, attr) {
 
@@ -25,7 +27,7 @@
 
                         element.append($.parseHTML(_getElement()));
 
-                        _runJavascript();
+                        _getAndRunJs();
                     }
 
                     function _getElement() {
@@ -51,27 +53,51 @@
                         return result;
                     }
 
-                    function _runJavascript() {
-                        var jsUrl = (attr.js[0] === '~') ? attr.js.replace('~', window.location.origin) : (attr.js[0] === '/') ? window.location.origin + attr.js : attr.js,
-                            js = '';
+                    function _getAndRunJs() {
+                        var js = '',
+                            passEle = (scope.passElement === "true" || scope.passElement === "1") ? true : false,
+                            jsUrl = (attr.js[0] === '~') ? attr.js.replace('~', window.location.origin) : (attr.js[0] === '/') ? window.location.origin + attr.js : attr.js,
+                            params =
+                                passEle && scope.params ? [element, scope.params] :
+                                    passEle && !scope.params ? [element] :
+                                        !passEle && scope.params ? [scope.params] : null;
+
                         if (_isValidURL(jsUrl)) {
                             _loadFromSource(jsUrl,
                                 (data) => {
                                     js = data;
-                                    eval('(' + js + ')');
+                                    //eval('(' + js + ')');
+                                    _runJS(js);
+
                                 });
                         }
+
+
                     }
 
                 }
             };
         }
 
-        function _isValidURL(url) {
+        function _runJS(js, params) {
+            var func = null;
+            params = Array.isArray(params) ? params : params ? [params] : null;
 
-            //var urlPattern = "(https?|http|ftp)://(www\\.)?(((([a-zA-Z0-9.-]+\\.){1,}[a-zA-Z]{2,4}|localhost))|((\\d{1,3}\\.){3}(\\d{1,3})))(:(\\d+))?(/([a-zA-Z0-9-._~!$&'()*+,;=:@/]|%[0-9A-F]{2})*)?(\\?([a-zA-Z0-9-._~!$&'()*+,;=:/?@]|%[0-9A-F]{2})*)?(#([a-zA-Z0-9._-]|%[0-9A-F]{2})*)?";
-            //urlPattern = "^" + urlPattern + "$";
-            //var regex = new RegExp(urlPattern);
+            if (js.slice(0, 7) === "function")
+                func = new Function(() => "{ return " + js + " }");
+
+            else if (js.slice(0, 5) === "return")
+                func = new Function(() => "{ " + js + " }");
+
+            else
+                func = new Function(js);
+
+
+
+            func.call(null, params);
+        }
+
+        function _isValidURL(url) {
 
             return /^(f|ht)tps?:\/\//i.test(url);
 
