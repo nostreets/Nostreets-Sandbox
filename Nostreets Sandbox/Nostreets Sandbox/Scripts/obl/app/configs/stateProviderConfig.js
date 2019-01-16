@@ -25,6 +25,12 @@
                         templateUrl: '/Scripts/obl/app/templates/contact.html',
                         controller: 'contactUsController',
                         controllerAs: 'pg'
+                    }).state('/music', {
+                        name: 'music',
+                        url: '/music',
+                        templateUrl: '/Scripts/obl/app/templates/music.html',
+                        controller: 'musicController',
+                        controllerAs: 'pg'
                     });
 
                 $urlRouterProvider.when('', '/home');

@@ -1,6 +1,7 @@
-﻿
-(function  (id, color, name, title, desc, imgUrl, socials) {
+﻿//# sourceURL=buinessCardConfig.js
+(function (id, color, name, title, desc, imgUrl, socials) {
 
+    var vm = {};
     _render();
 
     function _render() {
@@ -10,44 +11,49 @@
 
     function _setUp() {
 
-        var card = $(id),
-            linksAdded = 0,
-            cardFooter = card.find(".mc-footer"),
-            platforms = ["facebook", "linkedin", "google-plus", "twitter", "instagram", "youtube", "github"];
+        var platforms = ["facebook", "linkedin", "google-plus", "twitter", "instagram", "youtube", "github"],
+            linksAdded = 0;
 
-        card.addClass(color);
-        card.find(".card-name").text(name);
-        card.find(".card-title").text(title);
-        card.find(".card-description").text(desc);
-        card.find(".card-img").attr("src", imgUrl);
+
+        vm.card = $(id + "> .material-card");
+        vm.cardFooter = vm.card.find(".mc-footer");
+
+
+        vm.card.addClass(color);
+        vm.card.find(".card-name").text(name);
+        vm.card.find(".card-title").text(title);
+        vm.card.find(".card-description").text(desc);
+        vm.card.find(".card-img").attr("src", imgUrl);
 
 
 
         for (var platform of platforms) {
 
-            var linkTag = $('<a class="fa fa-fw"></a>');
-            linkTag.addClass(".fa-" + platform);
+            var linkTag = $('<a class="fab fa-fw"></a>');
+            linkTag.addClass("fa-" + platform);
 
             if (linksAdded > 5)
-                cardFooter.css({ height: "150px" });
+                vm.cardFooter.css({ height: "150px" });
 
             if (socials[platform]) {
                 linkTag.attr("href", socials[platform]);
-                cardFooter.append(linkTag);
+                vm.cardFooter.append(linkTag);
+                linksAdded++;
             }
 
         }
     }
 
     function _handlers() {
-        $('.material-card > .mc-btn-action').click(
+        vm.card.find(".mc-btn-action").click(
             () => {
-                var card = $(this).parent('.material-card');
-                var icon = $(this).children('i');
+                console.log('card click!');
+
+                var icon = vm.card.find(".mc-btn-action > i");
                 icon.addClass('fa-spin-fast');
 
-                if (card.hasClass('mc-active')) {
-                    card.removeClass('mc-active');
+                if (vm.card.hasClass('mc-active')) {
+                    vm.card.removeClass('mc-active');
 
                     window.setTimeout(function () {
                         icon
@@ -55,9 +61,10 @@
                             .removeClass('fa-spin-fast')
                             .addClass('fa-bars');
 
-                    }, 800);
-                } else {
-                    card.addClass('mc-active');
+                    }, 500);
+                }
+                else {
+                    vm.card.addClass('mc-active');
 
                     window.setTimeout(function () {
                         icon
@@ -65,7 +72,7 @@
                             .removeClass('fa-spin-fast')
                             .addClass('fa-arrow-left');
 
-                    }, 800);
+                    }, 500);
                 }
             });
     }

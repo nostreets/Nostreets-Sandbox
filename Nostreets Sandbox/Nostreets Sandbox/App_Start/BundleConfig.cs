@@ -86,7 +86,6 @@ namespace Nostreets_Sandbox
                       "~/assets/css/nostreets.css",
 
                       //+OTHER
-                      "~/assets/css/font-awesome.css",
                       "~/node_modules/angular-ui-bootstrap/dist/ui-bootstrap-csp.css",
                       "~/node_modules/angular-toastr/dist/angular-toastr.css",
                       "~/node_modules/angularjs-color-picker/dist/angularjs-color-picker.css",

@@ -15,7 +15,8 @@
                     html: '@',
                     css: '@',
                     js: '@',
-                    params: '@'
+                    params: '@',
+                    appendScriptToBody: '@'
                 },
                 link: function (scope, element, attr) {
 
@@ -34,8 +35,10 @@
                             cssUrl = (attr.css[0] === '~') ? attr.css.replace('~', window.location.origin) : (attr.css[0] === '/') ? window.location.origin + attr.css : attr.css,
                             htmlUrl = (attr.html[0] === '~') ? attr.html.replace('~', window.location.origin) : (attr.html[0] === '/') ? window.location.origin + attr.html : attr.html;
 
-                        if (_isValidURL(cssUrl))
+                        if (_isValidURL(cssUrl) && (!window.loadedScripts || !window.loadedScripts.includes(cssUrl))) {
                             _getStyleFromUrl(cssUrl);
+                            _addUrlToWindow(cssUrl);
+                        }
                         else
                             result = '<style>' + attr.css + '</style>';
 
@@ -62,8 +65,7 @@
                             _loadFromSource(jsUrl,
                                 (data) => {
                                     js = data;
-                                    _runJS(js, params);
-
+                                    _runJS(js, params, scope.appendScriptToBody || false);
                                 });
                         }
 
@@ -74,7 +76,7 @@
             };
         }
 
-        function _runJS(js, params) {
+        function _runJS(js, params, appendToBody) {
 
             //params = params ? params : null;
 
@@ -121,7 +123,15 @@
 
             }
 
-            _addCode(js);
+
+
+            if (appendToBody) {
+                var script = $("<script type='text/javascript'></script>");
+                script.text(js);
+                $('body').append(script);
+            }
+            else
+                eval(js);
         }
 
         function _isValidURL(url) {
@@ -166,10 +176,15 @@
             return result;
         }
 
-        function _addCode(js) {
-            var script = $("<script type='text/javascript'></script>");
-            script.text(js);
-            $('body').append(script);
+        function _addUrlToWindow(url) {
+
+            if (url) {
+                if (window.loadedScripts)
+                    window.loadedScripts.push(url);
+                else
+                    window.loadedScripts = [url];
+            }
+
         }
 
     }

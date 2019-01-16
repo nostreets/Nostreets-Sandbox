@@ -24,9 +24,10 @@
 
         function _setUp() {
 
+
         }
 
-         
+
 
     }
 
@@ -40,6 +41,7 @@
         }
 
         function _setUp() {
+            $('title').text("OBL | About");
 
 
         }
@@ -56,6 +58,7 @@
         }
 
         function _setUp() {
+            $('title').text("OBL | Music");
 
 
         }
@@ -76,11 +79,13 @@
         function _setUp() {
             vm.hasSent = false;
             vm.subjects = [
-                'Inquiry',
-                'Musicial Beat Quote',
-                'Web Site Quote',
-                'Moblie App Quote',
-                'Software Quote',
+                'Mix And Master Services',
+                'Beat Production Services',
+                'Video Production Services',
+                'OBL Music Inquiry',
+                'OBL Apperal Inquiry',
+                'OBL Entertainment Inquiry',
+                'OBL Techincal Inquiry',
                 'Report a Bug',
                 'Other'
             ];
@@ -102,5 +107,7 @@
             console.log(data);
         }
     }
+
+
 
 })();

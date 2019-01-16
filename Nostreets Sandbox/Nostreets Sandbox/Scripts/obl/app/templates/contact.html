@@ -1,16 +1,16 @@
-﻿<div class="container">
+﻿<div class="container text-center">
     <h2 class="title">Send Us A Message</h2>
     <div class="row">
-        <div class="col-md-6">
-            <small class="description">
-                You can contact me for any questions or inquiries. I'll get in touch with you as soon as possible.
-            </small>
+        <div class="col-md-6 col-md-push-3">
+            <p class="description">
+                You can contact us for any questions or inquiries. We get back to you as soon as possible.
+            </p>
 
             <!-- CONTACT FORM -->
-            <form ng-if="!contactUs.hasSent"
+            <form ng-if="!pg.hasSent"
                   name="contactUsForm"
                   novalidate
-                  ng-submit="contactUs.submitForm(contactUsForm.$valid)"
+                  ng-submit="pg.submitForm(contactUsForm.$valid)"
                   role="form" id="contact-form"
                   method="post">
 
@@ -23,7 +23,7 @@
                         <input type="text"
                                name="name"
                                class="form-control"
-                               ng-model="contactUs.item.name"
+                               ng-model="pg.item.name"
                                ng-minlength="2"
                                ng-maxlength="50"
                                required />
@@ -37,8 +37,8 @@
                             Subject
                         </label>
 
-                        <select ng-model="contactUs.item.subject"
-                                ng-options="item as item for item in contactUs.subjects"
+                        <select ng-model="pg.item.subject"
+                                ng-options="item as item for item in pg.subjects"
                                 class="form-control"
                                 required></select>
                     </div>
@@ -53,7 +53,7 @@
                         <input type="email"
                                name="email"
                                class="form-control"
-                               ng-model="contactUs.item.fromEmail"
+                               ng-model="pg.item.fromEmail"
                                required />
                         <p ng-if="!contactUsForm.email.$pristine && contactUsForm.email.$invalid ">
                             Enter a valid email.
@@ -69,7 +69,7 @@
                                pattern="^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$"
                                name="phone"
                                class="form-control"
-                               ng-model="contactUs.item.phone" />
+                               ng-model="pg.item.phone" />
                         <p ng-if="contactUsForm.phone.$invalid && !contactUsForm.phone.$pristine">
                             Invalid Format
                         </p>
@@ -86,7 +86,7 @@
                                   class="form-control"
                                   id="message"
                                   rows="6"
-                                  ng-model="contactUs.item.messageText"
+                                  ng-model="pg.item.messageText"
                                   ng-minlength="4"
                                   ng-maxlength="500"
                                   required></textarea>
@@ -108,12 +108,12 @@
                            class="btn btn-round btn-xs"
                            value="Send"
                            ng-disabled="contactUsForm.$invalid"
-                           ng-click="contactUs.sendEmail(contactUs.item)" />
+                           ng-click="pg.sendEmail(pg.item)" />
                 </div>
             </form>
 
 
-            <div ng-if="contactUs.hasSent" class="text-center">
+            <div ng-if="pg.hasSent" class="text-center">
                 <h4>
                     Message has been sent!
                 </h4>
