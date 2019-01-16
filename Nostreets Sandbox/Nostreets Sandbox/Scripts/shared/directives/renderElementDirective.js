@@ -15,7 +15,6 @@
                     html: '@',
                     css: '@',
                     js: '@',
-                    passElement: "@",
                     params: '@'
                 },
                 link: function (scope, element, attr) {
@@ -55,19 +54,15 @@
 
                     function _getAndRunJs() {
                         var js = '',
-                            passEle = (scope.passElement === "true" || scope.passElement === "1") ? true : false,
                             jsUrl = (attr.js[0] === '~') ? attr.js.replace('~', window.location.origin) : (attr.js[0] === '/') ? window.location.origin + attr.js : attr.js,
-                            params =
-                                passEle && scope.params ? [element, scope.params] :
-                                    passEle && !scope.params ? [element] :
-                                        !passEle && scope.params ? [scope.params] : null;
+                            params = scope.params ? JSON.parse(scope.params) : {};
+
 
                         if (_isValidURL(jsUrl)) {
                             _loadFromSource(jsUrl,
                                 (data) => {
                                     js = data;
-                                    //eval('(' + js + ')');
-                                    _runJS(js);
+                                    _runJS(js, params);
 
                                 });
                         }
@@ -80,21 +75,53 @@
         }
 
         function _runJS(js, params) {
-            var func = null;
-            params = Array.isArray(params) ? params : params ? [params] : null;
 
-            if (js.slice(0, 7) === "function")
-                func = new Function(() => "{ return " + js + " }");
+            //params = params ? params : null;
 
-            else if (js.slice(0, 5) === "return")
-                func = new Function(() => "{ " + js + " }");
-
-            else
-                func = new Function(js);
+            var iifeRegex = /(\(function)\W*(([a-zA-Z])*(,)(\s|\S))*(([a-zA-Z])*\))/i,
+                paramsRegex = /(?!\(\)|([a-zA-Z])*\(([a-zA-Z])*\))\((([a-zA-Z])*(,)(\s|\S))*(([a-zA-Z])*\))/i,
+                funcRegex = /(\(function)\W*/i;
 
 
+            if (iifeRegex.test(js)) {
 
-            func.call(null, params);
+                var match = paramsRegex.exec(js)[0];
+
+                if (match) {
+                    var parameters = match.slice(1, match.length - 1).split(", ");
+
+                    for (var key of parameters) {
+
+                        if (Object.keys(params).some(a => a === key)) {
+                            var value = params[key];
+                            if (typeof (value) === 'string')
+                                value = "\"" + value + "\"";
+                            else if (typeof (value) === 'object')
+                                value = JSON.stringify(value);
+
+                            js = js.replaceAt(js.lastIndexOf(key), value, key.length);
+
+                        }
+                        else {
+                            var n = "null";
+                            for (var i = 0; i < key.length - 4; i++)
+                                n += " ";
+
+                            js = js.replaceAt(js.lastIndexOf(key), n, key.length);
+
+                        }
+
+
+                    }
+                }
+            }
+
+            else {
+                js = '(' + js + ')';
+
+            }
+
+            _addCode(js);
         }
 
         function _isValidURL(url) {
@@ -137,6 +164,12 @@
                 result += charset[Math.floor(Math.random() * charset.length)];
 
             return result;
+        }
+
+        function _addCode(js) {
+            var script = $("<script type='text/javascript'></script>");
+            script.text(js);
+            $('body').append(script);
         }
 
     }

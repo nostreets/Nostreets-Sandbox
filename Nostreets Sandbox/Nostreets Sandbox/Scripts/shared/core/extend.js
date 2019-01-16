@@ -27,7 +27,7 @@ Array.prototype.any = function (func) {
 
 Array.prototype.in = function (value) {
     for (let item of this) {
-        if (item == value)
+        if (item === value)
             return true;
     }
     return false;
@@ -46,6 +46,16 @@ Number.prototype.toKey = function (keyAndValueArr) {
     return key;
 }
 
+
 String.prototype.safeName = function () {
     return this.replace(/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~\s+]/g, '');
 }
+
+
+
+String.prototype.replaceAt = function (index, replacement, replacementLength) {
+    return this.substr(0, index) + replacement + this.substr(index + replacementLength || index + replacement.length);
+}
+
+
+  

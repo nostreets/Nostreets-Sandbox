@@ -1,6 +1,7 @@
 ﻿
-return function (id, color, name, title, desc, imgUrl, socials) {
+(function  (id, color, name, title, desc, imgUrl, socials) {
 
+    _render();
 
     function _render() {
         _setUp();
@@ -9,7 +10,7 @@ return function (id, color, name, title, desc, imgUrl, socials) {
 
     function _setUp() {
 
-        var card = $("render > .material-card"),
+        var card = $(id),
             linksAdded = 0,
             cardFooter = card.find(".mc-footer"),
             platforms = ["facebook", "linkedin", "google-plus", "twitter", "instagram", "youtube", "github"];
@@ -69,4 +70,4 @@ return function (id, color, name, title, desc, imgUrl, socials) {
             });
     }
 
-}
+})(id, color, name, title, desc, imgUrl, socials);
