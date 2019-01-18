@@ -100,14 +100,14 @@ namespace Nostreets_Sandbox
 
                     //+OTHER
                     "~/assets/js/sweetalert2.js",
-                    "~/assets/js/chartist.min.js",                                      //Chartist.js
+                    "~/assets/js/chartist.min.js",                                              //Chartist.js
                     "~/assets/js/chartist-plugin-tooltip.min.js",
                     "~/assets/js/chartist-plugin-zoom.min.js",
 
                     //+CUSTOM
                     "~/assets/js/particles.js",
                     "~/assets/js/renderNostreetsParticles.js",                                   // Background Particles
-                    "~/Scripts/shared/services/nostreetsChartistScrollPlugin.js",       // Nostreets Chartist Scroll Plugin
+                    "~/Scripts/shared/services/nostreetsChartistScrollPlugin.js",               // Nostreets Chartist Scroll Plugin
                     "~/Scripts/shared/core/page.js",
                     "~/Scripts/nostreets/app/page.js",
                     "~/Scripts/shared/core/extend.js",
@@ -131,22 +131,22 @@ namespace Nostreets_Sandbox
             OBL_Website.BundleConfig.RegisterOBLBundles(bundles);
 
 
-            //+THEME SCRIPTS
-            bundles.Add(
-                new ScriptBundle("~/themeScripts").Include(
-                    "~/assets/js/animsition.min.js",
-                    "~/assets/js/jquery.magnific-popup.min.js",
-                    "~/assets/js/jquery.countdown.min.js",
-                    "~/assets/js/twitterFetcher_min.js",
-                    "~/assets/js/masonry.pkgd.min.js",
-                    "~/assets/js/imagesloaded.pkgd.min.js",
-                    "~/assets/js/jquery.flexslider-min.js",
-                    "~/assets/js/photoswipe.min.js",
-                    "~/assets/js/photoswipe-ui-default.min.js",
-                    "~/assets/js/jqinstapics.min.js",
-                    "~/assets/js/startUpPageScript.js"
-                )
-            );
+            ////+THEME SCRIPTS
+            //bundles.Add(
+            //    new ScriptBundle("~/themeScripts").Include(
+            //        "~/assets/js/animsition.min.js",
+            //        "~/assets/js/jquery.magnific-popup.min.js",
+            //        "~/assets/js/jquery.countdown.min.js",
+            //        "~/assets/js/twitterFetcher_min.js",
+            //        "~/assets/js/masonry.pkgd.min.js",
+            //        "~/assets/js/imagesloaded.pkgd.min.js",
+            //        "~/assets/js/jquery.flexslider-min.js",
+            //        "~/assets/js/photoswipe.min.js",
+            //        "~/assets/js/photoswipe-ui-default.min.js",
+            //        "~/assets/js/jqinstapics.min.js",
+            //        "~/assets/js/startUpPageScript.js"
+            //    )
+            //);
 
 
 

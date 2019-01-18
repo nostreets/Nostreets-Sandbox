@@ -1,67 +1,28 @@
-﻿using NostreetsExtensions.Helpers;
-using NostreetsORM;
+﻿using NostreetsExtensions.Helpers.Data;
+
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace Nostreets_Services.Helpers
 {
     public class RdlGenerator : SqlService
     {
-        SqlConnection _connection;
-        string _connectString;
-        string _commandText;
-        ArrayList _fields;
+        private string _commandText;
+        private SqlConnection _connection;
+        private string _connectString;
+        private ArrayList _fields;
 
-        public void GenerateReport()
+        public XmlElement AddElement(XmlElement parent, string name, string value)
         {
-            try
-            {
-                GenerateFieldsList();
-                GenerateDocument();
-
-                Console.WriteLine("RDL file generated successfully.");
-            }
-
-            catch (Exception exception)
-            {
-                Console.WriteLine("An error occurred: " + exception.Message);
-            }
-
-            finally
-            {
-                // Close the connection string
-                _connection.Close();
-            }
-        }
-
-        public void GenerateFieldsList()
-        {
-
-            _commandText =
-               "SELECT Person.CountryRegion.Name AS CountryName, Person.StateProvince.Name AS StateProvince " +
-               "FROM Person.StateProvince " +
-               "INNER JOIN Person.CountryRegion ON Person.StateProvince.CountryRegionCode = Person.CountryRegion.CountryRegionCode " +
-               "ORDER BY Person.CountryRegion.Name";
-
-
-            Query.ExecuteCmd(() => Connection, "", null,
-                (reader, set) =>
-                {
-                    for (int i = 0; i <= reader.FieldCount - 1; i++)
-                    {
-                        if (_fields == null) { _fields = new ArrayList(); }
-                        _fields.Add(reader.GetName(i));
-                    }
-                }, null, null, CommandBehavior.SchemaOnly);
-
+            XmlElement newelement = parent.OwnerDocument.CreateElement(name,
+                "http://schemas.microsoft.com/sqlserver/reporting/2010/01/reportdefinition");
+            parent.AppendChild(newelement);
+            if (value != null) newelement.InnerText = value;
+            return newelement;
         }
 
         public void GenerateDocument()
@@ -75,13 +36,13 @@ namespace Nostreets_Services.Helpers
 
             doc.Load(new StringReader(xmlData));
 
-
             #region Report element
+
             XmlElement report = (XmlElement)doc.FirstChild;
             AddElement(report, "AutoRefresh", "0");
             AddElement(report, "ConsumeContainerWhitespace", "true");
-            #endregion
 
+            #endregion Report element
 
             //DataSources element
             XmlElement dataSources = AddElement(report, "DataSources", null);
@@ -92,12 +53,10 @@ namespace Nostreets_Services.Helpers
             XmlAttribute attr = dataSource.Attributes.Append(doc.CreateAttribute("Name"));
             attr.Value = "DataSource1";
 
-
             XmlElement connectionProperties = AddElement(dataSource, "ConnectionProperties", null);
             AddElement(connectionProperties, "DataProvider", "SQL");
             AddElement(connectionProperties, "ConnectString", _connectString);
             AddElement(connectionProperties, "IntegratedSecurity", "true");
-
 
             //DataSets element
             XmlElement dataSets = AddElement(report, "DataSets", null);
@@ -105,13 +64,11 @@ namespace Nostreets_Services.Helpers
             attr = dataSet.Attributes.Append(doc.CreateAttribute("Name"));
             attr.Value = "DataSet1";
 
-
             //Query element
             XmlElement query = AddElement(dataSet, "Query", null);
             AddElement(query, "DataSourceName", "DataSource1");
             AddElement(query, "CommandText", _commandText);
             AddElement(query, "Timeout", "30");
-
 
             //Fields element
             XmlElement fields = AddElement(dataSet, "Fields", null);
@@ -125,10 +82,10 @@ namespace Nostreets_Services.Helpers
             attr = field.Attributes.Append(doc.CreateAttribute("Name"));
             attr.Value = "StateProvince";
             AddElement(field, "DataField", "StateProvince");
-            #endregion
+
+            #endregion DataSource element
 
             //end of DataSources
-
 
             //ReportSections element
             XmlElement reportSections = AddElement(report, "ReportSections", null);
@@ -138,7 +95,6 @@ namespace Nostreets_Services.Helpers
             XmlElement body = AddElement(reportSection, "Body", null);
             AddElement(body, "Height", "1.5in");
             XmlElement reportItems = AddElement(body, "ReportItems", null);
-
 
             // Tablix element
             XmlElement tablix = AddElement(reportItems, "Tablix", null);
@@ -160,7 +116,6 @@ namespace Nostreets_Services.Helpers
             tablixColumn = AddElement(tablixColumns, "TablixColumn", null);
             AddElement(tablixColumn, "Width", "1.5in");
 
-
             //TablixRows element
             XmlElement tablixRows = AddElement(tablixBody, "TablixRows", null);
 
@@ -168,7 +123,6 @@ namespace Nostreets_Services.Helpers
             XmlElement tablixRow = AddElement(tablixRows, "TablixRow", null);
             AddElement(tablixRow, "Height", "0.5in");
             XmlElement tablixCells = AddElement(tablixRow, "TablixCells", null);
-
 
             // TablixCell element (first cell)
             XmlElement tablixCell = AddElement(tablixCells, "TablixCell", null);
@@ -268,17 +222,45 @@ namespace Nostreets_Services.Helpers
 
             //Save XML document to file
             doc.Save("Report1.rdl");
-
         }
 
-        public XmlElement AddElement(XmlElement parent, string name, string value)
+        public void GenerateFieldsList()
         {
-            XmlElement newelement = parent.OwnerDocument.CreateElement(name,
-                "http://schemas.microsoft.com/sqlserver/reporting/2010/01/reportdefinition");
-            parent.AppendChild(newelement);
-            if (value != null) newelement.InnerText = value;
-            return newelement;
+            _commandText =
+               "SELECT Person.CountryRegion.Name AS CountryName, Person.StateProvince.Name AS StateProvince " +
+               "FROM Person.StateProvince " +
+               "INNER JOIN Person.CountryRegion ON Person.StateProvince.CountryRegionCode = Person.CountryRegion.CountryRegionCode " +
+               "ORDER BY Person.CountryRegion.Name";
+
+            Query.ExecuteCmd(() => Connection, "", null,
+                (reader, set) =>
+                {
+                    for (int i = 0; i <= reader.FieldCount - 1; i++)
+                    {
+                        if (_fields == null) { _fields = new ArrayList(); }
+                        _fields.Add(reader.GetName(i));
+                    }
+                }, null, null, CommandBehavior.SchemaOnly);
         }
 
+        public void GenerateReport()
+        {
+            try
+            {
+                GenerateFieldsList();
+                GenerateDocument();
+
+                Console.WriteLine("RDL file generated successfully.");
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("An error occurred: " + exception.Message);
+            }
+            finally
+            {
+                // Close the connection string
+                _connection.Close();
+            }
+        }
     }
 }

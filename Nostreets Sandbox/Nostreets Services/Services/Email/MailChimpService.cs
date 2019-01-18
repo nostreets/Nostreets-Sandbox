@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 using Nostreets_Services.Classes.Domain.Mailchimp;
 using Nostreets_Services.Classes.Domain.Mailchimp.Lists;
@@ -11,11 +7,15 @@ using Nostreets_Services.Interfaces.Services;
 using Nostreets_Services.Models;
 using Nostreets_Services.Models.Requests;
 
-using NostreetsExtensions.Helpers;
+using NostreetsExtensions.Helpers.Data;
 using NostreetsExtensions.Utilities;
 
 using RestSharp;
 using RestSharp.Authenticators;
+
+using System;
+using System.Collections.Generic;
+using System.Net;
 
 namespace Nostreets_Services.Services.Email
 {

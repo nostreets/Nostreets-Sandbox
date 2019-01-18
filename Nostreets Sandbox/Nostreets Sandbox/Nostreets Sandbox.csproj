@@ -257,7 +257,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Start\ApplicationOAuthProvider.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\ViewEngineConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
@@ -310,7 +309,6 @@
     <Content Include="assets\js\chartist-plugin-zoom.min.js" />
     <Content Include="assets\css\theme-Dark.css" />
     <Content Include="assets\css\jquery.fullPage.css" />
-    <Content Include="assets\js\easings.js" />
     <Content Include="assets\js\musicPlayerConfig.js" />
     <Content Include="assets\js\renderOBLParticles.js" />
     <Content Include="assets\partials\musicPlayer.html" />
@@ -342,39 +340,15 @@
     <Content Include="assets\img\logo2.png" />
     <Content Include="assets\img\lashGirlScreenShot.png" />
     <Content Include="assets\img\quotes.png" />
-    <Content Include="assets\js\animsition.min.js" />
     <Content Include="assets\js\chartist.min.js" />
-    <Content Include="assets\js\dateformatter.js" />
-    <Content Include="assets\js\featherlight.js" />
-    <Content Include="assets\js\fullcalendar.min.js" />
-    <Content Include="assets\js\imagesloaded.pkgd.min.js" />
-    <Content Include="assets\js\jqinstapics.min.js" />
     <Content Include="assets\js\chartist-plugin-tooltip.min.js.map" />
     <Content Include="assets\js\chartist-plugin-zoom.min.js.map" />
-    <Content Include="assets\js\jquery.countdown.min.js" />
-    <Content Include="assets\js\jquery.flexslider-min.js" />
-    <Content Include="assets\js\jquery.magnific-popup.min.js" />
-    <Content Include="assets\js\jquery.mCustomScrollbar.concat.min.js" />
-    <Content Include="assets\js\jquery.mousewheel.min.js" />
-    <Content Include="assets\js\jquery.paging.js" />
-    <Content Include="assets\js\map.js" />
-    <Content Include="assets\js\masonry.pkgd.min.js" />
     <Content Include="assets\js\material.min.js" />
-    <Content Include="assets\js\modernizr-2.8.3.js" />
-    <Content Include="assets\js\moment.js" />
     <Content Include="assets\emails\ValidateEmail.html" />
     <Content Include="assets\js\particles.js" />
     <Content Include="assets\js\particles.min.js" />
-    <Content Include="assets\js\perfect-scrollbar.jquery.min.js" />
-    <Content Include="assets\js\photoswipe-ui-default.min.js" />
-    <Content Include="assets\js\photoswipe.min.js" />
     <Content Include="assets\js\renderNostreetsParticles.js" />
-    <Content Include="assets\js\respond.js" />
-    <Content Include="assets\js\respond.matchmedia.addListener.js" />
-    <Content Include="assets\js\spectragram.min.js" />
-    <Content Include="assets\js\startUpPageScript.js" />
     <Content Include="assets\js\sweetalert2.js" />
-    <Content Include="assets\js\twitterFetcher_min.js" />
     <Content Include="assets\js\ui-bootstrap-tpls-2.5.0.min.js" />
     <Content Include="assets\svg\upwork.svg" />
     <Content Include="assets\js\jquery.fullPage.js" />

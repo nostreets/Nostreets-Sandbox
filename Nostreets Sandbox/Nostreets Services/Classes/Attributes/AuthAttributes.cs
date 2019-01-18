@@ -1,11 +1,11 @@
 ﻿using Newtonsoft.Json;
-using NostreetsExtensions;
+
 using NostreetsExtensions.Extend.Basic;
-using NostreetsExtensions.Helpers;
+using NostreetsExtensions.Helpers.Data;
+
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
@@ -17,8 +17,15 @@ namespace Nostreets_Sandbox.Classes.Attributes
 {
     public class AuthByKeyAttribute : AuthorizeAttribute
     {
-        public AuthByKeyAttribute() { _connectionKey = "DefaultConnection"; }
-        public AuthByKeyAttribute(string connectionKey) { _connectionKey = connectionKey; }
+        public AuthByKeyAttribute()
+        {
+            _connectionKey = "DefaultConnection";
+        }
+
+        public AuthByKeyAttribute(string connectionKey)
+        {
+            _connectionKey = connectionKey;
+        }
 
         private string _connectionKey;
 
@@ -45,20 +52,6 @@ namespace Nostreets_Sandbox.Classes.Attributes
             return isTrue;
         }
 
-        public override void OnAuthorization(HttpActionContext actionContext)
-        {
-            if (!Authorize(actionContext))
-            {
-                HandleUnauthorizedRequest(actionContext);
-            }
-        }
-
-        protected override void HandleUnauthorizedRequest(HttpActionContext actionContext)
-        {
-            actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Unauthorized Request");
-            return;
-        }
-
         private string GetRequestIPAddress()
         {
             System.Web.HttpContext context = System.Web.HttpContext.Current;
@@ -74,6 +67,20 @@ namespace Nostreets_Sandbox.Classes.Attributes
             }
 
             return context.Request.ServerVariables["REMOTE_ADDR"];
+        }
+
+        protected override void HandleUnauthorizedRequest(HttpActionContext actionContext)
+        {
+            actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Unauthorized Request");
+            return;
+        }
+
+        public override void OnAuthorization(HttpActionContext actionContext)
+        {
+            if (!Authorize(actionContext))
+            {
+                HandleUnauthorizedRequest(actionContext);
+            }
         }
     }
 
@@ -93,9 +100,7 @@ namespace Nostreets_Sandbox.Classes.Attributes
             {
                 _predicateWithoutInput = (Func<bool>)predicate.ToDelegate();
             }
-
         }
-
 
         private Func<HttpActionContext, bool> _predicateWithInput = null;
         private Func<bool> _predicateWithoutInput = null;
@@ -105,6 +110,12 @@ namespace Nostreets_Sandbox.Classes.Attributes
             return (_predicateWithInput == null) ? _predicateWithInput(actionContext) : _predicateWithoutInput();
         }
 
+        protected override void HandleUnauthorizedRequest(HttpActionContext actionContext)
+        {
+            actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Unauthorized Request");
+            return;
+        }
+
         public override void OnAuthorization(HttpActionContext actionContext)
         {
             if (!Authorize(actionContext))
@@ -112,12 +123,5 @@ namespace Nostreets_Sandbox.Classes.Attributes
                 HandleUnauthorizedRequest(actionContext);
             }
         }
-
-        protected override void HandleUnauthorizedRequest(HttpActionContext actionContext)
-        {
-            actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.Unauthorized, "Unauthorized Request");
-            return;
-        }
-
     }
 }

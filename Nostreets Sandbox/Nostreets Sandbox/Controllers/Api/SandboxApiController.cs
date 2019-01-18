@@ -16,20 +16,21 @@ using NostreetsExtensions.Interfaces;
 using NostreetsInterceptor;
 
 using NostreetsRouter.Models.Responses;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using OBL = OBL_Website.Controllers.Api;
 
 namespace Nostreets_Sandbox.Controllers.Api
 {
-    [RoutePrefix("nostreets/api")]
-    public class SandboxApiController : System.Web.Http.ApiController
+    [RoutePrefix("obl")]
+    public class SandboxApiController : OBL.OBL_ApiController 
     {
         public SandboxApiController()
         {
@@ -1011,33 +1012,11 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        //[HttpPost, Route("send/email")]
-        //public async Task<HttpResponseMessage> SendEmail(Dictionary<string, string> emailRequest)
-        //{
-        //    try
-        //    {
-        //        if (!emailRequest.ContainsKey("fromEmail") || !emailRequest.ContainsKey("name") || !emailRequest.ContainsKey("subject") || !emailRequest.ContainsKey("messageText"))
-        //        { throw new Exception("Invalid Model"); }
-        //        if (!emailRequest.ContainsKey("toEmail")) { emailRequest["toEmail"] = "nileoverstreet@gmail.com"; }
-        //        if (!emailRequest.ContainsKey("messageHtml"))
-        //        {
-        //            string phoneNumber = (emailRequest.ContainsKey("phone") ? "Phone Number: " + emailRequest["phone"] : string.Empty);
-        //            emailRequest["messageHtml"] = "<div> Email From Contact Me Page </div>"
-        //                                        + "<div>" + "Name: " + emailRequest["name"] + "</div>"
-        //                                        + "<div>" + "Email: " + emailRequest["fromEmail"] + "</div>"
-        //                                        + "<div>" + phoneNumber + "</div>"
-        //                                        + "<div>" + "Message: " + emailRequest["messageText"] + "</div>";
-        //        }
-        //        if (!await _emailSrv.SendAsync(emailRequest["fromEmail"], emailRequest["toEmail"], emailRequest["subject"], emailRequest["messageText"], emailRequest["messageHtml"]))
-        //        { throw new Exception("Email Was Not Sent"); }
-        //        SuccessResponse response = new SuccessResponse();
-        //        return Request.CreateResponse(HttpStatusCode.OK, response);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return ErrorResponse(ex);
-        //    }
-        //}
+        [HttpPost, Route("send/email")]
+        public async Task<HttpResponseMessage> SendEmail(Dictionary<string, string> emailRequest)
+        {
+            return await base.SendEmail(emailRequest);
+        }
 
         #endregion Other Endpoints
     }
