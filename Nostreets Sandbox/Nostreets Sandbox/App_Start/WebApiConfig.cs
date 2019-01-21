@@ -8,13 +8,12 @@ namespace Nostreets_Sandbox
         public static void Register(HttpConfiguration config)
         {
             //+Web API routes
-
+            config.MapHttpAttributeRoutes();
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
-            config.MapHttpAttributeRoutes();
 
 
             //+GlobalConfiguration.Configuration

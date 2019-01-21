@@ -3,7 +3,6 @@ using Nostreets_Sandbox.Classes;
 using Nostreets_Services.Classes.Domain.Web;
 using NostreetsEntities;
 using NostreetsExtensions.DataControl.Classes;
-using NostreetsExtensions.Helpers.Web;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -24,17 +23,12 @@ namespace Nostreets_Sandbox
 
             //+ASP.NET Configs
             AreaRegistration.RegisterAllAreas();
-            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
-
-
-            RouteConfig.RegisterRoutes(RouteTable.Routes);
-
 
             GlobalConfiguration.Configure(WebApiConfig.Register);
-            //GlobalConfiguration.Configure(OBL_Website.WebApiConfig.Register);
 
-           
+            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
 
+            RouteConfig.RegisterRoutes(RouteTable.Routes);
 
 
             BundleTable.EnableOptimizations = true;

@@ -1,5 +1,7 @@
 ﻿
 
+/*#region Element Styles */
+
 body {
     background-color: #ffffff;
     /*background-image: url(../img/body-bg.png);*/
@@ -28,6 +30,14 @@ body {
         color: grey;
     }
 
+/*#endregion */
+
+/*#region Class And Id Styles */
+
+#redietCard img {
+    margin: 0% -38%;
+}
+
 #particles-js {
     position: fixed;
     top: 0;
@@ -39,8 +49,8 @@ body {
 
 .card-img {
     display: block;
-    max-width: 100%;
     height: 100%;
+    max-width: fit-content;
 }
 
 .icon-xs {
@@ -48,11 +58,13 @@ body {
     height: 25px !important;
 }
 
+/*#endregion */
+
 [sign-in] {
     z-index: 98;
     color: black;
-    right: 10rem;
-    top: 3.6rem;
+    right: 21%;
+    top: 8%;
     position: absolute;
 }
 
@@ -61,6 +73,8 @@ body {
         cursor: pointer;
     }
 
+
+/*#region Medias */
 
 @media (min-width: 576px) {
 
@@ -113,6 +127,7 @@ body {
     }
 }
 
+/*#endregion */
 
 /*#region SWIPER JS */
 

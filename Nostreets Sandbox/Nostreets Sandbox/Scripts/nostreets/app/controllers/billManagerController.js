@@ -4,11 +4,11 @@
         .controller("billManagerController", billManagerController)
         .controller("modalInsertController", modalInsertController);
 
-    billManagerController.$inject = ["$scope", "$baseController", '$sandboxService', '$filter', '$serverModel'];
-    modalInsertController.$inject = ["$scope", "$baseController", '$uibModalInstance', '$sandboxService', 'model', 'enums'];
+    billManagerController.$inject = ["$scope", "$baseController", '$oblApiService', '$filter', '$serverModel'];
+    modalInsertController.$inject = ["$scope", "$baseController", '$uibModalInstance', '$oblApiService', 'model', 'enums'];
 
 
-    function billManagerController($scope, $baseController, $sandboxService, $filter) {
+    function billManagerController($scope, $baseController, $oblApiService, $filter) {
 
         var vm = this;
         vm.changeCurrentTab = _changeTab;
@@ -796,27 +796,27 @@
 
                     if (chart.id) {
                         obj.id = chart.id;
-                        $sandboxService.updateIncome(obj).then(
+                        $oblApiService.updateIncome(obj).then(
                             _getUserCharts,
                             err => $baseController.errorCheck(err,
                                 {
                                     maxLoops: 3,
                                     miliseconds: 2000,
                                     method: () => {
-                                        $sandboxService.updateIncome(obj);
+                                        $oblApiService.updateIncome(obj);
                                     }
                                 })
                         );
                     }
                     else {
-                        $sandboxService.insertIncome(obj).then(
+                        $oblApiService.insertIncome(obj).then(
                             _getUserCharts,
                             err => $baseController.errorCheck(err,
                                 {
                                     maxLoops: 3,
                                     miliseconds: 2000,
                                     method: () => {
-                                        $sandboxService.insertIncome(obj);
+                                        $oblApiService.insertIncome(obj);
                                     }
                                 })
                         );
@@ -827,27 +827,27 @@
 
                     if (chart.id) {
                         obj.id = chart.id
-                        $sandboxService.updateExpense(obj).then(
+                        $oblApiService.updateExpense(obj).then(
                             _getUserCharts,
                             err => $baseController.errorCheck(err,
                                 {
                                     maxLoops: 3,
                                     miliseconds: 2000,
                                     method: () => {
-                                        $sandboxService.updateExpense(obj);
+                                        $oblApiService.updateExpense(obj);
                                     }
                                 })
                         );
                     }
                     else {
-                        $sandboxService.insertExpense(obj).then(
+                        $oblApiService.insertExpense(obj).then(
                             _getUserCharts,
                             err => $baseController.errorCheck(err,
                                 {
                                     maxLoops: 3,
                                     miliseconds: 2000,
                                     method: () => {
-                                        $sandboxService.insertExpense(obj);
+                                        $oblApiService.insertExpense(obj);
                                     }
                                 })
                         );
@@ -860,7 +860,7 @@
 
             vm.isLoading = true;
 
-            return $sandboxService.getEnums('income,expense,schedule').then(
+            return $oblApiService.getEnums('income,expense,schedule').then(
                 (obj) => {
                     vm.enums = obj.data.items;
                     vm.isLoading = false;
@@ -870,7 +870,7 @@
                         maxLoops: 3,
                         miliseconds: 2000,
                         method: () => {
-                            $sandboxService.getEnums('income,expense,schedule').then(
+                            $oblApiService.getEnums('income,expense,schedule').then(
                                 (obj) => {
                                     vm.enums = obj.data.items;
                                     vm.isLoading = false;
@@ -884,7 +884,7 @@
 
             vm.isLoading = true;
 
-            return $sandboxService.getIncomesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
+            return $oblApiService.getIncomesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
                 (data) => {
                     var incomeChart = {
                         key: "income",
@@ -900,7 +900,7 @@
                         maxLoops: 3,
                         miliseconds: 2000,
                         method: () => {
-                            $sandboxService.getIncomesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
+                            $oblApiService.getIncomesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
                                 (data) => {
                                     var chart = {
                                         key: "income",
@@ -918,7 +918,7 @@
 
             vm.isLoading = true;
 
-            return $sandboxService.getExpensesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
+            return $oblApiService.getExpensesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
                 (data) => {
                     var expensesChart = {
                         key: "expense",
@@ -933,7 +933,7 @@
                         maxLoops: 3,
                         miliseconds: 2000,
                         method: () => {
-                            $sandboxService.getExpensesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
+                            $oblApiService.getExpensesChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
                                 (data) => {
                                     var chart = {
                                         key: "expense",
@@ -951,7 +951,7 @@
 
             vm.isLoading = true;
 
-            return $sandboxService.getCombinedChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
+            return $oblApiService.getCombinedChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
                 (data) => {
                     var combinedChart = {
                         key: "combined",
@@ -966,7 +966,7 @@
                         maxLoops: 3,
                         miliseconds: 2000,
                         method: () => {
-                            $sandboxService.getCombinedChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
+                            $oblApiService.getCombinedChart(vm.beginDate.toUTCString(), vm.endDate.toUTCString()).then(
                                 (data) => {
                                     var chart = {
                                         key: "combined",
@@ -984,7 +984,7 @@
 
             vm.isLoading = true;
 
-            return $sandboxService.getAllIncomes().then(
+            return $oblApiService.getAllIncomes().then(
                 a => {
                     if (a.data.items)
                         for (var i = 0; i < a.data.items.length; i++)
@@ -998,7 +998,7 @@
                         maxLoops: 3,
                         miliseconds: 2000,
                         method: () => {
-                            $sandboxService.getAllIncomes().then(
+                            $oblApiService.getAllIncomes().then(
                                 a => {
                                     if (a.data.items)
                                         for (var i = 0; i < a.data.items.length; i++)
@@ -1016,7 +1016,7 @@
 
             vm.isLoading = true;
 
-            return $sandboxService.getAllExpenses().then(
+            return $oblApiService.getAllExpenses().then(
                 a => {
                     if (a.data.items)
                         for (var i = 0; i < a.data.items.length; i++)
@@ -1030,7 +1030,7 @@
                         maxLoops: 3,
                         miliseconds: 2000,
                         method: () => {
-                            $sandboxService.getAllExpenses().then(a => {
+                            $oblApiService.getAllExpenses().then(a => {
                                 if (a.data.items)
                                     for (var i = 0; i < a.data.items.length; i++)
                                         a.data.items[i].style = JSON.parse(a.data.items[i].style);
@@ -1047,7 +1047,7 @@
 
             var incomePromise =
                 () => {
-                    return $sandboxService.getAllIncomes().then(
+                    return $oblApiService.getAllIncomes().then(
                         a => {
                             if (a.data.items)
                                 for (var i = 0; i < a.data.items.length; i++)
@@ -1061,7 +1061,7 @@
                                 maxLoops: 3,
                                 miliseconds: 2000,
                                 method: () => {
-                                    $sandboxService.getAllIncomes()
+                                    $oblApiService.getAllIncomes()
                                         .then(a => {
                                             if (a.data.items)
                                                 for (var i = 0; i < a.data.items.length; i++)
@@ -1077,7 +1077,7 @@
 
             var expensePromise =
                 () => {
-                    return $sandboxService.getAllExpenses().then(
+                    return $oblApiService.getAllExpenses().then(
                         a => {
                             for (var i = 0; i < a.data.items.length; i++)
                                 a.data.items[i].style = JSON.parse(a.data.items[i].style);
@@ -1090,7 +1090,7 @@
                                 maxLoops: 3,
                                 miliseconds: 2000,
                                 method: () => {
-                                    $sandboxService.getAllExpenses().then(a => {
+                                    $oblApiService.getAllExpenses().then(a => {
                                         for (var i = 0; i < a.data.items.length; i++)
                                             a.data.items[i].style = JSON.parse(a.data.items[i].style);
 
@@ -1119,14 +1119,14 @@
             var isSuccessful = false;
             vm.isLoading = true;
 
-            $sandboxService.getIncome(id, name, scheduleType, incomeType).then(
+            $oblApiService.getIncome(id, name, scheduleType, incomeType).then(
                 (data) => console.log(data),
                 err => $baseController.errorCheck(err,
                     {
                         maxLoops: 3,
                         miliseconds: 2000,
                         method: () => {
-                            $sandboxService.getIncome(id, name, scheduleType, incomeType).then((data) => { console.log(data); isSuccessful = true; vm.isLoading = false; });
+                            $oblApiService.getIncome(id, name, scheduleType, incomeType).then((data) => { console.log(data); isSuccessful = true; vm.isLoading = false; });
                         }
                     })
             );
@@ -1137,14 +1137,14 @@
             var isSuccessful = false;
             vm.isLoading = true;
 
-            $sandboxService.getExpense(id, name, scheduleType, billType).then(
+            $oblApiService.getExpense(id, name, scheduleType, billType).then(
                 (data) => console.log(data),
                 err => $baseController.errorCheck(err,
                     {
                         maxLoops: 3,
                         miliseconds: 2000,
                         method: () => {
-                            $sandboxService.getExpense(id, name, scheduleType, billType).then((data) => { console.log(data); isSuccessful = true; vm.isLoading = false; });
+                            $oblApiService.getExpense(id, name, scheduleType, billType).then((data) => { console.log(data); isSuccessful = true; vm.isLoading = false; });
                         }
                     })
             );
@@ -1155,27 +1155,27 @@
             vm.isLoading = true;
 
             if (obj.incomeType) {
-                $sandboxService.deleteIncome(obj.id).then(
+                $oblApiService.deleteIncome(obj.id).then(
                     _getUserCharts,
                     err => $baseController.errorCheck(err,
                         {
                             maxLoops: 3,
                             miliseconds: 2000,
                             method: () => {
-                                $sandboxService.deleteIncome(obj.id).then(_getUserCharts);
+                                $oblApiService.deleteIncome(obj.id).then(_getUserCharts);
                             }
                         })
                 );
             }
             else {
-                $sandboxService.deleteExpense(obj.id).then(
+                $oblApiService.deleteExpense(obj.id).then(
                     _getUserCharts,
                     err => $baseController.errorCheck(err,
                         {
                             maxLoops: 3,
                             miliseconds: 2000,
                             method: () => {
-                                $sandboxService.deleteExpense(obj.id).then(_getUserCharts);
+                                $oblApiService.deleteExpense(obj.id).then(_getUserCharts);
                             }
                         })
                 );
@@ -1188,7 +1188,7 @@
 
     }
 
-    function modalInsertController($scope, $baseController, $uibModalInstance, $sandboxService, model, enums) {
+    function modalInsertController($scope, $baseController, $uibModalInstance, $oblApiService, model, enums) {
 
         var vm = this;
         vm.$scope = $scope;
@@ -1299,7 +1299,7 @@
                     obj.incomeType = parseInt(vm.incomeType);
                     if (vm.id) {
                         obj.id = vm.id;
-                        $sandboxService.updateIncome(obj).then(
+                        $oblApiService.updateIncome(obj).then(
                             () => {
                                 vm.isLoading = false;
                                 vm.$uibModalInstance.close();
@@ -1309,7 +1309,7 @@
                                     maxLoops: 3,
                                     miliseconds: 2000,
                                     method: () => {
-                                        $sandboxService.updateIncome(obj).then(() => {
+                                        $oblApiService.updateIncome(obj).then(() => {
                                             vm.isLoading = false;
                                             vm.$uibModalInstance.close();
                                         });
@@ -1318,7 +1318,7 @@
                         );
                     }
                     else {
-                        $sandboxService.insertIncome(obj).then(
+                        $oblApiService.insertIncome(obj).then(
                             () => {
                                 vm.isLoading = false;
                                 vm.$uibModalInstance.close();
@@ -1328,7 +1328,7 @@
                                     maxLoops: 3,
                                     miliseconds: 2000,
                                     method: () => {
-                                        $sandboxService.insertIncome(obj).then(() => {
+                                        $oblApiService.insertIncome(obj).then(() => {
                                             vm.isLoading = false;
                                             vm.$uibModalInstance.close();
                                         });
@@ -1343,7 +1343,7 @@
 
                     if (vm.id) {
                         obj.id = vm.id
-                        $sandboxService.updateExpense(obj).then(
+                        $oblApiService.updateExpense(obj).then(
                             () => {
                                 vm.isLoading = false;
                                 vm.$uibModalInstance.close();
@@ -1354,13 +1354,13 @@
                                     miliseconds: 2000,
                                     method: () => {
                                         vm.isLoading = false;
-                                        $sandboxService.updateExpense(obj).then(() => { vm.$uibModalInstance.close(); });
+                                        $oblApiService.updateExpense(obj).then(() => { vm.$uibModalInstance.close(); });
                                     }
                                 })
                         );
                     }
                     else {
-                        $sandboxService.insertExpense(obj).then(
+                        $oblApiService.insertExpense(obj).then(
                             () => {
                                 vm.isLoading = false;
                                 vm.$uibModalInstance.close();
@@ -1370,7 +1370,7 @@
                                     maxLoops: 3,
                                     miliseconds: 2000,
                                     method: () => {
-                                        $sandboxService.insertExpense(obj).then(() => {
+                                        $oblApiService.insertExpense(obj).then(() => {
                                             vm.isLoading = false;
                                             vm.$uibModalInstance.close();
                                         });

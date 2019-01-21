@@ -2,9 +2,9 @@
 
     angular.module(page.APPNAME).controller("cardBuilderController", cardController);
 
-    cardController.$inject = ['$scope', '$baseController', '$uibModal', '$sandboxService'];
+    cardController.$inject = ['$scope', '$baseController', '$uibModal', '$oblApiService'];
 
-    function cardController($scope, $baseController, $uibModal, $sandboxService) {
+    function cardController($scope, $baseController, $uibModal, $oblApiService) {
 
         var vm = this;
         vm.submitCard = _btnSumbit;
@@ -63,12 +63,12 @@
 
         function _getUserData() {
 
-            $sandboxService.getAllCardsByUser().then(
+            $oblApiService.getAllCardsByUser().then(
                 (response) => _cardResponse(response),
                 (err) => {
                     $baseController.errorCheck(err,
                         {
-                            promiseMethod: () => $sandboxService.getAllCardsByUser(),
+                            promiseMethod: () => $oblApiService.getAllCardsByUser(),
                             onSuccess: (response) => _cardResponse(response)
                         }
                     )
@@ -151,13 +151,13 @@
                 showCancelButton: true
             }).then(
                 () => {
-                    $sandboxService.deleteCard(vm.cards[index].id).then(
-                        () => $sandboxService.getAllCardsByUser().then(
+                    $oblApiService.deleteCard(vm.cards[index].id).then(
+                        () => $oblApiService.getAllCardsByUser().then(
                             (response) => _cardResponse(response),
                             (err) => {
                                 $baseController.errorCheck(err,
                                     {
-                                        promiseMethod: () => $sandboxService.getAllCardsByUser(),
+                                        promiseMethod: () => $oblApiService.getAllCardsByUser(),
                                         onSuccess: (response) => _cardResponse(response)
                                     }
                                 )
@@ -166,13 +166,13 @@
                         (err) => {
                             $baseController.errorCheck(err,
                                 {
-                                    promiseMethod: () => $sandboxService.deleteCard(vm.cards[index].id),
-                                    onSuccess: () => $sandboxService.getAllCardsByUser().then(
+                                    promiseMethod: () => $oblApiService.deleteCard(vm.cards[index].id),
+                                    onSuccess: () => $oblApiService.getAllCardsByUser().then(
                                         (response) => _cardResponse(response),
                                         (err) => {
                                             $baseController.errorCheck(err,
                                                 {
-                                                    promiseMethod: () => $sandboxService.getAllCardsByUser(),
+                                                    promiseMethod: () => $oblApiService.getAllCardsByUser(),
                                                     onSuccess: (response) => _cardResponse(response)
                                                 }
                                             )
@@ -264,18 +264,18 @@
                                     });
                                 }
                                 : (!vm.updateMode)
-                                    ? (model) => { return $sandboxService.insertCard(model).then(getUserCards); }
-                                    : (model) => { return $sandboxService.updateCard(model).then(getUserCards); };
+                                    ? (model) => { return $oblApiService.insertCard(model).then(getUserCards); }
+                                    : (model) => { return $oblApiService.updateCard(model).then(getUserCards); };
 
 
                         var getUserCards =
                             () => {
-                                return $sandboxService.getAllCardsByUser().then(
+                                return $oblApiService.getAllCardsByUser().then(
                                     (response) => _cardResponse(response),
                                     (err) => {
                                         $baseController.errorCheck(err,
                                             {
-                                                promiseMethod: () => $sandboxService.getAllCardsByUser(),
+                                                promiseMethod: () => $oblApiService.getAllCardsByUser(),
                                                 onSuccess: (response) => _cardResponse(response)
                                             }
                                         )
@@ -284,12 +284,12 @@
                             }
 
                         //saveCard(lastestCard).then(
-                        //    () => $sandboxService.getAllCardsByUser().then(
+                        //    () => $oblApiService.getAllCardsByUser().then(
                         //        (response) => _cardResponse(response),
                         //        (err) => {
                         //            $baseController.errorCheck(err,
                         //                {
-                        //                    promiseMethod: () => $sandboxService.getAllCardsByUser(),
+                        //                    promiseMethod: () => $oblApiService.getAllCardsByUser(),
                         //                    onSuccess: (response) => _cardResponse(response)
                         //                }
                         //            )
@@ -299,12 +299,12 @@
                         //        $baseController.errorCheck(err,
                         //            {
                         //                promiseMethod: () => saveCard(lastestCard),
-                        //                onSuccess: () => $sandboxService.getAllCardsByUser.then(
+                        //                onSuccess: () => $oblApiService.getAllCardsByUser.then(
                         //                    (response) => _cardResponse(response),
                         //                    (err) => {
                         //                        $baseController.errorCheck(err,
                         //                            {
-                        //                                promiseMethod: () => $sandboxService.getAllCardsByUser(),
+                        //                                promiseMethod: () => $oblApiService.getAllCardsByUser(),
                         //                                onSuccess: (response) => _cardResponse(response)
                         //                            }
                         //                        )

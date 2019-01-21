@@ -1,6 +1,6 @@
 ﻿(function () {
 
-    angular.module(page.APPNAME).factory("$sandboxService", sandboxService);
+    angular.module(page.APPNAME).factory("$oblApiService", sandboxService);
 
     sandboxService.$inject = ["$http"];
 

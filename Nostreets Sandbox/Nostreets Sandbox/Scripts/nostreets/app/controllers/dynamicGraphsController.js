@@ -4,11 +4,11 @@
     angular.module(page.APPNAME).controller("dynamicGraphsController", pageController)
         .controller("modalGraphController", modalController);
 
-    pageController.$inject = ["$scope", "$baseController", "$uibModal", '$rootScope', "$sandboxService"];
+    pageController.$inject = ["$scope", "$baseController", "$uibModal", '$rootScope', "$oblApiService"];
     modalController.$inject = ["$scope", "$timeout", "$uibModalInstance", "graph", "$rootScope"];
 
 
-    function pageController($scope, $baseController, $uibModal, $rootScope, $sandboxService) {
+    function pageController($scope, $baseController, $uibModal, $rootScope, $oblApiService) {
 
         //View Model and Mapping
         var vm = this;
@@ -41,7 +41,7 @@
             vm.legend = [];
             vm.isLoggedIn = page.isLoggedIn;
 
-            $sandboxService.getAllChartsByUser().then(_chartsResponse, _consoleResponse);
+            $oblApiService.getAllChartsByUser().then(_chartsResponse, _consoleResponse);
         };
 
         function _handlers() {
@@ -422,20 +422,20 @@
                     series: vm.chart.series
                 }
                 if (!vm.chart.chartId) {
-                    $sandboxService.insertChart(model).then(_idResponse, _consoleResponse);
+                    $oblApiService.insertChart(model).then(_idResponse, _consoleResponse);
                 }
                 else {
                     model.id = vm.chart.chartId;
-                    $sandboxService.updateChart(model).then(_consoleResponse, _consoleResponse);
+                    $oblApiService.updateChart(model).then(_consoleResponse, _consoleResponse);
                 }
                 vm.saved = true;
-                $sandboxService.getAllChartsByUser.then(_chartsResponse, _consoleResponse);
+                $oblApiService.getAllChartsByUser.then(_chartsResponse, _consoleResponse);
             }
         }
 
         function _delete(chart) {
             if (chart && chart.chartId) {
-                $sandboxService.deleteChartById(chart.chartId).then(_refreshResponse, _consoleResponse);
+                $oblApiService.deleteChartById(chart.chartId).then(_refreshResponse, _consoleResponse);
             }
         }
 
@@ -465,7 +465,7 @@
         }
 
         function _refreshResponse() {
-            $sandboxService.getAllChartsByUser.then(_chartsResponse, _consoleResponse);
+            $oblApiService.getAllChartsByUser.then(_chartsResponse, _consoleResponse);
         }
     }
 
