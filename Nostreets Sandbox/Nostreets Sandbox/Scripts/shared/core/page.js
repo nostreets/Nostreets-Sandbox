@@ -29,6 +29,49 @@ var page = {
 
     utilities: {
 
+        print: (usePopupWindow, id) => {
+            var popupWinindow = window.open('', '_blank', 'width=' + window.innerWidth + ',height=' + window.innerHeight + ',scrollbars=no,menubar=no,toolbar=no,location=no,status=no,titlebar=no'),
+                beforePrint = () => { },
+                afterPrint = () => popupWinindow.close(),
+                printContents = id ? $(id)[0].outerHTML : $('body')[0].outerHTML,
+                originalContents = document.body.outerHTML,
+                links = $('link'),
+                printBody = '<body onload="window.print()">' + printContents + '</body>',
+                printHead = '<html><head>';
+            for (var i = 0; i < Object.keys(links).length; i++)
+                if (typeof (links[i]) !== 'undefined')
+                    printHead += links[i].outerHTML;
+
+            printHead += '</head>{0}</html>';
+
+            if (usePopupWindow) {
+                popupWinindow.document.open();
+                popupWinindow.document.write(printHead.replace("{0}", printBody));
+                popupWinindow.document.close();
+
+                if (popupWinindow.matchMedia) {
+                    var mediaQueryList = window.matchMedia('print');
+                    mediaQueryList.addListener((mql) => {
+                        if (mql.matches) {
+                            beforePrint();
+                        } else {
+                            afterPrint();
+                        }
+                    });
+                }
+
+                popupWinindow.onbeforeprint = beforePrint;
+                popupWinindow.onafterprint = afterPrint;
+            }
+            else {
+
+                document.body.innerHTML = printBody;
+                window.print();
+                document.body.innerHTML = originalContents;
+            }
+
+        },
+
         getDeviceWidth: () => $(window).width(),
 
         checkForJQEvent: (element, event) => {

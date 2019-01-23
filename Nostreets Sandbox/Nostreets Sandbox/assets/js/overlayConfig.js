@@ -13,6 +13,7 @@ var overlay_navigation = $('.overlay-navigation'),
 $('.open-overlay').click(() => {
 
     overlay_navigation.toggleClass('overlay-active');
+    $('#fp-nav ul').fadeToggle();
 
     if (overlay_navigation.hasClass('overlay-active')) {
         top_bar.removeClass('animate-out-top-bar').addClass('animate-top-bar');

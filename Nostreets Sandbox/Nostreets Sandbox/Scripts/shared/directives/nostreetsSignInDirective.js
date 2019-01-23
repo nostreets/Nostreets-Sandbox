@@ -56,7 +56,7 @@
                         , controller: "modalRegisterController as regVm"
                         , size: "lg"
                         , resolve: {
-                            links: () => { return { loginModal: _openLoginModal } }
+                            links: () => { return { loginModal: _openLoginModal }; }
                         }
                     });
 
@@ -77,7 +77,7 @@
                                 return {
                                     registerModal: _openRegisterModal,
                                     userModal: _openUserModal
-                                }
+                                };
                             }
                         }
                     });
@@ -192,7 +192,7 @@
         }
 
         function _validateForm() {
-            var values = [vm.firstName, vm.lastName, vm.email, vm.password, vm.username]
+            var values = [vm.firstName, vm.lastName, vm.email, vm.password, vm.username];
 
             for (var val of values)
                 if (vm.validatorRegEx.test(val))

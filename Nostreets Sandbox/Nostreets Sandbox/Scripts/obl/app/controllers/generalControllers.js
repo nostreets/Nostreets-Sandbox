@@ -2,12 +2,14 @@
     angular.module(page.APPNAME)
         .controller("homeController", homeController)
         .controller("aboutController", aboutController)
+        .controller("ourTeamController", ourTeamController)
         .controller("musicController", musicController)
         .controller("contactUsController", contactUsController);
 
 
     homeController.$inject = ["$scope", "$baseController"];
     aboutController.$inject = ["$scope", "$baseController"];
+    ourTeamController.$inject = ["$scope", "$baseController"];
     contactUsController.$inject = ["$scope", "$baseController", "$http"];
 
 
@@ -23,11 +25,10 @@
         }
 
         function _setUp() {
+            vm.sliderOptions = page.sliderOptions;
 
 
         }
-
-
 
     }
 
@@ -37,13 +38,49 @@
 
         function _render() {
             _setUp();
-            $baseController.defaultListeners($scope);
+            _handlers();
         }
 
         function _setUp() {
             $('title').text("OBL | About");
 
 
+        }
+
+        function _handlers() {
+            $baseController.defaultListeners($scope);
+
+        }
+    }
+
+    function ourTeamController($scope, $baseController) {
+        var vm = this;
+        _render();
+
+        function _render() {
+            _setUp();
+            _handlers();
+        }
+
+        function _setUp() {
+            vm.sliderOptions = page.sliderOptions;
+            $('title').text("OBL | Our Team");
+
+        }
+
+        function _handlers() {
+             $baseController.defaultListeners($scope,
+                {
+                    'fp-onLeave': (event, data) =>
+                    {
+
+                        console.log('left slide...');
+
+                        //if(data.index % 2 === 0)
+
+                    }
+                }
+            );
         }
 
     }
@@ -64,7 +101,6 @@
         }
 
     }
-
 
     function contactUsController($scope, $baseController, $http) {
         var vm = this;
@@ -107,7 +143,5 @@
             console.log(data);
         }
     }
-
-
 
 })();

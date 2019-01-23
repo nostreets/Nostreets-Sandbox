@@ -17,15 +17,14 @@ namespace Nostreets_Sandbox
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Sandbox", action = "Index", id = UrlParameter.Optional },
-                namespaces: new[] { "Nostreets_Sandbox.Controllers" }
+                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             );
-
+          
 
 
 
             routes.RegisterMvcExternalRoute("OBL_Website.Controllers");
-
+           
         }
 
 

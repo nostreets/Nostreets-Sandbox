@@ -24,6 +24,7 @@ body {
     background-color: transparent;
     color: gray;
     text-align: center;
+    z-index: 98;
 }
 
     .footer a {
@@ -60,18 +61,20 @@ body {
 
 /*#endregion */
 
+/*#region Attribute Styles */
+
 [sign-in] {
     z-index: 98;
     color: black;
-    right: 21%;
-    top: 8%;
-    position: absolute;
+    position: fixed;
 }
 
     [sign-in]:hover {
         color: gray;
         cursor: pointer;
     }
+
+/*#endregion */
 
 
 /*#region Medias */

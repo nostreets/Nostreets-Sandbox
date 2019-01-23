@@ -3,17 +3,18 @@
     page.baseController = angular.module(page.APPNAME)
         .factory("$baseController", baseController);
 
-    baseController.$inject = ['$document'
-                            , '$systemEventService'
-                            , '$alertService'
-                            , "$window"
-                            , "$location"
-                            , '$uibModal'
-                            , '$timeout'
-                            , '$http'
-                            , '$sce'
-                            , '$cookies'
-                            , '$q'];
+    baseController.$inject = [
+        '$document'
+        , '$systemEventService'
+        , '$alertService'
+        , "$window"
+        , "$location"
+        , '$uibModal'
+        , '$timeout'
+        , '$http'
+        , '$sce'
+        , '$cookies'
+        , '$q'];
 
     function baseController($document, $systemEventService, $alertService, $window, $location, $uibModal, $timeout, $http, $sce, $cookies, $q) {
 
@@ -140,7 +141,7 @@
 
         base.defaultListeners = function (scope, listeners) {
 
-            //#region Defualt Listeners
+            //#region Default Listeners
 
             $systemEventService.listen('$viewContentLoaded', () => {
                 window.ga('send', 'pageview', { page: $location.url() });

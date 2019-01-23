@@ -267,7 +267,7 @@
     <Compile Include="App_Start\WindsorResolver.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="App_Start\WindsorConfig.cs" />
-    <Compile Include="Controllers\Api\ApiController.cs" />
+    <Compile Include="Controllers\Api\MainApiController.cs" />
     <Compile Include="Controllers\NostreetsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -4230,6 +4230,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="assets\partials\buisnessCard.html" />
+    <Content Include="Scripts\obl\app\templates\ourTeam.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Scripts\obl\app\templates\music.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -4270,6 +4273,7 @@
     <Content Include="Scripts\nostreets\app\templates\skills.html" />
     <Content Include="Scripts\shared\core\baseController.js" />
     <Content Include="Scripts\shared\core\extend.js" />
+    <Content Include="Scripts\shared\directives\fullpageDirective.js" />
     <Content Include="Scripts\shared\directives\carouselDirective.js" />
     <Content Include="Scripts\shared\directives\facebookSigninDirective.js" />
     <Content Include="Scripts\shared\directives\googleSigninDirective.js" />
