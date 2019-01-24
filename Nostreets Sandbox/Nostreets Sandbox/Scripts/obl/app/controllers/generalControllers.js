@@ -55,6 +55,8 @@
 
     function ourTeamController($scope, $baseController) {
         var vm = this;
+        vm.reRenderCardsOn = _reRenderCardsOn;
+
         _render();
 
         function _render() {
@@ -63,24 +65,66 @@
         }
 
         function _setUp() {
-            vm.sliderOptions = page.sliderOptions;
-            $('title').text("OBL | Our Team");
 
+            vm.deviceWidth = page.utilities.getDeviceWidth();
+            vm.sliderOptions = page.sliderOptions;
+            vm.cardParams = {
+                nile: {
+                    "id": "#nileCard",
+                    "color": "Red",
+                    "name": "Nile Overstreet",
+                    "title": "CEO / CIO",
+                    "desc": "Always trying expand and improve my knowledge and understanding of different technologies like in this vast world of computer science...",
+                    "imgUrl": "/assets/img/nile5.jpg",
+                    "socials": {
+                        "github": "https://github.com/nostreets",
+                        "instagram": "https://www.instagram.com/obl.nostreets/",
+                        "linkedin": "https://www.linkedin.com/in/nile-overstreet/",
+                        "youtube": "https://www.youtube.com/"
+                    }
+                },
+                rediet: {
+                    "id": "#redietCard",
+                    "color": "Indigo",
+                    "name": "Rediet Teferi",
+                    "title": "CEO / CPO",
+                    "desc": "...",
+                    "imgUrl": "/assets/img/rediet2.jpg",
+                    "socials": {
+                        "instagram": "http://obl.network",
+                        "youtube": "https://www.youtube.com/"
+                    }
+                },
+                hovaness: {
+                    "id": "#hovanessCard",
+                    "color": "Blue",
+                    "name": "Hovaness G.",
+                    "title": "CEO / CDO",
+                    "desc": "...",
+                    "imgUrl": "/assets/img/hov.jpg",
+                    "socials": {
+                        "instagram": "http://obl.network",
+                        "youtube": "https://www.youtube.com/"
+                    }
+                }
+            };
+
+
+            $('title').text("OBL | Our Team");
         }
 
         function _handlers() {
-             $baseController.defaultListeners($scope,
-                {
-                    'fp-onLeave': (event, data) =>
-                    {
+            $baseController.defaultListeners($scope);
+        }
 
-                        console.log('left slide...');
+        function _reRenderCardsOn() {
+            var result = false;
+            if (vm.deviceWidth === page.getDeviceWidth())
+                result = true;
+            else
+                vm.deviceWidth = page.getDeviceWidth();
 
-                        //if(data.index % 2 === 0)
-
-                    }
-                }
-            );
+            return result;
         }
 
     }

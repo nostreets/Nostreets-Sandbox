@@ -33,11 +33,12 @@ var page = {
             var popupWinindow = window.open('', '_blank', 'width=' + window.innerWidth + ',height=' + window.innerHeight + ',scrollbars=no,menubar=no,toolbar=no,location=no,status=no,titlebar=no'),
                 beforePrint = () => { },
                 afterPrint = () => popupWinindow.close(),
-                printContents = id ? $(id)[0].outerHTML : $('body')[0].outerHTML,
+                printContents = id ? document.querySelector('#' + id).outerHTML : document.body.outerHTML,
                 originalContents = document.body.outerHTML,
-                links = $('link'),
-                printBody = '<body onload="window.print()">' + printContents + '</body>',
+                links = document.querySelectorAll('link'),
+                printBody = '<body onload="window.print(); window.focus();">' + printContents + '</body>',
                 printHead = '<html><head>';
+
             for (var i = 0; i < Object.keys(links).length; i++)
                 if (typeof (links[i]) !== 'undefined')
                     printHead += links[i].outerHTML;
@@ -48,6 +49,7 @@ var page = {
                 popupWinindow.document.open();
                 popupWinindow.document.write(printHead.replace("{0}", printBody));
                 popupWinindow.document.close();
+
 
                 if (popupWinindow.matchMedia) {
                     var mediaQueryList = window.matchMedia('print');
@@ -69,7 +71,6 @@ var page = {
                 window.print();
                 document.body.innerHTML = originalContents;
             }
-
         },
 
         getDeviceWidth: () => $(window).width(),

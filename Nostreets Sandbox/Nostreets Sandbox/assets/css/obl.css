@@ -7,6 +7,10 @@ body {
     /*background-image: url(../img/body-bg.png);*/
 }
 
+/*#endregion */
+
+/*#region Class And Id Styles */
+
 .bold {
     font-weight: 500;
 }
@@ -30,10 +34,6 @@ body {
     .footer a {
         color: grey;
     }
-
-/*#endregion */
-
-/*#region Class And Id Styles */
 
 #redietCard img {
     margin: 0% -38%;

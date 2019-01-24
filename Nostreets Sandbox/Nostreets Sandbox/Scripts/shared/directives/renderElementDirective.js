@@ -15,19 +15,21 @@
                     html: '@',
                     css: '@',
                     js: '@',
-                    params: '@',
-                    appendScriptToBody: '@'
+                    appendScriptToBody: '@',
+                    reRenderOn: '&',
+                    params: '='
                 },
                 link: function (scope, element, attr) {
-
 
                     $(document).ready(_render);
 
                     function _render() {
 
                         element.append($.parseHTML(_getElement()));
-
                         _getAndRunJs();
+
+                        if (scope.reRenderOn && typeof (scope.reRenderOn) === 'function')
+                            scope.$watch(scope.reRenderOn, _reRender, true);
                     }
 
                     function _getElement() {
@@ -58,7 +60,7 @@
                     function _getAndRunJs() {
                         var js = '',
                             jsUrl = (attr.js[0] === '~') ? attr.js.replace('~', window.location.origin) : (attr.js[0] === '/') ? window.location.origin + attr.js : attr.js,
-                            params = scope.params ? JSON.parse(scope.params) : {};
+                            params = scope.params || {};
 
 
                         if (_isValidURL(jsUrl)) {
@@ -68,10 +70,13 @@
                                     _runJS(js, params, scope.appendScriptToBody || false);
                                 });
                         }
-
-
                     }
 
+                    function _reRender() {
+                        $(element.children()[0]).remove();
+                        element.append($.parseHTML(_getElement()));
+                        _getAndRunJs();
+                    }
                 }
             };
         }
@@ -186,6 +191,8 @@
             }
 
         }
+
+
 
     }
 

@@ -50,9 +50,7 @@
 
                 function _handlers() {
                     scope.$watch(_watchNodes, rebuild);
-
                     scope.$watch('options', _rebuild, true);
-
                     element.on('$destroy', _destroyFullPage);
                 }
 
