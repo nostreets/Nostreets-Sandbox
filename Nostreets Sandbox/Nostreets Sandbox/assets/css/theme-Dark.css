@@ -225,7 +225,6 @@ h6 {
     }
 
         .social_icons li i, #homeCenter .social_icons li i {
-
             font-size: 1.4em;
             transition: all .3s;
             display: inline-block;
@@ -238,7 +237,7 @@ h6 {
             }
 
 
-   
+
 
 #homeCenter .social_icons {
     text-align: center;
@@ -490,6 +489,7 @@ h6 {
         }
 
         .project .item img {
+            height: 160px;
             width: 100%;
         }
 

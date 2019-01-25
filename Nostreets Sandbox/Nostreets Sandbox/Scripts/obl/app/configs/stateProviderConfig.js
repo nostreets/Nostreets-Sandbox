@@ -25,6 +25,12 @@
                         templateUrl: '/Scripts/obl/app/templates/ourTeam.html',
                         controller: 'ourTeamController',
                         controllerAs: 'pg'
+                    }).state('/entertainment', {
+                        name: 'entertainment',
+                        url: '/entertainment',
+                        templateUrl: '/Scripts/obl/app/templates/entertainment.html',
+                        controller: 'ourTeamController',
+                        controllerAs: 'pg'
                     }).state('/contact', {
                         name: 'contact',
                         url: '/contact',
