@@ -28,8 +28,8 @@
                         element.append($.parseHTML(_getElement()));
                         _getAndRunJs();
 
-                        if (scope.reRenderOn && typeof (scope.reRenderOn) === 'function')
-                            scope.$watch(scope.reRenderOn, _reRender, true);
+                        //if (scope.reRenderOn && typeof (scope.reRenderOn) === 'function')
+                        //    scope.$watch(scope.reRenderOn, _reRender, true);
                     }
 
                     function _getElement() {

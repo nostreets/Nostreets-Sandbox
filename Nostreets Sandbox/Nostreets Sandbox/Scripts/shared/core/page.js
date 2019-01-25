@@ -272,7 +272,7 @@ var page = {
             return false;
         },
 
-        loadFromSource: (url, callback, sourceType) => {
+        loadFromUrl: (url, callback, sourceType) => {
             $.ajax({
                 url: url,
                 dataType: sourceType || 'script',
@@ -285,7 +285,7 @@ var page = {
 
         clone: (obj) => JSON.parse(JSON.stringify(obj)),
 
-        getStyleInHtml: (id) => {
+        getStyleFromElement: (id) => {
             return document.getElementById(id).style;
         },
 
@@ -429,7 +429,7 @@ var page = {
             }
         },
 
-        isValidURL: (str) => {
+        isValidURL: (url) => {
             var urlPattern = "(https?|ftp)://(www\\.)?(((([a-zA-Z0-9.-]+\\.){1,}[a-zA-Z]{2,4}|localhost))|((\\d{1,3}\\.){3}(\\d{1,3})))(:(\\d+))?(/([a-zA-Z0-9-._~!$&'()*+,;=:@/]|%[0-9A-F]{2})*)?(\\?([a-zA-Z0-9-._~!$&'()*+,;=:/?@]|%[0-9A-F]{2})*)?(#([a-zA-Z0-9._-]|%[0-9A-F]{2})*)?";
 
             urlPattern = "^" + urlPattern + "$";

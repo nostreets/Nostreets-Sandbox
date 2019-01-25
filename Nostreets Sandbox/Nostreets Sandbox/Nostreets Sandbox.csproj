@@ -286,6 +286,7 @@
     <Content Include="assets\emails\NewPasswordEmail.html" />
     <Content Include="assets\emails\ShipingNotice.html" />
     <Content Include="assets\emails\TFAuthEmail.html" />
+    <Content Include="assets\img\wwred.1.jpg" />
     <Content Include="assets\img\hov.jpg" />
     <Content Include="assets\img\rediet2.JPG" />
     <Content Include="assets\img\obl.2.png" />
@@ -312,6 +313,7 @@
     <Content Include="assets\css\jquery.fullPage.css" />
     <Content Include="assets\js\musicPlayerConfig.js" />
     <Content Include="assets\js\renderOBLParticles.js" />
+    <Content Include="assets\mp3\bensound-relaxing.mp3" />
     <Content Include="assets\partials\musicPlayer.html" />
     <Content Include="fonts\fa-brands-400.svg" />
     <Content Include="fonts\fa-regular-400.svg" />

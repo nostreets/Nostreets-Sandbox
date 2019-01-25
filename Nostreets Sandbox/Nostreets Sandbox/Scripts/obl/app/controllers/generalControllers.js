@@ -10,6 +10,7 @@
     homeController.$inject = ["$scope", "$baseController"];
     aboutController.$inject = ["$scope", "$baseController"];
     ourTeamController.$inject = ["$scope", "$baseController"];
+    musicController.$inject = ["$scope", "$baseController", "$http"];
     contactUsController.$inject = ["$scope", "$baseController", "$http"];
 
 
@@ -135,13 +136,46 @@
 
         function _render() {
             _setUp();
-            $baseController.defaultListeners($scope);
+            _renderMusicPlayer();
+            _handlers();
         }
 
         function _setUp() {
             $('title').text("OBL | Music");
 
 
+        }
+
+        function _handlers() {
+            $baseController.defaultListeners($scope);
+            window.onkeydown = function (e) {
+                return !(e.keyCode === 32);
+            };
+
+            $('song-played-progress').on('click', (e) => {
+                var offset = this.getBoundingClientRect();
+                var x = e.pageX - offset.left;
+                Amplitude.setSongPlayedPercentage((parseFloat(x) / parseFloat(this.offsetWidth)) * 100);
+            });
+        }
+
+        function _renderMusicPlayer() {
+            Amplitude.init({
+                "bindings": {
+                    37: 'prev',
+                    39: 'next',
+                    32: 'play_pause'
+                },
+                "songs": [
+                    {
+                        "name": "What You Need (prod. WWRED.)",
+                        "artist": "WWRED.",
+                        "album": "Single",
+                        "url": "/assets/mp3/bensound-relaxing.mp3",
+                        "cover_art_url": "/assets/img/wwred.1.jpg"
+                    }
+                ]
+            });
         }
 
     }
