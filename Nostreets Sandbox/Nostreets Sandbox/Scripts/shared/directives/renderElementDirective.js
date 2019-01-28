@@ -3,8 +3,9 @@
     angular.module(page.APPNAME)
         .directive("render", renderElementDirective);
 
+    renderElementDirective.$inject = ['$window'];
 
-    function renderElementDirective() {
+    function renderElementDirective($window) {
 
         return _returnDirective();
 
@@ -16,7 +17,7 @@
                     css: '@',
                     js: '@',
                     appendScriptToBody: '@',
-                    reRenderOn: '&',
+                    reRenderAtSize: '@',
                     params: '='
                 },
                 link: function (scope, element, attr) {
@@ -28,8 +29,16 @@
                         element.append($.parseHTML(_getElement()));
                         _getAndRunJs();
 
-                        //if (scope.reRenderOn && typeof (scope.reRenderOn) === 'function')
-                        //    scope.$watch(scope.reRenderOn, _reRender, true);
+                        if (scope.reRenderAt) {
+                            angular.element($window).bind('resize', function () {
+                                scope.width = $window.innerWidth;
+
+                                if (scope.width == scope.reRenderAt)
+                                    _reRender();
+
+                                scope.$digest();
+                            });
+                        }
                     }
 
                     function _getElement() {
@@ -191,8 +200,6 @@
             }
 
         }
-
-
 
     }
 

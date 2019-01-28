@@ -4,31 +4,36 @@
         .controller("aboutController", aboutController)
         .controller("ourTeamController", ourTeamController)
         .controller("musicController", musicController)
+        .controller("videoController", videoController)
         .controller("contactUsController", contactUsController);
 
 
     homeController.$inject = ["$scope", "$baseController"];
     aboutController.$inject = ["$scope", "$baseController"];
     ourTeamController.$inject = ["$scope", "$baseController"];
-    musicController.$inject = ["$scope", "$baseController", "$http"];
+    musicController.$inject = ["$scope", "$baseController"];
+    videoController.$inject = ["$scope", "$baseController"];
     contactUsController.$inject = ["$scope", "$baseController", "$http"];
 
 
     function homeController($scope, $baseController) {
         var vm = this;
-        vm.getDeviceWidth = page.utilities.getDeviceWidth;
 
         _render();
 
         function _render() {
             _setUp();
-            $baseController.defaultListeners($scope);
+            _handlers();
         }
 
         function _setUp() {
             vm.sliderOptions = page.sliderOptions;
+        }
 
-
+        function _handlers() {
+            page.fixFooter();
+            $baseController.defaultListeners($scope);
+            angular.element($baseController.window).bind('resize', page.fixFooter);
         }
 
     }
@@ -49,8 +54,9 @@
         }
 
         function _handlers() {
+            page.fixFooter();
             $baseController.defaultListeners($scope);
-
+            angular.element($baseController.window).bind('resize', page.fixFooter);
         }
     }
 
@@ -115,7 +121,9 @@
         }
 
         function _handlers() {
+            page.fixFooter();
             $baseController.defaultListeners($scope);
+            angular.element($baseController.window).bind('resize', page.fixFooter);
         }
 
         function _reRenderCardsOn() {
@@ -136,48 +144,74 @@
 
         function _render() {
             _setUp();
-            _renderMusicPlayer();
             _handlers();
         }
 
         function _setUp() {
             $('title').text("OBL | Music");
 
+            vm.songs = [
+                {
+                    id: 'one',
+                    title: 'Rain',
+                    artist: 'Drake',
+                    url: 'http://www.schillmania.com/projects/soundmanager2/demo/_mp3/rain.mp3'
+                },
+                {
+                    id: 'two',
+                    title: 'Walking',
+                    artist: 'Nicki Minaj',
+                    url: 'http://www.schillmania.com/projects/soundmanager2/demo/_mp3/walking.mp3'
+                },
+                {
+                    id: 'three',
+                    title: 'Barrlping with Carl (featureblend.com)',
+                    artist: 'Akon',
+                    url: 'http://www.freshly-ground.com/misc/music/carl-3-barlp.mp3'
+                },
+                {
+                    id: 'four',
+                    title: 'Angry cow sound?',
+                    artist: 'A Cow',
+                    url: 'http://www.freshly-ground.com/data/audio/binaural/Mak.mp3'
+                },
+                {
+                    id: 'five',
+                    title: 'Things that open, close and roll',
+                    artist: 'Someone',
+                    url: 'http://www.freshly-ground.com/data/audio/binaural/Things%20that%20open,%20close%20and%20roll.mp3'
+                }
+            ];
+        }
+
+        function _handlers() {
+            page.fixFooter();
+            $baseController.defaultListeners($scope);
+            angular.element($baseController.window).bind('resize', page.fixFooter);
+        }
+
+    }
+
+    function videoController($scope, $baseController) {
+        var vm = this;
+        _render();
+
+        function _render() {
+            _setUp();
+            _handlers();
+        }
+
+        function _setUp() {
+            $('title').text("OBL | Video");
+
 
         }
 
         function _handlers() {
+            page.fixFooter();
             $baseController.defaultListeners($scope);
-            window.onkeydown = function (e) {
-                return !(e.keyCode === 32);
-            };
-
-            $('song-played-progress').on('click', (e) => {
-                var offset = this.getBoundingClientRect();
-                var x = e.pageX - offset.left;
-                Amplitude.setSongPlayedPercentage((parseFloat(x) / parseFloat(this.offsetWidth)) * 100);
-            });
+            angular.element($baseController.window).bind('resize', page.fixFooter);
         }
-
-        function _renderMusicPlayer() {
-            Amplitude.init({
-                "bindings": {
-                    37: 'prev',
-                    39: 'next',
-                    32: 'play_pause'
-                },
-                "songs": [
-                    {
-                        "name": "What You Need (prod. WWRED.)",
-                        "artist": "WWRED.",
-                        "album": "Single",
-                        "url": "/assets/mp3/bensound-relaxing.mp3",
-                        "cover_art_url": "/assets/img/wwred.1.jpg"
-                    }
-                ]
-            });
-        }
-
     }
 
     function contactUsController($scope, $baseController, $http) {
@@ -187,7 +221,7 @@
 
         function _render() {
             _setUp();
-            $baseController.defaultListeners($scope);
+            _handlers();
         }
 
         function _setUp() {
@@ -203,6 +237,12 @@
                 'Report a Bug',
                 'Other'
             ];
+        }
+
+        function _handlers() {
+            page.fixFooter();
+            $baseController.defaultListeners($scope);
+            angular.element($baseController.window).bind('resize', page.fixFooter);
         }
 
         function _sendEmail(model) {

@@ -302,6 +302,7 @@
     <Content Include="assets\img\googleplus%402x.png" />
     <Content Include="assets\img\twitter%402x.png" />
     <Content Include="assets\js\angular-fullpage.js" />
+    <Content Include="assets\js\angular-soundmanager2.js" />
     <Content Include="assets\js\autotrack.js" />
     <Content Include="assets\js\auto_update_stylesheets.js" />
     <Content Include="assets\js\buisnessCardConfig.js" />
@@ -314,6 +315,7 @@
     <Content Include="assets\js\musicPlayerConfig.js" />
     <Content Include="assets\js\renderOBLParticles.js" />
     <Content Include="assets\mp3\bensound-relaxing.mp3" />
+    <Content Include="assets\mp3\What You Need %28prod. WWRED.%29.mp3" />
     <Content Include="assets\partials\musicPlayer.html" />
     <Content Include="fonts\fa-brands-400.svg" />
     <Content Include="fonts\fa-regular-400.svg" />
@@ -4232,7 +4234,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="assets\partials\buisnessCard.html" />
-    <Content Include="Scripts\obl\app\templates\entertainment.html" />
+    <Content Include="Scripts\obl\app\templates\video.html" />
     <Content Include="Scripts\obl\app\templates\ourTeam.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

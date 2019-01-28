@@ -2,6 +2,7 @@
 page.APPNAME = 'obl-site';
 page.ngModules.push('fullPage.js');
 page.ngModules.push('ui.router');
+page.ngModules.push('angularSoundManager');
 
 page.sliderOptions = {
     licenseKey: '6D8C01FB-3C9B4F3A-93CBFC04-52802A55',
@@ -44,6 +45,37 @@ page.sliderOptions = {
 
     lazyLoading: true
 };
+
+page.fixFooter = () => {
+
+    var path = window.location.hash,
+        width = page.utilities.getDeviceWidth();
+
+    if (width < 768) {
+        if (path === '#!/home' || path === '#!/ourTeam') {
+            $('#fullpage-footer').show();
+            $('#normal-footer').hide();
+        }
+        else {
+            $('#fullpage-footer').hide();
+            $('#normal-footer').show();
+            $('#normal-footer').removeClass('fixed-footer');
+            $('#normal-footer').addClass('absolute-footer');
+        }
+    }
+    else if (path === '#!/music' || path === '#!/video') {
+        $('#fullpage-footer').hide();
+        $('#normal-footer').show();
+        $('#normal-footer').removeClass('fixed-footer');
+        $('#normal-footer').addClass('absolute-footer');
+    }
+    else {
+        $('#fullpage-footer').hide();
+        $('#normal-footer').show();
+        $('#normal-footer').removeClass('absolute-footer');
+        $('#normal-footer').addClass('fixed-footer');
+    }
+}
 
 
 

@@ -7,6 +7,21 @@ body {
     /*background-image: url(../img/body-bg.png);*/
 }
 
+
+footer {
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: transparent;
+    color: gray;
+    text-align: center;
+    z-index: 98;
+}
+
+    footer a {
+        color: grey;
+    }
+
 /*#endregion */
 
 /*#region Class And Id Styles */
@@ -19,21 +34,15 @@ body {
         color: black;
     }
 
-
-.footer {
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    background-color: transparent;
-    color: gray;
-    text-align: center;
-    z-index: 98;
+.absolute-footer {
+    bottom: -10%;
+    position: absolute;
 }
 
-    .footer a {
-        color: grey;
-    }
+
+.fixed-footer {
+    position: fixed;
+}
 
 #redietCard img {
     margin: 0% -38%;
@@ -90,19 +99,8 @@ body {
     }
 }
 
-
-@media (min-width: 576px) {
-
-    .mobile-img-xs-only {
-        display: none;
-    }
-
-    .mobile-img-xxs-only {
-        display: none;
-    }
-}
-
 @media (max-width: 576px) {
+
 
     .mobile-img-xs-only {
         display: initial;
