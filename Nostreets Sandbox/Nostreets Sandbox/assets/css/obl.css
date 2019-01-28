@@ -85,8 +85,21 @@ footer {
 
 /*#endregion */
 
-
 /*#region Medias */
+
+@media (min-width: 768px) {
+
+    #about-img {
+        padding: 0% 38% 0% 38%;
+    }
+}
+
+@media (max-width: 768px) {
+
+    #about-img {
+        padding: 0% 25% 0% 25%;
+    }
+}
 
 @media (min-width: 576px) {
 
@@ -101,6 +114,9 @@ footer {
 
 @media (max-width: 576px) {
 
+    #about-img {
+        padding: 0% 20% 0% 20%;
+    }
 
     .mobile-img-xs-only {
         display: initial;
