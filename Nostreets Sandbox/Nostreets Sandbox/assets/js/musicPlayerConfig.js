@@ -1,5 +1,8 @@
 ﻿(function () {
 
+
+    $('document').ready(render);
+
     var maxSideNum = 24,
         maxRectangleNum = 24;
 
