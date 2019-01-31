@@ -2,7 +2,7 @@
     {
         "particles": {
             "number": {
-                "value": 400,
+                "value": 150,
                 "density": {
                     "enable": true,
                     "value_area": 800
@@ -12,7 +12,7 @@
                 "value": "#BB5D5D"
             },
             "shape": {
-                "type": "circle",
+                "type": "image", //"circle",
                 "stroke": {
                     "width": 0,
                     "color": "#000000"
@@ -21,7 +21,7 @@
                     "nb_sides": 5
                 },
                 "image": {
-                    "src": "img/github.svg",
+                    "src": "assets/img/obl.2.400.png",
                     "width": 100,
                     "height": 100
                 }

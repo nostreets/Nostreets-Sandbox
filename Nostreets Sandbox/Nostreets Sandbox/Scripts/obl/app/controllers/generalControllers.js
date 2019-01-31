@@ -28,6 +28,7 @@
 
         function _setUp() {
             vm.sliderOptions = page.sliderOptions;
+            vm.isFullpageJs = true;
         }
 
         function _handlers() {
