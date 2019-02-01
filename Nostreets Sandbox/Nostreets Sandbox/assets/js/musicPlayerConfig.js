@@ -1,59 +1,57 @@
 ﻿(function () {
 
 
-    $('document').ready(render);
+    render();
 
-    var maxSideNum = 24,
-        maxRectangleNum = 24;
-
-    // Dat.gui setup
-    var Options = function () {
-        this.height = 400;
-        this.radius = 185;
-        this.sideCount = 12;
-        this.rotSpeed = -0.3;
-
-        this.rectangleCount = 12;
-        this.rectangleWidth = 80;
-        this.vertMargin = 10;
-        this.borderWidth = 3;
-
-        this.color = 200;
-        this.solidBG = false;
-        this.rainbowMode = false;
-        this.animateThroughSpectrum = false;
-        this.fade = false;
-    };
-
-    /*window.onload =*/
     function render() {
+
+        var maxSideNum = 24,
+            maxRectangleNum = 24;
+
+        // Dat.gui setup
+        var Options = function () {
+            this.height = 400;
+            this.radius = 185;
+            this.sideCount = 12;
+            this.rotSpeed = -0.3;
+
+            this.rectangleCount = 12;
+            this.rectangleWidth = 80;
+            this.vertMargin = 10;
+            this.borderWidth = 3;
+
+            this.color = 200;
+            this.solidBG = false;
+            this.rainbowMode = false;
+            this.animateThroughSpectrum = false;
+            this.fade = false;
+        };
+
         // dat.gui setup
-        var myOptions = new Options(),
-            gui = new dat.GUI(),
-            f1 = gui.addFolder("Prism Controls"),
-            f2 = gui.addFolder("Rectangle Controls"),
-            f3 = gui.addFolder("Color Controls"),
-            mySideCount = f1.add(myOptions, "sideCount", 3, maxSideNum).step(1),
-            myRadius = f1.add(myOptions, "radius", 30, 600).step(15),
-            myHeight = f1.add(myOptions, "height", 50, 750).step(50),
-            myRotSpeed = f1.add(myOptions, "rotSpeed", -1, 1).step(0.1),
-            myRectangleCount = f2
-                .add(myOptions, "rectangleCount", 3, maxRectangleNum)
-                .step(1),
-            myRectangleWidth = f2.add(myOptions, "rectangleWidth", 1, 100).step(5),
-            myVertMargin = f2.add(myOptions, "vertMargin", 0, 15).step(1),
-            myBorderWidth = f2.add(myOptions, "borderWidth", 0, 15).step(1),
-            myColor = f3.add(myOptions, "color", 0, 360).step(1),
-            mySolidBG = f3.add(myOptions, "solidBG"),
-            myRainbow = f3.add(myOptions, "rainbowMode"),
+        var myOptions                = new Options(),
+            gui                      = new dat.GUI(),
+            f1                       = gui.addFolder("Prism Controls"),
+            f2                       = gui.addFolder("Rectangle Controls"),
+            f3                       = gui.addFolder("Color Controls"),
+            mySideCount              = f1.add(myOptions, "sideCount", 3, maxSideNum).step(1),
+            myRadius                 = f1.add(myOptions, "radius", 30, 600).step(15),
+            myHeight                 = f1.add(myOptions, "height", 50, 750).step(50),
+            myRotSpeed               = f1.add(myOptions, "rotSpeed", -1, 1).step(0.1),
+            myRectangleCount         = f2.add(myOptions, "rectangleCount", 3, maxRectangleNum).step(1),
+            myRectangleWidth         = f2.add(myOptions, "rectangleWidth", 1, 100).step(5),
+            myVertMargin             = f2.add(myOptions, "vertMargin", 0, 15).step(1),
+            myBorderWidth            = f2.add(myOptions, "borderWidth", 0, 15).step(1),
+            myColor                  = f3.add(myOptions, "color", 0, 360).step(1),
+            mySolidBG                = f3.add(myOptions, "solidBG"),
+            myRainbow                = f3.add(myOptions, "rainbowMode"),
             myAnimateThroughSpectrum = f3.add(myOptions, "animateThroughSpectrum"),
-            myFade = f3.add(myOptions, "fade");
+            myFade                   = f3.add(myOptions, "fade");
 
         f2.open();
 
         var audio, analyser, audioctx, sourceNode, stream;
 
-        var audioInput = document.getElementById("audiofile"),
+        var audioInput  = document.getElementById("audiofile"),
             listenButton = document.querySelector(".listenButton"),
             playPauseButton = document.querySelector(".playPauseButton");
 
