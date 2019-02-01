@@ -11,6 +11,7 @@ page.sliderOptions = {
         , 'rgba(255, 255, 255, 0.30)'
         , 'rgba(255, 255, 255, 0.30)'
         , 'rgba(255, 255, 255, 0.30)'
+        , 'rgba(255, 255, 255, 0.30)'
     ],
     navigation: true,
     navigationPosition: 'right',

@@ -315,6 +315,7 @@
     <Content Include="assets\css\jquery.fullPage.css" />
     <Content Include="assets\js\musicPlayerConfig.js" />
     <Content Include="assets\js\renderOBLParticles.js" />
+    <Content Include="assets\js\scrolloverflow.js" />
     <Content Include="assets\mp3\bensound-relaxing.mp3" />
     <Content Include="assets\mp3\What You Need %28prod. WWRED.%29.mp3" />
     <Content Include="assets\partials\musicPlayer.html" />
