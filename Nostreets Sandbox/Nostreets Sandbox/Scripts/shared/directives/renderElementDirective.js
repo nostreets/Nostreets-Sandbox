@@ -26,10 +26,11 @@
 
                     function _render() {
 
-                        element.append($.parseHTML(_getElement()));
+                        var html = _getElement();
+                        element.append($.parseHTML(html));
                         _getAndRunJs();
 
-                        if (scope.reRenderAt) {
+                        if (scope.reRenderAt)
                             angular.element($window).bind('resize', function () {
                                 scope.width = $window.innerWidth;
 
@@ -38,7 +39,7 @@
 
                                 scope.$digest();
                             });
-                        }
+
                     }
 
                     function _getElement() {
@@ -82,8 +83,9 @@
                     }
 
                     function _reRender() {
+                        var html = _getElement();
                         $(element.children()[0]).remove();
-                        element.append($.parseHTML(_getElement()));
+                        element.append($.parseHTML(html));
                         _getAndRunJs();
                     }
                 }
@@ -95,7 +97,7 @@
             //params = params ? params : null;
 
             var iifeRegex = /(\(function)\W*(([a-zA-Z])*(,)(\s|\S))*(([a-zA-Z])*\))/i,
-                paramsRegex = /(?!\(\)|([a-zA-Z])*\(([a-zA-Z])*\))\((([a-zA-Z])*(,)(\s|\S))*(([a-zA-Z])*\))/i,
+                paramsRegex = /(?!\(\)|([a-zA-Z]))\((([a-zA-Z])*(,)(\s|\S))*(([a-zA-Z])*\))/i,
                 funcRegex = /(\(function)\W*/i;
 
 

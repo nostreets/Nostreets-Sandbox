@@ -44,7 +44,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             _errorLog = _errorLog.WindsorResolve(container);
             _errorLog = _errorLog.WindsorResolve(container);
 
-            _oblLibrary = new OBL_ApiLibrary(Request, ModelState);
+            _oblLibrary = new OBL_Endpoints(Request, ModelState);
         }
 
         private IBillService _billSrv = null;
@@ -54,7 +54,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         private IDBService<StyledCard, int> _cardSrv = null;
         private IDBService<WebRequestError, int> _errorLog = null;
         private IDBService<ProductDevelopment, int> _delevopProductSrv = null;
-        private OBL_ApiLibrary _oblLibrary = null;
+        private OBL_Endpoints _oblLibrary = null;
 
         #region Private Members
 

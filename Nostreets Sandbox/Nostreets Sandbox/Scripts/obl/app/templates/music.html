@@ -6,79 +6,8 @@
             append-script-to-body="false"
             html="~/assets/partials/musicPlayer.html"
             css="~/assets/css/musicPlayer.css"
-            js="~/assets/js/musicPlayerConfig.js"></render>
+            js="~/assets/js/musicPlayerConfig.js"
+            params="pg.musicParams"></render>
 
-
-    <!-- <div>
-        EXAMPLE
-
-        <div class="col-xs-6 col-xs-push-3">
-
-            <h5>Songs</h5>
-            <ul>
-                <li ng-repeat="song in pg.songs">
-                    <button music-player="play" add-song="song">{{ song.title }}</button>
-                    <button music-player add-song="song">+</button>
-                </li>
-            </ul>
-
-            <button play-all="songs">Play all</button>
-            <button play-all="songs" data-play="false">Add all</button>
-
-        </div>
-
-        <div class="row">
-            <div class="col-xs-12">
-                <sound-manager></sound-manager>
-
-                <p>
-                    Currently Playing: {{ pg.currentPlaying.title }} by {{ pg.currentPlaying.artist }} ({{ pg.currentPostion }} / {{ pg.currentDuration }})
-                </p>
-
-                <div class="seekBase" seek-track>
-                    <div class="seekLoad" ng-style="{ width : ( pg.progress + '%' ) }"></div>
-                </div>
-                <br />
-                <button play-music>Play</button>
-                -
-                <button pause-music>Pause</button>
-                -
-                <button stop-music>Stop</button>
-                -
-                <button repeat-music>Repeat ({{ pg.repeat }})</button>
-                -
-                <button play-pause-toggle data-play="Play!" data-pause="Pause!">Play Toggle</button>
-
-                Is Playing: {{ pg.isPlaying }}
-                <br />
-                <br />Volume: {{ pg.volume }} -
-                <button music-volume data-type="increase">+</button>
-                -
-                <button music-volume data-type="decrease">-</button>
-                -
-                <button mute-music>Mute ({{ pg.mute }})</button>
-                <br />
-                <br />
-                <button prev-track>Prev Track</button>
-                -
-                <button next-track>Next Track</button>
-                -
-                <button clear-playlist>Clear Playlist</button>
-                <br />
-                <br />
-                <h5>Playlist</h5>
-                <ul>
-                    <li ng-repeat="song in pg.playlist">
-                        <a play-from-playlist="song">{{ song.title }}</a>
-                        -
-                        <a remove-from-playlist="song" data-index="{{$index}}">
-                            <small>(remove)</small>
-                        </a>
-                        <span ng-if="pg.currentPlaying.id == song.id"> - (current)</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div> -->
 
 </div>

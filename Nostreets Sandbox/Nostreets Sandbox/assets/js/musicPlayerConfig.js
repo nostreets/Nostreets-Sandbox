@@ -1,4 +1,4 @@
-﻿(function () {
+﻿(function (songs) {
 
 
     render();
@@ -52,9 +52,6 @@
 
         var audio, analyser, audioctx, sourceNode, stream;
 
-        var audioInput = document.getElementById("audiofile"),
-            playPauseButton = document.querySelector(".playPauseButton");
-
         var c = 0, // Used to change color over time
             paused = true;
 
@@ -68,14 +65,14 @@
         var sectionsAveraged = [maxSideNum],
             countSinceLast = [maxSideNum];
 
-
+        var songTemplate = '<div class="row"> <span>{title}      </span> <button class="playPauseButton" data-music="{musicPath}">▶</button></div>';
 
 
         renderPrism();
         datGuiListeners();
         musicPlayerListeners();
         rotatePrism();
-
+        appendSongs();
 
 
 
@@ -107,7 +104,7 @@
         }
 
 
-        //render prism functions
+        // Render prism functions
         function rectangleSetup() {
             for (var i = 0; i < maxSideNum; i++) {
                 rectangleArray[i] = sides[i].querySelectorAll(".rectangle");
@@ -232,19 +229,22 @@
 
         // The music functions
         function musicPlayerListeners() {
-            audioInput.addEventListener(
-                "change",
-                function (event) {
-                    if (event.target.files[0]) {
-                        stream = URL.createObjectURL(event.target.files[0]);
-                        loadSong(stream);
-                    }
-                },
-                false
-            );
+            //audioInput.addEventListener("change",
+            //    (event) => {
+            //        if (event.target.files[0]) {
+            //            stream = URL.createObjectURL(event.target.files[0]);
+            //            loadSong(stream);
+            //        }
+            //    },
+            //    false
+            //);
 
 
-            playPauseButton.addEventListener("click", togglePlayPause, false);
+            $('.playPauseButton').on('click', () => {
+                var btn = $(this).find('.playPauseButton');
+                stream = URL.createObjectURL(btn.data('music'));
+                loadSong(stream);
+            });
         }
 
         function loadSong(stream) {
@@ -252,14 +252,14 @@
 
             audio.src = stream;
 
-            togglePlayPause();
-            document.body.classList.add("loaded");
+            playPause();
             updatePrism();
         }
 
         function setupSong() {
             // Stop the previous song if there is one
-            if (audio) togglePlayPause();
+            if (audio)
+                playPause();
 
             audio = new Audio();
             audioctx = new AudioContext();
@@ -275,26 +275,24 @@
         }
 
         function songEnded() {
-            document.body.classList.remove("loaded");
-            togglePlayPause();
+            playPause();
         }
 
-        function togglePlayPause() {
+        function playPause(btn) {
             if (paused) {
-                document.body.classList.add("loaded");
                 audio.play();
-                playPauseButton.innerText = "▮▮";
-            } else if (!audio.paused && !audio.ended) {
+                btn.text("▮▮");
+            }
+            else if (!audio.paused && !audio.ended) {
                 audio.pause();
-                playPauseButton.innerText = "▶";
+                btn.text("▶");
             }
 
             paused = !paused;
         }
 
 
-
-        //The drawing functions
+        // The drawing functions
         function drawSide(freqSequence, freqPercent) {
             // Get the number of rectangles based on the freqValue
             drawRectangles(
@@ -372,6 +370,18 @@
             requestAnimationFrame(rotatePrism);
         }
 
+        // Render songs
+        function appendSongs() {
+            if (songs && songs.length) {
+                for (var song of songs) {
+                    var songRow = songTemplate;
+                    songRow.replace('{title}', song.title);
+                    songRow.replace('{musicPath}', song.path);
+                    $('#song-list').append(songRow);
+                }
+            }
+        }
+
     }
 
-})();
+})(songs);

@@ -158,12 +158,14 @@
         function _setUp() {
             $('title').text("OBL | Music");
 
-            vm.songs = [
-                {
-                    title: "What You Need (prod. WWRED.)",
-                    path: "/assets/mp3/What You Need (prod. WWRED.)"
-                }
-            ];
+            vm.musicParams = {
+                songs: [
+                    {
+                        title: "What You Need (prod. WWRED.)",
+                        path: "/assets/mp3/What You Need (prod. WWRED.)"
+                    }
+                ]
+            };
         }
 
         function _handlers() {
