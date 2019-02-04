@@ -68,6 +68,9 @@ footer {
     height: 25px !important;
 }
 
+.dg {
+    display: none;
+}
 /*#endregion */
 
 /*#region Attribute Styles */

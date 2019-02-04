@@ -1,15 +1,7 @@
 ﻿/* Default all same color */
-/** {
-  box-sizing: border-box;
-}
-
-html, body {
-  height: 100%;
-}*/
 
 body {
-  color: #FFF;
-  position: relative;
+  /*position: relative;*/
   perspective: 1000px;
   perspective-origin: 50% 50%;
 }
@@ -53,7 +45,7 @@ body {
     to { transform: rotateY(-360deg); }
 }
 */
-.musicControls, label {
+/*.musicControls, label {
   position: absolute;
   border-radius: 5px;
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -69,7 +61,7 @@ label {
   left: 20px;
   top: 100px;
   font-style: italic;
-}
+}*/
 
 #loading {
   display: none;

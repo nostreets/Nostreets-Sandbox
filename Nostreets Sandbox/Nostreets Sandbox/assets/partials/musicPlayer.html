@@ -1,9 +1,20 @@
 ﻿<div>
-    <div class="musicControls">
+    <!--
+        <div class="musicControls">
         <input id="audiofile" type="file" />
         <button class="playPauseButton">▶</button>
     </div>
     <label id="loading" for="audiofile">Select an audio file...</label>
+        -->
+
+    <div class="col-md-4">
+        <div class="row" ng-repeat="song in pg.songs">
+            <span>{{ song.title }}      </span>
+            <button class="playPauseButton" data-music="{{ song.path }}">▶</button>
+
+        </div>
+    </div>
+
     <!-- This should match the values in the js-->
     <div class="prism">
         <div class="side hide">
@@ -631,4 +642,5 @@
             <div class="rectangle hide"></div>
         </div>
     </div>
+
 </div>

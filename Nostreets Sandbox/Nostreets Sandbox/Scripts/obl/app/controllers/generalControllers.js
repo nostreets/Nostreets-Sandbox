@@ -24,17 +24,22 @@
         function _render() {
             _setUp();
             _handlers();
+            _pageFixes();
         }
 
         function _setUp() {
             vm.sliderOptions = page.sliderOptions;
-            vm.isFullpageJs = true;
         }
 
         function _handlers() {
-            page.fixFooter();
             $baseController.defaultListeners($scope);
+        }
+
+        function _pageFixes() {
+            page.renderParticles();
+            page.fixFooter();
             angular.element($baseController.window).bind('resize', page.fixFooter);
+
         }
 
     }
@@ -46,6 +51,7 @@
         function _render() {
             _setUp();
             _handlers();
+            _pageFixes();
         }
 
         function _setUp() {
@@ -55,21 +61,27 @@
         }
 
         function _handlers() {
-            page.fixFooter();
             $baseController.defaultListeners($scope);
-            angular.element($baseController.window).bind('resize', page.fixFooter);
         }
+
+        function _pageFixes() {
+            page.renderParticles();
+            page.fixFooter();
+            angular.element($baseController.window).bind('resize', page.fixFooter);
+
+        }
+
     }
 
     function ourTeamController($scope, $baseController) {
         var vm = this;
-        vm.reRenderCardsOn = _reRenderCardsOn;
 
         _render();
 
         function _render() {
             _setUp();
             _handlers();
+            _pageFixes();
         }
 
         function _setUp() {
@@ -122,21 +134,15 @@
         }
 
         function _handlers() {
-            page.fixFooter();
             $baseController.defaultListeners($scope);
+        }
+
+        function _pageFixes() {
+            page.renderParticles();
+            page.fixFooter();
             angular.element($baseController.window).bind('resize', page.fixFooter);
+
         }
-
-        function _reRenderCardsOn() {
-            var result = false;
-            if (vm.deviceWidth === page.getDeviceWidth())
-                result = true;
-            else
-                vm.deviceWidth = page.getDeviceWidth();
-
-            return result;
-        }
-
     }
 
     function musicController($scope, $baseController) {
@@ -146,6 +152,7 @@
         function _render() {
             _setUp();
             _handlers();
+            _pageFixes();
         }
 
         function _setUp() {
@@ -153,42 +160,21 @@
 
             vm.songs = [
                 {
-                    id: 'one',
-                    title: 'Rain',
-                    artist: 'Drake',
-                    url: 'http://www.schillmania.com/projects/soundmanager2/demo/_mp3/rain.mp3'
-                },
-                {
-                    id: 'two',
-                    title: 'Walking',
-                    artist: 'Nicki Minaj',
-                    url: 'http://www.schillmania.com/projects/soundmanager2/demo/_mp3/walking.mp3'
-                },
-                {
-                    id: 'three',
-                    title: 'Barrlping with Carl (featureblend.com)',
-                    artist: 'Akon',
-                    url: 'http://www.freshly-ground.com/misc/music/carl-3-barlp.mp3'
-                },
-                {
-                    id: 'four',
-                    title: 'Angry cow sound?',
-                    artist: 'A Cow',
-                    url: 'http://www.freshly-ground.com/data/audio/binaural/Mak.mp3'
-                },
-                {
-                    id: 'five',
-                    title: 'Things that open, close and roll',
-                    artist: 'Someone',
-                    url: 'http://www.freshly-ground.com/data/audio/binaural/Things%20that%20open,%20close%20and%20roll.mp3'
+                    title: "What You Need (prod. WWRED.)",
+                    path: "/assets/mp3/What You Need (prod. WWRED.)"
                 }
             ];
         }
 
         function _handlers() {
-            page.fixFooter();
             $baseController.defaultListeners($scope);
+        }
+
+        function _pageFixes() {
+            page.renderParticles();
+            page.fixFooter();
             angular.element($baseController.window).bind('resize', page.fixFooter);
+
         }
 
     }
@@ -200,6 +186,7 @@
         function _render() {
             _setUp();
             _handlers();
+            _pageFixes();
         }
 
         function _setUp() {
@@ -209,9 +196,27 @@
         }
 
         function _handlers() {
-            page.fixFooter();
             $baseController.defaultListeners($scope);
+        }
+
+        function _pageFixes() {
+            page.renderParticles({
+                "particles": {
+                    "opacity": {
+                        "value": 0.3,
+                        "random": true,
+                        "anim": {
+                            "enable": false,
+                            "speed": 1,
+                            "opacity_min": 0.1,
+                            "sync": false
+                        }
+                    }
+                }
+            });
+            page.fixFooter();
             angular.element($baseController.window).bind('resize', page.fixFooter);
+
         }
     }
 
@@ -223,6 +228,7 @@
         function _render() {
             _setUp();
             _handlers();
+            _pageFixes();
         }
 
         function _setUp() {
@@ -241,9 +247,14 @@
         }
 
         function _handlers() {
-            page.fixFooter();
             $baseController.defaultListeners($scope);
+        }
+
+        function _pageFixes() {
+            page.renderParticles();
+            page.fixFooter();
             angular.element($baseController.window).bind('resize', page.fixFooter);
+
         }
 
         function _sendEmail(model) {

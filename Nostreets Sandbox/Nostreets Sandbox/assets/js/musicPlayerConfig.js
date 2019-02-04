@@ -5,65 +5,58 @@
 
     function render() {
 
+
         var maxSideNum = 24,
             maxRectangleNum = 24;
 
-        // Dat.gui setup
+        // Defaults
         var Options = function () {
-            this.height = 400;
-            this.radius = 185;
-            this.sideCount = 12;
+            this.height = 300;
+            this.radius = 360;
+            this.sideCount = 24;
             this.rotSpeed = -0.3;
 
-            this.rectangleCount = 12;
+            this.rectangleCount = 16;
             this.rectangleWidth = 80;
             this.vertMargin = 10;
             this.borderWidth = 3;
 
-            this.color = 200;
-            this.solidBG = false;
+            this.color = 2;
+            this.solidBG = true;
             this.rainbowMode = false;
-            this.animateThroughSpectrum = false;
+            this.animateThroughSpectrum = true;
             this.fade = false;
         };
 
         // dat.gui setup
-        var myOptions                = new Options(),
-            gui                      = new dat.GUI(),
-            f1                       = gui.addFolder("Prism Controls"),
-            f2                       = gui.addFolder("Rectangle Controls"),
-            f3                       = gui.addFolder("Color Controls"),
-            mySideCount              = f1.add(myOptions, "sideCount", 3, maxSideNum).step(1),
-            myRadius                 = f1.add(myOptions, "radius", 30, 600).step(15),
-            myHeight                 = f1.add(myOptions, "height", 50, 750).step(50),
-            myRotSpeed               = f1.add(myOptions, "rotSpeed", -1, 1).step(0.1),
-            myRectangleCount         = f2.add(myOptions, "rectangleCount", 3, maxRectangleNum).step(1),
-            myRectangleWidth         = f2.add(myOptions, "rectangleWidth", 1, 100).step(5),
-            myVertMargin             = f2.add(myOptions, "vertMargin", 0, 15).step(1),
-            myBorderWidth            = f2.add(myOptions, "borderWidth", 0, 15).step(1),
-            myColor                  = f3.add(myOptions, "color", 0, 360).step(1),
-            mySolidBG                = f3.add(myOptions, "solidBG"),
-            myRainbow                = f3.add(myOptions, "rainbowMode"),
+        var myOptions = new Options(),
+            gui = new dat.GUI(),
+            f1 = gui.addFolder("Prism Controls"),
+            f2 = gui.addFolder("Rectangle Controls"),
+            f3 = gui.addFolder("Color Controls"),
+            mySideCount = f1.add(myOptions, "sideCount", 3, maxSideNum).step(1),
+            myRadius = f1.add(myOptions, "radius", 30, 600).step(15),
+            myHeight = f1.add(myOptions, "height", 50, 750).step(50),
+            myRotSpeed = f1.add(myOptions, "rotSpeed", -1, 1).step(0.1),
+            myRectangleCount = f2.add(myOptions, "rectangleCount", 3, maxRectangleNum).step(1),
+            myRectangleWidth = f2.add(myOptions, "rectangleWidth", 1, 100).step(5),
+            myVertMargin = f2.add(myOptions, "vertMargin", 0, 15).step(1),
+            myBorderWidth = f2.add(myOptions, "borderWidth", 0, 15).step(1),
+            myColor = f3.add(myOptions, "color", 0, 360).step(1),
+            mySolidBG = f3.add(myOptions, "solidBG"),
+            myRainbow = f3.add(myOptions, "rainbowMode"),
             myAnimateThroughSpectrum = f3.add(myOptions, "animateThroughSpectrum"),
-            myFade                   = f3.add(myOptions, "fade");
+            myFade = f3.add(myOptions, "fade");
 
         f2.open();
 
         var audio, analyser, audioctx, sourceNode, stream;
 
-        var audioInput  = document.getElementById("audiofile"),
-            listenButton = document.querySelector(".listenButton"),
+        var audioInput = document.getElementById("audiofile"),
             playPauseButton = document.querySelector(".playPauseButton");
 
         var c = 0, // Used to change color over time
             paused = true;
-
-        /*var myMusic = [
-            "https://zachsaucier.com/music/Initiation.mp3",
-            "https://zachsaucier.com/music/High%20Tide.mp3",
-            "https://zachsaucier.com/music/Dolphin%20Style.mp3",
-            "https://zachsaucier.com/music/King.mp3"
-        ];*/
 
         var prism = document.querySelector(".prism"),
             sides = document.querySelectorAll(".side"),
@@ -72,16 +65,55 @@
             timeGap = 50,
             rotAmt = 0; // Starting rotation of prism in degrees
 
+        var sectionsAveraged = [maxSideNum],
+            countSinceLast = [maxSideNum];
+
+
+
+
+        renderPrism();
+        datGuiListeners();
+        musicPlayerListeners();
+        rotatePrism();
+
+
+
+
+        function renderPrism() {
+            rectangleSetup();
+            sideCountChange(myOptions.sideCount);
+            radiusChange(myOptions.radius);
+            heightChange(myOptions.height);
+            rectangleCountChange(myOptions.rectangleCount);
+            rectangleWidthChange(myOptions.rectangleWidth);
+            vertMarginChange(myOptions.vertMargin);
+            borderWidthChange(myOptions.borderWidthChange);
+            colorChange(myOptions.color);
+            soildGBChange(myOptions.solidBG);
+
+        }
+
+        function datGuiListeners() {
+            mySideCount.onFinishChange(sideCountChange);
+            myHeight.onFinishChange(heightChange);
+            myRectangleCount.onFinishChange(rectangleCountChange);
+            myRectangleWidth.onFinishChange(rectangleWidthChange);
+            myVertMargin.onFinishChange(vertMarginChange);
+            myBorderWidth.onFinishChange(borderWidthChange);
+            myColor.onFinishChange(colorChange);
+            mySolidBG.onFinishChange(soildGBChange);
+            myRainbow.onFinishChange(goRainbowMode);
+            myRadius.onFinishChange(radiusChange);
+        }
+
+
+        //render prism functions
         function rectangleSetup() {
             for (var i = 0; i < maxSideNum; i++) {
                 rectangleArray[i] = sides[i].querySelectorAll(".rectangle");
             }
         }
-        rectangleSetup();
 
-        // dat.gui listeners
-
-        // f1 listeners
         function sideCountChange(newCount) {
             [].forEach.call(sides, function (elem, i) {
                 if (i < myOptions.sideCount) {
@@ -103,24 +135,17 @@
                 }
             });
         }
-        mySideCount.onFinishChange(sideCountChange);
-        sideCountChange(myOptions.sideCount);
 
         function radiusChange(newRadius) {
             sideCountChange(myOptions.sideCount);
         }
-        myRadius.onFinishChange(radiusChange);
-        radiusChange(myOptions.radius);
 
         function heightChange(newHeight) {
             prism.style.height = newHeight + "px";
             prism.style.top = "calc(50% - " + newHeight / 2 + "px)";
             rectangleCountChange(myOptions.rectangleCount);
         }
-        myHeight.onFinishChange(heightChange);
-        heightChange(myOptions.height);
 
-        // f2 listeners
         function rectangleCountChange(newCount) {
             [].forEach.call(rectangleArray, function (side, i) {
                 [].forEach.call(side, function (rect, i) {
@@ -136,8 +161,6 @@
                 });
             });
         }
-        myRectangleCount.onFinishChange(rectangleCountChange);
-        rectangleCountChange(myOptions.rectangleCount);
 
         function rectangleWidthChange(newWidth) {
             [].forEach.call(rectangleArray, function (side, i) {
@@ -146,8 +169,6 @@
                 });
             });
         }
-        myRectangleWidth.onFinishChange(rectangleWidthChange);
-        rectangleWidthChange(myOptions.rectangleWidth);
 
         function vertMarginChange(newMargin) {
             [].forEach.call(rectangleArray, function (side, i) {
@@ -157,8 +178,6 @@
             });
             rectangleCountChange(myOptions.rectangleCount);
         }
-        myVertMargin.onFinishChange(vertMarginChange);
-        vertMarginChange(myOptions.vertMargin);
 
         function borderWidthChange(newWidth) {
             [].forEach.call(rectangleArray, function (side, i) {
@@ -167,10 +186,7 @@
                 });
             });
         }
-        myBorderWidth.onFinishChange(borderWidthChange);
-        borderWidthChange(myOptions.borderWidthChange);
 
-        // f3 listeners
         function colorChange(value) {
             if (!myOptions.rainbowMode)
                 [].forEach.call(sides, function (elem, i) {
@@ -182,13 +198,11 @@
                         "%)";
                 });
         }
-        myColor.onFinishChange(colorChange);
-        colorChange(myOptions.color);
 
-        mySolidBG.onFinishChange(function (value) {
+        function soildGBChange(value) {
             if (value === true) prism.classList.add("solid");
             else prism.classList.remove("solid");
-        });
+        }
 
         function goRainbowMode(value) {
             [].forEach.call(sides, function (elem, i) {
@@ -198,7 +212,6 @@
                 else colorChange(myOptions.color);
             });
         }
-        myRainbow.onFinishChange(goRainbowMode);
 
         function checkAnimateThroughSpectrum() {
             if (myOptions.animateThroughSpectrum)
@@ -214,27 +227,37 @@
             else colorChange(myOptions.color);
         }
 
-        // The music player listeners
-        audioInput.addEventListener(
-            "change",
-            function (event) {
-                if (event.target.files[0]) {
-                    // No error checking of file here, could be added
-                    stream = URL.createObjectURL(event.target.files[0]);
 
-                    loadSong(stream);
-                }
-            },
-            false
-        );
 
-        if (listenButton)
-            listenButton.addEventListener("click", chooseOneOfMine, false);
-
-        playPauseButton.addEventListener("click", togglePlayPause, false);
 
         // The music functions
-        function setup() {
+        function musicPlayerListeners() {
+            audioInput.addEventListener(
+                "change",
+                function (event) {
+                    if (event.target.files[0]) {
+                        stream = URL.createObjectURL(event.target.files[0]);
+                        loadSong(stream);
+                    }
+                },
+                false
+            );
+
+
+            playPauseButton.addEventListener("click", togglePlayPause, false);
+        }
+
+        function loadSong(stream) {
+            setupSong();
+
+            audio.src = stream;
+
+            togglePlayPause();
+            document.body.classList.add("loaded");
+            updatePrism();
+        }
+
+        function setupSong() {
             // Stop the previous song if there is one
             if (audio) togglePlayPause();
 
@@ -249,16 +272,6 @@
             sourceNode = audioctx.createMediaElementSource(audio);
             sourceNode.connect(analyser);
             sourceNode.connect(audioctx.destination);
-        }
-
-        function loadSong(stream) {
-            setup();
-
-            audio.src = stream;
-
-            togglePlayPause();
-            document.body.classList.add("loaded");
-            update();
         }
 
         function songEnded() {
@@ -279,12 +292,9 @@
             paused = !paused;
         }
 
-        function chooseOneOfMine() {
-            var num = Math.round(Math.random() * (myMusic.length - 1)) + 1;
-            loadSong(myMusic[num]);
-        }
 
-        // The drawing functions
+
+        //The drawing functions
         function drawSide(freqSequence, freqPercent) {
             // Get the number of rectangles based on the freqValue
             drawRectangles(
@@ -306,10 +316,7 @@
             }
         }
 
-        var sectionsAveraged = [maxSideNum],
-            countSinceLast = [maxSideNum];
-
-        function update() {
+        function updatePrism() {
             var currTime = Date.now();
 
             var freqArray = new Uint8Array(analyser.frequencyBinCount);
@@ -352,18 +359,19 @@
             checkAnimateThroughSpectrum();
 
             c += 0.5;
-            requestAnimationFrame(update);
+            requestAnimationFrame(updatePrism);
         }
 
+
+
         // Rotate the prism
-        function rotate() {
+        function rotatePrism() {
             prism.style.transform = "rotateY(" + rotAmt + "deg)";
             rotAmt += 3 * myOptions.rotSpeed;
             if (rotAmt > 360 || rotAmt < -360) rotAmt = 0;
-            requestAnimationFrame(rotate);
+            requestAnimationFrame(rotatePrism);
         }
 
-        rotate();
     }
 
 })();
