@@ -31,7 +31,11 @@ namespace Nostreets_Sandbox
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
 
+#if DEBUG
+            BundleTable.EnableOptimizations = false;
+#else
             BundleTable.EnableOptimizations = true;
+#endif
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
 

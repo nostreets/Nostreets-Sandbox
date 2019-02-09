@@ -140,8 +140,11 @@
             }
 
 
+            console.log(js);
 
-            if (appendToBody) {
+
+
+            if (appendToBody === 'true') {
                 var script = $("<script type='text/javascript'></script>");
                 script.text(js);
                 $('body').append(script);
