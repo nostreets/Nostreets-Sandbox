@@ -68,8 +68,14 @@ footer {
     height: 25px !important;
 }
 
-.dg {
+/*.dg {
     display: none;
+}*/
+
+.page-video-youtube {
+    width: 420px;
+    height: 290px;
+    margin: 2% 9%;
 }
 /*#endregion */
 
