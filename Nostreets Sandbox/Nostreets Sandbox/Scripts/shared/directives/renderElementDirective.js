@@ -3,9 +3,9 @@
     angular.module(page.APPNAME)
         .directive("render", renderElementDirective);
 
-    renderElementDirective.$inject = ['$window'];
+    renderElementDirective.$inject = ['$window', '$http', '$sce'];
 
-    function renderElementDirective($window) {
+    function renderElementDirective($window, $http, $sce) {
 
         return _returnDirective();
 
@@ -57,8 +57,8 @@
 
                         if (_isValidURL(htmlUrl))
                             _loadFromSource(htmlUrl,
-                                (data) => {
-                                    result += data;
+                                (obj) => {
+                                    result += obj.data;
                                 }, 'html');
                         else
                             result += attr.html;
@@ -75,8 +75,8 @@
 
                         if (_isValidURL(jsUrl)) {
                             _loadFromSource(jsUrl,
-                                (data) => {
-                                    js = data;
+                                (obj) => {
+                                    js = obj.data;
                                     _runJS(js, params, scope.appendScriptToBody || false);
                                 });
                         }
@@ -160,12 +160,21 @@
         }
 
         function _loadFromSource(url, callback, dataType) {
-            $.ajax({
+
+            $http({
                 url: url,
-                dataType: dataType,
-                success: callback,
-                async: false
-            });
+                method: 'GET',
+                headers: {
+                    'Content-Type': dataType
+                }
+            }).then(callback);
+
+            //$.ajax({
+            //    url: url,
+            //    dataType: dataType,
+            //    success: callback,
+            //    async: true
+            //});
         }
 
         function _getStyleFromUrl(url) {
