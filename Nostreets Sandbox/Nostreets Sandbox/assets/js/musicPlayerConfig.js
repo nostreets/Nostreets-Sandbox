@@ -1,4 +1,5 @@
-﻿(function (songs) {
+﻿//# sourceURL=musicPlayerConfig.js
+(function (songs) {
 
 
     render();
@@ -65,14 +66,13 @@
         var sectionsAveraged = [maxSideNum],
             countSinceLast = [maxSideNum];
 
-        var songTemplate = '<div class="row"> <span>{title}      </span> <button class="playPauseButton" data-music="{musicPath}">▶</button></div>';
-
 
         renderPrism();
         datGuiListeners();
-        musicPlayerListeners();
         rotatePrism();
+
         appendSongs();
+        musicPlayerListeners();
 
 
 
@@ -240,9 +240,9 @@
             //);
 
 
-            $('.playPauseButton').on('click', () => {
-                var btn = $(this).find('.playPauseButton');
-                stream = URL.createObjectURL(btn.data('music'));
+            $('.playPauseButton').on('click', function () {
+                var url = $(this).data('music');
+                stream = window.URL.createObjectURL(url);
                 loadSong(stream);
             });
         }
@@ -374,9 +374,9 @@
         function appendSongs() {
             if (songs && songs.length) {
                 for (var song of songs) {
-                    var songRow = songTemplate;
-                    songRow.replace('{title}', song.title);
-                    songRow.replace('{musicPath}', song.path);
+                    var songRow = '<div class="row"> <span>{title}      </span> <button class="playPauseButton" data-music="{musicPath}">▶</button></div>';
+                    songRow = songRow.replace('{title}', song.title);
+                    songRow = songRow.replace('{musicPath}', song.path);
                     $('#song-list').append(songRow);
                 }
             }

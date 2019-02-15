@@ -3,9 +3,9 @@
     angular.module(page.APPNAME)
         .directive("render", renderElementDirective);
 
-    renderElementDirective.$inject = ['$window', '$http', '$sce'];
+    renderElementDirective.$inject = ['$window'];
 
-    function renderElementDirective($window, $http, $sce) {
+    function renderElementDirective($window) {
 
         return _returnDirective();
 
@@ -18,7 +18,8 @@
                     js: '@',
                     appendScriptToBody: '@',
                     reRenderAtSize: '@',
-                    params: '='
+                    params: '=',
+                    debug: '@'
                 },
                 link: function (scope, element, attr) {
 
@@ -26,9 +27,13 @@
 
                     function _render() {
 
-                        var html = _getElement();
-                        element.append($.parseHTML(html));
-                        _getAndRunJs();
+                        _getElement((html) => {
+                            element.append($.parseHTML(html));
+                            _getAndRunJs((code, params) => {
+                                js = _evaluateJS(code, params, scope.debug || false);
+                                _runJs(js, scope.appendScriptToBody || false);
+                            });
+                        });
 
                         if (scope.reRenderAt)
                             angular.element($window).bind('resize', function () {
@@ -42,59 +47,55 @@
 
                     }
 
-                    function _getElement() {
+                    function _getElement(callback) {
+
                         var result = '',
-                            cssUrl = (attr.css[0] === '~') ? attr.css.replace('~', window.location.origin) : (attr.css[0] === '/') ? window.location.origin + attr.css : attr.css,
-                            htmlUrl = (attr.html[0] === '~') ? attr.html.replace('~', window.location.origin) : (attr.html[0] === '/') ? window.location.origin + attr.html : attr.html;
+                            cssUrl = (attr.css[0] === '~') ? attr.css.replace('~', window.location.origin) : (attr.css[0] === '/') ? window.location.origin + attr.css : (attr.css) ? attr.css : "",
+                            htmlUrl = (attr.html[0] === '~') ? attr.html.replace('~', window.location.origin) : (attr.html[0] === '/') ? window.location.origin + attr.html : (attr.html) ? attr.html : "";
 
                         if (_isValidURL(cssUrl) && (!window.loadedScripts || !window.loadedScripts.includes(cssUrl))) {
                             _getStyleFromUrl(cssUrl);
                             _addUrlToWindow(cssUrl);
                         }
-                        else
+                        else if (attr.css)
                             result = '<style>' + attr.css + '</style>';
 
 
                         if (_isValidURL(htmlUrl))
-                            _loadFromSource(htmlUrl,
-                                (obj) => {
-                                    result += obj.data;
-                                }, 'html');
+                            _loadFromSource(htmlUrl, callback, 'html');
                         else
-                            result += attr.html;
-
-
-                        return result;
+                            callback(attr.html);
                     }
 
-                    function _getAndRunJs() {
-                        var js = '',
-                            jsUrl = (attr.js[0] === '~') ? attr.js.replace('~', window.location.origin) : (attr.js[0] === '/') ? window.location.origin + attr.js : attr.js,
+                    function _getAndRunJs(callback) {
+                        var jsUrl = (attr.js[0] === '~') ? attr.js.replace('~', window.location.origin) : (attr.js[0] === '/') ? window.location.origin + attr.js : (attr.js) ? attr.js : "",
                             params = scope.params || {};
 
 
-                        if (_isValidURL(jsUrl)) {
-                            _loadFromSource(jsUrl,
-                                (obj) => {
-                                    js = obj.data;
-                                    _runJS(js, params, scope.appendScriptToBody || false);
-                                });
-                        }
+                        if (_isValidURL(jsUrl))
+                            _loadFromSource(jsUrl, (code) => callback(code, params));
+                        else if (attr.js)
+                            callback(attr.js, params);
+
                     }
 
                     function _reRender() {
-                        var html = _getElement();
-                        $(element.children()[0]).remove();
-                        element.append($.parseHTML(html));
-                        _getAndRunJs();
+                        _getElement((html) => {
+                            $(element.children()[0]).remove();
+                            element.append($.parseHTML(html));
+                            _getAndRunJs((code, params) => {
+                                js = _evaluateJS(code, params, scope.debug || false);
+                                _runJs(js, scope.appendScriptToBody || false);
+                            });
+                        });
                     }
                 }
             };
         }
 
-        function _runJS(js, params, appendToBody) {
+        function _evaluateJS(js, params, debug) {
 
-            //params = params ? params : null;
+            params = params ? params : {};
 
             var iifeRegex = /(\(function)\W*(([a-zA-Z])*(,)(\s|\S))*(([a-zA-Z])*\))/i,
                 paramsRegex = /(?!\(\)|([a-zA-Z]))\((([a-zA-Z])*(,)(\s|\S))*(([a-zA-Z])*\))/i,
@@ -139,18 +140,22 @@
 
             }
 
+            if (debug === true)
+                console.log(js);
 
-            console.log(js);
+            return js;
 
+        }
 
-
+        function _runJs(js, appendToBody) {
             if (appendToBody === 'true') {
                 var script = $("<script type='text/javascript'></script>");
                 script.text(js);
                 $('body').append(script);
             }
-            else
+            else {
                 eval(js);
+            }
         }
 
         function _isValidURL(url) {
@@ -161,20 +166,13 @@
 
         function _loadFromSource(url, callback, dataType) {
 
-            $http({
+            $.when($.ajax({
                 url: url,
-                method: 'GET',
-                headers: {
-                    'Content-Type': dataType
-                }
-            }).then(callback);
+                dataType: dataType
+            })).done(callback);
 
-            //$.ajax({
-            //    url: url,
-            //    dataType: dataType,
-            //    success: callback,
-            //    async: true
-            //});
+
+            //.then(, (err) => console.log(err));
         }
 
         function _getStyleFromUrl(url) {

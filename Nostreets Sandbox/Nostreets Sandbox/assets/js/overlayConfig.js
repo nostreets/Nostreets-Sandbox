@@ -1,4 +1,4 @@
-﻿
+﻿//# sourceRl = overlayConfig.js
 
 var overlay_navigation = $('.overlay-navigation'),
     nav_item_1 = $('nav li:nth-of-type(1)'),
