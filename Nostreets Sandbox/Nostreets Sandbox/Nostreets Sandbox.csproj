@@ -317,7 +317,8 @@
     <Content Include="assets\js\renderOBLParticles.js" />
     <Content Include="assets\js\scrolloverflow.js" />
     <Content Include="assets\mp3\bensound-relaxing.mp3" />
-    <Content Include="assets\mp3\WhatYouNeed%28prod.WWRED.%29.mp3" />
+    <Content Include="assets\mp3\T.H.U.G.L.I.F.E. %28short%29 %28prod. WWRED.%29.mp3" />
+    <Content Include="assets\mp3\What You Need %28prod. WWRED.%29.mp3" />
     <Content Include="assets\partials\musicPlayer.html" />
     <Content Include="fonts\fa-brands-400.svg" />
     <Content Include="fonts\fa-regular-400.svg" />

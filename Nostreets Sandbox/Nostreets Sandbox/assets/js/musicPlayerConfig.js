@@ -242,8 +242,12 @@
 
             $('.playPauseButton').on('click', function () {
                 var url = $(this).data('music');
-                stream = window.URL.createObjectURL(url);
-                loadSong(stream);
+
+                getSongFromUrl(window.location.origin + url, (obj) => {
+                    stream = window.URL.createObjectURL(obj);
+                    loadSong(stream);
+                });
+
             });
         }
 
@@ -373,13 +377,34 @@
         // Render songs
         function appendSongs() {
             if (songs && songs.length) {
+                
                 for (var song of songs) {
-                    var songRow = '<div class="row"> <span>{title}      </span> <button class="playPauseButton" data-music="{musicPath}">▶</button></div>';
-                    songRow = songRow.replace('{title}', song.title);
-                    songRow = songRow.replace('{musicPath}', song.path);
+                    var songRow = $($('#song-list').children()[0]).clone();
+                    songRow.find('.songTitle').text(song.title);
+                    songRow.find('.playPauseButton').data('music', song.path);
+
                     $('#song-list').append(songRow);
                 }
+
+                $('#song-list').children()[0].remove();
             }
+        }
+
+        //Get Song From Url
+        function getSongFromUrl(url, callback) {
+            $.ajax({
+                url: url,
+                cache: false,
+                xhr: function () {// Seems like the only way to get access to the xhr object
+                    var xhr = new XMLHttpRequest();
+                    xhr.responseType = 'blob';
+                    return xhr;
+                },
+                success: callback,
+                error: (err) => {
+                    console.log(err);
+                }
+            });
         }
 
     }

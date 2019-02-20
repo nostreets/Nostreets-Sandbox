@@ -163,6 +163,10 @@
                     {
                         title: "What You Need (prod. WWRED.)",
                         path: "/assets/mp3/What You Need (prod. WWRED.)"
+                    },
+                    {
+                        title: "T.H.U.G.L.I.F.E. (prod. WWRED.)",
+                        path: "/assets/mp3/T.H.U.G.L.I.F.E. (prod. WWRED.)"
                     }
                 ]
             };
