@@ -162,11 +162,11 @@
                 songs: [
                     {
                         title: "What You Need (prod. WWRED.)",
-                        path: "/assets/mp3/What You Need (prod. WWRED.)"
+                        path: "/assets/mp3/What You Need (prod. WWRED.).mp3"
                     },
                     {
                         title: "T.H.U.G.L.I.F.E. (prod. WWRED.)",
-                        path: "/assets/mp3/T.H.U.G.L.I.F.E. (prod. WWRED.)"
+                        path: "/assets/mp3/T.H.U.G.L.I.F.E. (short) (prod. WWRED.).mp3"
                     }
                 ]
             };

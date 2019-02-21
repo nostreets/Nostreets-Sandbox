@@ -54,7 +54,7 @@
         var audio, analyser, audioctx, sourceNode, stream;
 
         var c = 0, // Used to change color over time
-            paused = true;
+            activeSongBtn = null;
 
         var prism = document.querySelector(".prism"),
             sides = document.querySelectorAll(".side"),
@@ -229,41 +229,36 @@
 
         // The music functions
         function musicPlayerListeners() {
-            //audioInput.addEventListener("change",
-            //    (event) => {
-            //        if (event.target.files[0]) {
-            //            stream = URL.createObjectURL(event.target.files[0]);
-            //            loadSong(stream);
-            //        }
-            //    },
-            //    false
-            //);
 
+            $('.playPauseButton').on('click', function (a, b) {
+                var btn = $(this),
+                    activeSongUrl = btn.data('music'),
+                    previousSongUrl = (activeSongBtn) ? activeSongBtn.data('music') : '';
 
-            $('.playPauseButton').on('click', function () {
-                var url = $(this).data('music');
-
-                getSongFromUrl(window.location.origin + url, (obj) => {
-                    stream = window.URL.createObjectURL(obj);
-                    loadSong(stream);
-                });
+                if (activeSongUrl === previousSongUrl)
+                    playPause(btn, (btn.text() === "▮▮") ? 'pause' : 'playSame');
+                else
+                    getSongFromUrl(window.location.origin + activeSongUrl, (obj) => {
+                        stream = window.URL.createObjectURL(obj);
+                        loadSong(stream, btn);
+                    });
 
             });
         }
 
-        function loadSong(stream) {
+        function loadSong(stream, button) {
             setupSong();
 
             audio.src = stream;
 
-            playPause();
+            playPause(button, 'playNew');
             updatePrism();
         }
 
         function setupSong() {
             // Stop the previous song if there is one
-            if (audio)
-                playPause();
+            if (audio && activeSongBtn)
+                playPause(activeSongBtn, 'pause');
 
             audio = new Audio();
             audioctx = new AudioContext();
@@ -279,20 +274,41 @@
         }
 
         function songEnded() {
-            playPause();
+            playPause(activeSongBtn);
         }
 
-        function playPause(btn) {
-            if (paused) {
-                audio.play();
-                btn.text("▮▮");
-            }
-            else if (!audio.paused && !audio.ended) {
-                audio.pause();
-                btn.text("▶");
-            }
+        function playPause(button, action) {
 
-            paused = !paused;
+            switch (action) {
+                case 'playNew': {
+                    if (activeSongBtn && activeSongBtn.text() === "▮▮") {
+                        activeSongBtn.text("▶");
+                        audio.pause();
+                    }
+
+                    button.text("▮▮");
+                    activeSongBtn = button;
+                    audio.play();
+                    break;
+                }
+                case 'playSame': {
+                    if (activeSongBtn.text() === "▶") {
+                        activeSongBtn.text("▮▮");
+                        audio.play();
+                    }
+                    break;
+                }
+
+                case 'pause': {
+                    if (activeSongBtn.text() === "▮▮") {
+                        activeSongBtn.text("▶");
+                        audio.pause();
+                    }
+                    break;
+                }
+
+
+            }
         }
 
 
@@ -377,7 +393,7 @@
         // Render songs
         function appendSongs() {
             if (songs && songs.length) {
-                
+
                 for (var song of songs) {
                     var songRow = $($('#song-list').children()[0]).clone();
                     songRow.find('.songTitle').text(song.title);
@@ -387,11 +403,24 @@
                 }
 
                 $('#song-list').children()[0].remove();
+                $('#song-list').removeClass('hide');
             }
         }
 
         //Get Song From Url
         function getSongFromUrl(url, callback) {
+
+            //VANILLA WAY
+            //var xhr = new XMLHttpRequest();
+            //xhr.onreadystatechange = () => {
+            //    console.log(xhr);
+            //    if (xhr.status === 200)
+            //        callback(xhr.response);
+            //};
+            //xhr.open('GET', url);
+            //xhr.responseType = 'blob';
+            //xhr.send();
+
             $.ajax({
                 url: url,
                 cache: false,
