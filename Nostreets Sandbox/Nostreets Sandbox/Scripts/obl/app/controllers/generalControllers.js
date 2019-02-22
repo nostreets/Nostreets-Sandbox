@@ -91,7 +91,7 @@
             vm.cardParams = {
                 nile: {
                     "id": "#nileCard",
-                    "color": "Red",
+                    "color": "Indigo",
                     "name": "Nile Overstreet",
                     "title": "CEO / CIO",
                     "desc": "Always trying expand and improve my knowledge and understanding of different technologies like in this vast world of computer science...",
@@ -105,7 +105,7 @@
                 },
                 rediet: {
                     "id": "#redietCard",
-                    "color": "Indigo",
+                    "color": "Red",
                     "name": "Rediet Teferi",
                     "title": "CEO / CPO",
                     "desc": "...",
@@ -117,13 +117,13 @@
                 },
                 hovaness: {
                     "id": "#hovanessCard",
-                    "color": "Blue",
+                    "color": "Light-Orange",
                     "name": "Hovaness G.",
                     "title": "CEO / CDO",
-                    "desc": "...",
+                    "desc": "Hovaness was born and raised in Inglewood, California. Being half Hispanic and half Armenian, he brings two different cultures from across the world into OBL with a mix of west coast vibes. Hovaness brings the artistic and creative expertise to OBL designs, music, and all other ventures.",
                     "imgUrl": "/assets/img/hov.jpg",
                     "socials": {
-                        "instagram": "http://obl.network",
+                        "instagram": "https://www.instagram.com/obl.hov/",
                         "youtube": "https://www.youtube.com/"
                     }
                 }

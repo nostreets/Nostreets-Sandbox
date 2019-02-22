@@ -68,6 +68,10 @@ footer {
     height: 25px !important;
 }
 
+.Indigo > h2 > .card-title {
+    color: #c9c9c9;
+}
+
 /*MUSIC PLAYER CONTROLS*/
 .dg {
     display: none;
