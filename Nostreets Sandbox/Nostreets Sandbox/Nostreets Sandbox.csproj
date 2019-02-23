@@ -4271,7 +4271,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="assets\partials\buisnessCard.html" />
-    <Content Include="Scripts\obl\app\templates\video.html" />
+    <Content Include="Scripts\obl\app\templates\entertainment.html" />
     <Content Include="Scripts\obl\app\templates\ourTeam.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

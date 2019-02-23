@@ -26,10 +26,10 @@
                         controller: 'ourTeamController',
                         controllerAs: 'pg'
                     }).state('/entertainment', {
-                        name: 'video',
-                        url: '/video',
-                        templateUrl: '/Scripts/obl/app/templates/video.html',
-                        controller: 'videoController',
+                        name: 'entertainment',
+                        url: '/entertainment',
+                        templateUrl: '/Scripts/obl/app/templates/entertainment.html',
+                        controller: 'entertainmentController',
                         controllerAs: 'pg'
                     }).state('/contact', {
                         name: 'contact',

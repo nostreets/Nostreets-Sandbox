@@ -4,7 +4,7 @@
         .controller("aboutController", aboutController)
         .controller("ourTeamController", ourTeamController)
         .controller("musicController", musicController)
-        .controller("videoController", videoController)
+        .controller("entertainmentController", entertainmentController)
         .controller("contactUsController", contactUsController);
 
 
@@ -12,7 +12,7 @@
     aboutController.$inject = ["$scope", "$baseController"];
     ourTeamController.$inject = ["$scope", "$baseController"];
     musicController.$inject = ["$scope", "$baseController"];
-    videoController.$inject = ["$scope", "$baseController"];
+    entertainmentController.$inject = ["$scope", "$baseController"];
     contactUsController.$inject = ["$scope", "$baseController", "$http"];
 
 
@@ -185,7 +185,7 @@
 
     }
 
-    function videoController($scope, $baseController) {
+    function entertainmentController($scope, $baseController) {
         var vm = this;
         _render();
 
