@@ -97,7 +97,15 @@ footer {
 .page-video-youtube {
     width: 420px;
     height: 290px;
-    margin: 2% 9%;
+    margin: 50% 17%;
+    max-width: 180%;
+}
+
+.page-video-youtube-xs {
+    width: 420px;
+    height: 290px;
+    margin: 5% 0%;
+    max-width: 180%;
 }
 
 .song-card {
@@ -116,6 +124,8 @@ footer {
     width: 100%;
     height: 100%;
 }
+
+
 
 /*#endregion */
 
@@ -148,14 +158,6 @@ footer {
         font-size: smaller;
     }
 
-    .mobile-img-xs-only {
-        display: none;
-    }
-
-    .mobile-img-xxs-only {
-        display: initial;
-        width: 50%;
-    }
 }
 
 @media(max-width: 468px) {
@@ -164,41 +166,41 @@ footer {
     }
 }
 
-@media (min-width: 576px) {
-
-    .mobile-img-xs-only {
-        display: none;
-    }
-
-    .mobile-img-xxs-only {
-        display: none;
-    }
-}
 
 @media (max-width: 576px) {
 
     #about-img {
         padding: 0% 20% 0% 20%;
     }
-
-    .mobile-img-xs-only {
-        display: initial;
-        width: 50%;
-    }
-
-    .mobile-img-xxs-only {
-        display: none;
-    }
-
+   
 }
+
+@media (min-width: 766px) {
+
+    
+}
+
 
 @media(min-width: 767px) {
     .hidden-xs {
         display: none;
     }
+
+    .mobile-img-xs-only {
+        display: none;
+    }
+}
+
+@media(max-width: 767px) {
+
+    .mobile-img-xs-only {
+        display: initial;
+        width: 50%;
+    }
 }
 
 @media (min-width: 768px) {
+
 
     #about-img {
         padding: 0% 38% 0% 38%;
