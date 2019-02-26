@@ -29,6 +29,7 @@
 
         function _setUp() {
             vm.sliderOptions = page.sliderOptions;
+
         }
 
         function _handlers() {
@@ -36,6 +37,7 @@
         }
 
         function _pageFixes() {
+            $('title').text("OBL | Home");
             page.renderParticles();
             page.fixFooter();
             angular.element($baseController.window).bind('resize', page.fixFooter);
@@ -55,8 +57,6 @@
         }
 
         function _setUp() {
-            $('title').text("OBL | About");
-
 
         }
 
@@ -65,6 +65,7 @@
         }
 
         function _pageFixes() {
+            $('title').text("OBL | About");
             page.renderParticles();
             page.fixFooter();
             angular.element($baseController.window).bind('resize', page.fixFooter);
@@ -130,7 +131,6 @@
             };
 
 
-            $('title').text("OBL | Our Team");
         }
 
         function _handlers() {
@@ -138,6 +138,7 @@
         }
 
         function _pageFixes() {
+            $('title').text("OBL | Our Team");
             page.renderParticles();
             page.fixFooter();
             angular.element($baseController.window).bind('resize', page.fixFooter);
@@ -156,7 +157,6 @@
         }
 
         function _setUp() {
-            $('title').text("OBL | Music");
 
             vm.musicParams = {
                 songs: [
@@ -177,10 +177,10 @@
         }
 
         function _pageFixes() {
+            $('title').text("OBL | Music");
             page.renderParticles();
             page.fixFooter();
             angular.element($baseController.window).bind('resize', page.fixFooter);
-
         }
 
     }
@@ -196,9 +196,7 @@
         }
 
         function _setUp() {
-            $('title').text("OBL | Video");
-
-
+            vm.sliderOptions = page.sliderOptions;
         }
 
         function _handlers() {
@@ -206,6 +204,7 @@
         }
 
         function _pageFixes() {
+            $('title').text("OBL | Video");
             page.renderParticles({
                 "particles": {
                     "opacity": {
@@ -250,6 +249,8 @@
                 'Report a Bug',
                 'Other'
             ];
+
+
         }
 
         function _handlers() {
@@ -257,6 +258,7 @@
         }
 
         function _pageFixes() {
+            $('title').text("OBL | Contact");
             page.renderParticles();
             page.fixFooter();
             angular.element($baseController.window).bind('resize', page.fixFooter);

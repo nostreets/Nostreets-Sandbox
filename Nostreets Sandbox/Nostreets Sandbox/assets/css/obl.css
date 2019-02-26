@@ -7,6 +7,11 @@ body {
     /*background-image: url(../img/body-bg.png);*/
 }
 
+p {
+    font-size: medium;
+    color: #535353;
+}
+
 
 footer {
     left: 0;
@@ -21,6 +26,11 @@ footer {
     footer a {
         color: grey;
     }
+
+    footer p {
+        font-size: small;
+    }
+
 
 /*#endregion */
 
@@ -73,6 +83,11 @@ footer {
     color: #c9c9c9;
 }
 
+.control-label {
+    font-size: medium !important;
+    color: #999999 !important;
+}
+
 /*MUSIC PLAYER CONTROLS*/
 .dg {
     display: none;
@@ -91,7 +106,6 @@ footer {
 }
 
 #song-list {
-
 }
 
 .transparent-overlay {
@@ -124,17 +138,29 @@ footer {
 
 /*#region Medias */
 
-@media (min-width: 768px) {
+@media (max-width: 320px) {
 
-    #about-img {
-        padding: 0% 38% 0% 38%;
+    p {
+        font-size: smaller;
+    }
+
+    footer p {
+        font-size: smaller;
+    }
+
+    .mobile-img-xs-only {
+        display: none;
+    }
+
+    .mobile-img-xxs-only {
+        display: initial;
+        width: 50%;
     }
 }
 
-@media (max-width: 768px) {
-
-    #about-img {
-        padding: 0% 25% 0% 25%;
+@media(max-width: 468px) {
+    p {
+        font-size: small;
     }
 }
 
@@ -163,21 +189,30 @@ footer {
     .mobile-img-xxs-only {
         display: none;
     }
+
 }
 
-@media (max-width: 320px) {
-
-    .mobile-img-xs-only {
+@media(min-width: 767px) {
+    .hidden-xs {
         display: none;
     }
+}
 
-    .mobile-img-xxs-only {
-        display: initial;
-        width: 50%;
+@media (min-width: 768px) {
+
+    #about-img {
+        padding: 0% 38% 0% 38%;
     }
 
-    .mobile-text {
-        overflow-y: scroll;
+    .hidden-xs {
+        display: initial;
+    }
+}
+
+@media (max-width: 768px) {
+
+    #about-img {
+        padding: 0% 25% 0% 25%;
     }
 }
 
