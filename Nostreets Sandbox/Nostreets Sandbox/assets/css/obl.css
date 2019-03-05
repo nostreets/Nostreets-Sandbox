@@ -28,6 +28,7 @@ footer {
     }
 
     footer p {
+        font-weight:500;
         font-size: small;
     }
 
@@ -38,12 +39,14 @@ footer {
 /*#region Class And Id Styles */
 
 .bold {
-    font-weight: 400;
+    font-weight: 500;
+    color: black;
 }
 
-    .bold > a {
-        color: black;
-    }
+h3.bold, h3.bolder {
+    color: black;
+}
+
 
 .absolute-footer {
     bottom: -10%;
@@ -125,7 +128,19 @@ footer {
     height: 100%;
 }
 
+.mdl-button--black {
+    background: rgb(45, 45, 45);
+    color: rgb(255, 255, 255);
+}
+    .mdl-button--black:hover {
+        background-color: rgb(45, 45, 45);
+        color: rgb(255, 255, 255);
+    }
 
+
+.margin-tb-5p {
+    margin: 5% 0%;
+}
 
 /*#endregion */
 
@@ -157,7 +172,6 @@ footer {
     footer p {
         font-size: smaller;
     }
-
 }
 
 @media(max-width: 468px) {
@@ -172,12 +186,9 @@ footer {
     #about-img {
         padding: 0% 20% 0% 20%;
     }
-   
 }
 
 @media (min-width: 766px) {
-
-    
 }
 
 

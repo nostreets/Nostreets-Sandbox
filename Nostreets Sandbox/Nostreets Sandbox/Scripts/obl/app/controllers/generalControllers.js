@@ -94,8 +94,8 @@
                     "id": "#nileCard",
                     "color": "Indigo",
                     "name": "Nile Overstreet",
-                    "title": "CEO / CIO",
-                    "desc": "Always trying expand and improve my knowledge and understanding of different technologies like in this vast world of computer science...",
+                    "title": "CEO / CIO / CFO",
+                    "desc": "Nile Overstreet was born and raised in Los Angeles, California. Always trying expand and improve his knowledge and understanding of music, buiseness, technology, and more, he brings different innovativations to OBL and the technological expertise to the designs, music, and all other ventures. Nile is one-third of OBL, as the CEO, CIO, CCO, and CFO.",
                     "imgUrl": "/assets/img/nile5.jpg",
                     "socials": {
                         "github": "https://github.com/nostreets",
@@ -108,8 +108,8 @@
                     "id": "#redietCard",
                     "color": "Red",
                     "name": "Rediet Teferi",
-                    "title": "CEO / CPO",
-                    "desc": "...",
+                    "title": "CEO / President Of Music",
+                    "desc": "Rediet Teferi, also known by his stage name WWRED. is an American artist from Los Angeles, California. He released his debut single, 'What You Need' in Februbary 2019. Apart from his carrer as an artist he also works as the lead record producer and  of OBL. Rediet is one-third of OBL, as the CEO, CCO, and President Of Music.",
                     "imgUrl": "/assets/img/rediet2.jpg",
                     "socials": {
                         "instagram": "http://obl.network",
@@ -119,9 +119,9 @@
                 hovaness: {
                     "id": "#hovanessCard",
                     "color": "Light-Orange",
-                    "name": "Hovaness G.",
-                    "title": "CEO / CDO",
-                    "desc": "Hovaness was born and raised in Inglewood, California. Being half Hispanic and half Armenian, he brings two different cultures from across the world into OBL with a mix of west coast vibes. Hovaness brings the artistic and creative expertise to OBL designs, music, and all other ventures.",
+                    "name": "Hovaness Gadzhyan",
+                    "title": "CEO / CDO / Director Of Written Content",
+                    "desc": "Hovaness was born and raised in Inglewood, California. Being half Hispanic and half Armenian, he brings two different cultures from across the world into OBL with a mix of west coast vibes. Hovaness brings the artistic and creative expertise to OBL designs, music, and all other ventures. Hovaness is one-third of OBL, as the CEO, CDO, and Director Of Written Content.",
                     "imgUrl": "/assets/img/hov.jpg",
                     "socials": {
                         "instagram": "https://www.instagram.com/obl.hov/",
