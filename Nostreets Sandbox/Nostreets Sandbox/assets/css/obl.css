@@ -28,7 +28,7 @@ footer {
     }
 
     footer p {
-        font-weight:500;
+        font-weight: 500;
         font-size: small;
     }
 
@@ -132,6 +132,7 @@ h3.bold, h3.bolder {
     background: rgb(45, 45, 45);
     color: rgb(255, 255, 255);
 }
+
     .mdl-button--black:hover {
         background-color: rgb(45, 45, 45);
         color: rgb(255, 255, 255);
@@ -140,6 +141,10 @@ h3.bold, h3.bolder {
 
 .margin-tb-5p {
     margin: 5% 0%;
+}
+
+.margin-t-50p {
+    margin: 50% 0% 0% 0%;
 }
 
 /*#endregion */
@@ -227,6 +232,14 @@ h3.bold, h3.bolder {
     #about-img {
         padding: 0% 25% 0% 25%;
     }
+
+    .prism {
+        display: none;
+    }
+
+        .prism > .side {
+            display: none;
+        }
 }
 
 /*#endregion */

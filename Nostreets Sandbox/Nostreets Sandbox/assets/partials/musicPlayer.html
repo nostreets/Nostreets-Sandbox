@@ -6,19 +6,6 @@
     </div>
     <label id="loading" for="audiofile">Select an audio file...</label>
         -->
-
-
-
-    <div id="song-list" class="col-md-2 hide">
-        <div class="row">
-            <div class="card song-card">
-                <span class="songTitle">{title}      </span>
-                <button class="playPauseButton btn btn-xs" data-music="{musicPath}">▶</button>
-            </div>
-        </div>
-    </div>
-
-
     <!-- This should match the values in the js-->
     <div class="prism">
         <div class="side hide">
@@ -644,6 +631,15 @@
             <div class="rectangle hide"></div>
             <div class="rectangle hide"></div>
             <div class="rectangle hide"></div>
+        </div>
+    </div>
+
+    <div id="song-list" class="row margin-t-50p hide">
+        <div  class="col-sm-4 col-xs-12">
+            <div class="card song-card">
+                <span class="songTitle">{title}      </span>
+                <button class="playPauseButton btn btn-xs" data-music="{musicPath}">▶</button>
+            </div>
         </div>
     </div>
 

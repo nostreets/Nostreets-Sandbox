@@ -94,7 +94,7 @@
                     "id": "#nileCard",
                     "color": "Indigo",
                     "name": "Nile Overstreet",
-                    "title": "CEO / CIO / CFO",
+                    "title": "CEO / CFO / CIO",
                     "desc": "Nile Overstreet was born and raised in Los Angeles, California. Always trying expand and improve his knowledge and understanding of music, buiseness, technology, and more, he brings different innovativations to OBL and the technological expertise to the designs, music, and all other ventures. Nile is one-third of OBL, as the CEO, CIO, CCO, and CFO.",
                     "imgUrl": "/assets/img/nile5.jpg",
                     "socials": {
@@ -112,7 +112,7 @@
                     "desc": "Rediet Teferi, also known by his stage name WWRED. is an American artist from Los Angeles, California. He released his debut single, 'What You Need' in Februbary 2019. Apart from his carrer as an artist he also works as the lead record producer and  of OBL. Rediet is one-third of OBL, as the CEO, CCO, and President Of Music.",
                     "imgUrl": "/assets/img/rediet2.jpg",
                     "socials": {
-                        "instagram": "http://obl.network",
+                        "instagram": "https://www.instagram.com/obl.wwred/",
                         "youtube": "https://www.youtube.com/"
                     }
                 },
@@ -124,7 +124,7 @@
                     "desc": "Hovaness was born and raised in Inglewood, California. Being half Hispanic and half Armenian, he brings two different cultures from across the world into OBL with a mix of west coast vibes. Hovaness brings the artistic and creative expertise to OBL designs, music, and all other ventures. Hovaness is one-third of OBL, as the CEO, CDO, and Director Of Written Content.",
                     "imgUrl": "/assets/img/hov.jpg",
                     "socials": {
-                        "instagram": "https://www.instagram.com/obl.hov/",
+                        "instagram": "https://www.instagram.com/obl.hovlito/",
                         "youtube": "https://www.youtube.com/"
                     }
                 }
@@ -161,11 +161,11 @@
             vm.musicParams = {
                 songs: [
                     {
-                        title: "What You Need (prod. WWRED.)",
+                        title: "WWRED. - What You Need",
                         path: "/assets/mp3/What You Need (prod. WWRED.).mp3"
                     },
                     {
-                        title: "T.H.U.G.L.I.F.E. (prod. WWRED.)",
+                        title: "WWRED. - T.H.U.G.L.I.F.E.",
                         path: "/assets/mp3/T.H.U.G.L.I.F.E. (short) (prod. WWRED.).mp3"
                     }
                 ]
