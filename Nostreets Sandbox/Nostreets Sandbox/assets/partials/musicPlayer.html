@@ -1,12 +1,5 @@
 ﻿<div>
-    <!--
-        <div class="musicControls">
-        <input id="audiofile" type="file" />
-        <button class="playPauseButton">▶</button>
-    </div>
-    <label id="loading" for="audiofile">Select an audio file...</label>
-        -->
-    <!-- This should match the values in the js-->
+
     <div class="prism">
         <div class="side hide">
             <div class="rectangle hide"></div>
@@ -634,13 +627,30 @@
         </div>
     </div>
 
-    <div id="song-list" class="row margin-t-50p hide">
-        <div  class="col-sm-4 col-xs-12">
-            <div class="card song-card">
-                <span class="songTitle">{title}      </span>
-                <button class="playPauseButton btn btn-xs" data-music="{musicPath}">▶</button>
+</div>
+
+<div id="song-list" class="row margin-t-50p hide">
+    <div class="col-sm-4 col-xs-12">
+        <div class="card song-card">
+            <div class="row">
+                <div class="col-xs-2">
+                    <img class="songImg" src="{imgSrc}" alt="Card image cap">
+                </div>
+                <div class="col-xs-8 text-center" style="margin-top: 3%;">
+                    <span class="songTitle"> {title} </span>
+                </div>
+                <div class="col-xs-2" style="margin-top: 2%;">
+                    <button class="playPauseButton btn btn-xs" data-music="{musicPath}">▶</button>
+                </div>
             </div>
         </div>
     </div>
-
 </div>
+
+<!--
+    <div class="card-body">
+    <h4 class="card-title">Card title</h4>
+    <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+  </div>
+ -->

@@ -32,7 +32,6 @@ footer {
         font-size: small;
     }
 
-
 /*#endregion */
 
 
@@ -47,12 +46,10 @@ h3.bold, h3.bolder {
     color: black;
 }
 
-
 .absolute-footer {
     bottom: -10%;
     position: absolute;
 }
-
 
 .fixed-footer {
     position: fixed;
@@ -116,7 +113,20 @@ h3.bold, h3.bolder {
     margin: 5% 10%;
 }
 
+.songImg {
+    margin: 10% 0%;
+    border-radius: 50%;
+}
+
+.songTitle {
+    font-size: 1.3em;
+    font-weight: 400;
+    line-height: 1.5em;
+    margin-right: 2%;
+}
+
 #song-list {
+    margin: 41% 0% 0% 0%;
 }
 
 .transparent-overlay {
@@ -138,13 +148,8 @@ h3.bold, h3.bolder {
         color: rgb(255, 255, 255);
     }
 
-
 .margin-tb-5p {
     margin: 5% 0%;
-}
-
-.margin-t-50p {
-    margin: 50% 0% 0% 0%;
 }
 
 /*#endregion */
@@ -240,6 +245,18 @@ h3.bold, h3.bolder {
         .prism > .side {
             display: none;
         }
+}
+
+@media(max-width: 850px) {
+    #song-list {
+        margin: 65% 0% 0% 0%;
+    }
+}
+
+@media(max-width: 1100px) {
+    #song-list {
+        margin: 52% 0% 0% 0%;
+    }
 }
 
 /*#endregion */

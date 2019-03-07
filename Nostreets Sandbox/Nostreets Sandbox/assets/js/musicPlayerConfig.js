@@ -395,9 +395,11 @@
             if (songs && songs.length) {
 
                 for (var song of songs) {
+
                     var songRow = $($('#song-list').children()[0]).clone();
                     songRow.find('.songTitle').text(song.title);
-                    songRow.find('.playPauseButton').data('music', song.path);
+                    songRow.find('.playPauseButton').data('music', song.musicPath);
+                    songRow.find('.songImg').attr('src', song.imgPath);
 
                     $('#song-list').append(songRow);
                 }

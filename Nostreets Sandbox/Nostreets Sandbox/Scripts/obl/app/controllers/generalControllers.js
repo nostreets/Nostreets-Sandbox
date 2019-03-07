@@ -130,7 +130,6 @@
                 }
             };
 
-
         }
 
         function _handlers() {
@@ -162,11 +161,13 @@
                 songs: [
                     {
                         title: "WWRED. - What You Need",
-                        path: "/assets/mp3/What You Need (prod. WWRED.).mp3"
+                        musicPath: "/assets/mp3/What You Need (prod. WWRED.).mp3",
+                        imgPath: "/assets/img/wwred.1.jpg"
                     },
                     {
                         title: "WWRED. - T.H.U.G.L.I.F.E.",
-                        path: "/assets/mp3/T.H.U.G.L.I.F.E. (short) (prod. WWRED.).mp3"
+                        musicPath: "/assets/mp3/T.H.U.G.L.I.F.E. (short) (prod. WWRED.).mp3",
+                        imgPath: "/assets/img/wwred.2.jpg"
                     }
                 ]
             };
