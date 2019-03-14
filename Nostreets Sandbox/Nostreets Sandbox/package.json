@@ -12,6 +12,7 @@
     "angular-ui-bootstrap": "^2.5.6",
     "angular-ui-router": "^1.0.20",
     "angularjs-color-picker": "^3.4.8",
+    "animate.css": "^3.7.0",
     "bootstrap": "^3.3.6",
     "dat.gui": "^0.7.5",
     "fullpage.js": "^3.0.4",

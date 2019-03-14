@@ -18,13 +18,11 @@ var page = {
         'color.picker'
     ],
 
-    startSite: () => {
+    startSite: (callback) => {
         (() => angular.module(page.APPNAME, page.ngModules))();
 
-        $(document).ready(() => {
-            page.utilities.inlineSvgs();
-            page.utilities.setUpJQSwipeHandlers();
-        });
+        if (callback && typeof (callback) === 'function')
+            $(document).ready(callback);
     },
 
     utilities: {
@@ -436,6 +434,12 @@ var page = {
             var regex = new RegExp(urlPattern);
 
             return regex.test(url);
+        },
+
+        removeElement: (elementId) => {
+            // Removes an element from the document
+            var element = document.getElementById(elementId);
+            element.parentNode.removeChild(element);
         }
     }
 };

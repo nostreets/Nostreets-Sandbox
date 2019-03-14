@@ -2,7 +2,6 @@
 page.APPNAME = 'obl-site';
 page.ngModules.push('fullPage.js');
 page.ngModules.push('ui.router');
-page.ngModules.push('angularSoundManager');
 
 page.sliderOptions = {
     licenseKey: '6D8C01FB-3C9B4F3A-93CBFC04-52802A55',
@@ -22,7 +21,7 @@ page.sliderOptions = {
     scrollBar: true,
 
     //Scrolling
-    css3: true,
+    css3: false,
     scrollingSpeed: 500,
     autoScrolling: true,
     fitToSection: true,
@@ -53,25 +52,19 @@ page.fixFooter = () => {
         width = page.utilities.getDeviceWidth();
 
     if (width < 768) {
-        if (path === '#!/home' || path === '#!/ourTeam') {
+        if (path === '#!/home' || path === '#!/entertainment') {
             $('#fullpage-footer').show();
             $('#normal-footer').hide();
         }
-        else {
-            $('#fullpage-footer').hide();
-            $('#normal-footer').show();
-            $('#normal-footer').removeClass('fixed-footer');
-            $('#normal-footer').addClass('absolute-footer');
-        }
     }
-    else if (path === '#!/music' || path === '#!/video') {
-        $('#fullpage-footer').hide();
+    else if (path === '#!/music') {
         $('#normal-footer').show();
         $('#normal-footer').removeClass('fixed-footer');
         $('#normal-footer').addClass('absolute-footer');
     }
     else {
-        $('#fullpage-footer').hide();
+        $('#fullpage-footer').addClass('hidden');
+        //page.utilities.removeElement('fullpage-footer');
         $('#normal-footer').show();
         $('#normal-footer').removeClass('absolute-footer');
         $('#normal-footer').addClass('fixed-footer');
@@ -80,6 +73,7 @@ page.fixFooter = () => {
 
 page.renderParticles = (data) => {
     var particles = {
+
         "particles": {
             "number": {
                 "value": 150,
@@ -208,4 +202,32 @@ page.renderParticles = (data) => {
     particlesJS('particles-js', particles);
 }
 
-page.startSite();
+page.animate = (element, animation, callback, speedClass) => {
+
+    var node = null;
+    if (typeof (element) === 'object')
+        node = element.get(0);
+    else
+        node = document.querySelector(element);
+
+    node.classList.add('animated', animation);
+    if (speedClass)
+        node.classList.add(speedClass);
+
+    function handleAnimationEnd() {
+        node.classList.remove('animated', animation);
+        node.removeEventListener('animationend', handleAnimationEnd);
+
+        if (callback && typeof callback === 'function')
+            callback();
+    }
+
+    node.addEventListener('animationend', handleAnimationEnd);
+}
+
+
+page.startSite(() => {
+    angular.element(window).bind('resize', page.fixFooter);
+    page.utilities.setUpJQSwipeHandlers();
+
+});

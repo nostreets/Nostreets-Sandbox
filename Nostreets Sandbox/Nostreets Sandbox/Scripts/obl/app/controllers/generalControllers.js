@@ -8,7 +8,7 @@
         .controller("contactUsController", contactUsController);
 
 
-    homeController.$inject = ["$scope", "$baseController"];
+    homeController.$inject = ["$scope", "$baseController", "$state", "$previousState"];
     aboutController.$inject = ["$scope", "$baseController"];
     ourTeamController.$inject = ["$scope", "$baseController"];
     musicController.$inject = ["$scope", "$baseController"];
@@ -16,7 +16,7 @@
     contactUsController.$inject = ["$scope", "$baseController", "$http"];
 
 
-    function homeController($scope, $baseController) {
+    function homeController($scope, $baseController, $state, $previousState) {
         var vm = this;
 
         _render();
@@ -40,8 +40,7 @@
             $('title').text("OBL | Home");
             page.renderParticles();
             page.fixFooter();
-            angular.element($baseController.window).bind('resize', page.fixFooter);
-
+            //angular.element($baseController.window).bind('resize', page.fixFooter);
         }
 
     }
@@ -68,8 +67,7 @@
             $('title').text("OBL | About");
             page.renderParticles();
             page.fixFooter();
-            angular.element($baseController.window).bind('resize', page.fixFooter);
-
+            //angular.element($baseController.window).bind('resize', page.fixFooter);
         }
 
     }
@@ -113,7 +111,7 @@
                     "imgUrl": "/assets/img/rediet2.jpg",
                     "socials": {
                         "instagram": "https://www.instagram.com/obl.wwred/",
-                        "youtube": "https://www.youtube.com/"
+                        "youtube": "https://www.youtube.com/channel/UCzF_BoRKI48fynEu5QaJ7SA"
                     }
                 },
                 hovaness: {
@@ -140,8 +138,7 @@
             $('title').text("OBL | Our Team");
             page.renderParticles();
             page.fixFooter();
-            angular.element($baseController.window).bind('resize', page.fixFooter);
-
+            //angular.element($baseController.window).bind('resize', page.fixFooter);
         }
     }
 
@@ -162,12 +159,18 @@
                     {
                         title: "WWRED. - What You Need",
                         musicPath: "/assets/mp3/What You Need (prod. WWRED.).mp3",
-                        imgPath: "/assets/img/wwred.1.jpg"
+                        imgPath: "/assets/img/wwred.1.jpg",
+                        spotify: "https://open.spotify.com/artist/0FLx6NTV9fZcOWK7UOrv2V",
+                        soundcloud: "https://soundcloud.com/wwred/what-you-need-prod-wwred",
+                        youtube: "https://www.youtube.com/watch?v=J9S2L4kRBbM&list=OLAK5uy_lo0_pqWHQHK9OjBfOaQ-fhus8HI3_9okQ"
                     },
                     {
                         title: "WWRED. - T.H.U.G.L.I.F.E.",
                         musicPath: "/assets/mp3/T.H.U.G.L.I.F.E. (short) (prod. WWRED.).mp3",
-                        imgPath: "/assets/img/wwred.2.jpg"
+                        imgPath: "/assets/img/wwred.2.jpg",
+                        spotify: "https://open.spotify.com/artist/0FLx6NTV9fZcOWK7UOrv2V",
+                        soundcloud: "https://soundcloud.com/wwred/thuglife-prod-wwred",
+                        youtube: "https://www.youtube.com/watch?v=DqJr7eypBs0&list=OLAK5uy_n3rPTZ61Nnz3PtoB62v7HrtCzwjm0i9Sc"
                     }
                 ]
             };
@@ -181,7 +184,7 @@
             $('title').text("OBL | Music");
             page.renderParticles();
             page.fixFooter();
-            angular.element($baseController.window).bind('resize', page.fixFooter);
+            //angular.element($baseController.window).bind('resize', page.fixFooter);
         }
 
     }
@@ -206,22 +209,9 @@
 
         function _pageFixes() {
             $('title').text("OBL | Video");
-            page.renderParticles({
-                "particles": {
-                    "opacity": {
-                        "value": 0.3,
-                        "random": true,
-                        "anim": {
-                            "enable": false,
-                            "speed": 1,
-                            "opacity_min": 0.1,
-                            "sync": false
-                        }
-                    }
-                }
-            });
+            page.renderParticles();
             page.fixFooter();
-            angular.element($baseController.window).bind('resize', page.fixFooter);
+            //angular.element($baseController.window).bind('resize', page.fixFooter);
 
         }
     }
@@ -262,8 +252,7 @@
             $('title').text("OBL | Contact");
             page.renderParticles();
             page.fixFooter();
-            angular.element($baseController.window).bind('resize', page.fixFooter);
-
+            //angular.element($baseController.window).bind('resize', page.fixFooter);
         }
 
         function _sendEmail(model) {

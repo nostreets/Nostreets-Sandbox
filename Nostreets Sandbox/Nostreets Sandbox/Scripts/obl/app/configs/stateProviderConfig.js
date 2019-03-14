@@ -12,7 +12,10 @@
                         url: '/home',
                         templateUrl: '/Scripts/obl/app/templates/home.html',
                         controller: 'homeController',
-                        controllerAs: 'pg'
+                        controllerAs: 'pg',
+                        resolve: {
+                            $previousState: ['$state', _previousState]
+                        }
                     }).state('/about', {
                         name: 'about',
                         url: '/about',
@@ -51,5 +54,17 @@
                     enabled: false,
                     requireBase: false
                 });
+
             }]);
+
+
+    function _previousState($state) {
+        var currentStateData = {
+            Name: $state.current.name,
+            Params: $state.params,
+            URL: $state.href($state.current.name, $state.params)
+        };
+        return currentStateData;
+    }
+
 })();

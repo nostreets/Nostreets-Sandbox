@@ -630,36 +630,39 @@
 </div>
 
 <div id="song-list" class="row margin-t-50p hide">
-    <div class="col-sm-4 col-xs-12">
+    <div class="col-sm-4 col-xs-10">
         <div class="card song-card">
             <div class="row">
-                <div class="col-xs-2">
+                <div class="col-sm-2 col-sm-push-0 col-xs-6 col-xs-push-3">
                     <img class="songImg" src="{imgSrc}" alt="Card image">
                 </div>
-                <div class="col-xs-8 text-center" style="margin-top: 3%;">
+                <div class="col-sm-8 col-xs-12 text-center" style="margin-top: 3%;">
                     <span class="songTitle"> {title} </span>
                 </div>
-                <div class="col-xs-2" style="margin-top: 2%;">
+                <div class="col-sm-2 col-sm-push-0 col-xs-8 col-xs-push-4" style="margin-top: 2%;">
                     <button class="playPauseButton btn btn-xs" data-music="{musicPath}">▶</button>
                 </div>
-                <div id="song-links" class="col-xs-8 col-xs-push-2 text-center hide">
+                <div class="col-sm-8 col-sm-push-0 col-xs-10 col-xs-push-1 song-links text-center hide">
                     <hr class="style5" />
-                    <i class="fab fa-3x fa-spotify"
-                       style="  padding: 0% 5% 3% 0%;
-                                color: #1ED760;"></i>
-                    <i class="fab fa-3x fa-youtube"
-                       style="  padding: 0% 5% 3% 0%;
-                                color: #1ED760;"></i>
+                    <a href="{spotifyUrl}" target="_spotify">
+                        <i class="fab fa-3x fa-spotify"
+                           style="  padding: 0% 5% 3% 0%;
+                                    color: #1ED760;"></i>
+                    </a>
+                    <a href="{youtubeUrl}" target="_youtube">
+                        <i class="fab fa-3x fa-youtube"
+                           style="  padding: 0% 5% 3% 0%;
+                                    color: #FF0000;"></i>
+                    </a>
+                    <a href="{soundcloudUrl}" target="_soundcloud">
+                        <i class="fab fa-3x fa-soundcloud"
+                           style="  padding: 0% 5% 3% 0%;
+                                color: #FF5B00;"></i>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!--
-    <div class="card-body">
-    <h4 class="card-title">Card title</h4>
-    <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-    </div>
- -->
+ 

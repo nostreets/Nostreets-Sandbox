@@ -247,6 +247,8 @@
         }
 
         function loadSong(stream, button) {
+
+            toggleSongLinks(button);
             setupSong();
 
             audio.src = stream;
@@ -291,6 +293,7 @@
                     audio.play();
                     break;
                 }
+
                 case 'playSame': {
                     if (activeSongBtn.text() === "▶") {
                         activeSongBtn.text("▮▮");
@@ -306,7 +309,6 @@
                     }
                     break;
                 }
-
 
             }
         }
@@ -401,6 +403,12 @@
                     songRow.find('.playPauseButton').data('music', song.musicPath);
                     songRow.find('.songImg').attr('src', song.imgPath);
 
+                    //LINKS
+                    songRow.find('.fa-spotify').parent().attr('href', song.spotify);
+                    songRow.find('.fa-soundcloud').parent().attr('href', song.soundcloud);
+                    songRow.find('.fa-youtube').parent().attr('href', song.youtube);
+
+
                     $('#song-list').append(songRow);
                 }
 
@@ -436,6 +444,21 @@
                     console.log(err);
                 }
             });
+        }
+
+        //Toggle The Song Links
+        function toggleSongLinks(button) {
+
+            if (activeSongBtn) {
+                var activeLinks = activeSongBtn.parent().parent().find('.song-links');
+                page.animate(activeLinks, 'fadeOut', () => {
+                    activeLinks.addClass('hide');
+                }, 'faster');
+            }
+
+            var links = button.parent().parent().find('.song-links');
+            links.removeClass('hide');
+            page.animate(links, 'slideInDown', null, 'faster');
         }
 
     }
