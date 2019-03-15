@@ -71,6 +71,7 @@
         datGuiListeners();
         rotatePrism();
 
+        //destroyAll();
         appendSongs();
         musicPlayerListeners();
 
@@ -383,6 +384,33 @@
         }
 
 
+        //Custom Logic
+
+        //Destroy Everything
+        function destroyAll() {
+            
+            f3.remove(myFade);
+            f3.remove(myAnimateThroughSpectrum);
+            f3.remove(myRainbow);
+            f3.remove(mySolidBG);
+            f3.remove(myColor);
+
+            f2.remove(myBorderWidth);
+            f2.remove(myVertMargin);
+            f2.remove(myRectangleWidth);
+            f2.remove(myRectangleCount);
+
+            f1.remove(myRotSpeed);
+            f1.remove(myHeight);
+            f1.remove(myRadius);
+            f1.remove(mySideCount);
+
+            gui.removeFolder(f3);
+            gui.removeFolder(f2);
+            gui.removeFolder(f1);
+
+            gui.destroy();
+        }
 
         // Rotate the prism
         function rotatePrism() {

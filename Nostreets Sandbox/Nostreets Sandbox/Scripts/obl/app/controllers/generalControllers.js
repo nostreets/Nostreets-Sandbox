@@ -8,7 +8,7 @@
         .controller("contactUsController", contactUsController);
 
 
-    homeController.$inject = ["$scope", "$baseController", "$state", "$previousState"];
+    homeController.$inject = ["$scope", "$baseController", "$state"];
     aboutController.$inject = ["$scope", "$baseController"];
     ourTeamController.$inject = ["$scope", "$baseController"];
     musicController.$inject = ["$scope", "$baseController"];
@@ -16,7 +16,7 @@
     contactUsController.$inject = ["$scope", "$baseController", "$http"];
 
 
-    function homeController($scope, $baseController, $state, $previousState) {
+    function homeController($scope, $baseController, $state) {
         var vm = this;
 
         _render();
@@ -29,7 +29,7 @@
 
         function _setUp() {
             vm.sliderOptions = page.sliderOptions;
-
+            vm.windowWidth = page.utilities.getDeviceWidth();
         }
 
         function _handlers() {
@@ -40,7 +40,9 @@
             $('title').text("OBL | Home");
             page.renderParticles();
             page.fixFooter();
-            //angular.element($baseController.window).bind('resize', page.fixFooter);
+
+            if (page.previousView === 'music')
+                $baseController.window.location.reload();
         }
 
     }
@@ -67,7 +69,9 @@
             $('title').text("OBL | About");
             page.renderParticles();
             page.fixFooter();
-            //angular.element($baseController.window).bind('resize', page.fixFooter);
+
+            if (page.previousView === 'music')
+                $baseController.window.location.reload();
         }
 
     }
@@ -107,7 +111,7 @@
                     "color": "Red",
                     "name": "Rediet Teferi",
                     "title": "CEO / President Of Music",
-                    "desc": "Rediet Teferi, also known by his stage name WWRED. is an American artist from Los Angeles, California. He released his debut single, 'What You Need' in Februbary 2019. Apart from his carrer as an artist he also works as the lead record producer and  of OBL. Rediet is one-third of OBL, as the CEO, CCO, and President Of Music.",
+                    "desc": "Rediet Teferi, also known by his stage name WWRED., is an Ethiopian-American producer, recording artist, and singer/songwriter from Los Angeles, California. With his transcendental and neo-modern mindset, he ushers positive vibrations and an inquisitive amalgam of the old ways of living and new insights into all the enterprises of OBL. Rediet is one-third of OBL as the CEO, CCO, and the President of Music. ",
                     "imgUrl": "/assets/img/rediet2.jpg",
                     "socials": {
                         "instagram": "https://www.instagram.com/obl.wwred/",
@@ -138,7 +142,9 @@
             $('title').text("OBL | Our Team");
             page.renderParticles();
             page.fixFooter();
-            //angular.element($baseController.window).bind('resize', page.fixFooter);
+
+            if (page.previousView === 'music')
+                $baseController.window.location.reload();
         }
     }
 
@@ -184,7 +190,9 @@
             $('title').text("OBL | Music");
             page.renderParticles();
             page.fixFooter();
-            //angular.element($baseController.window).bind('resize', page.fixFooter);
+
+            if (page.previousView === 'music')
+                $baseController.window.location.reload();
         }
 
     }
@@ -201,6 +209,7 @@
 
         function _setUp() {
             vm.sliderOptions = page.sliderOptions;
+            vm.windowWidth = page.utilities.getDeviceWidth();
         }
 
         function _handlers() {
@@ -211,7 +220,9 @@
             $('title').text("OBL | Video");
             page.renderParticles();
             page.fixFooter();
-            //angular.element($baseController.window).bind('resize', page.fixFooter);
+
+            if (page.previousView === 'music')
+                $baseController.window.location.reload();
 
         }
     }
@@ -252,7 +263,9 @@
             $('title').text("OBL | Contact");
             page.renderParticles();
             page.fixFooter();
-            //angular.element($baseController.window).bind('resize', page.fixFooter);
+
+            if (page.previousView === 'music')
+                $baseController.window.location.reload();
         }
 
         function _sendEmail(model) {

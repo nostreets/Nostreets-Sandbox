@@ -8,44 +8,59 @@
 
                 $stateProvider
                     .state('/home', {
+
                         name: 'home',
                         url: '/home',
                         templateUrl: '/Scripts/obl/app/templates/home.html',
                         controller: 'homeController',
                         controllerAs: 'pg',
-                        resolve: {
-                            $previousState: ['$state', _previousState]
-                        }
+                        onExit: () => { page.previousView = 'home'; }
+
                     }).state('/about', {
+
                         name: 'about',
                         url: '/about',
                         templateUrl: '/Scripts/obl/app/templates/about.html',
                         controller: 'aboutController',
-                        controllerAs: 'pg'
+                        controllerAs: 'pg',
+                        onExit: () => { page.previousView = 'about'; }
+
                     }).state('/ourTeam', {
+
                         name: 'ourTeam',
                         url: '/ourTeam',
                         templateUrl: '/Scripts/obl/app/templates/ourTeam.html',
                         controller: 'ourTeamController',
-                        controllerAs: 'pg'
+                        controllerAs: 'pg',
+                        onExit: () => { page.previousView = 'ourTeam'; }
+
                     }).state('/entertainment', {
+
                         name: 'entertainment',
                         url: '/entertainment',
                         templateUrl: '/Scripts/obl/app/templates/entertainment.html',
                         controller: 'entertainmentController',
-                        controllerAs: 'pg'
+                        controllerAs: 'pg',
+                        onExit: () => { page.previousView = 'entertainment'; }
+
                     }).state('/contact', {
+
                         name: 'contact',
                         url: '/contact',
                         templateUrl: '/Scripts/obl/app/templates/contact.html',
                         controller: 'contactUsController',
-                        controllerAs: 'pg'
+                        controllerAs: 'pg',
+                        onExit: () => { page.previousView = 'contact'; }
+
                     }).state('/music', {
+
                         name: 'music',
                         url: '/music',
                         templateUrl: '/Scripts/obl/app/templates/music.html',
                         controller: 'musicController',
-                        controllerAs: 'pg'
+                        controllerAs: 'pg',
+                        onExit: () => { page.previousView = 'music'; }
+
                     });
 
                 $urlRouterProvider.when('', '/home');
@@ -56,15 +71,5 @@
                 });
 
             }]);
-
-
-    function _previousState($state) {
-        var currentStateData = {
-            Name: $state.current.name,
-            Params: $state.params,
-            URL: $state.href($state.current.name, $state.params)
-        };
-        return currentStateData;
-    }
 
 })();

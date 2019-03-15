@@ -63,7 +63,7 @@ page.fixFooter = () => {
         $('#normal-footer').addClass('absolute-footer');
     }
     else {
-        $('#fullpage-footer').addClass('hidden');
+        //$('#fullpage-footer').addClass('hidden');
         //page.utilities.removeElement('fullpage-footer');
         $('#normal-footer').show();
         $('#normal-footer').removeClass('absolute-footer');
