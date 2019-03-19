@@ -112,7 +112,7 @@
                     "name": "Rediet Teferi",
                     "title": "CEO / President Of Music",
                     "desc": "Rediet Teferi, also known by his stage name WWRED., is an Ethiopian-American producer, recording artist, and singer/songwriter from Los Angeles, California. With his transcendental and neo-modern mindset, he ushers positive vibrations and an inquisitive amalgam of the old ways of living and new insights into all the enterprises of OBL. Rediet is one-third of OBL as the CEO, CCO, and the President of Music. ",
-                    "imgUrl": "/assets/img/rediet2.jpg",
+                    "imgUrl": "/assets/img/rediet.3.jpg",
                     "socials": {
                         "instagram": "https://www.instagram.com/obl.wwred/",
                         "youtube": "https://www.youtube.com/channel/UCzF_BoRKI48fynEu5QaJ7SA"
@@ -124,7 +124,7 @@
                     "name": "Hovaness Gadzhyan",
                     "title": "CEO / CDO / Director Of Written Content",
                     "desc": "Hovaness was born and raised in Inglewood, California. Being half Hispanic and half Armenian, he brings two different cultures from across the world into OBL with a mix of west coast vibes. Hovaness brings the artistic and creative expertise to OBL designs, music, and all other ventures. Hovaness is one-third of OBL, as the CEO, CDO, and Director Of Written Content.",
-                    "imgUrl": "/assets/img/hov.jpg",
+                    "imgUrl": "/assets/img/hov.1.png",
                     "socials": {
                         "instagram": "https://www.instagram.com/obl.hovlito/",
                         "youtube": "https://www.youtube.com/"
