@@ -53,7 +53,6 @@ page.fixFooter = () => {
 
     if (width < 768) {
         if (path === '#!/home' || path === '#!/entertainment') {
-            $('#fullpage-footer').show();
             $('#normal-footer').hide();
         }
     }
@@ -63,8 +62,6 @@ page.fixFooter = () => {
         $('#normal-footer').addClass('absolute-footer');
     }
     else {
-        //$('#fullpage-footer').addClass('hidden');
-        //page.utilities.removeElement('fullpage-footer');
         $('#normal-footer').show();
         $('#normal-footer').removeClass('absolute-footer');
         $('#normal-footer').addClass('fixed-footer');
@@ -76,7 +73,7 @@ page.renderParticles = (data) => {
 
         "particles": {
             "number": {
-                "value": 150,
+                "value": 75,
                 "density": {
                     "enable": true,
                     "value_area": 800

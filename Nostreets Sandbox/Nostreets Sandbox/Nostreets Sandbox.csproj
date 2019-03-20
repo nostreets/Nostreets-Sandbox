@@ -288,6 +288,7 @@
     <Content Include="assets\emails\TFAuthEmail.html" />
     <Content Include="assets\img\hov.1.PNG" />
     <Content Include="assets\img\apparel.1.png" />
+    <Content Include="assets\img\music.1.jpg" />
     <Content Include="assets\img\rediet.3.JPG" />
     <Content Include="assets\img\wwred.2.jpg" />
     <Content Include="assets\img\obl.2.400.png" />

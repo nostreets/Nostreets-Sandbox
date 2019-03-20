@@ -243,11 +243,13 @@
             vm.subjects = [
                 'Mix And Master Services',
                 'Beat Production Services',
+                'Music Distribution Services',
                 'Video Production Services',
-                'OBL Music Inquiry',
+                'Photography Services',
+                'Web Site Development Services',
+                'Mobile App Development Services',
+                'OBL Records Inquiry',
                 'OBL Apperal Inquiry',
-                'OBL Entertainment Inquiry',
-                'OBL Techincal Inquiry',
                 'Report a Bug',
                 'Other'
             ];
@@ -269,6 +271,8 @@
         }
 
         function _sendEmail(model) {
+            model.messageText = model.messageText.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
             $http({
                 method: "POST",
                 url: "/api/send/email",
