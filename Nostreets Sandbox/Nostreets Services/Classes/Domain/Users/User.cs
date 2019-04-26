@@ -34,11 +34,10 @@ namespace Nostreets_Services.Classes.Domain.Users
         [Required]
         public UserOriginType UserOrigin { get; set; }
 
-        public IIdentity Identity => throw new NotImplementedException();
+        public List<string> Roles { get; set; }
 
-        public bool IsInRole(string role)
-        {
-            throw new NotImplementedException();
+        public bool IsInRole(string roleName) {
+            return Roles != null && Roles.Contains(roleName);
         }
     }
 
