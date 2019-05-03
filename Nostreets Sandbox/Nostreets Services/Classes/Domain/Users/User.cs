@@ -43,7 +43,7 @@ namespace Nostreets_Services.Classes.Domain.Users
 
     public class UserSettings : DBObject
     {
-        public NostreetsPortfolioSettings Portfolio { get; set; }
+        public NostreetsPortfolioSettings NostreetsSiteSettings { get; set; }
 
         public bool TwoFactorAuthEnabled { get; set; } = false;
         public bool TFAuthByEmail { get; set; } = false;
@@ -108,6 +108,8 @@ namespace Nostreets_Services.Classes.Domain.Users
 
     public class UserData : DBObject
     {
+        [Required]
+        public override string UserId { get => base.UserId; set => base.UserId = value; }
         public Dictionary<string, string> ApiIDs { get; set; }
         public List<string> IPAddresses { get; set; }
     }

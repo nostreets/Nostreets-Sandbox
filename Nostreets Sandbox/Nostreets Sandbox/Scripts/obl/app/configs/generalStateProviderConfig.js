@@ -61,15 +61,6 @@
                         controllerAs: 'pg',
                         onExit: () => { page.previousView = 'music'; }
 
-                    }).state('/admin', {
-
-                        name: 'admin',
-                        url: '/admin',
-                        templateUrl: '/Scripts/obl/app/templates/admin.html',
-                        controller: 'adminController',
-                        controllerAs: 'pg',
-                        onExit: () => { page.previousView = 'admin'; }
-
                     });
 
                 $urlRouterProvider.when('', '/home');

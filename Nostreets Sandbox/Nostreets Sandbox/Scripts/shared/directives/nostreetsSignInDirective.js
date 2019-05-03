@@ -29,10 +29,10 @@
 
                 function _render() {
 
-                    page.isLoggedIn = $serverModel.user !== null;
+                    page.isLoggedIn = $serverModel.user && $serverModel.user !== null ? true : false;
                     $scope.isLoggedIn = page.isLoggedIn;
 
-                    if ($serverModel.tokenOutcome !== null)
+                    if ($serverModel.tokenOutcome && $serverModel.tokenOutcome !== null)
                         swal({
                             title: $serverModel.tokenOutcome,
                             type: $serverModel.state.toLowerCase(),

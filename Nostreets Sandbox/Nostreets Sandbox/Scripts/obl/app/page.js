@@ -222,7 +222,6 @@ page.animate = (element, animation, callback, speedClass) => {
     node.addEventListener('animationend', handleAnimationEnd);
 }
 
-
 page.startSite(() => {
     angular.element(window).bind('resize', page.fixFooter);
     page.utilities.setUpJQSwipeHandlers();

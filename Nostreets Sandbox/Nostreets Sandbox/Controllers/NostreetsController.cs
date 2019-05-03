@@ -20,7 +20,7 @@ namespace Nostreets_Sandbox.Controllers
         public IUserService _userService = null;
 
         [Gzip]
-        public ActionResult Index(string token = null, string user = null)
+        public ActionResult Index(string token = null)
         {
             User sessionUser = null;
             Token userToken = null;
@@ -28,8 +28,8 @@ namespace Nostreets_Sandbox.Controllers
             bool hasVisited = false;
             State state = State.Error;
 
-            if (token != null && user != null)
-                userToken = _userService.ValidateToken(new TokenRequest { TokenId = token, UserId = user }, out state, out outcome);
+            if (token != null)
+                userToken = _userService.ValidateToken(new TokenRequest { TokenId = token }, out state, out outcome);
 
             if (_userService.SessionUser != null)
             {
