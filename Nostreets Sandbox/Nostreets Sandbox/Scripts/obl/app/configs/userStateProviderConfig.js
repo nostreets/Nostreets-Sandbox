@@ -6,16 +6,16 @@
 
                 $locationProvider.hashPrefix('!');
 
-                $stateProvider.state('/user', {
+                $stateProvider.state('/dashboard', {
 
-                        name: 'user',
+                        name: 'dashboard',
                         url: '/dashboard',
                         templateUrl: '/Scripts/obl/app/templates/user.html',
-                        controller: 'userController',
+                        controller: 'userDashboardController',
                         controllerAs: 'pg'
                     });
 
-                $urlRouterProvider.when('', '/login');
+                $urlRouterProvider.when('', '/dashboard');
 
                 $locationProvider.html5Mode({
                     enabled: false,

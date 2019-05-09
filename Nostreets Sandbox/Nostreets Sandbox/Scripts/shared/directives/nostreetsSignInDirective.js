@@ -255,7 +255,8 @@
         }
 
         function _openLoginModal() {
-            links.loginModal();
+            if (links && links.loginModal)
+                links.loginModal();
             $uibModalInstance.close();
         }
 
@@ -464,13 +465,15 @@
         }
 
         function _openRegisterModal() {
-            links.registerModal();
+            if (links && links.registerModal)
+                links.registerModal();
             $uibModalInstance.close();
 
         }
 
         function _openUserModal(user) {
-            links.userModal(user);
+            if (links && links.userModal)
+                links.userModal(user);
             $uibModalInstance.close();
 
         }
@@ -825,7 +828,7 @@
             vm.rememberMe = true;
             vm.googleClientId = "545466753618-ap1q43tsr3omjeh0huefc5qg8l3kgk3o.apps.googleusercontent.com";
             vm.instagramClientId = "fb198f3bbf4744bd89e066fd6eeaeb2e";
-            vm.fbAppId = 1903266009978931;
+            vm.facebookAppId = 1903266009978931;
             vm.isLoggedIn = $scope.$parent.isLoggedIn || false;
             vm.elementTag = $scope.$parent.elementTag || 'button';
         }
@@ -1072,6 +1075,9 @@
                 , templateUrl: "Scripts/shared/templates/modals/registerForm.html"
                 , controller: "modalRegisterController as regVm"
                 , size: "lg"
+                , resolve: {
+                    links: () => { return null; }
+                }
             });
 
             modalInstance.rendered.then(() => {
@@ -1086,6 +1092,10 @@
                 , templateUrl: "Scripts/shared/templates/modals/userDashboard.html"
                 , controller: "modalUserController as pg"
                 , size: "lg"
+                , resolve: {
+                    links: () => { return null; }
+                }
+
             });
 
             modalInstance.rendered.then(() => {
