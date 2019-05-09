@@ -6,8 +6,7 @@
 
                 $locationProvider.hashPrefix('!');
 
-                $stateProvider
-                    .state('/user', {
+                $stateProvider.state('/user', {
 
                         name: 'user',
                         url: '/dashboard',
@@ -16,7 +15,7 @@
                         controllerAs: 'pg'
                     });
 
-                $urlRouterProvider.when('', '/user');
+                $urlRouterProvider.when('', '/login');
 
                 $locationProvider.html5Mode({
                     enabled: false,

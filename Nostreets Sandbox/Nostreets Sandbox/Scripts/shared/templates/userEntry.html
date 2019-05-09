@@ -1,0 +1,156 @@
+﻿
+ 
+<i ng-class="{ 'hidden' : ((isLoggedIn && elementTag === 'button') || elementTag !== 'button') }" class="material-icons">folder_shared</i>
+<i ng-class="{ 'hidden' : ((!isLoggedIn && elementTag === 'button') || elementTag !== 'button') }" class="material-icons">person</i>
+
+<form name="logVm.logForm" 
+      ng-controller="formLogInController as logVm"
+      ng-class="{ 'hidden' : ((logVm.isLoggedIn && logVm.elementTag === 'form') || logVm.elementTag !== 'form') }">
+    <div ng-if="!logVm.registered" class="card card-login noshadow">
+        <div class="card-header text-center">
+            <h4 class="card-title">
+                Login
+            </h4>
+        </div>
+
+        <!--LOGIN FORM-->
+        <div class="card-content" ng-show="!logVm.isLoading">
+            <div class="input-group">
+                <span class="input-group-addon">
+                    <i class="material-icons" style="color:black">email</i>
+                </span>
+                <div class="form-group label-floating"
+                     ng-class="{ 'has-success': logVm.logForm.username.$valid, 'has-error': logVm.logForm.username.$invalid && logVm.logForm.username.$dirty}">
+                    <label class="control-label">Username / Email address</label>
+                    <input name="username"
+                           id="username"
+                           type="text"
+                           ng-model="logVm.username"
+                           ng-minlength="6"
+                           required
+                           class="form-control">
+                    <span class="form-control-feedback"
+                          ng-show="logVm.logForm.username.$valid">
+                        <i class="material-icons">done</i>
+                    </span>
+                    <div class="text-danger"
+                         ng-show="logVm.logForm.username.$error.required && logVm.logForm.username.$dirty">
+                        <em>
+                            This field is required!
+                        </em>
+                    </div>
+                    <div class="text-danger"
+                         ng-show="logVm.logForm.username.$touched && logVm.logForm.username.$error.minlength">
+                        <em>
+                            This field is too short!
+                        </em>
+                    </div>
+                </div>
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon">
+                    <i class="material-icons" style="color:black">lock_outline</i>
+                </span>
+                <div class="form-group label-floating"
+                     ng-class="{ 'has-success': logVm.logForm.password.$valid, 'has-error': logVm.logForm.password.$invalid && logVm.logForm.password.$dirty}">
+                    <label class="control-label">Password</label>
+                    <input name="password"
+                           id="password"
+                           type="password"
+                           ng-minlength="12"
+                           ng-model="logVm.password"
+                           required
+                           enter-press="logVm.submitLogin()"
+                           class="form-control">
+                    <span class="form-control-feedback"
+                          ng-show="logVm.logForm.password.$valid">
+                        <i class="material-icons">done</i>
+                    </span>
+                    <div class="text-danger"
+                         ng-show="logVm.logForm.password.$error.required && logVm.logForm.password.$dirty">
+                        <em>
+                            This field is required!
+                        </em>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="footer text-center">
+
+            <!--ERROR REASON-->
+            <div class="text-danger"
+                 ng-show="logVm.reason !== null">
+                <em>
+                    {{ logVm.reason }}
+                </em>
+
+                <div ng-if="logVm.reason.includes('email is not validated...') && !logVm.sentEmail">
+                    <a ng-click="logVm.resendEmailValidation()" class="text-danger" href="">
+                        Resend Validation Email?
+                    </a>
+                </div>
+                <div ng-if="logVm.resentEmail" class="text-success"> Sent Email! </div>
+            </div>
+
+            <!-- LOAD SPINNER -->
+            <div ng-show="logVm.isLoading" class="text-center">
+                <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
+            </div>
+
+            <!-- LOGIN BTN AND LINKS -->
+            <div ng-show="!logVm.isLoading">
+                <button class="btn btn-sm btn-round btn-primary"
+                        ng-disabled="logVm.logForm.password.$invalid || logVm.isLoading"
+                        ng-click="logVm.login()">
+                    Let's go
+                </button>
+
+                <div class="form-group login-group-checkbox">
+                    <label for="remember"> Remember Me </label>
+                    <input id="remember"
+                           name="remember"
+                           type="checkbox"
+                           ng-model="logVm.rememberMe" />
+                </div>
+
+                <div>
+                    <div class="col-xs-6">
+                        <a href="" ng-click="logVm.forgotPassword()">Forgot Password?</a>
+                    </div>
+                    <div class="col-xs-6">
+                        <a href="" ng-click="logVm.signUp()">Don't have an account?</a>
+                    </div>
+
+                    <div class="text-center">
+                        <h5 style="font-size:small; font-family:'Trebuchet MS'">Log In With...</h5>
+                        <div class="row">
+                            <a href=""
+                               facebook-sign-in
+                               app-id="logVm.facebookAppId"
+                               signin-succes="logVm.facebookSignInOnSuccess(user)">
+                                <img src="/assets/svg/facebook.svg" class="icon-xs" />
+                            </a>
+                            <a href=""
+                               google-sign-in
+                               client-id="logVm.googleClientId"
+                               signin-success="logVm.googleSignInOnSuccess(user)">
+                                <img src="/assets/svg/google.svg" class="icon-xs" />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" ng-if="logVm.registered">
+        <div class="card-content text-center">
+            <div>Registation Email has been sent...</div>
+            <div>Validate Email to be able to login!</div>
+        </div>
+    </div>
+
+</form>

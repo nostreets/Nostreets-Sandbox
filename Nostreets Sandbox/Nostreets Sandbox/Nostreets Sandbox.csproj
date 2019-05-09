@@ -2901,6 +2901,7 @@
     <Content Include="Scripts\shared\templates\modals\userDashboard.html" />
     <Content Include="assets\partials\darkOrbitSpinner.html" />
     <Content Include="assets\partials\overlayHtml.html" />
+    <Content Include="Scripts\shared\templates\userEntry.html" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

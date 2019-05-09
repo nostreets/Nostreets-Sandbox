@@ -20,6 +20,8 @@ namespace Nostreets_Services.Classes.Domain.Users
         [Required, MinLength(12)]
         public string Password { get; set; }
 
+        public string AvatarUrl { get; set; }
+
         public DateTime? DateCreated { get; set; } = DateTime.Now;
 
         public DateTime? DateModified { get; set; } = DateTime.Now;
@@ -52,6 +54,7 @@ namespace Nostreets_Services.Classes.Domain.Users
         public bool HasVaildatedEmail { get; set; } = false;
         public bool HasVaildatedPhone { get; set; } = false;
         public bool ValidateIPBeforeLogin { get; set; } = false;
+
     }
 
     public class Contact : DBObject
@@ -114,8 +117,8 @@ namespace Nostreets_Services.Classes.Domain.Users
         public List<string> IPAddresses { get; set; }
     }
 
-    public class LogInResponse {
-
+    public class LogInResponse 
+    {
         public State State { get; set; }
         public string Message { get; set; }
         public User User { get; set; }

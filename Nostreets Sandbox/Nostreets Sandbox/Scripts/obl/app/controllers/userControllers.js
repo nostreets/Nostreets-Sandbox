@@ -1,6 +1,6 @@
 ﻿(function () {
     angular.module(page.APPNAME)
-        .controller("userController", userController)
+        .controller("userDashboardController", userController)
 
 
     userController.$inject = ["$scope", "$baseController"];
@@ -18,8 +18,11 @@
         }
 
         function _setUp() {
+
             vm.sliderOptions = page.sliderOptions;
             vm.windowWidth = page.utilities.getDeviceWidth();
+            vm.isLoggedIn = page.isLoggedIn;
+
         }
 
         function _handlers() {

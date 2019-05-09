@@ -42,9 +42,9 @@ namespace Nostreets_Sandbox.Controllers.Api
             _userSrv = _userSrv.WindsorResolve(container);
             _billSrv = _billSrv.WindsorResolve(container);
             _errorLog = _errorLog.WindsorResolve(container);
-            _errorLog = _errorLog.WindsorResolve(container);
+            _delevopProductSrv = _delevopProductSrv.WindsorResolve(container);
 
-            _oblLibrary = new OBL_Endpoints(Request, ModelState);
+            _oblEndpoints = new Endpoints(_emailSrv, _userSrv);
         }
 
         private IBillService _billSrv = null;
@@ -54,15 +54,15 @@ namespace Nostreets_Sandbox.Controllers.Api
         private IDBService<StyledCard, int> _cardSrv = null;
         private IDBService<WebRequestError, int> _errorLog = null;
         private IDBService<ProductDevelopment, int> _delevopProductSrv = null;
-        private OBL_Endpoints _oblLibrary = null;
+        private Endpoints _oblEndpoints = null;
 
         #region Private Members
 
-        private HttpResponseMessage ErrorResponse(Exception ex, string userId = null)
+        private HttpResponseMessage ErrorResponse(Exception ex)
         {
             _errorLog.Insert(new WebRequestError(Request, ex)
             {
-                UserId = userId
+                UserId = _userSrv.SessionUser?.Id
             });
             return Request.CreateResponse(HttpStatusCode.InternalServerError, new ErrorResponse(ex));
         }
@@ -82,69 +82,166 @@ namespace Nostreets_Sandbox.Controllers.Api
         #region User Service Endpoints
 
         [HttpGet, Route("checkEmail")]
-        public  HttpResponseMessage CheckIfEmailExist(string email)
+        public HttpResponseMessage CheckIfEmailExist(string email)
         {
-            return _oblLibrary.CheckIfEmailExist(email);
+            try
+            {
+                ItemResponse<bool> response = _oblEndpoints.CheckIfEmailExist(email);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
         }
 
         [HttpGet, Route("checkUsername")]
-        public  HttpResponseMessage CheckIfUsernameExist(string username)
+        public HttpResponseMessage CheckIfUsernameExist(string username)
         {
-            return _oblLibrary.CheckIfUsernameExist(username);
+            try
+            {
+                ItemResponse<bool> response = _oblEndpoints.CheckIfUsernameExist(username);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
         }
 
         [HttpGet, Route("user/forgotPassword")]
-        public  HttpResponseMessage ForgotPasswordEmail(string username)
+        public HttpResponseMessage ForgotPasswordEmail(string username)
         {
-            return _oblLibrary.ForgotPasswordEmail(username);
+            try
+            {
+                SuccessResponse response = _oblEndpoints.ForgotPasswordEmail(username);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
         }
 
         [HttpGet, Route("user/session"), Intercept("LoggedIn")]
-        public  HttpResponseMessage GetSessionUser()
+        public HttpResponseMessage GetSessionUser()
         {
-            return _oblLibrary.GetSessionUser();
+            try
+            {
+                ItemResponse<User> response = _oblEndpoints.GetSessionUser();
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
         }
 
         [HttpPost, Route("login")]
-        public  async Task<HttpResponseMessage> LogInUserAsync(NamePasswordPair request, bool rememberDevice = false)
+        public async Task<HttpResponseMessage> LogInUserAsync(NamePasswordPair request, bool rememberDevice = false)
         {
-            return await _oblLibrary.LogInUserAsync(request, rememberDevice);
+            try
+            {
+                BaseResponse response = null;
+                LogInResponse result = await _oblEndpoints.LogInUserAsync(request, rememberDevice);
+
+                if (result.Message == null)
+                    response = new ItemResponse<User>(result.User);
+                else
+                    response = new ItemResponse<string>(result.Message);
+
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
         }
 
         [HttpGet, Route("logout")]
-        public  HttpResponseMessage LogOutUser()
+        public HttpResponseMessage LogOutUser()
         {
-            return _oblLibrary.LogOutUser();
+            try
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, _oblEndpoints.LogOutUser());
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
         }
 
         [HttpPost, Route("register")]
-        public  async Task<HttpResponseMessage> RegisterAsync(User user)
+        public async Task<HttpResponseMessage> RegisterAsync(User user)
         {
-            return await _oblLibrary.RegisterAsync(user);
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    ItemResponse<string> response = await _oblEndpoints.RegisterAsync(user);
+                    return Request.CreateResponse(HttpStatusCode.OK, response);
+                }
+                else
+                    throw new Exception("user is invalid...");
+
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
         }
 
         [HttpGet, Route("user/resendValidationEmail")]
-        public  HttpResponseMessage ResendValidationEmail(string username)
+        public HttpResponseMessage ResendValidationEmail(string username)
         {
-            return _oblLibrary.ResendValidationEmail(username);
+            try
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, _oblEndpoints.ResendValidationEmail(username));
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
         }
 
         [HttpPut, Route("user"), Intercept("LoggedIn")]
-        public  HttpResponseMessage UpdateUser(User user)
+        public HttpResponseMessage UpdateUser(User user)
         {
-            return _oblLibrary.UpdateUser(user);
+            try
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, _oblEndpoints.UpdateUser(user));
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
         }
 
         [HttpGet, Route("user/validatePassword"), Intercept("LoggedIn")]
-        public  HttpResponseMessage ValidatePassword(string password)
+        public HttpResponseMessage ValidatePassword(string password)
         {
-            return _oblLibrary.ValidatePassword(password);
+            try
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, _oblEndpoints.ValidatePassword(password));
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
         }
 
         [HttpGet, Route("user/tfauth")]
-        public  HttpResponseMessage ValidateTFAuthCode(string id, string code)
+        public HttpResponseMessage ValidateTFAuthCode(string id, string code)
         {
-            return _oblLibrary.ValidateTFAuthCode(id, code);
+            try
+            {
+                ItemResponse<User> response = _oblEndpoints.ValidateTFAuthCode(id, code);
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
         }
 
         #endregion User Service Endpoints
@@ -357,7 +454,9 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpPut, Intercept("LoggedIn"), Route("bill/expenses")]
+        [Intercept("LoggedIn")]
+        [Route("bill/expenses")]
+        [HttpPut]
         public HttpResponseMessage UpdateExpense(Expense expense)
         {
             try
@@ -383,7 +482,9 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpPut, Route("bill/income"), Intercept("LoggedIn")]
+        [Intercept("LoggedIn")]
+        [Route("bill/income")]
+        [HttpPut]
         public HttpResponseMessage UpdateIncome(Income income)
         {
             try
@@ -760,9 +861,10 @@ namespace Nostreets_Sandbox.Controllers.Api
 
         #endregion Chart Service Endpoints
 
-        #region Product Delevopment Endpoints
+        #region Product Development Endpoints
 
-        [HttpPost, Route("productDevelopment")]
+        [Route("productDevelopment")]
+        [HttpPost]
         public HttpResponseMessage InsertProductDevelopmentRequest(DelevopProductRequest request)
         {
             try
@@ -788,7 +890,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        #endregion Product Delevopment Endpoints
+        #endregion Product Development Endpoints
 
         #region Other Endpoints
 
@@ -828,7 +930,14 @@ namespace Nostreets_Sandbox.Controllers.Api
         [HttpGet, Route("config/enums/{enumString}")]
         public HttpResponseMessage GetEnums(string enumString)
         {
-            return _oblLibrary.GetEnums(enumString);
+            try
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, _oblEndpoints.GetEnums(enumString));
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
         }
 
         [HttpGet, Route("config/site"), Intercept("LoggedIn")]
@@ -853,7 +962,14 @@ namespace Nostreets_Sandbox.Controllers.Api
         [HttpPost, Route("send/email")]
         public async Task<HttpResponseMessage> SendEmail(Dictionary<string, string> emailRequest)
         {
-            return await _oblLibrary.SendEmail(emailRequest);
+            try
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, _oblEndpoints.SendEmail(emailRequest));
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
         }
 
         #endregion Other Endpoints
