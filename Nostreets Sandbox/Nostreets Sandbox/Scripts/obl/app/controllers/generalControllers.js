@@ -129,6 +129,18 @@
                         "instagram": "https://www.instagram.com/obl.hovlito/",
                         "youtube": "https://www.youtube.com/"
                     }
+                },
+                kandon: {
+                    "id": "#kandonCard",
+                    "color": "Orange",
+                    "name": "Kandon",
+                    "title": "CEO",
+                    "desc": "...",
+                    "imgUrl": "/assets/img/kandon.1.jpg",
+                    "socials": {
+                        "instagram": "https://www.instagram.com/obl.melodx/",
+                        "youtube": "https://www.youtube.com/"
+                    }
                 }
             };
 
@@ -164,7 +176,7 @@
                 songs: [
                     {
                         title: "WWRED. - What You Need",
-                        musicPath: "/assets/mp3/What You Need (prod. WWRED.).mp3",
+                        musicPath: "/assets/audio/What You Need (prod. WWRED.).mp3",
                         imgPath: "/assets/img/wwred.1.jpg",
                         spotify: "https://open.spotify.com/artist/0FLx6NTV9fZcOWK7UOrv2V",
                         soundcloud: "https://soundcloud.com/wwred/what-you-need-prod-wwred",
@@ -172,11 +184,19 @@
                     },
                     {
                         title: "WWRED. - T.H.U.G.L.I.F.E.",
-                        musicPath: "/assets/mp3/T.H.U.G.L.I.F.E. (short) (prod. WWRED.).mp3",
+                        musicPath: "/assets/audio/T.H.U.G.L.I.F.E. (short) (prod. WWRED.).mp3",
                         imgPath: "/assets/img/wwred.2.jpg",
                         spotify: "https://open.spotify.com/artist/0FLx6NTV9fZcOWK7UOrv2V",
                         soundcloud: "https://soundcloud.com/wwred/thuglife-prod-wwred",
                         youtube: "https://www.youtube.com/watch?v=DqJr7eypBs0&list=OLAK5uy_n3rPTZ61Nnz3PtoB62v7HrtCzwjm0i9Sc"
+                    },
+                    {
+                        title: "WWRED. - Løve!",
+                        musicPath: "/assets/audio/Løve! (prod. WWRED.).wav",
+                        imgPath: "/assets/img/wwred.3.jpg",
+                        spotify: "https://open.spotify.com/artist/0FLx6NTV9fZcOWK7UOrv2V",
+                        soundcloud: "https://soundcloud.com/wwred/love-prod-wwred",
+                        youtube: "https://www.youtube.com/watch?v=A6JucX95DSQ"
                     }
                 ]
             };

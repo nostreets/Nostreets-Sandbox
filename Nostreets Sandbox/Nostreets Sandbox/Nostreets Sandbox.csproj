@@ -288,6 +288,7 @@
     <Content Include="assets\emails\TFAuthEmail.html" />
     <Content Include="assets\img\hov.1.PNG" />
     <Content Include="assets\img\apparel.1.png" />
+    <Content Include="assets\img\kandon.1.jpg" />
     <Content Include="assets\img\music.1.jpg" />
     <Content Include="assets\img\rediet.3.JPG" />
     <Content Include="assets\img\wwred.2.jpg" />
@@ -306,6 +307,7 @@
     <Content Include="assets\img\facebook%402x.png" />
     <Content Include="assets\img\googleplus%402x.png" />
     <Content Include="assets\img\twitter%402x.png" />
+    <Content Include="assets\img\wwred.3.jpg" />
     <Content Include="assets\js\angular-fullpage.js" />
     <Content Include="assets\js\angular-soundmanager2.js" />
     <Content Include="assets\js\autotrack.js" />
@@ -320,9 +322,9 @@
     <Content Include="assets\js\musicPlayerConfig.js" />
     <Content Include="assets\js\renderOBLParticles.js" />
     <Content Include="assets\js\scrolloverflow.js" />
-    <Content Include="assets\mp3\bensound-relaxing.mp3" />
-    <Content Include="assets\mp3\T.H.U.G.L.I.F.E. %28short%29 %28prod. WWRED.%29.mp3" />
-    <Content Include="assets\mp3\What You Need %28prod. WWRED.%29.mp3" />
+    <Content Include="assets\audio\bensound-relaxing.mp3" />
+    <Content Include="assets\audio\T.H.U.G.L.I.F.E. %28short%29 %28prod. WWRED.%29.mp3" />
+    <Content Include="assets\audio\What You Need %28prod. WWRED.%29.mp3" />
     <Content Include="assets\partials\musicPlayer.html" />
     <Content Include="fonts\fa-brands-400.svg" />
     <Content Include="fonts\fa-regular-400.svg" />
