@@ -286,6 +286,7 @@
     <Content Include="assets\emails\NewPasswordEmail.html" />
     <Content Include="assets\emails\ShipingNotice.html" />
     <Content Include="assets\emails\TFAuthEmail.html" />
+    <Content Include="assets\img\video.1.png" />
     <Content Include="assets\img\hov.1.PNG" />
     <Content Include="assets\img\apparel.1.png" />
     <Content Include="assets\img\kandon.1.jpg" />
