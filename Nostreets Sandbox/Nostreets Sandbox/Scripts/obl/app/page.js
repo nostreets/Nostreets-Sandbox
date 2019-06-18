@@ -18,15 +18,15 @@ page.sliderOptions = {
     slidesNavigation: true,
     slidesNavPosition: 'bottom',
     lockAnchors: true,
-    scrollBar: true,
+    scrollBar: false,
 
     //Scrolling
-    css3: false,
-    scrollingSpeed: 500,
+    css3: true,
+    scrollingSpeed: 800,
     autoScrolling: true,
     fitToSection: true,
-    loopBottom: true,
-    loopTop: true,
+    loopBottom: false,
+    loopTop: false,
     touchSensitivity: 15,
     normalScrollElementTouchThreshold: 5,
 

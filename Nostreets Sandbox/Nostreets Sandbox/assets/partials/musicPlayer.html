@@ -630,19 +630,29 @@
 </div>
 
 <div id="song-list" class="row margin-t-50p hide">
+    
     <div class="col-sm-4 col-xs-10">
         <div class="card song-card">
             <div class="row">
-                <div class="col-sm-2 col-sm-push-0 col-xs-6 col-xs-push-3">
+
+                <div class="col-sm-2 col-sm-push-0 
+                            col-xs-6 col-xs-push-3">
                     <img class="songImg" src="{imgSrc}" alt="Card image">
                 </div>
+
                 <div class="col-sm-8 col-xs-12 text-center" style="margin-top: 3%;">
                     <span class="songTitle"> {title} </span>
                 </div>
-                <div class="col-sm-2 col-sm-push-3 col-xs-8 col-xs-push-5" style="margin: 0% 0% 2% 2%;">
+
+                <div class="col-sm-2 col-sm-push-3 
+                            col-xs-8 col-xs-push-5" 
+                     style="margin: 0% 0% 2% 2%;">
                     <button class="playPauseButton btn btn-xs" data-music="{musicPath}">▶</button>
                 </div>
-                <div class="col-sm-8 col-sm-push-0 col-xs-10 col-xs-push-1 song-links text-center hide">
+
+                <div class="song-links text-center hide
+                     col-sm-8 col-sm-push-0 
+                     col-xs-10 col-xs-push-1">
                     <hr class="style5" />
                     <a href="{spotifyUrl}" target="_spotify">
                         <i class="fab fa-3x fa-spotify"
@@ -660,7 +670,9 @@
                                     color: #FF5B00;"></i>
                     </a>
                 </div>
+
             </div>
+
         </div>
     </div>
 </div>

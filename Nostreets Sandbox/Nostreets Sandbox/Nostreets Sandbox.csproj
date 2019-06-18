@@ -18,7 +18,7 @@
     <AssemblyName>Nostreets Sandbox</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
-    <UseIISExpress>true</UseIISExpress>
+    <UseIISExpress>false</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -286,7 +286,7 @@
     <Content Include="assets\emails\NewPasswordEmail.html" />
     <Content Include="assets\emails\ShipingNotice.html" />
     <Content Include="assets\emails\TFAuthEmail.html" />
-    <Content Include="assets\img\video.1.png" />
+    <Content Include="assets\img\video.1.jpg" />
     <Content Include="assets\img\hov.1.PNG" />
     <Content Include="assets\img\apparel.1.png" />
     <Content Include="assets\img\kandon.1.jpg" />
@@ -3457,11 +3457,11 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>False</UseIIS>
+          <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>52329</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:52329/</IISUrl>
+          <IISUrl>http://localhost:1111</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
