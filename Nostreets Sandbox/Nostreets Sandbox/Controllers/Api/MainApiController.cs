@@ -44,7 +44,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             _errorLog = _errorLog.WindsorResolve(container);
             _delevopProductSrv = _delevopProductSrv.WindsorResolve(container);
 
-            _oblEndpoints = new Endpoints(_emailSrv, _userSrv);
+            _oblEndpoints = new OblEndpoints(_emailSrv, _userSrv);
         }
 
         private IBillService _billSrv = null;
@@ -54,7 +54,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         private IDBService<StyledCard, int> _cardSrv = null;
         private IDBService<WebRequestError, int> _errorLog = null;
         private IDBService<ProductDevelopment, int> _delevopProductSrv = null;
-        private Endpoints _oblEndpoints = null;
+        private OblEndpoints _oblEndpoints = null;
 
         #region Private Members
 
