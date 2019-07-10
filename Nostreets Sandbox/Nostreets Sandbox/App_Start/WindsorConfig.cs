@@ -21,7 +21,7 @@ using NostreetsExtensions.Interfaces;
 using NostreetsExtensions.Utilities;
 
 using NostreetsORM;
-
+using OBL_Website.Interfaces;
 using OBL_Website.Services.Database;
 
 using System.Collections.Generic;
@@ -118,6 +118,14 @@ namespace Nostreets_Sandbox.App_Start
                          param["apiKey"] = ConfigKeys.ShopifyApiKey;
                          param["userSrv"] = k.Resolve<IUserService>();
                          param["errorLog"] = k.Resolve<IDBService<WebRequestError>>();
+                     }),
+                   Reg.Component.For<IOBLService>().ImplementedBy<OBLService>().LifestyleSingleton()
+                     .DependsOn((k, param) =>
+                     {
+                         param["financialContributionSrv"] = k.Resolve<IDBService<>>();
+                         param["timeContributionSrv"] = k.Resolve<IDBService<>>();
+                         param["assetContributionSrv"] = k.Resolve<IDBService<>>();
+                         param["deductionSrv"] = k.Resolve<IDBService<>>();
                      })
              );
         }
