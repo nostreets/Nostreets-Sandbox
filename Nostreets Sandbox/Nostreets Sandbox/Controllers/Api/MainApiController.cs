@@ -9,21 +9,27 @@ using Nostreets_Services.Classes.Domain.Web;
 using Nostreets_Services.Enums;
 using Nostreets_Services.Interfaces.Services;
 using Nostreets_Services.Models.Request;
-
+using NostreetsExtensions.DataControl.Classes;
+using NostreetsExtensions.DataControl.Enums;
+using NostreetsExtensions.Extend.Basic;
 using NostreetsExtensions.Extend.IOC;
 using NostreetsExtensions.Extend.Web;
 using NostreetsExtensions.Interfaces;
-
+using NostreetsExtensions.Utilities;
 using NostreetsInterceptor;
 
 using NostreetsRouter.Models.Responses;
-using OBL_Website.Controllers.Api;
+using OBL_Website.Classes.Domain;
+using OBL_Website.Interfaces;
+using OBL_Website.Models.Request;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
@@ -43,10 +49,10 @@ namespace Nostreets_Sandbox.Controllers.Api
             _billSrv = _billSrv.WindsorResolve(container);
             _errorLog = _errorLog.WindsorResolve(container);
             _delevopProductSrv = _delevopProductSrv.WindsorResolve(container);
-
-            _oblEndpoints = new OblEndpoints(_emailSrv, _userSrv);
+            _oblBoardSrv = _oblBoardSrv.WindsorResolve(container);
         }
 
+        private IOBLBoardService _oblBoardSrv = null;// _oblSrv.WindsorResolve(container);
         private IBillService _billSrv = null;
         private IChartService _chartsSrv = null;
         private IEmailService _emailSrv = null;
@@ -54,9 +60,27 @@ namespace Nostreets_Sandbox.Controllers.Api
         private IDBService<StyledCard, int> _cardSrv = null;
         private IDBService<WebRequestError, int> _errorLog = null;
         private IDBService<ProductDevelopment, int> _delevopProductSrv = null;
-        private OblEndpoints _oblEndpoints = null;
 
         #region Private Members
+        private bool IsOnDemendPrintingEmail(string strippedHtml)
+        {
+            bool result = false;
+            Regex printfulOrderMatch = new Regex(@"(Your Order #)\d\d\d\d...............(has been sent out!)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            Regex artOfWhereOrderMatch = new Regex(@"(Your order #)(\d|[a-z])(\d|[a-z])(\d|[a-z])(\d|[a-z])(\d|[a-z])( is shipped!)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            Regex[] regices = new[] {
+                printfulOrderMatch,
+                artOfWhereOrderMatch
+            };
+
+            foreach (Regex regex in regices)
+            {
+                result = regex.IsMatch(strippedHtml);
+                if (result)
+                    break;
+            }
+
+            return result;
+        }
 
         private HttpResponseMessage ErrorResponse(Exception ex)
         {
@@ -81,13 +105,14 @@ namespace Nostreets_Sandbox.Controllers.Api
 
         #region User Service Endpoints
 
-        [HttpGet, Route("checkEmail")]
+        [Route("checkEmail")]
+        [HttpGet]
         public HttpResponseMessage CheckIfEmailExist(string email)
         {
             try
             {
-                ItemResponse<bool> response = _oblEndpoints.CheckIfEmailExist(email);
-                return Request.CreateResponse(HttpStatusCode.OK, response);
+                bool result = _userSrv.CheckIfEmailExist(email);
+                return Request.CreateResponse(HttpStatusCode.OK, new ItemResponse<bool>(result));
             }
             catch (Exception ex)
             {
@@ -95,13 +120,14 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpGet, Route("checkUsername")]
+        [Route("checkUsername")]
+        [HttpGet]
         public HttpResponseMessage CheckIfUsernameExist(string username)
         {
             try
             {
-                ItemResponse<bool> response = _oblEndpoints.CheckIfUsernameExist(username);
-                return Request.CreateResponse(HttpStatusCode.OK, response);
+                bool result = _userSrv.CheckIfUsernameExist(username);
+                return Request.CreateResponse(HttpStatusCode.OK, new ItemResponse<bool>(result));
             }
             catch (Exception ex)
             {
@@ -109,13 +135,14 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpGet, Route("user/forgotPassword")]
+        [Route("user/forgotPassword")]
+        [HttpGet]
         public HttpResponseMessage ForgotPasswordEmail(string username)
         {
             try
             {
-                SuccessResponse response = _oblEndpoints.ForgotPasswordEmail(username);
-                return Request.CreateResponse(HttpStatusCode.OK, response);
+                _userSrv.ForgotPasswordEmailAsync(username);
+                return Request.CreateResponse(HttpStatusCode.OK, new SuccessResponse());
             }
             catch (Exception ex)
             {
@@ -123,13 +150,17 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpGet, Route("user/session"), Intercept("LoggedIn")]
+        [Intercept("IsLoggedIn")]
+        [Route("user/session")]
+        [HttpGet]
         public HttpResponseMessage GetSessionUser()
         {
             try
             {
-                ItemResponse<User> response = _oblEndpoints.GetSessionUser();
-                return Request.CreateResponse(HttpStatusCode.OK, response);
+                if (_userSrv.SessionUser == null)
+                    throw new Exception("Session is has not started...");
+
+                return Request.CreateResponse(HttpStatusCode.OK, new ItemResponse<User>(_userSrv.SessionUser));
             }
             catch (Exception ex)
             {
@@ -137,13 +168,14 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpPost, Route("login")]
+        [Route("login")]
+        [HttpPost]
         public async Task<HttpResponseMessage> LogInUserAsync(NamePasswordPair request, bool rememberDevice = false)
         {
             try
             {
                 BaseResponse response = null;
-                LogInResponse result = await _oblEndpoints.LogInUserAsync(request, rememberDevice);
+                LogInResponse result = await _userSrv.LogInAsync(request, rememberDevice);
 
                 if (result.Message == null)
                     response = new ItemResponse<User>(result.User);
@@ -163,7 +195,8 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-                return Request.CreateResponse(HttpStatusCode.OK, _oblEndpoints.LogOutUser());
+                _userSrv.LogOut();
+                return Request.CreateResponse(HttpStatusCode.OK, new SuccessResponse());
             }
             catch (Exception ex)
             {
@@ -171,15 +204,16 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpPost, Route("register")]
+        [Route("register")]
+        [HttpPost]
         public async Task<HttpResponseMessage> RegisterAsync(User user)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    ItemResponse<string> response = await _oblEndpoints.RegisterAsync(user);
-                    return Request.CreateResponse(HttpStatusCode.OK, response);
+                    string id = await _userSrv.RegisterAsync(user);
+                    return Request.CreateResponse(HttpStatusCode.OK, new ItemResponse<string>(id));
                 }
                 else
                     throw new Exception("user is invalid...");
@@ -191,12 +225,15 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpGet, Route("user/resendValidationEmail")]
+        [Route("user/resendValidationEmail")]
+        [HttpGet]
         public HttpResponseMessage ResendValidationEmail(string username)
         {
             try
             {
-                return Request.CreateResponse(HttpStatusCode.OK, _oblEndpoints.ResendValidationEmail(username));
+                _userSrv.ResendValidationEmailAsync(username);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new SuccessResponse());
             }
             catch (Exception ex)
             {
@@ -204,12 +241,20 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpPut, Route("user"), Intercept("LoggedIn")]
+        [Intercept("IsLoggedIn")]
+        [Route("user")]
+        [HttpPut]
         public HttpResponseMessage UpdateUser(User user)
         {
             try
             {
-                return Request.CreateResponse(HttpStatusCode.OK, _oblEndpoints.UpdateUser(user));
+                if (user.Id != _userSrv.SessionUser.Id)
+                    throw new Exception("Targeted user is not the current user...");
+
+                else
+                    _userSrv.UpdateUser(user, true);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new SuccessResponse());
             }
             catch (Exception ex)
             {
@@ -217,12 +262,17 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpGet, Route("user/validatePassword"), Intercept("LoggedIn")]
+        [Intercept("IsLoggedIn")]
+        [Route("user/validatePassword")]
+        [HttpGet]
         public HttpResponseMessage ValidatePassword(string password)
         {
             try
             {
-                return Request.CreateResponse(HttpStatusCode.OK, _oblEndpoints.ValidatePassword(password));
+                if (!_userSrv.ValidatePassword(_userSrv.SessionUser.Password, password))
+                    throw new Exception("Password is invalid...");
+
+                return Request.CreateResponse(HttpStatusCode.OK, new SuccessResponse());
             }
             catch (Exception ex)
             {
@@ -230,13 +280,18 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpGet, Route("user/tfauth")]
+        [Route("user/tfauth")]
+        [HttpGet]
         public HttpResponseMessage ValidateTFAuthCode(string id, string code)
         {
             try
             {
-                ItemResponse<User> response = _oblEndpoints.ValidateTFAuthCode(id, code);
-                return Request.CreateResponse(HttpStatusCode.OK, response);
+                Token token = _userSrv.ValidateToken(new TokenRequest { TokenId = id, Code = code }, out State state, out string o);
+
+                if (!token.IsValidated)
+                    throw new Exception("Code is invalid...");
+
+                return Request.CreateResponse(HttpStatusCode.OK, new ItemResponse<User>(_userSrv.SessionUser));
             }
             catch (Exception ex)
             {
@@ -248,7 +303,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
         #region Bill Service Endpoints
 
-        [HttpDelete, Intercept("LoggedIn"), Route("bill/expenses/{id:int}")]
+        [HttpDelete, Intercept("IsLoggedIn"), Route("bill/expenses/{id:int}")]
         public HttpResponseMessage DeleteExpense(int id)
         {
             try
@@ -263,7 +318,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpDelete, Intercept("LoggedIn"), Route("bill/income/{id:int}")]
+        [HttpDelete, Intercept("IsLoggedIn"), Route("bill/income/{id:int}")]
         public HttpResponseMessage DeleteIncome(int id)
         {
             try
@@ -278,7 +333,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpGet, Route("bill/expenses/all"), Intercept("LoggedIn")]
+        [HttpGet, Route("bill/expenses/all"), Intercept("IsLoggedIn")]
         public HttpResponseMessage GetAllExpenses()
         {
             try
@@ -294,7 +349,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpGet, Route("bill/income/all"), Intercept("LoggedIn")]
+        [HttpGet, Route("bill/income/all"), Intercept("IsLoggedIn")]
         public HttpResponseMessage GetAllIncome()
         {
             try
@@ -310,7 +365,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpGet, Route("bill/combined/chart"), Intercept("LoggedIn")]
+        [HttpGet, Route("bill/combined/chart"), Intercept("IsLoggedIn")]
         public HttpResponseMessage GetCombinedChart(DateTime? startDate = null
                                                     , DateTime? endDate = null
                                                     , ScheduleTypes chartSchedule = ScheduleTypes.Any)
@@ -328,7 +383,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpGet, Route("bill/expenses"), Intercept("LoggedIn")]
+        [HttpGet, Route("bill/expenses"), Intercept("IsLoggedIn")]
         public HttpResponseMessage GetExpense(int id = 0
                                             , string name = null
                                             , ScheduleTypes scheduleType = ScheduleTypes.Any
@@ -347,7 +402,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpGet, Route("bill/expenses/chart"), Intercept("LoggedIn")]
+        [HttpGet, Route("bill/expenses/chart"), Intercept("IsLoggedIn")]
         public HttpResponseMessage GetExpensesChart(DateTime? startDate = null
                                                     , DateTime? endDate = null
                                                     , ScheduleTypes chartSchedule = ScheduleTypes.Any)
@@ -365,7 +420,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpGet, Route("bill/income"), Intercept("LoggedIn")]
+        [HttpGet, Route("bill/income"), Intercept("IsLoggedIn")]
         public HttpResponseMessage GetIncome(int id = 0
                                             , string name = null
                                             , ScheduleTypes scheduleType = ScheduleTypes.Any
@@ -384,7 +439,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpGet, Route("bill/income/chart"), Intercept("LoggedIn")]
+        [HttpGet, Route("bill/income/chart"), Intercept("IsLoggedIn")]
         public HttpResponseMessage GetIncomeChart(DateTime? startDate = null
                                                    , DateTime? endDate = null
                                                    , ScheduleTypes chartSchedule = ScheduleTypes.Any)
@@ -402,7 +457,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpPost, Route("bill/expenses"), Intercept("LoggedIn")]
+        [HttpPost, Route("bill/expenses"), Intercept("IsLoggedIn")]
         public HttpResponseMessage InsertExpense(Expense expense)
         {
             try
@@ -429,7 +484,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpPost, Route("bill/income"), Intercept("LoggedIn")]
+        [HttpPost, Route("bill/income"), Intercept("IsLoggedIn")]
         public HttpResponseMessage InsertIncome(Income income)
         {
             try
@@ -454,7 +509,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("LoggedIn")]
+        [Intercept("IsLoggedIn")]
         [Route("bill/expenses")]
         [HttpPut]
         public HttpResponseMessage UpdateExpense(Expense expense)
@@ -482,7 +537,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("LoggedIn")]
+        [Intercept("IsLoggedIn")]
         [Route("bill/income")]
         [HttpPut]
         public HttpResponseMessage UpdateIncome(Income income)
@@ -514,7 +569,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
         #region Card Service Endpoints
 
-        [Intercept("LoggedIn")]
+        [Intercept("IsLoggedIn")]
         [Route("cards/delete/{id:int}")]
         [HttpDelete]
         public HttpResponseMessage DeleteCard(int id)
@@ -531,7 +586,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("LoggedIn")]
+        [Intercept("IsLoggedIn")]
         [Route("cards/user")]
         [HttpGet]
         public HttpResponseMessage GetAllCardsByUser()
@@ -548,7 +603,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("LoggedIn")]
+        [Intercept("IsLoggedIn")]
         [Route("cards/{id:int}")]
         [HttpGet]
         public HttpResponseMessage GetCard(int id)
@@ -565,7 +620,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("LoggedIn")]
+        [Intercept("IsLoggedIn")]
         [Route("cards")]
         [HttpPost]
         public HttpResponseMessage InsertCard(StyledCard model)
@@ -593,7 +648,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("LoggedIn")]
+        [Intercept("IsLoggedIn")]
         [Route("cards")]
         [HttpPut]
         public HttpResponseMessage UpdateCard(StyledCard model)
@@ -625,7 +680,7 @@ namespace Nostreets_Sandbox.Controllers.Api
 
         #region Chart Service Endpoints
 
-        [Intercept("LoggedIn")]
+        [Intercept("IsLoggedIn")]
         [Route("charts/delete/{id:int}")]
         [HttpDelete]
         public HttpResponseMessage DeleteChart(int id)
@@ -644,7 +699,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("LoggedIn")]
+        [Intercept("IsLoggedIn")]
         [Route("charts/all")]
         [HttpGet]
         public HttpResponseMessage GetAllCharts()
@@ -661,7 +716,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("LoggedIn")]
+        [Intercept("IsLoggedIn")]
         [Route("charts/user")]
         [HttpGet]
         public HttpResponseMessage GetAllChartsByUser()
@@ -679,7 +734,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("LoggedIn")]
+        [Intercept("IsLoggedIn")]
         [Route("charts/{id:int}")]
         [HttpGet]
         public HttpResponseMessage GetChart(int id)
@@ -696,7 +751,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("LoggedIn")]
+        [Intercept("IsLoggedIn")]
         [Route("charts/int")]
         [HttpPost]
         public HttpResponseMessage InsertChart(ChartAddRequest<int> model)
@@ -737,7 +792,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("LoggedIn")]
+        [Intercept("IsLoggedIn")]
         [Route("charts/list/int")]
         [HttpPost]
         public HttpResponseMessage InsertChart(ChartAddRequest model)
@@ -781,7 +836,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("LoggedIn")]
+        [Intercept("IsLoggedIn")]
         [Route("charts/int")]
         [HttpPut]
         public HttpResponseMessage UpdateChart(ChartUpdateRequest<int> model)
@@ -820,7 +875,7 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [Intercept("LoggedIn")]
+        [Intercept("IsLoggedIn")]
         [Route("charts/list/int")]
         [HttpPut]
         public HttpResponseMessage UpdateChart(ChartUpdateRequest model)
@@ -892,9 +947,168 @@ namespace Nostreets_Sandbox.Controllers.Api
 
         #endregion Product Development Endpoints
 
-        #region Other Endpoints
+        #region OBL Endpoints
 
-        [HttpGet, Route("view/code/{fileName}")]
+        [Intercept("IsLoggedIn"), Intercept("IsBoardMember")]
+        [Route("obl/capital")]
+        [HttpGet]
+        public HttpResponseMessage CapitalOfCompany(DateTime? cutoffDate = null)
+        {
+            try
+            {
+                var result = _oblBoardSrv.GetTotalCapitalOfCompany(cutoffDate);
+                return Request.CreateResponse(HttpStatusCode.OK, new ItemsResponse<string, decimal>(result));
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
+        }
+
+
+        [Intercept("IsLoggedIn"), Intercept("IsBoardMember")]
+        [Route("obl/capital/current")]
+        [HttpGet]
+        public HttpResponseMessage CurrentMembersCapitalOfCompany(DateTime? cutoffDate = null)
+        {
+            try
+            {
+                decimal result = _oblBoardSrv.GetCurrentMemberCapitalOfCompany(_userSrv.SessionUser, cutoffDate);
+                return Request.CreateResponse(HttpStatusCode.OK, new ItemResponse<decimal>(result));
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
+        }
+
+        [Intercept("IsLoggedIn"), Intercept("IsBoardMember")]
+        [Route("obl/capital")]
+        [HttpPost]
+        public HttpResponseMessage AddContribution(ContributionRequest request)
+        {
+            try
+            {
+                bool success = true;
+                BaseResponse response = null;
+
+                switch (request.Type)
+                {
+                    case ContributionType.Time:
+                        TimeContribution timeContibution = new TimeContribution();
+                        request.MapProperties(ref timeContibution);
+                        _oblBoardSrv.AddContribution(timeContibution);
+                        break;
+
+                    case ContributionType.Financial:
+                        FinancialContribution financialContibution = new FinancialContribution();
+                        request.MapProperties(ref financialContibution);
+                        _oblBoardSrv.AddContribution(financialContibution);
+                        break;
+
+                    case ContributionType.DigitalAsset:
+                        DigitalAssetContribution assetContibution = new DigitalAssetContribution();
+                        request.MapProperties(ref assetContibution);
+                        _oblBoardSrv.AddContribution(assetContibution);
+                        break;
+
+                    case ContributionType.Deduction:
+                        CapitalDeduction deduction = new CapitalDeduction();
+                        request.MapProperties(ref deduction);
+                        _oblBoardSrv.AddContribution(deduction);
+                        break;
+
+                    default:
+                        success = false;
+                        break;
+
+                }
+
+                if (success)
+                    return Request.CreateResponse(HttpStatusCode.OK, response);
+                else
+                    throw new Exception("Adding the contribution was not successful...");
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
+        }
+
+        [Intercept("IsLoggedIn"), Intercept("IsBoardMember")]
+        [Route("obl/capital")]
+        [HttpPut]
+        public HttpResponseMessage UpdateContribution(ContributionRequest request)
+        {
+            try
+            {
+                bool success = true;
+                BaseResponse response = null;
+
+                switch (request.Type)
+                {
+                    case ContributionType.Time:
+                        TimeContribution timeContibution = new TimeContribution();
+                        request.MapProperties(ref timeContibution);
+                        _oblBoardSrv.UpdateContribution(timeContibution);
+                        break;
+
+                    case ContributionType.Financial:
+                        FinancialContribution financialContibution = new FinancialContribution();
+                        request.MapProperties(ref financialContibution);
+                        _oblBoardSrv.UpdateContribution(financialContibution);
+                        break;
+
+                    case ContributionType.DigitalAsset:
+                        DigitalAssetContribution assetContibution = new DigitalAssetContribution();
+                        request.MapProperties(ref assetContibution);
+                        _oblBoardSrv.UpdateContribution(assetContibution);
+                        break;
+
+                    case ContributionType.Deduction:
+                        CapitalDeduction deduction = new CapitalDeduction();
+                        request.MapProperties(ref deduction);
+                        _oblBoardSrv.UpdateContribution(deduction);
+                        break;
+
+                    default:
+                        success = false;
+                        break;
+
+                }
+
+                if (success)
+                    return Request.CreateResponse(HttpStatusCode.OK, response);
+                else
+                    throw new Exception("Adding the contribution was not successful...");
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
+        }
+
+
+        [Intercept("IsLoggedIn"), Intercept("IsBoardMember")]
+        [Route("obl/capital/{id:int}")]
+        [HttpDelete]
+        public HttpResponseMessage DeleteContribution(int id, ContributionType type)
+        {
+            try
+            {
+                _oblBoardSrv.DeleteContribution(id, type);
+                return Request.CreateResponse(HttpStatusCode.OK, new SuccessResponse());
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
+        }
+        #endregion OBL Endpoints
+
+        #region Other Endpoints
+        [Route("view/code/{fileName}")]
+        [HttpGet]
         public HttpResponseMessage GetCode(string fileName)
         {
             try
@@ -927,12 +1141,48 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpGet, Route("config/enums/{enumString}")]
+        [Route("config/enums/{enumString}")]
+        [HttpGet]
         public HttpResponseMessage GetEnums(string enumString)
         {
             try
             {
-                return Request.CreateResponse(HttpStatusCode.OK, _oblEndpoints.GetEnums(enumString));
+                string[] enumTypes = enumString.Split(',');
+                ItemsResponse<string, Dictionary<int, string>> response = null;
+                Dictionary<string, Dictionary<int, string>> result = new Dictionary<string, Dictionary<int, string>>();
+
+                foreach (string _enum in enumTypes)
+                {
+                    #region Parse N Search For Enum
+
+                    Type enumType = null;
+                    string _enumCamel = _enum[0].ToUpperCase().Append(_enum.Where((a, b) => b > 0).ToArray()),
+                           _enumCamelWithType = _enum[0].ToUpperCase().Append(_enum.Where((a, b) => b > 0).ToArray()) + "Type",
+                           _enumCamelWithTypePlural = _enum[0].ToUpperCase().Append(_enum.Where((a, b) => b > 0).ToArray()) + "Types";
+
+                    enumType = (Type)_enum.ScanAssembliesForObject("Nostreets", ClassTypes.Type, a => a.IsEnum);
+                    if (enumType == null)
+                        enumType = (Type)_enumCamel.ScanAssembliesForObject("Nostreets", ClassTypes.Type, a => a.IsEnum);
+                    if (enumType == null)
+                        enumType = (Type)_enumCamelWithType.ScanAssembliesForObject("Nostreets", ClassTypes.Type, a => a.IsEnum);
+                    if (enumType == null)
+                        enumType = (Type)_enumCamelWithTypePlural.ScanAssembliesForObject("Nostreets", ClassTypes.Type, a => a.IsEnum);
+
+                    #endregion Parse N Search For Enum
+
+                    if (enumType != null)
+                    {
+                        Dictionary<int, string> types = enumType.EnumToDictionary(),
+                                                safeTypes = new Dictionary<int, string>();
+
+                        foreach (var type in types)
+                            safeTypes.Add(type.Key, type.Value.SafeName());
+
+                        result.Add(_enum, types);
+                    }
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new ItemsResponse<string, Dictionary<int, string>>(result));
             }
             catch (Exception ex)
             {
@@ -940,7 +1190,9 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpGet, Route("config/site"), Intercept("LoggedIn")]
+        [Intercept("IsLoggedIn")]
+        [Route("config/site")]
+        [HttpGet]
         public HttpResponseMessage GetSite(string url)
         {
             try
@@ -959,17 +1211,63 @@ namespace Nostreets_Sandbox.Controllers.Api
             }
         }
 
-        [HttpPost, Route("send/email")]
+        [Route("send/email")]
+        [HttpPost]
         public async Task<HttpResponseMessage> SendEmail(Dictionary<string, string> emailRequest)
         {
             try
             {
-                return Request.CreateResponse(HttpStatusCode.OK, _oblEndpoints.SendEmail(emailRequest));
+                if (!emailRequest.ContainsKey("fromEmail") || !emailRequest.ContainsKey("name") || !emailRequest.ContainsKey("subject") || !emailRequest.ContainsKey("messageText"))
+                { throw new Exception("Invalid Model"); }
+                if (!emailRequest.ContainsKey("toEmail")) { emailRequest["toEmail"] = "nileoverstreet@gmail.com"; }
+                if (!emailRequest.ContainsKey("messageHtml"))
+                {
+                    string phoneNumber = (emailRequest.ContainsKey("phone") ? "Phone Number: " + emailRequest["phone"] : string.Empty);
+                    emailRequest["messageHtml"] = "<div> Email From Contact Me Page </div>"
+                                                + "<div>" + "IP: " + HttpContext.Current.GetIP4Address() + "</div>"
+                                                + "<div>" + "Name: " + emailRequest["name"] + "</div>"
+                                                + "<div>" + "Email: " + emailRequest["fromEmail"] + "</div>"
+                                                + "<div>" + phoneNumber + "</div>"
+                                                + "<div>" + "Message: " + emailRequest["messageText"] + "</div>";
+                }
+
+                if (!await _emailSrv.SendAsync(emailRequest["fromEmail"], emailRequest["toEmail"], emailRequest["subject"], emailRequest["messageText"], emailRequest["messageHtml"]))
+                    throw new Exception("Email Was Not Sent");
+
+                return Request.CreateResponse(HttpStatusCode.OK, new SuccessResponse());
             }
             catch (Exception ex)
             {
                 return ErrorResponse(ex);
             }
+        }
+
+        public HttpResponseMessage ExamineEmail(NameValueCollection form)
+        {
+            var email = new InboundEmail();
+            email.Sender = form.Get("sender");
+
+            email.FromEmail = form.Get("sender");
+            email.RecipientEmail = form.Get("recipient");
+            email.Subject = form.Get("subject");
+            email.BodyPlain = form.Get("body-plain");
+            email.StrippedText = form.Get("stripped-text");
+            email.StrippedSignature = form.Get("stripped-signature");
+            email.BodyHtml = form.Get("body-html");
+            email.StrippedHtml = form.Get("stripped-html");
+            email.AttachmentCount = form.Get("attachment-count");
+            email.TimeStamp = form.Get("timestamp");
+
+
+
+            if (IsOnDemendPrintingEmail(email.StrippedHtml))
+            {
+                //todo: Sent Email with tracking number 
+            }
+
+
+
+            return Request.CreateResponse(HttpStatusCode.OK, new SuccessResponse());
         }
 
         #endregion Other Endpoints

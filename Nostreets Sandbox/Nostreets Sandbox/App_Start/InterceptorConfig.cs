@@ -23,19 +23,26 @@ namespace Nostreets_Sandbox.App_Start
 
         #region Validators
 
-        [Validator("LoggedIn")]
-        private void LoggedIn(HttpApplication app)
+        [Validator("IsLoggedIn")]
+        private void IsLoggedIn(HttpApplication app)
         {
             if (_userSrv.SessionUser == null)
                 Not_LoggedIn(app);
         }
 
         [Validator("ValidReferer")]
-        private void ValidAPIReferer(HttpApplication app)
+        private void ValidUrlReferer(HttpApplication app)
         {
             if (app.Context.Request.UrlReferrer.ToString().Contains(ConfigKeys.ServerDomain))
                 Not_ValidAPIReferer(app);
 
+        }
+
+        [Validator("IsBoardMember")]
+        private void IsBoardMember(HttpApplication app)
+        {
+            if (!_userSrv.SessionUser.Roles.Contains("BoardMember"))
+                Not_BoardMember(app);
         }
 
         #endregion
@@ -54,6 +61,11 @@ namespace Nostreets_Sandbox.App_Start
         private void Not_ValidAPIReferer(HttpApplication app)
         {
             app.CreateResponse(HttpStatusCode.Unauthorized, new ErrorResponse("API is private..."));
+        }
+
+        private void Not_BoardMember(HttpApplication app)
+        {
+            app.CreateResponse(HttpStatusCode.Unauthorized, new ErrorResponse("User is not eligible to hit OBL endpoints..."));
         }
 
         #endregion

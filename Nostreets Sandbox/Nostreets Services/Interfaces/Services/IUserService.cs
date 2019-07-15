@@ -68,9 +68,9 @@ namespace Nostreets_Services.Interfaces.Services
 
         Token ValidateToken(TokenRequest request, out State state, out string output);
 
-        IEnumerable<User> Where(Func<User, bool> predicate);
+        IEnumerable<User> GetUsersWhere(Func<User, bool> predicate);
 
-        IEnumerable<Token> Where(Func<Token, bool> predicate);
+        IEnumerable<Token> GetTokensWhere(Func<Token, bool> predicate);
 
     }
 }

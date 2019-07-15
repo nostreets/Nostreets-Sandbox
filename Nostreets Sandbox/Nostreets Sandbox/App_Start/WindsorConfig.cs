@@ -21,6 +21,7 @@ using NostreetsExtensions.Interfaces;
 using NostreetsExtensions.Utilities;
 
 using NostreetsORM;
+using OBL_Website.Classes.Domain;
 using OBL_Website.Interfaces;
 using OBL_Website.Services.Database;
 
@@ -44,7 +45,7 @@ namespace Nostreets_Sandbox.App_Start
                    {
                        ConnectionKey = ConfigKeys.WebsiteConnectionKey,
                        ErrorLog = k.Resolve<IDBService<Error>>(),
-                       WipeDB = false,
+                       WipeDB = true,
                        NullLock = false
                    };
 
@@ -92,7 +93,7 @@ namespace Nostreets_Sandbox.App_Start
                  Reg.Component.For<IChartService>().ImplementedBy<ChartsService>().LifestyleSingleton()
                      .DependsOn((k, param) =>
                      {
-                         param["charDBtSrv"] = k.Resolve<IDBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest>>();
+                         param["chartDBSrv"] = k.Resolve<IDBService<Chart<List<int>>, int, ChartAddRequest, ChartUpdateRequest>>();
                          param["pieDBChartSrv"] = k.Resolve<IDBService<Chart<int>, int, ChartAddRequest<int>, ChartUpdateRequest<int>>>();
                      }),
 
@@ -119,13 +120,14 @@ namespace Nostreets_Sandbox.App_Start
                          param["userSrv"] = k.Resolve<IUserService>();
                          param["errorLog"] = k.Resolve<IDBService<WebRequestError>>();
                      }),
-                   Reg.Component.For<IOBLService>().ImplementedBy<OBLService>().LifestyleSingleton()
+                   Reg.Component.For<IOBLBoardService>().ImplementedBy<OBLBoardService>().LifestyleSingleton()
                      .DependsOn((k, param) =>
                      {
-                         param["financialContributionSrv"] = k.Resolve<IDBService<>>();
-                         param["timeContributionSrv"] = k.Resolve<IDBService<>>();
-                         param["assetContributionSrv"] = k.Resolve<IDBService<>>();
-                         param["deductionSrv"] = k.Resolve<IDBService<>>();
+                         param["financialContributionSrv"] = k.Resolve<IDBService<FinancialContribution>>();
+                         param["timeContributionSrv"] = k.Resolve<IDBService<TimeContribution>>();
+                         param["assetContributionSrv"] = k.Resolve<IDBService<DigitalAssetContribution>>();
+                         param["deductionSrv"] = k.Resolve<IDBService<CapitalDeduction>>();
+                         param["userSrv"] = k.Resolve<IUserService>();
                      })
              );
         }
