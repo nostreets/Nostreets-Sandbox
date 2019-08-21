@@ -45,7 +45,7 @@ namespace Nostreets_Sandbox.App_Start
                    {
                        ConnectionKey = ConfigKeys.WebsiteConnectionKey,
                        ErrorLog = k.Resolve<IDBService<Error>>(),
-                       WipeDB = true,
+                       WipeDB = false,
                        NullLock = false
                    };
 

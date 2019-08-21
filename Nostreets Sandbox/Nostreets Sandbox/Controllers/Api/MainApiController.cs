@@ -950,6 +950,22 @@ namespace Nostreets_Sandbox.Controllers.Api
         #region OBL Endpoints
 
         [Intercept("IsLoggedIn"), Intercept("IsBoardMember")]
+        [Route("obl/capital/pieChart")]
+        [HttpGet]
+        public HttpResponseMessage CapitalPieChart(DateTime? cutoffDate = null)
+        {
+            try
+            {
+                Chart<decimal> result = _oblBoardSrv.GetPieChart(cutoffDate);
+                return Request.CreateResponse(HttpStatusCode.OK, new ItemResponse<Chart<decimal>>(result));
+            }
+            catch (Exception ex)
+            {
+                return ErrorResponse(ex);
+            }
+        }
+
+        [Intercept("IsLoggedIn"), Intercept("IsBoardMember")]
         [Route("obl/capital")]
         [HttpGet]
         public HttpResponseMessage CapitalOfCompany(DateTime? cutoffDate = null)
@@ -973,7 +989,7 @@ namespace Nostreets_Sandbox.Controllers.Api
         {
             try
             {
-                decimal result = _oblBoardSrv.GetCurrentMemberCapitalOfCompany(_userSrv.SessionUser, cutoffDate);
+                decimal result = _oblBoardSrv.GetMembersCapital(_userSrv.SessionUser, cutoffDate);
                 return Request.CreateResponse(HttpStatusCode.OK, new ItemResponse<decimal>(result));
             }
             catch (Exception ex)
@@ -995,27 +1011,21 @@ namespace Nostreets_Sandbox.Controllers.Api
                 switch (request.Type)
                 {
                     case ContributionType.Time:
-                        TimeContribution timeContibution = new TimeContribution();
-                        request.MapProperties(ref timeContibution);
-                        _oblBoardSrv.AddContribution(timeContibution);
+                        //TimeContribution timeContibution = new TimeContribution();
+                        //request.MapProperties(ref timeContibution);
+                        _oblBoardSrv.AddContribution(request.ToTimeContribution());
                         break;
 
                     case ContributionType.Financial:
-                        FinancialContribution financialContibution = new FinancialContribution();
-                        request.MapProperties(ref financialContibution);
-                        _oblBoardSrv.AddContribution(financialContibution);
+                        _oblBoardSrv.AddContribution(request.ToFinancialContribution());
                         break;
 
                     case ContributionType.DigitalAsset:
-                        DigitalAssetContribution assetContibution = new DigitalAssetContribution();
-                        request.MapProperties(ref assetContibution);
-                        _oblBoardSrv.AddContribution(assetContibution);
+                        _oblBoardSrv.AddContribution(request.ToDigitalAssetContribution());
                         break;
 
                     case ContributionType.Deduction:
-                        CapitalDeduction deduction = new CapitalDeduction();
-                        request.MapProperties(ref deduction);
-                        _oblBoardSrv.AddContribution(deduction);
+                        _oblBoardSrv.AddContribution(request.ToCapitalDeduction());
                         break;
 
                     default:
