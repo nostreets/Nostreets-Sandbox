@@ -1011,21 +1011,31 @@ namespace Nostreets_Sandbox.Controllers.Api
                 switch (request.Type)
                 {
                     case ContributionType.Time:
-                        //TimeContribution timeContibution = new TimeContribution();
-                        //request.MapProperties(ref timeContibution);
-                        _oblBoardSrv.AddContribution(request.ToTimeContribution());
+                        TimeContribution timeContibution = request.ToTimeContribution();
+                        timeContibution.UserId = _userSrv.SessionUser.Id;
+                        timeContibution.ModifiedUserId = _userSrv.SessionUser.Id;
+                        _oblBoardSrv.AddContribution(timeContibution);
                         break;
 
                     case ContributionType.Financial:
-                        _oblBoardSrv.AddContribution(request.ToFinancialContribution());
+                        FinancialContribution financialContibution = request.ToFinancialContribution();
+                        financialContibution.UserId = _userSrv.SessionUser.Id;
+                        financialContibution.ModifiedUserId = _userSrv.SessionUser.Id;
+                        _oblBoardSrv.AddContribution(financialContibution);
                         break;
 
                     case ContributionType.DigitalAsset:
-                        _oblBoardSrv.AddContribution(request.ToDigitalAssetContribution());
+                        DigitalAssetContribution assetContibution = request.ToDigitalAssetContribution();
+                        assetContibution.UserId = _userSrv.SessionUser.Id;
+                        assetContibution.ModifiedUserId = _userSrv.SessionUser.Id;
+                        _oblBoardSrv.AddContribution(assetContibution);
                         break;
 
                     case ContributionType.Deduction:
-                        _oblBoardSrv.AddContribution(request.ToCapitalDeduction());
+                        CapitalDeduction deduction = request.ToCapitalDeduction();
+                        deduction.UserId = _userSrv.SessionUser.Id;
+                        deduction.ModifiedUserId = _userSrv.SessionUser.Id;
+                        _oblBoardSrv.AddContribution(deduction);
                         break;
 
                     default:
