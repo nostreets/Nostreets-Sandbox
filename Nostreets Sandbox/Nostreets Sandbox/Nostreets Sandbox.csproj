@@ -3373,25 +3373,9 @@
     <Folder Include="Scripts\obl\app\modules\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\NostreetsEntities\NostreetsEntities.csproj">
-      <Project>{BD13E863-0848-4BD3-8D9B-C14A12135734}</Project>
-      <Name>NostreetsEntities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\NostreetsExtensions\NostreetsExtensions\NostreetsExtensions.csproj">
-      <Project>{d75ef23c-2e65-4bf7-90d3-c21c73a3e9c3}</Project>
-      <Name>NostreetsExtensions</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\NostreetsInterceptor\NostreetsInterceptor\NostreetsInterceptor.csproj">
-      <Project>{9152c751-21f4-4587-ba93-dd0c139b17f7}</Project>
-      <Name>NostreetsInterceptor</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\NostreetsORM\NostreetsORM\NostreetsORM.csproj">
+    <ProjectReference Include="..\..\..\Nostreets.Orm.Ado\Nostreets.Orm.Ado\Nostreets.Orm.Ado.csproj">
       <Project>{6E132F1C-F285-4535-ABEE-F02FC0BD18CB}</Project>
-      <Name>NostreetsORM</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\NostreetsRouter\NostreetsRouter\NostreetsRouter\NostreetsRouter.csproj">
-      <Project>{7e7127d3-3146-46a4-a72a-b05200a1756e}</Project>
-      <Name>NostreetsRouter</Name>
+      <Name>Nostreets.Orm.Ado</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\OBL_Website\OBL_Website\OBL_Website.csproj">
       <Project>{ab0f8df3-9cbd-4023-9bda-db61a42e1788}</Project>

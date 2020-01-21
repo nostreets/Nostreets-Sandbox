@@ -14,13 +14,13 @@ using Nostreets_Services.Services.Database;
 using Nostreets_Services.Services.Email;
 using Nostreets_Services.Services.Shopify;
 
-using NostreetsEntities;
+using Nostreets.ORM.Entities;
 
 using NostreetsExtensions.DataControl.Classes;
 using NostreetsExtensions.Interfaces;
 using NostreetsExtensions.Utilities;
 
-using NostreetsORM;
+using Nostreets.Orm.Ado;
 using OBL_Website.Classes.Domain;
 using OBL_Website.Interfaces;
 using OBL_Website.Services.Database;

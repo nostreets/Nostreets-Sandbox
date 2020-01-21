@@ -1,7 +1,7 @@
 ﻿using Nostreets_Sandbox.App_Start;
 using Nostreets_Sandbox.Classes;
 using Nostreets_Services.Classes.Domain.Web;
-using NostreetsEntities;
+using Nostreets.ORM.Entities;
 using NostreetsExtensions.DataControl.Classes;
 using System.Web;
 using System.Web.Http;

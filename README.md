@@ -30,8 +30,8 @@
    - My Dependencies
      - NostreetsExtentions
      - NostreetsInterceptor
-     - NostreetsORM
-     - NostreetsEntities
+     - Nostreets.Orm.Ado
+     - Nostreets.ORM.Entities
    - 3rd Party Dependencies
      - Castle.Windsor
      - Google.Apis.Analytics.v3
