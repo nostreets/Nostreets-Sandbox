@@ -1,5 +1,5 @@
-using NostreetsExtensions.Extend.Basic;
-using NostreetsExtensions.Utilities;
+using Nostreets.Extensions.Extend.Basic;
+using Nostreets.Extensions.Utilities;
 using RazorGenerator.Mvc;
 using System;
 using System.Reflection;

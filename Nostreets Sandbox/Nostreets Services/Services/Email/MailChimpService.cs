@@ -7,8 +7,8 @@ using Nostreets_Services.Interfaces.Services;
 using Nostreets_Services.Models;
 using Nostreets_Services.Models.Requests;
 
-using NostreetsExtensions.Helpers.Data;
-using NostreetsExtensions.Utilities;
+using Nostreets.Extensions.Helpers.Data;
+using Nostreets.Extensions.Utilities;
 
 using RestSharp;
 using RestSharp.Authenticators;

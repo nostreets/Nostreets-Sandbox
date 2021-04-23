@@ -1,14 +1,14 @@
 ﻿using Nostreets_Sandbox.Classes;
 using Nostreets_Services.Interfaces.Services;
-using NostreetsExtensions.Extend.IOC;
-using NostreetsExtensions.Extend.Web;
-using NostreetsExtensions.Utilities.Managers;
-using NostreetsInterceptor;
-using NostreetsRouter.Models.Responses;
+using Nostreets.Extensions.Extend.IOC;
+using Nostreets.Extensions.Extend.Web;
+using Nostreets.Extensions.Utilities.Managers;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Net.Http;
 using System.Web;
+using Nostreets.Web.Interceptor;
+using Nostreets.Web.Router.Models.Responses;
 
 namespace Nostreets_Sandbox.App_Start
 {

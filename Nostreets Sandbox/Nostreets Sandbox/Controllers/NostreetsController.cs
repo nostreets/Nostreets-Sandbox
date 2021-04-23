@@ -1,12 +1,10 @@
 ﻿using System.Web.Mvc;
 using Nostreets_Services.Interfaces.Services;
-using NostreetsInterceptor;
-using NostreetsExtensions.DataControl.Classes;
-using NostreetsExtensions.Extend.IOC;
-using NostreetsExtensions.DataControl.Enums;
 using Nostreets_Services.Classes.Domain.Users;
-using NostreetsExtensions.DataControl.Attributes;
-using System.Text;
+using Nostreets.Extensions.DataControl.Classes;
+using Nostreets.Extensions.DataControl.Enums;
+using Nostreets.Extensions.DataControl.Attributes;
+using Nostreets.Extensions.Extend.IOC;
 
 namespace Nostreets_Sandbox.Controllers
 {

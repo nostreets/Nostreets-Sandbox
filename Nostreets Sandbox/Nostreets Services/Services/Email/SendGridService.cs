@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Nostreets_Services.Interfaces.Services;
-using NostreetsExtensions.DataControl.Classes;
-using NostreetsExtensions.Interfaces;
+using Nostreets.Extensions.DataControl.Classes;
+using Nostreets.Extensions.Interfaces;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 

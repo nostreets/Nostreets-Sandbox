@@ -1,7 +1,7 @@
 ﻿using Nostreets_Services.Classes.Domain.Web;
 using Nostreets_Services.Interfaces.Services;
-using NostreetsExtensions.Extend.Web;
-using NostreetsExtensions.Interfaces;
+using Nostreets.Extensions.Extend.Web;
+using Nostreets.Extensions.Interfaces;
 using RestSharp;
 using System;
 using System.Collections.Generic;

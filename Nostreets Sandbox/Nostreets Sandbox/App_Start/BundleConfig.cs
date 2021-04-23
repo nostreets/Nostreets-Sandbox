@@ -1,5 +1,5 @@
 ﻿using System.Web.Optimization;
-using NostreetsExtensions.Extend.Web;
+using Nostreets.Extensions.Extend.Web;
 
 namespace Nostreets_Sandbox
 {

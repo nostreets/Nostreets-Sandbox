@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Principal;
+
+using Nostreets.Extensions.DataControl.Classes;
+using Nostreets.Extensions.DataControl.Enums;
+
 using Nostreets_Services.Enums;
-using NostreetsExtensions.DataControl.Classes;
-using NostreetsExtensions.DataControl.Enums;
+
+
 
 namespace Nostreets_Services.Classes.Domain.Users
 {

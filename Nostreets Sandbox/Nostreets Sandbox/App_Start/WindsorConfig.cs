@@ -14,11 +14,6 @@ using Nostreets_Services.Services.Database;
 using Nostreets_Services.Services.Email;
 using Nostreets_Services.Services.Shopify;
 
-using Nostreets.ORM.Entities;
-
-using NostreetsExtensions.DataControl.Classes;
-using NostreetsExtensions.Interfaces;
-using NostreetsExtensions.Utilities;
 
 using Nostreets.Orm.Ado;
 using OBL_Website.Classes.Domain;
@@ -31,6 +26,10 @@ using System.Web.Http;
 using System.Web.Mvc;
 
 using Reg = Castle.MicroKernel.Registration;
+using Nostreets.Extensions.DataControl.Classes;
+using Nostreets.Extensions.Interfaces;
+using NostreetsEntities;
+using Nostreets.Extensions.Utilities;
 
 namespace Nostreets_Sandbox.App_Start
 {

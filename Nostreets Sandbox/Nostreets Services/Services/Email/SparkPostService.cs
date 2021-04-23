@@ -1,5 +1,5 @@
 ﻿using Nostreets_Services.Interfaces.Services;
-using NostreetsExtensions;
+using Nostreets.Extensions;
 using SparkPost;
 using System;
 using System.Net;

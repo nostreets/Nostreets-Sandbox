@@ -2,9 +2,9 @@
 using Nostreets_Services.Classes.Domain.Charts;
 using Nostreets_Services.Enums;
 using Nostreets_Services.Interfaces.Services;
-using NostreetsExtensions.DataControl.Classes;
-using NostreetsExtensions.Extend.Basic;
-using NostreetsExtensions.Interfaces;
+using Nostreets.Extensions.DataControl.Classes;
+using Nostreets.Extensions.Extend.Basic;
+using Nostreets.Extensions.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

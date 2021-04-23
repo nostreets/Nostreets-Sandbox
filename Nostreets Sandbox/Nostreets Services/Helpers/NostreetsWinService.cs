@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceProcess;
 using System.Threading;
-using NostreetsExtensions.Utilities;
+using Nostreets.Extensions.Utilities;
 using System.Reflection;
-using NostreetsExtensions.Extend.Basic;
+using Nostreets.Extensions.Extend.Basic;
 
 namespace Nostreets_Services.Helpers
 {

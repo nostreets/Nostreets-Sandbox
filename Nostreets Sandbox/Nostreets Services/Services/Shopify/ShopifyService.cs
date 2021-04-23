@@ -6,8 +6,8 @@ using Nostreets_Services.Classes.Domain.Users;
 using Nostreets_Services.Classes.Domain.Web;
 using Nostreets_Services.Enums;
 using Nostreets_Services.Interfaces.Services;
-using NostreetsExtensions.Extend.Web;
-using NostreetsExtensions.Interfaces;
+using Nostreets.Extensions.Extend.Web;
+using Nostreets.Extensions.Interfaces;
 using RestSharp;
 
 namespace Nostreets_Services.Services.Shopify

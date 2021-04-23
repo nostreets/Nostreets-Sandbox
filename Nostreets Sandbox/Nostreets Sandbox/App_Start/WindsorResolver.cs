@@ -1,6 +1,6 @@
 ﻿using Castle.MicroKernel.Lifestyle;
 using Castle.Windsor;
-using NostreetsExtensions.Extend.Basic;
+using Nostreets.Extensions.Extend.Basic;
 using System;
 using System.Collections.Generic;
 using System.Linq;

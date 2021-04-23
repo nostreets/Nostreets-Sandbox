@@ -4,9 +4,9 @@ using Nostreets_Services.Models.Request;
 using System.Collections.Generic;
 using System;
 using System.Linq;
-using NostreetsExtensions.Interfaces;
-using NostreetsExtensions.DataControl.Classes;
-using NostreetsExtensions.Extend.Basic;
+using Nostreets.Extensions.Interfaces;
+using Nostreets.Extensions.DataControl.Classes;
+using Nostreets.Extensions.Extend.Basic;
 
 namespace Nostreets_Services.Services.Database
 {

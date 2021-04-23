@@ -11,13 +11,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nostreets Sandbox", "Nostre
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OBL_Website", "..\..\OBL_Website\OBL_Website\OBL_Website.csproj", "{AB0F8DF3-9CBD-4023-9BDA-DB61A42E1788}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nostreets.Orm.EF", "..\..\Nostreets.Orm.EF\Nostreets.Orm.EF.csproj", "{D7BFC3E0-772C-434E-80D5-1228CB25931A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nostreets.Web.Interceptor", "..\..\Nostreets.Web.Interceptor\Nostreets.Web.Interceptor\Nostreets.Web.Interceptor.csproj", "{9152C751-21F4-4587-BA93-DD0C139B17F7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nostreets.Extensions", "..\..\Nostreets.Extensions\Nostreets.Extensions\Nostreets.Extensions.csproj", "{D75EF23C-2E65-4BF7-90D3-C21C73A3E9C3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nostreets.Web.Router", "..\..\Nostreets.Web.Router\Nostreets.Web.Router\Nostreets.Web.Router\Nostreets.Web.Router.csproj", "{7E7127D3-3146-46A4-A72A-B05200A1756E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NostreetsEntities", "..\..\Nostreets.Orm.EF\NostreetsEntities.csproj", "{AEE4EBBC-36BB-4311-BD4B-7F864DE93E59}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,10 +41,6 @@ Global
 		{AB0F8DF3-9CBD-4023-9BDA-DB61A42E1788}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB0F8DF3-9CBD-4023-9BDA-DB61A42E1788}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB0F8DF3-9CBD-4023-9BDA-DB61A42E1788}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D7BFC3E0-772C-434E-80D5-1228CB25931A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D7BFC3E0-772C-434E-80D5-1228CB25931A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D7BFC3E0-772C-434E-80D5-1228CB25931A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D7BFC3E0-772C-434E-80D5-1228CB25931A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9152C751-21F4-4587-BA93-DD0C139B17F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9152C751-21F4-4587-BA93-DD0C139B17F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9152C751-21F4-4587-BA93-DD0C139B17F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -57,6 +53,10 @@ Global
 		{7E7127D3-3146-46A4-A72A-B05200A1756E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E7127D3-3146-46A4-A72A-B05200A1756E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E7127D3-3146-46A4-A72A-B05200A1756E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEE4EBBC-36BB-4311-BD4B-7F864DE93E59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEE4EBBC-36BB-4311-BD4B-7F864DE93E59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEE4EBBC-36BB-4311-BD4B-7F864DE93E59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEE4EBBC-36BB-4311-BD4B-7F864DE93E59}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

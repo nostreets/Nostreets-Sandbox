@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+using Nostreets.Extensions.DataControl.Classes;
+using Nostreets.Extensions.DataControl.Enums;
+
 using Nostreets_Services.Classes.Domain.Users;
-using NostreetsExtensions.DataControl.Classes;
-using NostreetsExtensions.DataControl.Enums;
 
 namespace Nostreets_Services.Interfaces.Services
 {

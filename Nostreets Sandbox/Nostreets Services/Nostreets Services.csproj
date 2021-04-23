@@ -220,6 +220,10 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Nostreets.Extensions\Nostreets.Extensions\Nostreets.Extensions.csproj">
+      <Project>{D75EF23C-2E65-4BF7-90D3-C21C73A3E9C3}</Project>
+      <Name>Nostreets.Extensions</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Nostreets.Orm.Ado\Nostreets.Orm.Ado\Nostreets.Orm.Ado.csproj">
       <Project>{6e132f1c-f285-4535-abee-f02fc0bd18cb}</Project>
       <Name>Nostreets.Orm.Ado</Name>

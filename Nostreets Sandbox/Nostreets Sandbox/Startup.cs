@@ -1,7 +1,7 @@
 ﻿using Microsoft.Owin;
 using Nostreets_Sandbox.Classes;
-using NostreetsExtensions.DataControl.Attributes;
-using NostreetsExtensions.Extend.Web;
+using Nostreets.Extensions.DataControl.Attributes;
+using Nostreets.Extensions.Extend.Web;
 using Owin;
 
 [assembly: OwinStartup(typeof(Nostreets_Sandbox.Startup))]
