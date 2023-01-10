@@ -15,7 +15,7 @@
     "animate.css": "^3.7.0",
     "bootstrap": "^3.3.6",
     "dat.gui": "^0.7.5",
-    "fullpage.js": "^3.0.4",
+    "fullpage.js": "^4.0.5",
     "gulp": "^4.0.0",
     "gulp-concat": "^2.6.1",
     "gulp-cssmin": "^0.2.0",
