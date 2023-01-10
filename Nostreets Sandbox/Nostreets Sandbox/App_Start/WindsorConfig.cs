@@ -14,11 +14,7 @@ using Nostreets_Services.Services.Database;
 using Nostreets_Services.Services.Email;
 using Nostreets_Services.Services.Shopify;
 
-
-using Nostreets.Orm.Ado;
-using OBL_Website.Classes.Domain;
-using OBL_Website.Interfaces;
-using OBL_Website.Services.Database;
+//using Nostreets.Orm.Ado;
 
 using System.Collections.Generic;
 using System.Web;
@@ -39,14 +35,14 @@ namespace Nostreets_Sandbox.App_Start
         {
             #region ORMOptions Func
 
-            ORMOptions ormOptions(IKernel k) =>
-                   new ORMOptions
-                   {
-                       ConnectionKey = ConfigKeys.WebsiteConnectionKey,
-                       ErrorLog = k.Resolve<IDBService<Error>>(),
-                       WipeDB = false,
-                       NullLock = false
-                   };
+            //ORMOptions ormOptions(IKernel k) =>
+            //       new ORMOptions
+            //       {
+            //           ConnectionKey = ConfigKeys.WebsiteConnectionKey,
+            //           ErrorLog = k.Resolve<IDBService<Error>>(),
+            //           WipeDB = false,
+            //           NullLock = false
+            //       };
 
             #endregion ORMOptions Func
 
@@ -64,22 +60,25 @@ namespace Nostreets_Sandbox.App_Start
                          param["connectionKey"] = ConfigKeys.WebsiteConnectionKey;
                      }),
 
-                Reg.Component.For(typeof(IDBService<>)).ImplementedBy(typeof(DBService<>)).LifestyleSingleton()
+                Reg.Component.For(typeof(IDBService<>)).ImplementedBy(typeof(EFDBService<>)).LifestyleSingleton()
                     .DependsOn((k, param) =>
                      {
-                         param["options"] = ormOptions(k);
+                         param["connectionKey"] = ConfigKeys.WebsiteConnectionKey;
+                         //param["options"] = ormOptions(k);
                      }),
 
-                 Reg.Component.For(typeof(IDBService<,>)).ImplementedBy(typeof(DBService<,>)).LifestyleSingleton()
+                 Reg.Component.For(typeof(IDBService<,>)).ImplementedBy(typeof(EFDBService<,>)).LifestyleSingleton()
                     .DependsOn((k, param) =>
                     {
-                        param["options"] = ormOptions(k);
+                        param["connectionKey"] = ConfigKeys.WebsiteConnectionKey;
+                        //param["options"] = ormOptions(k);
                     }),
 
-                 Reg.Component.For(typeof(IDBService<,,,>)).ImplementedBy(typeof(DBService<,,,>)).LifestyleSingleton()
+                 Reg.Component.For(typeof(IDBService<,,,>)).ImplementedBy(typeof(EFDBService<,,,>)).LifestyleSingleton()
                     .DependsOn((k, param) =>
                      {
-                         param["options"] = ormOptions(k);
+                         param["connectionKey"] = ConfigKeys.WebsiteConnectionKey;
+                         //param["options"] = ormOptions(k);
                      }),
 
                  Reg.Component.For<IBillService>().ImplementedBy<BillService>().LifestyleSingleton()
@@ -118,16 +117,16 @@ namespace Nostreets_Sandbox.App_Start
                          param["apiKey"] = ConfigKeys.ShopifyApiKey;
                          param["userSrv"] = k.Resolve<IUserService>();
                          param["errorLog"] = k.Resolve<IDBService<WebRequestError>>();
-                     }),
-                   Reg.Component.For<IOBLBoardService>().ImplementedBy<OBLBoardService>().LifestyleSingleton()
-                     .DependsOn((k, param) =>
-                     {
-                         param["financialContributionSrv"] = k.Resolve<IDBService<FinancialContribution>>();
-                         param["timeContributionSrv"] = k.Resolve<IDBService<TimeContribution>>();
-                         param["assetContributionSrv"] = k.Resolve<IDBService<DigitalAssetContribution>>();
-                         param["deductionSrv"] = k.Resolve<IDBService<CapitalDeduction>>();
-                         param["userSrv"] = k.Resolve<IUserService>();
                      })
+                   //Reg.Component.For<IOBLBoardService>().ImplementedBy<OBLBoardService>().LifestyleSingleton()
+                   //  .DependsOn((k, param) =>
+                   //  {
+                   //      param["financialContributionSrv"] = k.Resolve<IDBService<FinancialContribution>>();
+                   //      param["timeContributionSrv"] = k.Resolve<IDBService<TimeContribution>>();
+                   //      param["assetContributionSrv"] = k.Resolve<IDBService<DigitalAssetContribution>>();
+                   //      param["deductionSrv"] = k.Resolve<IDBService<CapitalDeduction>>();
+                   //      param["userSrv"] = k.Resolve<IUserService>();
+                   //  })
              );
         }
     }

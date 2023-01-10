@@ -13,11 +13,11 @@ namespace Nostreets_Sandbox
         {
             ConfigureAuth(app);
 
-            app.HangfireStart(ConfigKeys.HangfireConnectionString, true, "/admin/hangire/dashboard", 
-                new Hangfire.DashboardOptions { Authorization = new[] { new HangfireAuthorizationFilter() } }
-                );
+            //app.HangfireStart(ConfigKeys.HangfireConnectionString, true, "/admin/hangire/dashboard", 
+            //    new Hangfire.DashboardOptions { Authorization = new[] { new HangfireAuthorizationFilter() } }
+            //    );
 
-            OBL_Website.HangfireConfig.RegisterJobs();
+            //OBL_Website.HangfireConfig.RegisterJobs();
         }
 
     }

@@ -20,9 +20,9 @@ using Nostreets_Services.Enums;
 using Nostreets_Services.Interfaces.Services;
 using Nostreets_Services.Models.Request;
 
-using OBL_Website.Classes.Domain;
-using OBL_Website.Interfaces;
-using OBL_Website.Models.Request;
+//using OBL_Website.Classes.Domain;
+//using OBL_Website.Interfaces;
+//using OBL_Website.Models.Request;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -50,10 +50,10 @@ namespace Nostreets_Sandbox.Controllers.Api
             _billSrv = _billSrv.WindsorResolve(container);
             _errorLog = _errorLog.WindsorResolve(container);
             _delevopProductSrv = _delevopProductSrv.WindsorResolve(container);
-            _oblBoardSrv = _oblBoardSrv.WindsorResolve(container);
+            //_oblBoardSrv = _oblBoardSrv.WindsorResolve(container);
         }
 
-        private IOBLBoardService _oblBoardSrv = null;// _oblSrv.WindsorResolve(container);
+       //private IOBLBoardService _oblBoardSrv = null;// _oblSrv.WindsorResolve(container);
         private IBillService _billSrv = null;
         private IChartService _chartsSrv = null;
         private IEmailService _emailSrv = null;
@@ -948,184 +948,184 @@ namespace Nostreets_Sandbox.Controllers.Api
 
         #endregion Product Development Endpoints
 
-        #region OBL Endpoints
+        //#region OBL Endpoints
 
-        [Intercept("IsLoggedIn"), Intercept("IsBoardMember")]
-        [Route("obl/capital/pieChart")]
-        [HttpGet]
-        public HttpResponseMessage CapitalPieChart(DateTime? cutoffDate = null)
-        {
-            try
-            {
-                Chart<decimal> result = _oblBoardSrv.GetPieChart(cutoffDate);
-                return Request.CreateResponse(HttpStatusCode.OK, new ItemResponse<Chart<decimal>>(result));
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
+        //[Intercept("IsLoggedIn"), Intercept("IsBoardMember")]
+        //[Route("obl/capital/pieChart")]
+        //[HttpGet]
+        //public HttpResponseMessage CapitalPieChart(DateTime? cutoffDate = null)
+        //{
+        //    try
+        //    {
+        //        Chart<decimal> result = _oblBoardSrv.GetPieChart(cutoffDate);
+        //        return Request.CreateResponse(HttpStatusCode.OK, new ItemResponse<Chart<decimal>>(result));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ErrorResponse(ex);
+        //    }
+        //}
 
-        [Intercept("IsLoggedIn"), Intercept("IsBoardMember")]
-        [Route("obl/capital")]
-        [HttpGet]
-        public HttpResponseMessage CapitalOfCompany(DateTime? cutoffDate = null)
-        {
-            try
-            {
-                var result = _oblBoardSrv.GetTotalCapitalOfCompany(cutoffDate);
-                return Request.CreateResponse(HttpStatusCode.OK, new ItemsResponse<string, decimal>(result));
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
-
-
-        [Intercept("IsLoggedIn"), Intercept("IsBoardMember")]
-        [Route("obl/capital/current")]
-        [HttpGet]
-        public HttpResponseMessage CurrentMembersCapitalOfCompany(DateTime? cutoffDate = null)
-        {
-            try
-            {
-                decimal result = _oblBoardSrv.GetMembersCapital(_userSrv.SessionUser, cutoffDate);
-                return Request.CreateResponse(HttpStatusCode.OK, new ItemResponse<decimal>(result));
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
-
-        [Intercept("IsLoggedIn"), Intercept("IsBoardMember")]
-        [Route("obl/capital")]
-        [HttpPost]
-        public HttpResponseMessage AddContribution(ContributionRequest request)
-        {
-            try
-            {
-                bool success = true;
-                BaseResponse response = null;
-
-                switch (request.Type)
-                {
-                    case ContributionType.Time:
-                        TimeContribution timeContibution = request.ToTimeContribution();
-                        timeContibution.UserId = _userSrv.SessionUser.Id;
-                        timeContibution.ModifiedUserId = _userSrv.SessionUser.Id;
-                        _oblBoardSrv.AddContribution(timeContibution);
-                        break;
-
-                    case ContributionType.Financial:
-                        FinancialContribution financialContibution = request.ToFinancialContribution();
-                        financialContibution.UserId = _userSrv.SessionUser.Id;
-                        financialContibution.ModifiedUserId = _userSrv.SessionUser.Id;
-                        _oblBoardSrv.AddContribution(financialContibution);
-                        break;
-
-                    case ContributionType.DigitalAsset:
-                        DigitalAssetContribution assetContibution = request.ToDigitalAssetContribution();
-                        assetContibution.UserId = _userSrv.SessionUser.Id;
-                        assetContibution.ModifiedUserId = _userSrv.SessionUser.Id;
-                        _oblBoardSrv.AddContribution(assetContibution);
-                        break;
-
-                    case ContributionType.Deduction:
-                        CapitalDeduction deduction = request.ToCapitalDeduction();
-                        deduction.UserId = _userSrv.SessionUser.Id;
-                        deduction.ModifiedUserId = _userSrv.SessionUser.Id;
-                        _oblBoardSrv.AddContribution(deduction);
-                        break;
-
-                    default:
-                        success = false;
-                        break;
-
-                }
-
-                if (success)
-                    return Request.CreateResponse(HttpStatusCode.OK, response);
-                else
-                    throw new Exception("Adding the contribution was not successful...");
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
-
-        [Intercept("IsLoggedIn"), Intercept("IsBoardMember")]
-        [Route("obl/capital")]
-        [HttpPut]
-        public HttpResponseMessage UpdateContribution(ContributionRequest request)
-        {
-            try
-            {
-                bool success = true;
-                BaseResponse response = null;
-
-                switch (request.Type)
-                {
-                    case ContributionType.Time:
-                        TimeContribution timeContibution = new TimeContribution();
-                        request.MapProperties(ref timeContibution);
-                        _oblBoardSrv.UpdateContribution(timeContibution);
-                        break;
-
-                    case ContributionType.Financial:
-                        FinancialContribution financialContibution = new FinancialContribution();
-                        request.MapProperties(ref financialContibution);
-                        _oblBoardSrv.UpdateContribution(financialContibution);
-                        break;
-
-                    case ContributionType.DigitalAsset:
-                        DigitalAssetContribution assetContibution = new DigitalAssetContribution();
-                        request.MapProperties(ref assetContibution);
-                        _oblBoardSrv.UpdateContribution(assetContibution);
-                        break;
-
-                    case ContributionType.Deduction:
-                        CapitalDeduction deduction = new CapitalDeduction();
-                        request.MapProperties(ref deduction);
-                        _oblBoardSrv.UpdateContribution(deduction);
-                        break;
-
-                    default:
-                        success = false;
-                        break;
-
-                }
-
-                if (success)
-                    return Request.CreateResponse(HttpStatusCode.OK, response);
-                else
-                    throw new Exception("Adding the contribution was not successful...");
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
+        //[Intercept("IsLoggedIn"), Intercept("IsBoardMember")]
+        //[Route("obl/capital")]
+        //[HttpGet]
+        //public HttpResponseMessage CapitalOfCompany(DateTime? cutoffDate = null)
+        //{
+        //    try
+        //    {
+        //        var result = _oblBoardSrv.GetTotalCapitalOfCompany(cutoffDate);
+        //        return Request.CreateResponse(HttpStatusCode.OK, new ItemsResponse<string, decimal>(result));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ErrorResponse(ex);
+        //    }
+        //}
 
 
-        [Intercept("IsLoggedIn"), Intercept("IsBoardMember")]
-        [Route("obl/capital/{id:int}")]
-        [HttpDelete]
-        public HttpResponseMessage DeleteContribution(int id, ContributionType type)
-        {
-            try
-            {
-                _oblBoardSrv.DeleteContribution(id, type);
-                return Request.CreateResponse(HttpStatusCode.OK, new SuccessResponse());
-            }
-            catch (Exception ex)
-            {
-                return ErrorResponse(ex);
-            }
-        }
-        #endregion OBL Endpoints
+        //[Intercept("IsLoggedIn"), Intercept("IsBoardMember")]
+        //[Route("obl/capital/current")]
+        //[HttpGet]
+        //public HttpResponseMessage CurrentMembersCapitalOfCompany(DateTime? cutoffDate = null)
+        //{
+        //    try
+        //    {
+        //        decimal result = _oblBoardSrv.GetMembersCapital(_userSrv.SessionUser, cutoffDate);
+        //        return Request.CreateResponse(HttpStatusCode.OK, new ItemResponse<decimal>(result));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ErrorResponse(ex);
+        //    }
+        //}
+
+        //[Intercept("IsLoggedIn"), Intercept("IsBoardMember")]
+        //[Route("obl/capital")]
+        //[HttpPost]
+        //public HttpResponseMessage AddContribution(ContributionRequest request)
+        //{
+        //    try
+        //    {
+        //        bool success = true;
+        //        BaseResponse response = null;
+
+        //        switch (request.Type)
+        //        {
+        //            case ContributionType.Time:
+        //                TimeContribution timeContibution = request.ToTimeContribution();
+        //                timeContibution.UserId = _userSrv.SessionUser.Id;
+        //                timeContibution.ModifiedUserId = _userSrv.SessionUser.Id;
+        //                _oblBoardSrv.AddContribution(timeContibution);
+        //                break;
+
+        //            case ContributionType.Financial:
+        //                FinancialContribution financialContibution = request.ToFinancialContribution();
+        //                financialContibution.UserId = _userSrv.SessionUser.Id;
+        //                financialContibution.ModifiedUserId = _userSrv.SessionUser.Id;
+        //                _oblBoardSrv.AddContribution(financialContibution);
+        //                break;
+
+        //            case ContributionType.DigitalAsset:
+        //                DigitalAssetContribution assetContibution = request.ToDigitalAssetContribution();
+        //                assetContibution.UserId = _userSrv.SessionUser.Id;
+        //                assetContibution.ModifiedUserId = _userSrv.SessionUser.Id;
+        //                _oblBoardSrv.AddContribution(assetContibution);
+        //                break;
+
+        //            case ContributionType.Deduction:
+        //                CapitalDeduction deduction = request.ToCapitalDeduction();
+        //                deduction.UserId = _userSrv.SessionUser.Id;
+        //                deduction.ModifiedUserId = _userSrv.SessionUser.Id;
+        //                _oblBoardSrv.AddContribution(deduction);
+        //                break;
+
+        //            default:
+        //                success = false;
+        //                break;
+
+        //        }
+
+        //        if (success)
+        //            return Request.CreateResponse(HttpStatusCode.OK, response);
+        //        else
+        //            throw new Exception("Adding the contribution was not successful...");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ErrorResponse(ex);
+        //    }
+        //}
+
+        //[Intercept("IsLoggedIn"), Intercept("IsBoardMember")]
+        //[Route("obl/capital")]
+        //[HttpPut]
+        //public HttpResponseMessage UpdateContribution(ContributionRequest request)
+        //{
+        //    try
+        //    {
+        //        bool success = true;
+        //        BaseResponse response = null;
+
+        //        switch (request.Type)
+        //        {
+        //            case ContributionType.Time:
+        //                TimeContribution timeContibution = new TimeContribution();
+        //                request.MapProperties(ref timeContibution);
+        //                _oblBoardSrv.UpdateContribution(timeContibution);
+        //                break;
+
+        //            case ContributionType.Financial:
+        //                FinancialContribution financialContibution = new FinancialContribution();
+        //                request.MapProperties(ref financialContibution);
+        //                _oblBoardSrv.UpdateContribution(financialContibution);
+        //                break;
+
+        //            case ContributionType.DigitalAsset:
+        //                DigitalAssetContribution assetContibution = new DigitalAssetContribution();
+        //                request.MapProperties(ref assetContibution);
+        //                _oblBoardSrv.UpdateContribution(assetContibution);
+        //                break;
+
+        //            case ContributionType.Deduction:
+        //                CapitalDeduction deduction = new CapitalDeduction();
+        //                request.MapProperties(ref deduction);
+        //                _oblBoardSrv.UpdateContribution(deduction);
+        //                break;
+
+        //            default:
+        //                success = false;
+        //                break;
+
+        //        }
+
+        //        if (success)
+        //            return Request.CreateResponse(HttpStatusCode.OK, response);
+        //        else
+        //            throw new Exception("Adding the contribution was not successful...");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ErrorResponse(ex);
+        //    }
+        //}
+
+
+        //[Intercept("IsLoggedIn"), Intercept("IsBoardMember")]
+        //[Route("obl/capital/{id:int}")]
+        //[HttpDelete]
+        //public HttpResponseMessage DeleteContribution(int id, ContributionType type)
+        //{
+        //    try
+        //    {
+        //        _oblBoardSrv.DeleteContribution(id, type);
+        //        return Request.CreateResponse(HttpStatusCode.OK, new SuccessResponse());
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ErrorResponse(ex);
+        //    }
+        //}
+        //#endregion OBL Endpoints
 
         #region Other Endpoints
         [Route("view/code/{fileName}")]
